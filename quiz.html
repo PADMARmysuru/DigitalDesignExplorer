@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Quiz | Digital Design Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Digital Design Explorer</h1>
+
+    <p>Digital System Design & Verilog Quiz</p>
+
+</header>
+
+
+<nav>
+
+    <a href="index.html">Home</a>
+
+    <a href="logic-gates.html">Logic Gates</a>
+
+    <a href="half-adder.html">Half Adder</a>
+
+    <a href="full-adder.html">Full Adder</a>
+
+    <a href="verilog.html">Verilog</a>
+
+    <a href="practice.html">Practice</a>
+
+    <a href="quiz.html">Quiz</a>
+
+</nav>
+
+
+<main>
+
+    <section class="welcome">
+
+        <h2>📝 Digital Design Quiz</h2>
+
+        <p>
+            Test your understanding of digital logic
+            and basic Verilog.
+        </p>
+
+    </section>
+
+
+    <section class="quiz-container">
+
+        <div id="quiz">
+
+            <h2 id="questionNumber">
+                Question 1 of 10
+            </h2>
+
+            <h3 id="question">
+                Question will appear here
+            </h3>
+
+
+            <div id="options">
+
+            </div>
+
+
+            <button onclick="nextQuestion()"
+                    id="nextButton">
+
+                NEXT
+
+            </button>
+
+            <p id="feedback"></p>
+
+        </div>
+
+
+        <div id="resultBox"
+             style="display:none;">
+
+            <h2>🎉 Quiz Completed!</h2>
+
+            <p>Your Score:</p>
+
+            <div id="score"></div>
+
+            <p id="message"></p>
+
+            <button onclick="restartQuiz()">
+
+                TRY AGAIN
+
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+const questions = [
+
+    {
+        question:
+        "Which operator represents AND in Verilog?",
+
+        options:
+        ["|", "&", "^", "~"],
+
+        answer: 1
+    },
+
+
+    {
+        question:
+        "Which gate produces HIGH output when both inputs are HIGH?",
+
+        options:
+        ["OR", "XOR", "AND", "NOR"],
+
+        answer: 2
+    },
+
+
+    {
+        question:
+        "Which Verilog keyword starts a module?",
+
+        options:
+        ["begin", "module", "start", "design"],
+
+        answer: 1
+    },
+
+
+    {
+        question:
+        "What is the output of an XOR gate when A=1 and B=1?",
+
+        options:
+        ["0", "1", "X", "Z"],
+
+        answer: 0
+    },
+
+
+    {
+        question:
+        "How many inputs does a NOT gate have?",
+
+        options:
+        ["1", "2", "3", "4"],
+
+        answer: 0
+    },
+
+
+    {
+        question:
+        "A Half Adder produces which outputs?",
+
+        options:
+        [
+            "SUM and CARRY",
+            "A and B",
+            "INPUT and OUTPUT",
+            "CLOCK and RESET"
+        ],
+
+        answer: 0
+    },
+
+
+    {
+        question:
+        "Which Verilog operator represents XOR?",
+
+        options:
+        ["&", "|", "^", "~"],
+
+        answer: 2
+    },
+
+
+    {
+        question:
+        "How many inputs does a Full Adder have?",
+
+        options:
+        ["1", "2", "3", "4"],
+
+        answer: 2
+    },
+
+
+    {
+        question:
+        "Which circuit selects one of several inputs?",
+
+        options:
+        [
+            "Decoder",
+            "Multiplexer",
+            "Counter",
+            "Flip-Flop"
+        ],
+
+        answer: 1
+    },
+
+
+    {
+        question:
+        "Which keyword ends a Verilog module?",
+
+        options:
+        [
+            "end",
+            "endmodule",
+            "stop",
+            "finish"
+        ],
+
+        answer: 1
+    }
+
+];
+
+
+let currentQuestion = 0;
+
+let score = 0;
+
+let selectedAnswer = -1;
+
+
+function loadQuestion() {
+
+    selectedAnswer = -1;
+
+    document.getElementById("feedback")
+        .innerText = "";
+
+
+    let q =
+        questions[currentQuestion];
+
+
+    document.getElementById("questionNumber")
+        .innerText =
+        "Question " +
+        (currentQuestion + 1) +
+        " of " +
+        questions.length;
+
+
+    document.getElementById("question")
+        .innerText =
+        q.question;
+
+
+    let options =
+        document.getElementById("options");
+
+
+    options.innerHTML = "";
+
+
+    q.options.forEach(
+        function(option, index) {
+
+            let button =
+                document.createElement("button");
+
+            button.innerText = option;
+
+            button.className =
+                "quiz-option";
+
+            button.onclick =
+                function() {
+
+                    selectAnswer(index);
+
+                };
+
+            options.appendChild(button);
+
+        }
+    );
+
+}
+
+
+function selectAnswer(index) {
+
+    selectedAnswer = index;
+
+
+    let buttons =
+        document.querySelectorAll(
+            ".quiz-option"
+        );
+
+
+    buttons.forEach(
+        function(button, i) {
+
+            button.classList.remove(
+                "selected"
+            );
+
+            if (i === index) {
+
+                button.classList.add(
+                    "selected"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+function nextQuestion() {
+
+    if (selectedAnswer === -1) {
+
+        document.getElementById("feedback")
+            .innerText =
+            "⚠️ Please select an answer.";
+
+        return;
+
+    }
+
+
+    if (
+        selectedAnswer ===
+        questions[currentQuestion].answer
+    ) {
+
+        score++;
+
+    }
+
+
+    currentQuestion++;
+
+
+    if (
+        currentQuestion <
+        questions.length
+    ) {
+
+        loadQuestion();
+
+    }
+
+    else {
+
+        showResult();
+
+    }
+
+}
+
+
+function showResult() {
+
+    document.getElementById("quiz")
+        .style.display = "none";
+
+
+    document.getElementById("resultBox")
+        .style.display = "block";
+
+
+    document.getElementById("score")
+        .innerText =
+        score + " / " + questions.length;
+
+
+    let percentage =
+        (score / questions.length) * 100;
+        localStorage.setItem(
+    "quizScore",
+    score
+);
+
+localStorage.setItem(
+    "quizTotal",
+    questions.length
+);
+
+
+    if (percentage >= 80) {
+
+        document.getElementById("message")
+            .innerText =
+            "🌟 Excellent! You have a strong understanding of the concepts.";
+
+    }
+
+    else if (percentage >= 60) {
+
+        document.getElementById("message")
+            .innerText =
+            "👍 Good work! Keep practicing.";
+
+    }
+
+    else {
+
+        document.getElementById("message")
+            .innerText =
+            "📚 Keep learning and try the quiz again.";
+
+    }
+
+}
+
+
+function restartQuiz() {
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    document.getElementById("quiz")
+        .style.display = "block";
+
+
+    document.getElementById("resultBox")
+        .style.display = "none";
+
+
+    loadQuestion();
+
+}
+
+
+loadQuestion();
+
+</script>
+
+
+</body>
+
+</html>

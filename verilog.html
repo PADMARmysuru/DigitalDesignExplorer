@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Verilog Basics | Digital Design Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Digital Design Explorer</h1>
+
+    <p>Learn Verilog Step by Step</p>
+
+</header>
+
+
+<nav>
+
+    <a href="index.html">Home</a>
+
+    <a href="logic-gates.html">Logic Gates</a>
+
+    <a href="half-adder.html">Half Adder</a>
+
+    <a href="full-adder.html">Full Adder</a>
+
+    <a href="verilog.html">Verilog</a>
+
+    <a href="#">Quiz</a>
+
+</nav>
+
+
+<main>
+
+    <!-- Introduction -->
+
+    <section class="welcome">
+
+        <h2>💻 Introduction to Verilog</h2>
+
+        <p>
+            Learn the basic concepts of Verilog HDL
+            through simple examples.
+        </p>
+
+    </section>
+
+
+    <!-- What is Verilog -->
+
+    <section class="gate-container">
+
+        <h2>What is Verilog?</h2>
+
+        <p>
+            Verilog is a Hardware Description Language (HDL)
+            used to describe and model digital electronic systems.
+        </p>
+
+        <p>
+            It allows us to describe the behaviour and structure
+            of digital circuits using code.
+        </p>
+
+    </section>
+
+
+    <!-- Basic Structure -->
+
+    <section class="gate-container">
+
+        <h2>1️⃣ Basic Verilog Module</h2>
+
+        <p>
+            A Verilog design is usually written inside a module.
+        </p>
+
+<pre>
+module circuit_name(
+    input A,
+    input B,
+    output Y
+);
+
+    // Circuit description
+
+endmodule
+</pre>
+
+    </section>
+
+
+    <!-- Explanation -->
+
+    <section class="gate-container">
+
+        <h2>2️⃣ Understanding the Module</h2>
+
+        <table class="concept-table">
+
+            <tr>
+
+                <th>Keyword</th>
+
+                <th>Meaning</th>
+
+            </tr>
+
+            <tr>
+
+                <td>module</td>
+
+                <td>Starts a Verilog module</td>
+
+            </tr>
+
+            <tr>
+
+                <td>input</td>
+
+                <td>Defines an input signal</td>
+
+            </tr>
+
+            <tr>
+
+                <td>output</td>
+
+                <td>Defines an output signal</td>
+
+            </tr>
+
+            <tr>
+
+                <td>assign</td>
+
+                <td>Used for continuous assignment</td>
+
+            </tr>
+
+            <tr>
+
+                <td>endmodule</td>
+
+                <td>Ends the module</td>
+
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- First Program -->
+
+    <section class="verilog-box">
+
+        <h2>3️⃣ Your First Verilog Program</h2>
+
+<pre>
+module and_gate(
+    input A,
+    input B,
+    output Y
+);
+
+assign Y = A & B;
+
+endmodule
+</pre>
+
+    </section>
+
+
+    <!-- Explanation -->
+
+    <section class="gate-container">
+
+        <h2>🔍 Understand the Code</h2>
+
+        <p>
+            <b>A and B</b> are the inputs of the AND gate.
+        </p>
+
+        <p>
+            <b>Y</b> is the output.
+        </p>
+
+        <p>
+            The statement
+        </p>
+
+        <div class="boolean-expression">
+
+            assign Y = A & B;
+
+        </div>
+
+        <p>
+            performs the AND operation.
+        </p>
+
+    </section>
+
+
+    <!-- Operators -->
+
+    <section class="gate-container">
+
+        <h2>4️⃣ Basic Verilog Operators</h2>
+
+        <table class="concept-table">
+
+            <tr>
+
+                <th>Operator</th>
+
+                <th>Operation</th>
+
+                <th>Example</th>
+
+            </tr>
+
+            <tr>
+
+                <td>&</td>
+
+                <td>AND</td>
+
+                <td>A & B</td>
+
+            </tr>
+
+            <tr>
+
+                <td>|</td>
+
+                <td>OR</td>
+
+                <td>A | B</td>
+
+            </tr>
+
+            <tr>
+
+                <td>~</td>
+
+                <td>NOT</td>
+
+                <td>~A</td>
+
+            </tr>
+
+            <tr>
+
+                <td>^</td>
+
+                <td>XOR</td>
+
+                <td>A ^ B</td>
+
+            </tr>
+
+            <tr>
+
+                <td>~^</td>
+
+                <td>XNOR</td>
+
+                <td>A ~^ B</td>
+
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- Practice -->
+
+    <section class="gate-container">
+
+        <h2>🎯 Try It Yourself</h2>
+
+        <p>
+            Complete the following Verilog statement
+            for an OR gate.
+        </p>
+
+<pre>
+module or_gate(
+    input A,
+    input B,
+    output Y
+);
+
+assign Y = A ___ B;
+
+endmodule
+</pre>
+
+        <button onclick="checkAnswer('|')">
+            |
+        </button>
+
+        <button onclick="checkAnswer('&')">
+            &
+        </button>
+
+        <button onclick="checkAnswer('^')">
+            ^
+        </button>
+
+        <button onclick="checkAnswer('~')">
+            ~
+        </button>
+
+        <p id="answerResult"></p>
+
+    </section>
+
+</main>
+
+
+<script>
+
+function checkAnswer(answer) {
+
+    let result =
+        document.getElementById("answerResult");
+
+    if (answer === "|") {
+
+        result.innerText =
+            "✅ Correct! | is the OR operator in Verilog.";
+
+        result.style.color = "green";
+
+    }
+
+    else {
+
+        result.innerText =
+            "❌ Try again. Think about the OR operation.";
+
+        result.style.color = "red";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>

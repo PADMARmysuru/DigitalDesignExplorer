@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard | Digital Design Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Digital Design Explorer</h1>
+
+    <p>Student Learning Dashboard</p>
+
+</header>
+
+<nav>
+
+    <a href="index.html">Home</a>
+    <a href="logic-gates.html">Logic Gates</a>
+    <a href="half-adder.html">Half Adder</a>
+    <a href="full-adder.html">Full Adder</a>
+    <a href="verilog.html">Verilog</a>
+    <a href="practice.html">Practice</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="dashboard.html">Dashboard</a>
+
+</nav>
+
+<main>
+
+   <section class="welcome">
+
+    <h2>👩‍🎓 My Learning Dashboard</h2>
+
+    <p>
+        Track your Digital System Design learning progress.
+    </p>
+
+    <div class="student-profile">
+
+        <h3>Student Profile</h3>
+
+        <label>Student Name:</label>
+        <input type="text"
+               id="studentName"
+               placeholder="Enter your name">
+
+        <br><br>
+
+        <label>USN:</label>
+        <input type="text"
+               id="studentUSN"
+               placeholder="Enter your USN">
+
+        <br><br>
+
+        <label>Branch:</label>
+        <input type="text"
+               value="ECE"
+               readonly>
+
+        <br><br>
+
+        <button onclick="saveStudent()">
+            Save Profile
+        </button>
+
+        <p id="profileMessage"></p>
+
+    </div>
+
+</section>
+
+
+    <section class="dashboard-cards">
+
+        <div class="progress-card">
+
+            <h2>💡 Logic Gates</h2>
+
+            <div class="progress-bar">
+
+                <div class="progress"
+                     style="width: 100%;">
+
+                    100%
+
+                </div>
+
+            </div>
+
+            <p>7 / 7 Gates Completed</p>
+
+        </div>
+
+
+        <div class="progress-card">
+
+            <h2>🔧 Digital Circuits</h2>
+
+            <div class="progress-bar">
+
+                <div class="progress"
+                     style="width: 50%;">
+
+                    50%
+
+                </div>
+
+            </div>
+
+            <p>2 / 4 Circuits Completed</p>
+
+        </div>
+
+
+        <div class="progress-card">
+
+    <h2>💻 Verilog Practice</h2>
+
+    <div class="progress-bar">
+
+        <div class="progress"
+             id="practiceProgress"
+             style="width: 0%;">
+
+            0%
+
+        </div>
+
+    </div>
+
+    <p id="practiceCompleted">
+        0 / 10 Programs Completed
+    </p>
+
+</div>
+
+
+        <div class="progress-card">
+
+            <h2>📝 Quiz</h2>
+
+            <div class="score-display"
+     id="quizScore">
+
+    -- / 10
+
+</div>
+
+            <p>Latest Quiz Score</p>
+
+        </div>
+
+    </section>
+
+
+    <section class="gate-container">
+
+        <h2>🏆 Achievements</h2>
+
+        <div class="badges">
+
+           <div class="badge" id="logicBadge">
+
+    🔒
+
+    <p>Logic Gate Explorer</p>
+
+</div>
+
+            <div class="badge">
+
+                🥈
+
+                <p>Verilog Beginner</p>
+
+            </div>
+
+            <div class="badge">
+
+                🔒
+
+                <p>Circuit Designer</p>
+
+            </div>
+
+            <div class="badge">
+
+                🔒
+
+                <p>Verilog Master</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+<script>
+    
+
+let completedPrograms = 0;
+
+for (let i = 1; i <= 10; i++) {
+
+    if (
+        localStorage.getItem("practice" + i)
+        === "completed"
+    ) {
+        completedPrograms++;
+    }
+
+}
+
+let practicePercent =
+    Math.round((completedPrograms / 10) * 100);
+
+
+document.getElementById("practiceProgress")
+    .style.width =
+    practicePercent + "%";
+
+
+document.getElementById("practiceProgress")
+    .innerText =
+    practicePercent + "%";
+
+
+document.getElementById("practiceCompleted")
+    .innerText =
+    completedPrograms +
+    " / 10 Programs Completed";
+
+</script>
+
+let savedScore =
+    localStorage.getItem("quizScore");
+
+let savedTotal =
+    localStorage.getItem("quizTotal");
+
+
+if (savedScore !== null) {
+
+    document.getElementById("quizScore")
+        .innerText =
+        savedScore + " / " + savedTotal;
+
+}
+
+</script>
+<script>
+
+function saveStudent() {
+
+    let name =
+        document.getElementById("studentName").value;
+
+    let usn =
+        document.getElementById("studentUSN").value;
+
+    if (name === "" || usn === "") {
+
+        document.getElementById("profileMessage")
+            .innerText =
+            "⚠️ Please enter Name and USN.";
+
+        return;
+    }
+
+    localStorage.setItem("studentName", name);
+    localStorage.setItem("studentUSN", usn);
+
+    document.getElementById("profileMessage")
+        .innerText =
+        "✓ Profile saved successfully!";
+
+}
+
+let savedName =
+    localStorage.getItem("studentName");
+
+let savedUSN =
+    localStorage.getItem("studentUSN");
+
+if (savedName !== null) {
+
+    document.getElementById("studentName")
+        .value = savedName;
+
+}
+
+if (savedUSN !== null) {
+
+    document.getElementById("studentUSN")
+        .value = savedUSN;
+
+}
+
+</script>
+<script>
+
+let logicBadge =
+    document.getElementById("logicBadge");
+
+let completedGates =
+    JSON.parse(
+        localStorage.getItem("completedGates")
+    ) || [];
+
+if (completedGates.length === 7) {
+
+    logicBadge.innerHTML =
+        "🥇<p>Logic Gate Explorer</p>";
+
+}
+
+</script>
+</body>
+
+</html>
