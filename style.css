@@ -1,0 +1,599 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fb;
+    color: #222;
+}
+
+/* Header */
+
+header {
+    background-color: #243b64;
+    color: white;
+    text-align: center;
+    padding: 35px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 38px;
+}
+
+header p {
+    font-size: 18px;
+}
+
+/* Navigation */
+
+nav {
+    background-color: #162746;
+    text-align: center;
+    padding: 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 20px;
+    font-size: 16px;
+}
+
+/* Welcome section */
+
+.welcome {
+    text-align: center;
+    padding: 40px;
+}
+
+.welcome h2 {
+    font-size: 30px;
+    color: #243b64;
+}
+
+/* Cards */
+
+.modules {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.card {
+    background-color: white;
+    width: 220px;
+    padding: 25px;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+    color: #243b64;
+}
+
+button {
+    background-color: #243b64;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #36598f;
+}
+
+/* Footer */
+
+footer {
+    background-color: #162746;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+/* Logic Gate Page */
+
+.gate-selection {
+    text-align: center;
+    padding: 20px;
+}
+
+.gate-selection button {
+    margin: 5px;
+    min-width: 80px;
+}
+
+.gate-container {
+    background: white;
+    width: 80%;
+    margin: 20px auto;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.circuit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    margin-top: 30px;
+}
+
+.input-section button {
+    background-color: #243b64;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.gate-symbol {
+    background-color: #e8eef8;
+    border: 3px solid #243b64;
+    padding: 30px 40px;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.output-section #output {
+    background-color: #243b64;
+    color: white;
+    font-size: 30px;
+    padding: 15px 25px;
+    border-radius: 8px;
+}
+
+.truth-table {
+    text-align: center;
+    margin: 30px;
+}
+
+.truth-table table {
+    margin: auto;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.truth-table th,
+.truth-table td {
+    border: 1px solid #ccc;
+    padding: 12px 30px;
+}
+
+.truth-table th {
+    background-color: #243b64;
+    color: white;
+}
+
+.verilog-box {
+    background-color: #1e1e1e;
+    color: #00ff88;
+    width: 70%;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.verilog-box h2 {
+    color: white;
+}
+
+.verilog-box pre {
+    font-size: 18px;
+}
+.gate-container p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.boolean-expression {
+    display: inline-block;
+    background-color: #eef3fa;
+    color: #243b64;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.output-section div {
+    background-color: #243b64;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 12px 25px;
+    margin: 8px;
+    border-radius: 8px;
+}
+.concept-table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: white;
+    width: 80%;
+}
+
+.concept-table th,
+.concept-table td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+}
+
+.concept-table th {
+    background-color: #243b64;
+    color: white;
+}
+
+.gate-container pre {
+    background-color: #f1f3f6;
+    padding: 20px;
+    text-align: left;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.practice-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.practice-buttons button {
+    min-width: 150px;
+}
+
+#codeInput {
+    width: 90%;
+    padding: 15px;
+    font-family: Consolas, monospace;
+    font-size: 16px;
+    border: 2px solid #243b64;
+    border-radius: 8px;
+    resize: vertical;
+    background-color: #f8f8f8;
+}
+
+#result {
+    font-size: 19px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.quiz-container {
+    background-color: white;
+    width: 70%;
+    margin: 30px auto;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.quiz-option {
+    display: block;
+    width: 70%;
+    margin: 12px auto;
+    padding: 15px;
+    background-color: #f1f3f6;
+    color: #243b64;
+    border: 2px solid #d0d5dd;
+    border-radius: 8px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.quiz-option:hover {
+    background-color: #e3eaf5;
+}
+
+.quiz-option.selected {
+    background-color: #243b64;
+    color: white;
+    border-color: #243b64;
+}
+
+#nextButton {
+    margin-top: 20px;
+    padding: 12px 30px;
+}
+
+#feedback {
+    font-weight: bold;
+}
+
+#score {
+    font-size: 45px;
+    font-weight: bold;
+    color: #243b64;
+    margin: 20px;
+}
+.dashboard-cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+    padding: 20px;
+}
+
+.progress-card {
+    background-color: white;
+    width: 250px;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.progress-card h2 {
+    color: #243b64;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 25px;
+    background-color: #e2e5e9;
+    border-radius: 15px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.progress {
+    height: 100%;
+    background-color: #243b64;
+    color: white;
+    line-height: 25px;
+    font-size: 13px;
+}
+
+.score-display {
+    font-size: 40px;
+    font-weight: bold;
+    color: #243b64;
+    margin: 20px;
+}
+
+.badges {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.badge {
+    width: 150px;
+    padding: 20px;
+    background-color: #f4f7fb;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 35px;
+}
+
+.badge p {
+    font-size: 15px;
+    color: #243b64;
+}
+.student-profile {
+    background-color: white;
+    width: 60%;
+    margin: 25px auto;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.student-profile h3 {
+    color: #243b64;
+    font-size: 24px;
+}
+
+.student-profile label {
+    font-weight: bold;
+    color: #243b64;
+}
+
+.student-profile input {
+    padding: 10px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+#profileMessage {
+    color: green;
+    font-weight: bold;
+}
+.kmap-table {
+    border-collapse: collapse;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.kmap-table th,
+.kmap-table td {
+    border: 2px solid #243b64;
+    padding: 15px;
+    min-width: 55px;
+}
+
+.kmap-table th {
+    background-color: #dbeafe;
+    color: #243b64;
+}
+
+.kmap-table td {
+    background-color: #ffffff;
+}
+
+.kmap-table .group1 {
+    background-color: #fde68a;
+    border: 3px solid #f59e0b;
+    font-weight: bold;
+    color: #7c2d12;
+}
+
+.kmap-table small {
+    font-size: 11px;
+}
+.cell-m0,
+.cell-m1,
+.cell-m2,
+.cell-m3,
+.cell-m4,
+.cell-m5,
+.cell-m6,
+.cell-m7 {
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.cell-m0 {
+    background-color: #e0f2fe;
+}
+
+.cell-m1 {
+    background-color: #dcfce7;
+}
+
+.cell-m3 {
+    background-color: #fef3c7;
+}
+
+.cell-m2 {
+    background-color: #fce7f3;
+}
+
+.cell-m4 {
+    background-color: #ede9fe;
+}
+
+.cell-m5 {
+    background-color: #dbeafe;
+}
+
+.cell-m7 {
+    background-color: #fef9c3;
+}
+
+.cell-m6 {
+    background-color: #f3e8ff;
+}
+.cell-m8 {
+    background-color: #fce7f3;
+}
+
+.cell-m9 {
+    background-color: #ede9fe;
+}
+
+.cell-m10 {
+    background-color: #dbeafe;
+}
+
+.cell-m11 {
+    background-color: #dcfce7;
+}
+
+.cell-m12 {
+    background-color: #fef3c7;
+}
+
+.cell-m13 {
+    background-color: #cffafe;
+}
+
+.cell-m14 {
+    background-color: #f3e8ff;
+}
+
+.cell-m15 {
+    background-color: #ffedd5;
+}
+.student-info {
+    background: linear-gradient(135deg, #e0f2fe, #ede9fe);
+    width: 60%;
+    margin: 25px auto;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+    text-align: left;
+}
+
+.student-info h2 {
+    color: #243b64;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.student-info p {
+    font-size: 17px;
+    margin: 10px 0;
+    color: #333;
+}
+
+.student-info strong {
+    color: #243b64;
+}
+/* Certificate */
+
+.certificate {
+    width: 80%;
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 50px;
+    text-align: center;
+    background: #fffdf5;
+    border: 10px double #243b64;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.certificate h1 {
+    color: #243b64;
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.certificate-title {
+    font-size: 25px;
+    font-weight: bold;
+    color: #b45309;
+    margin-bottom: 30px;
+}
+
+.certificate h2 {
+    font-size: 32px;
+    color: #111827;
+    margin: 20px 0;
+    border-bottom: 2px solid #b45309;
+    display: inline-block;
+    padding: 5px 30px;
+}
+
+.certificate p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.certificate-details {
+    margin: 30px auto;
+    text-align: left;
+    width: 70%;
+}
+
+.certificate-date {
+    margin-top: 35px;
+    font-weight: bold;
+}

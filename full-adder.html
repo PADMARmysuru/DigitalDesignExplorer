@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Full Adder | Digital Design Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <script>
+
+let loggedIn =
+    localStorage.getItem("studentLoggedIn");
+
+if (loggedIn !== "true") {
+
+    window.location.href = "login.html";
+
+}
+
+</script>
+
+<header>
+
+    <h1>Digital Design Explorer</h1>
+
+    <p>Interactive Digital Circuit Learning</p>
+
+</header>
+
+
+<nav>
+
+    <a href="index.html">Home</a>
+
+    <a href="logic-gates.html">Logic Gates</a>
+
+    <a href="half-adder.html">Half Adder</a>
+
+    <a href="full-adder.html">Full Adder</a>
+
+    <a href="#">Verilog</a>
+
+    <a href="#">Quiz</a>
+    <a href="kmap.html">K-Map</a>
+
+</nav>
+
+
+<main>
+
+    <!-- Introduction -->
+
+    <section class="welcome">
+
+        <h2>🔧 Full Adder</h2>
+
+        <p>
+            Learn how a Full Adder adds three single-bit
+            binary inputs.
+        </p>
+
+    </section>
+
+
+    <!-- Theory -->
+
+    <section class="gate-container">
+
+        <h2>What is a Full Adder?</h2>
+
+        <p>
+            A Full Adder is a combinational circuit that
+            adds three binary inputs: A, B and Carry-in.
+        </p>
+
+        <p>
+            It produces two outputs:
+        </p>
+
+        <ul>
+
+            <li><b>SUM</b></li>
+
+            <li><b>CARRY</b></li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- Interactive Circuit -->
+
+    <section class="gate-container">
+
+        <h2>Interactive Full Adder</h2>
+
+        <div class="circuit">
+
+            <div class="input-section">
+
+                <p>
+                    Input A
+                    <button onclick="toggleA()" id="inputA">
+                        0
+                    </button>
+                </p>
+
+                <p>
+                    Input B
+                    <button onclick="toggleB()" id="inputB">
+                        0
+                    </button>
+                </p>
+
+                <p>
+                    Carry In
+                    <button onclick="toggleCin()" id="inputCin">
+                        0
+                    </button>
+                </p>
+
+            </div>
+
+
+            <div class="gate-symbol">
+
+                FULL<br>ADDER
+
+            </div>
+
+
+            <div class="output-section">
+
+                <p>SUM</p>
+
+                <div id="sumOutput">
+                    0
+                </div>
+
+                <p>CARRY</p>
+
+                <div id="carryOutput">
+                    0
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Boolean Expressions -->
+
+    <section class="gate-container">
+
+        <h2>Boolean Expressions</h2>
+
+        <div class="boolean-expression">
+
+            SUM = A ⊕ B ⊕ Cin
+
+        </div>
+
+        <br><br>
+
+        <div class="boolean-expression">
+
+            CARRY = AB + BCin + ACin
+
+        </div>
+
+    </section>
+
+
+    <!-- Truth Table -->
+
+    <section class="truth-table">
+
+        <h2>Truth Table</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>A</th>
+                    <th>B</th>
+                    <th>Cin</th>
+                    <th>SUM</th>
+                    <th>CARRY</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+
+                <tr>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>0</td>
+                </tr>
+
+                <tr>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                </tr>
+
+                <tr>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+
+                <tr>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                </tr>
+
+                <tr>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+
+                <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+
+                <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- Verilog -->
+
+    <section class="verilog-box">
+
+        <h2>💻 Verilog Implementation</h2>
+
+<pre>
+module full_adder(
+    input A,
+    input B,
+    input Cin,
+    output SUM,
+    output CARRY
+);
+
+assign SUM = A ^ B ^ Cin;
+
+assign CARRY =
+       (A & B) |
+       (B & Cin) |
+       (A & Cin);
+
+endmodule
+</pre>
+
+    </section>
+
+</main>
+
+
+<script>
+
+let A = 0;
+let B = 0;
+let Cin = 0;
+
+
+function toggleA() {
+
+    A = A === 0 ? 1 : 0;
+
+    document.getElementById("inputA").innerText = A;
+
+    calculate();
+
+}
+
+
+function toggleB() {
+
+    B = B === 0 ? 1 : 0;
+
+    document.getElementById("inputB").innerText = B;
+
+    calculate();
+
+}
+
+
+function toggleCin() {
+
+    Cin = Cin === 0 ? 1 : 0;
+
+    document.getElementById("inputCin").innerText = Cin;
+
+    calculate();
+
+}
+
+
+function calculate() {
+
+    let SUM = A ^ B ^ Cin;
+
+    let CARRY =
+        (A & B) |
+        (B & Cin) |
+        (A & Cin);
+
+
+    document.getElementById("sumOutput").innerText =
+        SUM;
+
+    document.getElementById("carryOutput").innerText =
+        CARRY;
+
+}
+localStorage.setItem("fullAdderCompleted", "true");
+</script>
+
+
+</body>
+
+</html>

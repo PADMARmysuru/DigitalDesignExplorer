@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Verilog Practice | Digital Design Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <script>
+
+let loggedIn =
+    localStorage.getItem("studentLoggedIn");
+
+if (loggedIn !== "true") {
+
+    window.location.href = "login.html";
+
+}
+
+</script>
+
+<header>
+
+    <h1>Digital Design Explorer</h1>
+
+    <p>Verilog Coding Practice</p>
+
+</header>
+
+<nav>
+
+    <a href="index.html">Home</a>
+
+    <a href="logic-gates.html">Logic Gates</a>
+
+    <a href="half-adder.html">Half Adder</a>
+
+    <a href="full-adder.html">Full Adder</a>
+
+    <a href="verilog.html">Verilog</a>
+
+    <a href="practice.html">Practice</a>
+
+    <a href="quiz.html">Quiz</a>
+
+    <a href="kmap.html">K-Map</a>
+
+    <a href="dashboard.html">Dashboard</a>
+
+</nav>
+
+
+<main>
+
+    <section class="welcome">
+
+        <h2>💻 Verilog Coding Practice</h2>
+
+        <p>
+            Select a program and write the Verilog code.
+        </p>
+
+    </section>
+
+
+    <!-- Program Selection -->
+
+    <section class="gate-container">
+
+        <h2>Select a Program</h2>
+
+        <div class="practice-buttons">
+
+            <button onclick="loadQuestion(1)">
+                1. AND Gate
+            </button>
+
+            <button onclick="loadQuestion(2)">
+                2. OR Gate
+            </button>
+
+            <button onclick="loadQuestion(3)">
+                3. NOT Gate
+            </button>
+
+            <button onclick="loadQuestion(4)">
+                4. XOR Gate
+            </button>
+
+            <button onclick="loadQuestion(5)">
+                5. NAND Gate
+            </button>
+
+            <button onclick="loadQuestion(6)">
+                6. NOR Gate
+            </button>
+            <button onclick="loadQuestion(7)">
+    7. Half Adder
+</button>
+
+<button onclick="loadQuestion(8)">
+    8. Full Adder
+</button>
+
+<button onclick="loadQuestion(9)">
+    9. 2:1 Multiplexer
+</button>
+
+<button onclick="loadQuestion(10)">
+    10. 2-to-4 Decoder
+</button>
+
+        </div>
+
+    </section>
+
+
+    <!-- Question -->
+
+    <section class="gate-container">
+
+        <h2 id="questionTitle">
+            Select a program above
+        </h2>
+
+        <p id="questionText">
+            Your question will appear here.
+        </p>
+
+
+        <textarea
+            id="codeInput"
+            rows="16"
+            placeholder="Write your Verilog code here...">
+        </textarea>
+
+
+        <br><br>
+
+        <button onclick="checkCode()">
+            CHECK CODE
+        </button>
+
+
+        <p id="result"></p>
+
+    </section>
+
+
+    <!-- Hint -->
+
+    <section class="gate-container">
+
+        <h2>💡 Hint</h2>
+
+        <p id="hint">
+            Select a program to see the hint.
+        </p>
+
+    </section>
+
+</main>
+
+
+<script>
+
+let currentProgram = 0;
+
+function loadQuestion(program) {
+
+    currentProgram = program;
+
+    let title = document.getElementById("questionTitle");
+    let question = document.getElementById("questionText");
+    let hint = document.getElementById("hint");
+    let code = document.getElementById("codeInput");
+    let result = document.getElementById("result");
+
+    code.value = "";
+    result.innerText = "";
+    result.style.color = "";
+
+    if (program === 1) {
+
+        title.innerText = "Question 1: AND Gate";
+        question.innerText =
+            "Write Verilog code to implement a 2-input AND gate. Inputs: A, B. Output: Y.";
+        hint.innerText = "Use the AND operator.";
+
+    } else if (program === 2) {
+
+        title.innerText = "Question 2: OR Gate";
+        question.innerText =
+            "Write Verilog code to implement a 2-input OR gate. Inputs: A, B. Output: Y.";
+        hint.innerText = "Use the OR operator.";
+
+    } else if (program === 3) {
+
+        title.innerText = "Question 3: NOT Gate";
+        question.innerText =
+            "Write Verilog code to implement a NOT gate. Input: A. Output: Y.";
+        hint.innerText = "A NOT gate has only one input.";
+
+    } else if (program === 4) {
+
+        title.innerText = "Question 4: XOR Gate";
+        question.innerText =
+            "Write Verilog code to implement a 2-input XOR gate. Inputs: A, B. Output: Y.";
+        hint.innerText = "XOR produces 1 when the two inputs are different.";
+
+    } else if (program === 5) {
+
+        title.innerText = "Question 5: NAND Gate";
+        question.innerText =
+            "Write Verilog code to implement a 2-input NAND gate. Inputs: A, B. Output: Y.";
+        hint.innerText = "NAND is the complement of AND.";
+
+    } else if (program === 6) {
+
+        title.innerText = "Question 6: NOR Gate";
+        question.innerText =
+            "Write Verilog code to implement a 2-input NOR gate. Inputs: A, B. Output: Y.";
+        hint.innerText = "NOR is the complement of OR.";
+
+    } else if (program === 7) {
+
+        title.innerText = "Question 7: Half Adder";
+        question.innerText =
+            "Write Verilog code for a Half Adder. Inputs: A, B. Outputs: SUM, CARRY.";
+        hint.innerText = "Use XOR for SUM and AND for CARRY.";
+
+    } else if (program === 8) {
+
+        title.innerText = "Question 8: Full Adder";
+        question.innerText =
+            "Write Verilog code for a Full Adder. Inputs: A, B, Cin. Outputs: SUM, CARRY.";
+        hint.innerText =
+            "The SUM depends on all three inputs. CARRY is generated when at least two inputs are HIGH.";
+
+    } else if (program === 9) {
+
+        title.innerText = "Question 9: 2:1 Multiplexer";
+        question.innerText =
+            "Write Verilog code for a 2:1 Multiplexer. Inputs: I0, I1, S. Output: Y.";
+        hint.innerText =
+            "The select input S decides which input appears at Y.";
+
+    } else if (program === 10) {
+
+        title.innerText = "Question 10: 2-to-4 Decoder";
+        question.innerText =
+            "Write Verilog code for a 2-to-4 Decoder. Inputs: A, B. Outputs: Y0, Y1, Y2, Y3.";
+        hint.innerText =
+            "Only one output should be HIGH for each input combination.";
+    }
+}
+
+function checkCode() {
+
+    let code = document
+        .getElementById("codeInput")
+        .value
+        .toLowerCase();
+
+    let result = document.getElementById("result");
+
+    if (currentProgram === 0) {
+        result.innerText = "⚠️ Please select a program first.";
+        result.style.color = "orange";
+        return;
+    }
+
+    let cleanCode = code.replace(/\s/g, "");
+    let correct = false;
+
+    // AND Gate
+    if (currentProgram === 1) {
+        correct =
+            cleanCode.includes("module") &&
+            (cleanCode.includes("inputa,b") ||
+             (cleanCode.includes("inputa") && cleanCode.includes("inputb"))) &&
+            cleanCode.includes("outputy") &&
+            cleanCode.includes("assigny=a&b") &&
+            cleanCode.includes("endmodule");
+    }
+
+    // OR Gate
+    else if (currentProgram === 2) {
+        correct =
+            cleanCode.includes("module") &&
+            (cleanCode.includes("inputa,b") ||
+             (cleanCode.includes("inputa") && cleanCode.includes("inputb"))) &&
+            cleanCode.includes("outputy") &&
+            cleanCode.includes("assigny=a|b") &&
+            cleanCode.includes("endmodule");
+    }
+
+    // NOT Gate
+    else if (currentProgram === 3) {
+        correct =
+            cleanCode.includes("module") &&
+            cleanCode.includes("inputa") &&
+            cleanCode.includes("outputy") &&
+            cleanCode.includes("assigny=~a") &&
+            cleanCode.includes("endmodule");
+    }
+
+    // XOR Gate
+    else if (currentProgram === 4) {
+        correct =
+            cleanCode.includes("module") &&
+            (cleanCode.includes("inputa,b") ||
+             (cleanCode.includes("inputa") && cleanCode.includes("inputb"))) &&
+            cleanCode.includes("outputy") &&
+            cleanCode.includes("assigny=a^b") &&
+            cleanCode.includes("endmodule");
+    }
+
+    // NAND Gate
+    else if (currentProgram === 5) {
+        correct =
+            cleanCode.includes("module") &&
+            (cleanCode.includes("inputa,b") ||
+             (cleanCode.includes("inputa") && cleanCode.includes("inputb"))) &&
+            cleanCode.includes("outputy") &&
+            cleanCode.includes("assigny=~(a&b)") &&
+            cleanCode.includes("endmodule");
+    }
+
+    // NOR Gate
+    else if (currentProgram === 6) {
+        correct =
+            cleanCode.includes("module") &&
+            (cleanCode.includes("inputa,b") ||
+             (cleanCode.includes("inputa") && cleanCode.includes("inputb"))) &&
+            cleanCode.includes("outputy") &&
+            cleanCode.includes("assigny=~(a|b)") &&
+            cleanCode.includes("endmodule");
+    }
+
+    // Half Adder
+    else if (currentProgram === 7) {
+        correct =
+            cleanCode.includes("module") &&
+            (cleanCode.includes("inputa,b") ||
+             (cleanCode.includes("inputa") && cleanCode.includes("inputb"))) &&
+            cleanCode.includes("outputsum") &&
+            cleanCode.includes("outputcarry") &&
+            cleanCode.includes("assignsum=a^b") &&
+            cleanCode.includes("assigncarry=a&b") &&
+            cleanCode.includes("endmodule");
+    }
+
+    // Full Adder
+    else if (currentProgram === 8) {
+        correct =
+            cleanCode.includes("module") &&
+            (cleanCode.includes("inputa,b,cin") ||
+             (cleanCode.includes("inputa") &&
+              cleanCode.includes("inputb") &&
+              cleanCode.includes("inputcin"))) &&
+            cleanCode.includes("outputsum") &&
+            cleanCode.includes("outputcarry") &&
+            cleanCode.includes("assignsum=a^b^cin") &&
+            cleanCode.includes("endmodule");
+    }
+
+    // 2:1 Multiplexer
+    else if (currentProgram === 9) {
+        correct =
+            cleanCode.includes("module") &&
+            cleanCode.includes("inputi0,i1,s") &&
+            cleanCode.includes("outputy") &&
+            cleanCode.includes("endmodule");
+    }
+
+    // 2-to-4 Decoder
+    else if (currentProgram === 10) {
+        correct =
+            cleanCode.includes("module") &&
+            (cleanCode.includes("inputa,b") ||
+             (cleanCode.includes("inputa") && cleanCode.includes("inputb"))) &&
+            cleanCode.includes("outputy0") &&
+            cleanCode.includes("outputy1") &&
+            cleanCode.includes("outputy2") &&
+            cleanCode.includes("outputy3") &&
+            cleanCode.includes("endmodule");
+    }
+
+    if (correct) {
+
+        result.innerText = "✓ Correct! Well done!";
+        result.style.color = "green";
+
+        localStorage.setItem(
+            "practice" + currentProgram,
+            "completed"
+        );
+
+    } else {
+
+        result.innerText = "✗ Not quite correct. Try again.";
+        result.style.color = "red";
+    }
+}
+</script>
+
+</body>
+</html>

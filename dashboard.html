@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard | Digital Design Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Digital Design Explorer</h1>
+
+    <p>Student Learning Dashboard</p>
+
+</header>
+
+<nav>
+
+    <a href="index.html">Home</a>
+    <a href="logic-gates.html">Logic Gates</a>
+    <a href="half-adder.html">Half Adder</a>
+    <a href="full-adder.html">Full Adder</a>
+    <a href="verilog.html">Verilog</a>
+    <a href="practice.html">Practice</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="kmap.html">K-Map</a>
+    <a href="dashboard.html">Dashboard</a>
+
+</nav>
+
+<main>
+
+   <section class="welcome">
+
+    <h2>👩‍🎓 My Learning Dashboard</h2>
+
+    <p>
+        Track your Digital System Design learning progress.
+    </p>
+
+   
+
+</section>
+
+<div class="student-info">
+
+    <h2>👨‍🎓 Student Details</h2>
+
+    <p><strong>Name:</strong> <span id="displayName"></span></p>
+
+    <p><strong>USN:</strong> <span id="displayUSN"></span></p>
+
+    <p><strong>Branch:</strong> <span id="displayBranch"></span></p>
+
+    <p><strong>Semester:</strong> <span id="displaySemester"></span></p>
+
+    <p><strong>Section:</strong> <span id="displaySection"></span></p>
+
+    <p><strong>Email:</strong> <span id="displayEmail"></span></p>
+
+</div>
+    <section class="dashboard-cards">
+
+        <div class="progress-card">
+
+            <h2>💡 Logic Gates</h2>
+
+            <div class="progress-bar">
+
+                <div class="progress"
+                     style="width: 100%;">
+
+                    100%
+
+                </div>
+
+            </div>
+
+            <p>7 / 7 Gates Completed</p>
+
+        </div>
+
+
+        <div class="progress-card">
+
+            <h2>🔧 Digital Circuits</h2>
+
+            <div class="progress-bar">
+
+                <div class="progress"
+                     style="width: 50%;">
+
+                    50%
+
+                </div>
+
+            </div>
+
+            <p>2 / 4 Circuits Completed</p>
+
+        </div>
+
+
+        <div class="progress-card">
+
+    <h2>💻 Verilog Practice</h2>
+
+    <div class="progress-bar">
+
+        <div class="progress"
+             id="practiceProgress"
+             style="width: 0%;">
+
+            0%
+
+        </div>
+
+    </div>
+
+    <p id="practiceCompleted">
+        0 / 10 Programs Completed
+    </p>
+
+</div>
+
+
+        <div class="progress-card">
+
+            <h2>📝 Quiz</h2>
+
+            <div class="score-display"
+     id="quizScore">
+
+    -- / 10
+
+</div>
+
+            <p>Latest Quiz Score</p>
+
+        </div>
+
+    </section>
+
+
+    <section class="gate-container">
+
+        <h2>🏆 Achievements</h2>
+
+        <div class="badges">
+           <div id="certificateSection">
+
+    <button id="certificateButton" onclick="openCertificate()">
+        🏆 Generate Certificate
+    </button>
+
+    <p id="certificateMessage"></p>
+
+</div>
+
+           <div class="badge" id="logicBadge">
+
+    🔒
+
+    <p>Logic Gate Explorer</p>
+
+</div>
+
+            <div class="badge">
+
+                🥈
+
+                <p>Verilog Beginner</p>
+
+            </div>
+
+            <div class="badge">
+
+                🔒
+
+                <p>Circuit Designer</p>
+
+            </div>
+
+            <div class="badge">
+
+                🔒
+
+                <p>Verilog Master</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+<script>
+    
+
+let completedPrograms = 0;
+
+for (let i = 1; i <= 10; i++) {
+
+    if (
+        localStorage.getItem("practice" + i)
+        === "completed"
+    ) {
+        completedPrograms++;
+    }
+
+}
+
+let practicePercent =
+    Math.round((completedPrograms / 10) * 100);
+
+
+document.getElementById("practiceProgress")
+    .style.width =
+    practicePercent + "%";
+
+
+document.getElementById("practiceProgress")
+    .innerText =
+    practicePercent + "%";
+
+
+document.getElementById("practiceCompleted")
+    .innerText =
+    completedPrograms +
+    " / 10 Programs Completed";
+
+</script>
+
+<script>
+
+let savedScore =
+    localStorage.getItem("quizScore");
+
+let savedTotal =
+    localStorage.getItem("quizTotal");
+
+if (savedScore !== null) {
+
+    document.getElementById("quizScore")
+        .innerText =
+        savedScore + " / " + savedTotal;
+
+}
+
+</script>
+
+
+<script>
+
+let logicBadge =
+    document.getElementById("logicBadge");
+
+let completedGates =
+    JSON.parse(
+        localStorage.getItem("completedGates")
+    ) || [];
+
+if (completedGates.length === 7) {
+
+    logicBadge.innerHTML =
+        "🥇<p>Logic Gate Explorer</p>";
+
+}
+
+</script>
+<script>
+
+let savedStudent =
+    JSON.parse(
+        localStorage.getItem("studentAccount")
+    );
+
+if (savedStudent) {
+
+    document.getElementById("displayName")
+        .innerText = savedStudent.name;
+
+    document.getElementById("displayUSN")
+        .innerText = savedStudent.usn;
+
+    document.getElementById("displayBranch")
+        .innerText = savedStudent.branch;
+
+    document.getElementById("displaySemester")
+        .innerText = savedStudent.semester;
+
+    document.getElementById("displaySection")
+        .innerText = savedStudent.section;
+
+    document.getElementById("displayEmail")
+        .innerText = savedStudent.email;
+
+}
+
+let loggedIn =
+    localStorage.getItem("studentLoggedIn");
+
+if (loggedIn !== "true") {
+
+    window.location.href = "login.html";
+
+}
+function openCertificate() {
+
+    let completedGates =
+        JSON.parse(localStorage.getItem("completedGates")) || [];
+
+    let completedPrograms = 0;
+
+    for (let i = 1; i <= 10; i++) {
+
+        if (
+            localStorage.getItem("practice" + i)
+            === "completed"
+        ) {
+            completedPrograms++;
+        }
+
+    }
+
+    let quizCompleted =
+        localStorage.getItem("quizScore") !== null;
+
+  if (
+    completedGates.length === 7 &&
+   completedPrograms === 10 &&
+localStorage.getItem("halfAdderCompleted") === "true" &&
+localStorage.getItem("fullAdderCompleted") === "true" &&
+quizCompleted &&
+localStorage.getItem("kmapCompleted") === "true"
+) {
+
+        window.location.href = "certificate.html";
+
+    } else {
+
+        document.getElementById("certificateMessage").innerText =
+            "🔒 Complete all required learning activities to unlock your certificate.";
+
+    }
+
+}
+</script>
+</body>
+
+</html>

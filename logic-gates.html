@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Logic Gates | Digital Design Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <script>
+
+let loggedIn =
+    localStorage.getItem("studentLoggedIn");
+
+if (loggedIn !== "true") {
+
+    window.location.href = "login.html";
+
+}
+
+</script>
+
+    <!-- Header -->
+
+    <header>
+
+        <h1>Digital Design Explorer</h1>
+
+        <p>Interactive Logic Gate Learning</p>
+
+    </header>
+
+
+    <!-- Navigation -->
+
+    <nav>
+
+    <a href="index.html">Home</a>
+
+    <a href="logic-gates.html">Logic Gates</a>
+
+    <a href="half-adder.html">Half Adder</a>
+
+    <a href="full-adder.html">Full Adder</a>
+
+    <a href="verilog.html">Verilog</a>
+
+    <a href="practice.html">Practice</a>
+
+    <a href="quiz.html">Quiz</a>
+
+    <a href="kmap.html">K-Map</a>
+
+    <a href="dashboard.html">Dashboard</a>
+
+</nav>
+
+
+    <!-- Main Content -->
+
+    <main>
+
+        <section class="welcome">
+
+            <h2>💡 Explore Logic Gates</h2>
+
+            <p>
+                Select a logic gate and change the inputs
+                to observe the output.
+            </p>
+
+        </section>
+
+
+        <!-- Gate Selection -->
+
+        <section class="gate-selection">
+
+            <button onclick="selectGate('AND')">AND</button>
+
+            <button onclick="selectGate('OR')">OR</button>
+
+            <button onclick="selectGate('NOT')">NOT</button>
+
+            <button onclick="selectGate('NAND')">NAND</button>
+
+            <button onclick="selectGate('NOR')">NOR</button>
+
+            <button onclick="selectGate('XOR')">XOR</button>
+
+            <button onclick="selectGate('XNOR')">XNOR</button>
+
+        </section>
+
+
+        <!-- Gate Display -->
+
+        <section class="gate-container">
+
+            <h2 id="gateTitle">AND Gate</h2>
+            <p id="gateDescription">
+    The AND gate produces HIGH output only when both inputs are HIGH.
+</p>
+
+<h3>Boolean Expression</h3>
+
+<div class="boolean-expression" id="booleanExpression">
+    Y = A · B
+</div>
+
+            <div class="circuit">
+
+                <div class="input-section">
+
+                    <p>
+                        Input A:
+                        <button onclick="toggleA()" id="inputA">
+                            0
+                        </button>
+                    </p>
+
+                    <p id="inputBText">
+                        Input B:
+                        <button onclick="toggleB()" id="inputB">
+                            0
+                        </button>
+                    </p>
+
+                </div>
+
+
+                <div class="gate-symbol" id="gateSymbol">
+
+                    AND
+
+                </div>
+
+
+                <div class="output-section">
+
+                    <p>Output Y</p>
+
+                    <div id="output">
+
+                        0
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Truth Table -->
+
+        <section class="truth-table">
+
+            <h2>Truth Table</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>A</th>
+
+                        <th>B</th>
+
+                        <th>Y</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="truthTableBody">
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- Verilog -->
+
+        <section class="verilog-box">
+
+            <h2>💻 Verilog Code</h2>
+
+            <pre id="verilogCode">
+assign Y = A & B;
+            </pre>
+
+        </section>
+
+    </main>
+
+
+    <!-- JavaScript -->
+
+    <script>
+
+        let A = 0;
+        let B = 0;
+
+        let currentGate = "AND";
+        let completedGates =
+    JSON.parse(localStorage.getItem("completedGates")) || [];
+
+
+        function toggleA() {
+
+            A = A === 0 ? 1 : 0;
+
+            document.getElementById("inputA").innerText = A;
+
+            calculateOutput();
+
+        }
+
+
+        function toggleB() {
+
+            B = B === 0 ? 1 : 0;
+
+            document.getElementById("inputB").innerText = B;
+
+            calculateOutput();
+
+        }
+
+
+      function selectGate(gate) {
+
+    currentGate = gate;
+    if (!completedGates.includes(gate)) {
+
+    completedGates.push(gate);
+
+    localStorage.setItem(
+        "completedGates",
+        JSON.stringify(completedGates)
+    );
+}
+
+    document.getElementById("gateTitle").innerText =
+        gate + " Gate";
+
+    document.getElementById("gateSymbol").innerText =
+        gate;
+
+    let description = "";
+    let expression = "";
+
+    if (gate === "AND") {
+
+        description =
+            "The AND gate produces HIGH output only when both inputs are HIGH.";
+
+        expression = "Y = A · B";
+
+    }
+
+    else if (gate === "OR") {
+
+        description =
+            "The OR gate produces HIGH output when at least one input is HIGH.";
+
+        expression = "Y = A + B";
+
+    }
+
+    else if (gate === "NOT") {
+
+        description =
+            "The NOT gate produces the complement of the input.";
+
+        expression = "Y = A̅";
+
+    }
+
+    else if (gate === "NAND") {
+
+        description =
+            "The NAND gate is the complement of the AND operation.";
+
+        expression = "Y = ~(A · B)",
+
+    }
+
+    else if (gate === "NOR") {
+
+        description =
+            "The NOR gate is the complement of the OR operation.";
+
+        expression = "Y = ~(A + B)̅";
+
+    }
+
+    else if (gate === "XOR") {
+
+        description =
+            "The XOR gate produces HIGH output when the inputs are different.";
+
+        expression = "Y = A ⊕ B";
+
+    }
+
+    else if (gate === "XNOR") {
+
+        description =
+            "The XNOR gate produces HIGH output when the inputs are the same.";
+
+        expression = "Y = ~(A ⊕ B)"
+
+    }
+
+    document.getElementById("gateDescription").innerText =
+        description;
+
+    document.getElementById("booleanExpression").innerText =
+        expression;
+
+    updateVerilog();
+
+    updateTruthTable();
+
+    calculateOutput();
+}
+
+   
+
+        function calculateOutput() {
+
+            let Y = 0;
+
+            if (currentGate === "AND") {
+
+                Y = A & B;
+
+            }
+
+            else if (currentGate === "OR") {
+
+                Y = A | B;
+
+            }
+
+            else if (currentGate === "NOT") {
+
+                Y = A === 0 ? 1 : 0;
+
+            }
+
+            else if (currentGate === "NAND") {
+
+                Y = !(A & B) ? 1 : 0;
+
+            }
+
+            else if (currentGate === "NOR") {
+
+                Y = !(A | B) ? 1 : 0;
+
+            }
+
+            else if (currentGate === "XOR") {
+
+                Y = A ^ B;
+
+            }
+
+            else if (currentGate === "XNOR") {
+
+                Y = !(A ^ B) ? 1 : 0;
+
+            }
+
+            document.getElementById("output").innerText = Y;
+
+        }
+
+
+        function updateVerilog() {
+
+            let code = "";
+
+            if (currentGate === "AND") {
+
+                code = "assign Y = A & B;";
+
+            }
+
+            else if (currentGate === "OR") {
+
+                code = "assign Y = A | B;";
+
+            }
+
+            else if (currentGate === "NOT") {
+
+                code = "assign Y = ~A;";
+
+            }
+
+            else if (currentGate === "NAND") {
+
+                code = "assign Y = ~(A & B);";
+
+            }
+
+            else if (currentGate === "NOR") {
+
+                code = "assign Y = ~(A | B);";
+
+            }
+
+            else if (currentGate === "XOR") {
+
+                code = "assign Y = A ^ B;";
+
+            }
+
+            else if (currentGate === "XNOR") {
+
+                code = "assign Y = ~(A ^ B);";
+
+            }
+
+            document.getElementById("verilogCode").innerText =
+                code;
+
+        }
+
+
+        function updateTruthTable() {
+
+            let rows = "";
+
+            for (let a = 0; a <= 1; a++) {
+
+                for (let b = 0; b <= 1; b++) {
+
+                    let y = 0;
+
+                    if (currentGate === "AND")
+                        y = a & b;
+
+                    else if (currentGate === "OR")
+                        y = a | b;
+
+                    else if (currentGate === "NAND")
+                        y = !(a & b) ? 1 : 0;
+
+                    else if (currentGate === "NOR")
+                        y = !(a | b) ? 1 : 0;
+
+                    else if (currentGate === "XOR")
+                        y = a ^ b;
+
+                    else if (currentGate === "XNOR")
+                        y = !(a ^ b) ? 1 : 0;
+
+                    rows +=
+                        `<tr>
+                            <td>${a}</td>
+                            <td>${b}</td>
+                            <td>${y}</td>
+                         </tr>`;
+
+                }
+
+            }
+
+            if (currentGate === "NOT") {
+
+                rows = "";
+
+                for (let a = 0; a <= 1; a++) {
+
+                    let y = a === 0 ? 1 : 0;
+
+                    rows +=
+                        `<tr>
+                            <td>${a}</td>
+                            <td>-</td>
+                            <td>${y}</td>
+                         </tr>`;
+
+                }
+
+            }
+
+            document.getElementById("truthTableBody").innerHTML =
+                rows;
+
+        }
+
+
+        /* Initial setup */
+
+        updateTruthTable();
+
+        calculateOutput();
+
+    </script>
+
+
+</body>
+
+</html>

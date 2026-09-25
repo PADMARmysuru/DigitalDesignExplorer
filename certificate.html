@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Certificate of Completion</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="certificate">
+
+        <h1>🏆 Certificate of Completion</h1>
+
+        <p class="certificate-title">
+            Digital Design Explorer
+        </p>
+
+        <p>This certificate is proudly presented to</p>
+
+        <h2 id="certificateName">Student Name</h2>
+
+        <p>
+            <strong>USN:</strong>
+            <span id="certificateUSN">USN</span>
+        </p>
+
+        <p>
+            for successfully completing the
+            Digital System Design learning activities
+            using Verilog.
+        </p>
+
+        <div class="certificate-details">
+
+            <p>
+                <strong>Course:</strong>
+                Digital System Design
+            </p>
+
+            <p>
+                <strong>Department:</strong>
+                Electronics and Communication Engineering
+            </p>
+
+            <p>
+                <strong>Institution:</strong>
+                GSSSIETW, Mysuru
+            </p>
+
+        </div>
+
+        <p class="certificate-date">
+            Date: <span id="certificateDate"></span>
+        </p>
+        <div class="faculty-signature">
+
+    <p><strong>Course Instructor</strong></p>
+
+    <p><strong>Mrs. Padma R</strong></p>
+
+    <p>Assistant Professor</p>
+
+    <p>Department of Electronics and Communication Engineering</p>
+
+    <p>GSSSIETW, Mysuru</p>
+
+</div>
+
+    </div>
+    <button onclick="window.print()" class="print-button">
+    🖨️ Print / Save as PDF
+</button>
+
+    <script>
+
+        let student =
+            JSON.parse(localStorage.getItem("studentAccount"));
+
+        if (student) {
+
+            document.getElementById("certificateName").innerText =
+                student.name;
+
+            document.getElementById("certificateUSN").innerText =
+                student.usn;
+
+        }
+
+        let today = new Date();
+
+        document.getElementById("certificateDate").innerText =
+            today.toLocaleDateString();
+
+    </script>
+
+</body>
+
+</html>
