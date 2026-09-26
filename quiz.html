@@ -15,7 +15,8 @@
 </head>
 
 <body>
-    <script>
+
+<script>
 
 let loggedIn =
     localStorage.getItem("studentLoggedIn");
@@ -27,6 +28,7 @@ if (loggedIn !== "true") {
 }
 
 </script>
+
 
 <header>
 
@@ -79,18 +81,14 @@ if (loggedIn !== "true") {
         <div id="quiz">
 
             <h2 id="questionNumber">
-                Question 1 of 10
+                Question 1 of 110
             </h2>
 
             <h3 id="question">
                 Question will appear here
             </h3>
 
-
-            <div id="options">
-
-            </div>
-
+            <div id="options"></div>
 
             <button onclick="nextQuestion()"
                     id="nextButton">
@@ -132,6 +130,10 @@ if (loggedIn !== "true") {
 
 const questions = [
 
+    /* =========================
+       EXISTING QUESTIONS 1-10
+       ========================= */
+
     {
         question:
         "Which operator represents AND in Verilog?",
@@ -141,7 +143,6 @@ const questions = [
 
         answer: 1
     },
-
 
     {
         question:
@@ -153,7 +154,6 @@ const questions = [
         answer: 2
     },
 
-
     {
         question:
         "Which Verilog keyword starts a module?",
@@ -163,7 +163,6 @@ const questions = [
 
         answer: 1
     },
-
 
     {
         question:
@@ -175,7 +174,6 @@ const questions = [
         answer: 0
     },
 
-
     {
         question:
         "How many inputs does a NOT gate have?",
@@ -185,7 +183,6 @@ const questions = [
 
         answer: 0
     },
-
 
     {
         question:
@@ -202,7 +199,6 @@ const questions = [
         answer: 0
     },
 
-
     {
         question:
         "Which Verilog operator represents XOR?",
@@ -213,7 +209,6 @@ const questions = [
         answer: 2
     },
 
-
     {
         question:
         "How many inputs does a Full Adder have?",
@@ -223,7 +218,6 @@ const questions = [
 
         answer: 2
     },
-
 
     {
         question:
@@ -240,7 +234,6 @@ const questions = [
         answer: 1
     },
 
-
     {
         question:
         "Which keyword ends a Verilog module?",
@@ -254,6 +247,1372 @@ const questions = [
         ],
 
         answer: 1
+    },
+
+
+    /* =========================
+       BOOLEAN ALGEBRA & GATES
+       QUESTIONS 11-30
+       ========================= */
+
+    {
+        question:
+        "Which Boolean operation is represented by A + B?",
+
+        options:
+        ["AND", "OR", "NOT", "XOR"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which Boolean operation is represented by A · B?",
+
+        options:
+        ["AND", "OR", "NOT", "XOR"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "What is the output of an AND gate when A=1 and B=0?",
+
+        options:
+        ["0", "1", "X", "Z"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "What is the output of an OR gate when A=0 and B=0?",
+
+        options:
+        ["0", "1", "X", "Z"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "What is the output of a NOT gate when its input is 0?",
+
+        options:
+        ["0", "1", "X", "Z"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which gate is known as a universal gate?",
+
+        options:
+        ["AND", "OR", "NAND", "XOR"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "Which other gate is a universal gate?",
+
+        options:
+        ["NOR", "XOR", "XNOR", "AND"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "What is the output of a NAND gate when A=1 and B=1?",
+
+        options:
+        ["0", "1", "X", "Z"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "What is the output of a NOR gate when A=0 and B=0?",
+
+        options:
+        ["0", "1", "X", "Z"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "An XOR gate produces 1 when its inputs are:",
+
+        options:
+        [
+            "The same",
+            "Different",
+            "Both 0",
+            "Both 1"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "An XNOR gate produces 1 when its inputs are:",
+
+        options:
+        [
+            "Different",
+            "The same",
+            "Always 0",
+            "Only 1 and 0"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which law states A + 0 = A?",
+
+        options:
+        [
+            "Identity law",
+            "Null law",
+            "Complement law",
+            "Absorption law"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which law states A · 1 = A?",
+
+        options:
+        [
+            "Identity law",
+            "Null law",
+            "Complement law",
+            "De Morgan's law"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "What is A + A equal to?",
+
+        options:
+        ["0", "1", "A", "A'"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "What is A · A equal to?",
+
+        options:
+        ["0", "1", "A", "A'"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "What is A + A' equal to?",
+
+        options:
+        ["0", "1", "A", "A'"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "What is A · A' equal to?",
+
+        options:
+        ["0", "1", "A", "A'"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "According to De Morgan's theorem, (A·B)' is equal to:",
+
+        options:
+        [
+            "A'·B'",
+            "A'+B'",
+            "A+B",
+            "A·B"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "According to De Morgan's theorem, (A+B)' is equal to:",
+
+        options:
+        [
+            "A'+B'",
+            "A'·B'",
+            "A+B",
+            "A·B"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which gate performs logical inversion?",
+
+        options:
+        ["AND", "OR", "NOT", "XOR"],
+
+        answer: 2
+    },
+
+
+    /* =========================
+       K-MAP
+       QUESTIONS 31-45
+       ========================= */
+
+    {
+        question:
+        "What is the main purpose of a Karnaugh Map?",
+
+        options:
+        [
+            "Store data",
+            "Simplify Boolean expressions",
+            "Generate clocks",
+            "Design processors"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "How many cells are present in a 2-variable K-map?",
+
+        options:
+        ["2", "4", "8", "16"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "How many cells are present in a 3-variable K-map?",
+
+        options:
+        ["4", "6", "8", "16"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "How many cells are present in a 4-variable K-map?",
+
+        options:
+        ["4", "8", "16", "32"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "Which sequence represents Gray-code ordering for four K-map columns?",
+
+        options:
+        [
+            "00, 01, 10, 11",
+            "00, 01, 11, 10",
+            "00, 10, 01, 11",
+            "00, 11, 10, 01"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Adjacent K-map cells differ in how many variables?",
+
+        options:
+        ["One", "Two", "Three", "Four"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which group size is valid in a K-map?",
+
+        options:
+        ["3", "5", "6", "4"],
+
+        answer: 3
+    },
+
+    {
+        question:
+        "Which group generally gives greater simplification?",
+
+        options:
+        [
+            "Smaller group",
+            "Larger valid group",
+            "Single cell",
+            "Random group"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "In a K-map, a group of 2 cells can eliminate:",
+
+        options:
+        [
+            "One variable",
+            "Two variables",
+            "Three variables",
+            "No variables"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "In a K-map, a group of 4 cells can eliminate:",
+
+        options:
+        [
+            "One variable",
+            "Two variables",
+            "Three variables",
+            "Four variables"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "In a K-map, a group of 8 cells in a 4-variable map can eliminate:",
+
+        options:
+        [
+            "One variable",
+            "Two variables",
+            "Three variables",
+            "Four variables"
+        ],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "In SOP simplification using a K-map, we normally group:",
+
+        options:
+        [
+            "Zeros",
+            "Ones",
+            "Only don't-care cells",
+            "Clock pulses"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "In POS simplification using a K-map, we normally group:",
+
+        options:
+        [
+            "Ones",
+            "Zeros",
+            "Only don't-care cells",
+            "Inputs"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "A don't-care condition can be:",
+
+        options:
+        [
+            "Used when useful for simplification",
+            "Always ignored",
+            "Always treated as 1",
+            "Always treated as 0"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which terms are commonly used for SOP K-map representation?",
+
+        options:
+        [
+            "Maxterms",
+            "Minterms",
+            "Registers",
+            "Flip-flops"
+        ],
+
+        answer: 1
+    },
+
+
+    /* =========================
+       COMBINATIONAL CIRCUITS
+       QUESTIONS 46-65
+       ========================= */
+
+    {
+        question:
+        "A combinational circuit depends on:",
+
+        options:
+        [
+            "Present inputs",
+            "Previous outputs only",
+            "Clock only",
+            "Memory only"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "How many inputs does a Half Adder have?",
+
+        options:
+        ["1", "2", "3", "4"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "How many outputs does a Half Adder have?",
+
+        options:
+        ["1", "2", "3", "4"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "The SUM output of a Half Adder is produced using:",
+
+        options:
+        ["AND", "OR", "XOR", "NOR"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "The CARRY output of a Half Adder is produced using:",
+
+        options:
+        ["AND", "OR", "XOR", "NOT"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A Full Adder has how many inputs?",
+
+        options:
+        ["1", "2", "3", "4"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "The third input of a Full Adder is called:",
+
+        options:
+        [
+            "Carry input",
+            "Carry output",
+            "Select input",
+            "Enable input"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A Full Adder produces:",
+
+        options:
+        [
+            "SUM and CARRY",
+            "Only SUM",
+            "Only CARRY",
+            "CLOCK and RESET"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A Half Subtractor produces:",
+
+        options:
+        [
+            "Difference and Borrow",
+            "Sum and Carry",
+            "Only Difference",
+            "Only Borrow"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which circuit compares two binary numbers?",
+
+        options:
+        [
+            "Comparator",
+            "Decoder",
+            "Encoder",
+            "Multiplexer"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A multiplexer is also called a:",
+
+        options:
+        [
+            "Data selector",
+            "Data distributor",
+            "Counter",
+            "Comparator"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A demultiplexer is also called a:",
+
+        options:
+        [
+            "Data selector",
+            "Data distributor",
+            "Decoder only",
+            "Adder"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "How many select lines are required for a 4-to-1 multiplexer?",
+
+        options:
+        ["1", "2", "3", "4"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "How many select lines are required for an 8-to-1 multiplexer?",
+
+        options:
+        ["1", "2", "3", "4"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "A decoder converts:",
+
+        options:
+        [
+            "n inputs into up to 2^n outputs",
+            "2^n inputs into n outputs",
+            "One input into one output",
+            "Analog input into digital output"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A 2-to-4 decoder has how many outputs?",
+
+        options:
+        ["2", "3", "4", "8"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "An encoder performs the reverse operation of a:",
+
+        options:
+        [
+            "Decoder",
+            "Adder",
+            "Counter",
+            "Comparator"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which circuit converts decimal digits into coded outputs?",
+
+        options:
+        [
+            "Encoder",
+            "Adder",
+            "Multiplexer",
+            "Comparator"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A 4-bit comparator compares:",
+
+        options:
+        [
+            "Two 4-bit numbers",
+            "Four 1-bit numbers only",
+            "One 4-bit number with a clock",
+            "Two 2-bit numbers only"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A programmable logic device is used mainly for:",
+
+        options:
+        [
+            "Implementing logic functions",
+            "Generating mechanical motion",
+            "Storing files",
+            "Cooling circuits"
+        ],
+
+        answer: 0
+    },
+
+
+    /* =========================
+       ADDERS, SUBTRACTORS
+       QUESTIONS 66-75
+       ========================= */
+
+    {
+        question:
+        "What is 1 + 1 in binary?",
+
+        options:
+        ["0", "1", "10", "11"],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "What is the SUM output of a Full Adder for A=1, B=1, Cin=0?",
+
+        options:
+        ["0", "1", "10", "11"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "What is the CARRY output of a Full Adder for A=1, B=1, Cin=0?",
+
+        options:
+        ["0", "1", "X", "Z"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "What is the SUM output for A=1, B=0, Cin=1?",
+
+        options:
+        ["0", "1", "2", "3"],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "What is the CARRY output for A=1, B=0, Cin=1?",
+
+        options:
+        ["0", "1", "2", "3"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "A ripple carry adder is constructed by connecting:",
+
+        options:
+        [
+            "Full Adders in cascade",
+            "NOT gates only",
+            "Multiplexers only",
+            "Decoders only"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "In a ripple carry adder, carry propagates from:",
+
+        options:
+        [
+            "MSB to LSB",
+            "LSB to MSB",
+            "Middle to both ends",
+            "Clock to output"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which circuit can perform binary addition and subtraction using control logic?",
+
+        options:
+        [
+            "Adder-subtractor",
+            "Decoder",
+            "Encoder",
+            "Comparator"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "The borrow output is associated with a:",
+
+        options:
+        [
+            "Subtractor",
+            "Comparator only",
+            "Multiplexer",
+            "Decoder"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "The main disadvantage of a ripple carry adder is:",
+
+        options:
+        [
+            "Carry propagation delay",
+            "No inputs",
+            "No output",
+            "It cannot add binary numbers"
+        ],
+
+        answer: 0
+    },
+
+
+    /* =========================
+       SEQUENTIAL CIRCUITS
+       QUESTIONS 76-95
+       ========================= */
+
+    {
+        question:
+        "A sequential circuit depends on:",
+
+        options:
+        [
+            "Present inputs only",
+            "Present inputs and previous state",
+            "Only output",
+            "Only power supply"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which circuit is used to store one bit of information?",
+
+        options:
+        [
+            "Flip-flop",
+            "Multiplexer",
+            "Decoder",
+            "Adder"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which flip-flop has inputs J and K?",
+
+        options:
+        [
+            "SR flip-flop",
+            "JK flip-flop",
+            "D flip-flop",
+            "T flip-flop"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which flip-flop has a single data input?",
+
+        options:
+        [
+            "D flip-flop",
+            "JK flip-flop",
+            "SR flip-flop",
+            "T flip-flop"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which flip-flop toggles when T=1?",
+
+        options:
+        [
+            "D flip-flop",
+            "T flip-flop",
+            "SR flip-flop",
+            "JK only when J=0"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "A JK flip-flop toggles when:",
+
+        options:
+        [
+            "J=0, K=0",
+            "J=0, K=1",
+            "J=1, K=0",
+            "J=1, K=1"
+        ],
+
+        answer: 3
+    },
+
+    {
+        question:
+        "For a D flip-flop, the next state is generally equal to:",
+
+        options:
+        [
+            "D",
+            "D'",
+            "Q'",
+            "0 always"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which device is used to store multiple bits?",
+
+        options:
+        [
+            "Register",
+            "NOT gate",
+            "Decoder",
+            "Comparator"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A shift register is used to:",
+
+        options:
+        [
+            "Shift stored data",
+            "Compare two numbers",
+            "Perform only addition",
+            "Decode addresses only"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A counter is a sequential circuit used to:",
+
+        options:
+        [
+            "Count clock events",
+            "Perform only multiplication",
+            "Select data inputs",
+            "Invert signals"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A binary counter operates using:",
+
+        options:
+        [
+            "Flip-flops",
+            "Only AND gates",
+            "Only OR gates",
+            "Only multiplexers"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A ripple counter is also known as an:",
+
+        options:
+        [
+            "Asynchronous counter",
+            "Synchronous counter",
+            "Ring counter only",
+            "Decoder"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "In a synchronous counter, flip-flops are generally triggered by:",
+
+        options:
+        [
+            "The same clock",
+            "Different unrelated clocks",
+            "Only data inputs",
+            "Output voltage"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which counter has a modulus of 10?",
+
+        options:
+        [
+            "MOD-2",
+            "MOD-4",
+            "MOD-8",
+            "MOD-10"
+        ],
+
+        answer: 3
+    },
+
+    {
+        question:
+        "A MOD-4 counter has how many valid states?",
+
+        options:
+        ["2", "4", "8", "16"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "A MOD-8 counter requires at least how many flip-flops?",
+
+        options:
+        ["2", "3", "4", "8"],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "A ring counter is based on:",
+
+        options:
+        [
+            "Shift registers",
+            "Adders only",
+            "Multiplexers only",
+            "Decoders only"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "A master-slave flip-flop generally uses:",
+
+        options:
+        [
+            "Two stages",
+            "One gate only",
+            "Three counters",
+            "No clock"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which circuit can be used as a frequency divider?",
+
+        options:
+        [
+            "Toggle flip-flop",
+            "Decoder",
+            "Encoder",
+            "Multiplexer"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "The characteristic equation describes:",
+
+        options:
+        [
+            "Next state of a flip-flop",
+            "Power supply voltage",
+            "Physical size of a gate",
+            "Clock frequency only"
+        ],
+
+        answer: 0
+    },
+
+
+    /* =========================
+       VERILOG BASICS
+       QUESTIONS 96-110
+       ========================= */
+
+    {
+        question:
+        "Which keyword declares a Verilog module?",
+
+        options:
+        [
+            "module",
+            "entity",
+            "design",
+            "program"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which keyword terminates a Verilog module?",
+
+        options:
+        [
+            "end",
+            "endmodule",
+            "finish",
+            "stop"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which symbol terminates a Verilog statement?",
+
+        options:
+        [
+            ".",
+            ",",
+            ";",
+            ":"
+        ],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "Which operator represents OR in Verilog?",
+
+        options:
+        [
+            "&",
+            "|",
+            "^",
+            "~"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which operator represents NOT in Verilog?",
+
+        options:
+        [
+            "&",
+            "|",
+            "^",
+            "~"
+        ],
+
+        answer: 3
+    },
+
+    {
+        question:
+        "Which operator represents XOR in Verilog?",
+
+        options:
+        [
+            "&",
+            "|",
+            "^",
+            "~"
+        ],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "Which keyword is commonly used to declare a net?",
+
+        options:
+        [
+            "wire",
+            "integer",
+            "real",
+            "event"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which keyword is commonly used to declare a variable for procedural assignments?",
+
+        options:
+        [
+            "reg",
+            "wire",
+            "module",
+            "input"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which keyword declares an input port?",
+
+        options:
+        [
+            "input",
+            "output",
+            "inout",
+            "port"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which keyword declares an output port?",
+
+        options:
+        [
+            "input",
+            "output",
+            "inout",
+            "result"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which keyword declares a bidirectional port?",
+
+        options:
+        [
+            "input",
+            "output",
+            "inout",
+            "wire"
+        ],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "Which block is commonly used for behavioral sequential statements?",
+
+        options:
+        [
+            "always",
+            "module",
+            "wire",
+            "assign"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which statement is used for continuous assignment in Verilog?",
+
+        options:
+        [
+            "assign",
+            "always",
+            "initial",
+            "repeat"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which operator represents bitwise AND in Verilog?",
+
+        options:
+        [
+            "&",
+            "|",
+            "^",
+            "~"
+        ],
+
+        answer: 0
+    },
+
+    {
+        question:
+        "Which Verilog construct is used to define a module's port list?",
+
+        options:
+        [
+            "module declaration",
+            "always block",
+            "initial block",
+            "for loop"
+        ],
+
+        answer: 0
     }
 
 ];
@@ -273,10 +1632,8 @@ function loadQuestion() {
     document.getElementById("feedback")
         .innerText = "";
 
-
     let q =
         questions[currentQuestion];
-
 
     document.getElementById("questionNumber")
         .innerText =
@@ -285,18 +1642,14 @@ function loadQuestion() {
         " of " +
         questions.length;
 
-
     document.getElementById("question")
         .innerText =
         q.question;
 
-
     let options =
         document.getElementById("options");
 
-
     options.innerHTML = "";
-
 
     q.options.forEach(
         function(option, index) {
@@ -328,12 +1681,10 @@ function selectAnswer(index) {
 
     selectedAnswer = index;
 
-
     let buttons =
         document.querySelectorAll(
             ".quiz-option"
         );
-
 
     buttons.forEach(
         function(button, i) {
@@ -368,7 +1719,6 @@ function nextQuestion() {
 
     }
 
-
     if (
         selectedAnswer ===
         questions[currentQuestion].answer
@@ -378,9 +1728,7 @@ function nextQuestion() {
 
     }
 
-
     currentQuestion++;
-
 
     if (
         currentQuestion <
@@ -405,28 +1753,25 @@ function showResult() {
     document.getElementById("quiz")
         .style.display = "none";
 
-
     document.getElementById("resultBox")
         .style.display = "block";
-
 
     document.getElementById("score")
         .innerText =
         score + " / " + questions.length;
 
-
     let percentage =
         (score / questions.length) * 100;
-        localStorage.setItem(
-    "quizScore",
-    score
-);
 
-localStorage.setItem(
-    "quizTotal",
-    questions.length
-);
+    localStorage.setItem(
+        "quizScore",
+        score
+    );
 
+    localStorage.setItem(
+        "quizTotal",
+        questions.length
+    );
 
     if (percentage >= 80) {
 
@@ -464,10 +1809,8 @@ function restartQuiz() {
     document.getElementById("quiz")
         .style.display = "block";
 
-
     document.getElementById("resultBox")
         .style.display = "none";
-
 
     loadQuestion();
 

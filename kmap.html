@@ -18,14 +18,50 @@ if (loggedIn !== "true") {
 }
 
 </script>
+<nav>
 
+    <a href="index.html">Home</a>
+
+    <a href="logic-gates.html">Logic Gates</a>
+
+    <a href="half-adder.html">Half Adder</a>
+
+    <a href="full-adder.html">Full Adder</a>
+
+    <a href="verilog.html">Verilog</a>
+
+    <a href="practice.html">Practice</a>
+
+    <a href="quiz.html">Quiz</a>
+
+    <a href="kmap.html">K-Map</a>
+
+    <a href="dashboard.html">Dashboard</a>
+
+</nav>
 <header>
     <h1>🧩 K-Map Learning</h1>
     <p>Learn Karnaugh Maps Step by Step</p>
 </header>
 
 <div class="container">
+<div class="card kmap-topic-card">
+        <h3>🔹 2-Variable K-Map</h3>
+        <p>Learn how to simplify Boolean expressions using a 2-variable K-Map.</p>
+      <button onclick="document.getElementById('twoVariable').scrollIntoView({behavior:'smooth'});">Learn</button>
+    </div>
 
+   <div class="card kmap-topic-card">
+        <h3>🔹 3-Variable K-Map</h3>
+        <p>Learn grouping and simplification using a 3-variable K-Map.</p>
+        <button onclick="document.getElementById('threeVariable').scrollIntoView({behavior:'smooth'});">Learn</button>
+    </div>
+
+  <div class="card kmap-topic-card">
+        <h3>🔹 4-Variable K-Map</h3>
+        <p>Learn how to simplify Boolean expressions using a 4-variable K-Map.</p>
+       <button onclick="document.getElementById('fourVariable').scrollIntoView({behavior:'smooth'});">Learn</button>
+    </div>
     <h2>What is a Karnaugh Map?</h2>
 
     <p>
@@ -37,10 +73,14 @@ if (loggedIn !== "true") {
         It helps us reduce the number of logic gates required
         to implement a digital circuit.
     </p>
+<a href="#kmapPractice" class="practice-jump">
+
+⭐ Go to K-Map Practice
 
     <h2>Topics</h2>
-    <h2>🔹 2-Variable K-Map</h2>
-
+    
+</a>
+    <h2 id="twoVariable">🔹 2-Variable K-Map</h2>
 <p>
     A 2-variable K-Map contains 4 cells representing all
     possible combinations of two variables A and B.
@@ -75,7 +115,7 @@ if (loggedIn !== "true") {
     <li>Find the simplified Boolean expression.</li>
 </ol>
 
-<h3>🟩 3-Variable K-Map Mapping</h3>
+<h3 id="threeVariable">🟩 3-Variable K-Map Mapping</h3>
 
 <p>
     A 3-variable K-Map has 8 cells. The columns are arranged
@@ -347,7 +387,7 @@ if (loggedIn !== "true") {
     possible combinations of variables A, B, C and D.
 </p>
 
-<h3>🟨 4-Variable K-Map Mapping</h3>
+<h3 id="fourVariable">🟦 4-Variable K-Map Mapping</h3>
 
 <p>
     The rows and columns are arranged in
@@ -502,24 +542,8 @@ if (loggedIn !== "true") {
 <h3>Therefore:</h3>
 
 <h2>F = A'B'</h2>
-    <div class="card">
-        <h3>🔹 2-Variable K-Map</h3>
-        <p>Learn how to simplify Boolean expressions using a 2-variable K-Map.</p>
-        <button>Learn</button>
-    </div>
-
-    <div class="card">
-        <h3>🔹 3-Variable K-Map</h3>
-        <p>Learn grouping and simplification using a 3-variable K-Map.</p>
-        <button>Learn</button>
-    </div>
-
-    <div class="card">
-        <h3>🔹 4-Variable K-Map</h3>
-        <p>Learn how to simplify Boolean expressions using a 4-variable K-Map.</p>
-        <button>Learn</button>
-    </div>
-<h2>🧠 K-Map Practice</h2>
+    
+<h2 id="kmapPractice">🧠 K-Map Practice</h2>
 
 <div class="practice-card">
 
@@ -729,25 +753,5 @@ loadKmapQuestion();
 </div>
 
 </body>
-<nav>
 
-    <a href="index.html">Home</a>
-
-    <a href="logic-gates.html">Logic Gates</a>
-
-    <a href="half-adder.html">Half Adder</a>
-
-    <a href="full-adder.html">Full Adder</a>
-
-    <a href="verilog.html">Verilog</a>
-
-    <a href="practice.html">Practice</a>
-
-    <a href="quiz.html">Quiz</a>
-
-    <a href="kmap.html">K-Map</a>
-
-    <a href="dashboard.html">Dashboard</a>
-
-</nav>
 </html>

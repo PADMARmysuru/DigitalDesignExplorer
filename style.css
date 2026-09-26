@@ -597,3 +597,61 @@ footer {
     margin-top: 35px;
     font-weight: bold;
 }
+
+.practice-jump {
+
+display: block;
+
+width: fit-content;
+
+margin: 20px auto 30px;
+
+padding: 14px 25px;
+
+background: #f59e0b;
+
+color: white;
+
+text-decoration: none;
+
+font-size: 18px;
+
+font-weight: bold;
+
+border-radius: 12px;
+
+box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+
+}
+
+.practice-jump:hover {
+
+background: #d97706;
+
+transform: scale(1.03);
+
+}
+.kmap-topic-card {
+width: 30%;
+min-height: 180px;
+display: inline-block;
+vertical-align: top;
+margin: 10px;
+box-sizing: border-box;
+}
+
+.site-footer {
+
+text-align: center;
+
+margin-top: 50px;
+
+padding: 25px;
+
+background: #1e293b;
+
+color: white;
+
+font-size: 15px;
+
+}
