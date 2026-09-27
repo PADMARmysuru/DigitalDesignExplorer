@@ -1,0 +1,2857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Quine–McCluskey Method</title>
+
+<link rel="stylesheet" href="style.css">
+
+
+<style>
+
+/* =========================================================
+   QUINE–MCCLUSKEY PAGE
+   ========================================================= */
+
+.qm-page{
+    max-width:1200px;
+    margin:30px auto;
+    padding:20px;
+}
+
+
+/* TITLE */
+
+.qm-title{
+    text-align:center;
+    color:#243b64;
+    margin-bottom:10px;
+}
+
+.qm-subtitle{
+    text-align:center;
+    color:#555;
+    margin-bottom:30px;
+}
+
+
+/* =========================================================
+   INTRO CARDS
+   ========================================================= */
+
+.qm-intro{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:30px;
+}
+
+.qm-card{
+    flex:1;
+    min-width:250px;
+    padding:22px;
+    border-radius:15px;
+    color:white;
+    box-shadow:0 5px 15px rgba(0,0,0,0.12);
+}
+
+.qm-card:nth-child(1){
+    background:#4f6fad;
+}
+
+.qm-card:nth-child(2){
+    background:#5b8c5a;
+}
+
+.qm-card:nth-child(3){
+    background:#c47f35;
+}
+
+.qm-card h3{
+    margin-top:0;
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.qm-section{
+    background:white;
+    padding:25px;
+    margin:25px 0;
+    border-radius:15px;
+    box-shadow:0 3px 12px rgba(0,0,0,0.10);
+}
+
+.qm-section h2{
+    color:#243b64;
+}
+
+.qm-section h3{
+    color:#344d73;
+    margin-top:25px;
+}
+
+
+/* =========================================================
+   FORMULA
+   ========================================================= */
+
+.formula-box{
+    background:#f4f7fb;
+    border-left:6px solid #243b64;
+    padding:18px;
+    margin:15px 0;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+}
+
+
+/* =========================================================
+   INPUT AREA
+   ========================================================= */
+
+.qm-input-area{
+    background:#f4f7fb;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+}
+
+.qm-input-area input{
+    width:80%;
+    max-width:650px;
+    padding:13px;
+    border:2px solid #ccd5e2;
+    border-radius:8px;
+    font-size:16px;
+    margin-top:12px;
+}
+
+.qm-input-area select{
+    padding:12px;
+    margin:10px;
+    border-radius:8px;
+    border:2px solid #ccd5e2;
+    font-size:15px;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.qm-btn{
+    margin:10px 5px;
+    padding:12px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:white;
+    background:#243b64;
+    font-size:15px;
+}
+
+.qm-btn:hover{
+    opacity:0.9;
+}
+
+.clear-btn{
+    background:#b83b3b;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.qm-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+    margin-bottom:25px;
+}
+
+.qm-table th{
+    background:#243b64;
+    color:white;
+    padding:10px;
+}
+
+.qm-table td{
+    border:1px solid #ddd;
+    padding:9px;
+    text-align:center;
+}
+
+.qm-table tr:nth-child(even){
+    background:#f5f7fa;
+}
+
+
+/* =========================================================
+   RESULT
+   ========================================================= */
+
+.qm-result{
+    background:#eaf6ea;
+    border-left:6px solid #4c8c4a;
+    padding:20px;
+    border-radius:10px;
+    margin-top:20px;
+}
+
+.final-expression{
+    font-size:25px;
+    font-weight:bold;
+    color:#1d6b35;
+    text-align:center;
+    padding:15px;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.qm-error{
+    background:#ffe8e8;
+    color:#a00000;
+    padding:15px;
+    border-radius:8px;
+    margin-top:15px;
+}
+
+
+/* =========================================================
+   PRACTICE
+   ========================================================= */
+
+.practice-question{
+    background:#f6f8fc;
+    padding:20px;
+    margin:15px 0;
+    border-radius:10px;
+}
+
+.answer{
+    display:none;
+    background:#eaf6ea;
+    padding:12px;
+    margin-top:10px;
+    border-radius:8px;
+}
+
+.show-answer{
+    padding:8px 15px;
+    border:none;
+    background:#243b64;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.small-note{
+    color:#666;
+    font-size:14px;
+}
+
+
+/* =========================================================
+   STEP LABELS
+   ========================================================= */
+
+.step-label{
+    display:inline-block;
+    background:#243b64;
+    color:white;
+    padding:7px 14px;
+    border-radius:20px;
+    margin-bottom:10px;
+    font-weight:bold;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:700px){
+
+    .qm-card{
+        min-width:100%;
+    }
+
+    .qm-input-area input{
+        width:95%;
+    }
+
+    .qm-table{
+        font-size:13px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVIGATION
+     ===================================================== -->
+
+<nav>
+
+<a href="index.html">Home</a>
+
+<a href="logic-gates.html">Logic Gates</a>
+
+<a href="half-adder.html">Half Adder</a>
+
+<a href="full-adder.html">Full Adder</a>
+
+<a href="kmap.html">K-Map</a>
+
+<a href="quine-mccluskey.html">
+Quine–McCluskey
+</a>
+
+<a href="verilog.html">Verilog</a>
+
+<a href="practice.html">Practice</a>
+
+<a href="quiz.html">Quiz</a>
+
+<a href="dashboard.html">Dashboard</a>
+
+</nav>
+
+
+<!-- =====================================================
+     HEADER
+     ===================================================== -->
+
+<header>
+
+<h1>🧮 Quine–McCluskey Method</h1>
+
+<p>
+Learn Boolean Function Minimization Step by Step
+</p>
+
+</header>
+
+
+<div class="qm-page">
+
+
+<!-- =====================================================
+     PAGE TITLE
+     ===================================================== -->
+
+<h1 class="qm-title">
+Quine–McCluskey Method
+</h1>
+
+<p class="qm-subtitle">
+A systematic tabular method for minimizing Boolean functions
+</p>
+
+
+<!-- =====================================================
+     INTRODUCTION CARDS
+     ===================================================== -->
+
+<div class="qm-intro">
+
+
+<div class="qm-card">
+
+<h3>📚 What is it?</h3>
+
+<p>
+
+The Quine–McCluskey method is a systematic procedure
+used to minimize Boolean functions using minterms.
+
+</p>
+
+</div>
+
+
+<div class="qm-card">
+
+<h3>🔢 Main Idea</h3>
+
+<p>
+
+Minterms are converted into binary form and repeatedly
+combined to eliminate variables.
+
+</p>
+
+</div>
+
+
+<div class="qm-card">
+
+<h3>🎯 Goal</h3>
+
+<p>
+
+Find the minimum Boolean expression using
+prime implicants and essential prime implicants.
+
+</p>
+
+</div>
+
+
+</div>
+
+
+<!-- =====================================================
+     WHY USE IT
+     ===================================================== -->
+
+<div class="qm-section">
+
+<h2>💡 Why Use Quine–McCluskey?</h2>
+
+<ul>
+
+<li>
+Provides a systematic Boolean minimization procedure.
+</li>
+
+<li>
+Useful for functions with several minterms.
+</li>
+
+<li>
+Can be implemented using a computer program.
+</li>
+
+<li>
+Produces prime implicants and essential prime implicants.
+</li>
+
+<li>
+Provides a tabular alternative to Karnaugh maps.
+</li>
+
+</ul>
+
+</div>
+
+
+<!-- =====================================================
+     METHOD STEPS
+     ===================================================== -->
+
+<div class="qm-section">
+
+<h2>📖 Steps of the Method</h2>
+
+<ol>
+
+<li>List all minterms.</li>
+
+<li>Convert minterms to binary.</li>
+
+<li>Group minterms according to the number of 1s.</li>
+
+<li>Compare adjacent groups.</li>
+
+<li>Combine terms that differ in exactly one bit.</li>
+
+<li>Repeat the combination process.</li>
+
+<li>Identify prime implicants.</li>
+
+<li>Create the prime implicant chart.</li>
+
+<li>Select essential prime implicants.</li>
+
+<li>Write the minimized Boolean expression.</li>
+
+</ol>
+
+</div>
+
+
+<!-- =====================================================
+     STEP-BY-STEP WORKED EXAMPLE
+     ===================================================== -->
+
+<div class="qm-section">
+
+<h2>📝 Step-by-Step Worked Example</h2>
+
+<p>
+
+Let us minimize the following Boolean function using
+the Quine–McCluskey method.
+
+</p>
+
+
+<div class="formula-box">
+
+F(A,B,C,D) = Σm(0,1,2,3,8,9,10,11)
+
+</div>
+
+
+<!-- STEP 1 -->
+
+<span class="step-label">
+STEP 1
+</span>
+
+<h3>List the Minterms</h3>
+
+<p>
+
+The given minterms are:
+
+</p>
+
+
+<table class="qm-table">
+
+<tr>
+
+<th>Minterm</th>
+
+<th>Decimal Value</th>
+
+</tr>
+
+
+<tr>
+<td>m0</td>
+<td>0</td>
+</tr>
+
+<tr>
+<td>m1</td>
+<td>1</td>
+</tr>
+
+<tr>
+<td>m2</td>
+<td>2</td>
+</tr>
+
+<tr>
+<td>m3</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>m8</td>
+<td>8</td>
+</tr>
+
+<tr>
+<td>m9</td>
+<td>9</td>
+</tr>
+
+<tr>
+<td>m10</td>
+<td>10</td>
+</tr>
+
+<tr>
+<td>m11</td>
+<td>11</td>
+</tr>
+
+</table>
+
+
+<!-- STEP 2 -->
+
+<span class="step-label">
+STEP 2
+</span>
+
+<h3>Convert Minterms to Binary</h3>
+
+<p>
+
+For four variables, every minterm is represented using
+four binary bits.
+
+</p>
+
+
+<table class="qm-table">
+
+<tr>
+
+<th>Minterm</th>
+
+<th>Binary</th>
+
+<th>Number of 1s</th>
+
+</tr>
+
+
+<tr>
+<td>0</td>
+<td>0000</td>
+<td>0</td>
+</tr>
+
+<tr>
+<td>1</td>
+<td>0001</td>
+<td>1</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>0010</td>
+<td>1</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>0011</td>
+<td>2</td>
+</tr>
+
+<tr>
+<td>8</td>
+<td>1000</td>
+<td>1</td>
+</tr>
+
+<tr>
+<td>9</td>
+<td>1001</td>
+<td>2</td>
+</tr>
+
+<tr>
+<td>10</td>
+<td>1010</td>
+<td>2</td>
+</tr>
+
+<tr>
+<td>11</td>
+<td>1011</td>
+<td>3</td>
+</tr>
+
+</table>
+
+
+<!-- STEP 3 -->
+
+<span class="step-label">
+STEP 3
+</span>
+
+<h3>Group According to Number of 1s</h3>
+
+<table class="qm-table">
+
+<tr>
+
+<th>Group</th>
+
+<th>Minterms</th>
+
+<th>Binary</th>
+
+</tr>
+
+
+<tr>
+
+<td>0 ones</td>
+
+<td>0</td>
+
+<td>0000</td>
+
+</tr>
+
+
+<tr>
+
+<td>1 one</td>
+
+<td>1</td>
+
+<td>0001</td>
+
+</tr>
+
+
+<tr>
+
+<td>1 one</td>
+
+<td>2</td>
+
+<td>0010</td>
+
+</tr>
+
+
+<tr>
+
+<td>1 one</td>
+
+<td>8</td>
+
+<td>1000</td>
+
+</tr>
+
+
+<tr>
+
+<td>2 ones</td>
+
+<td>3</td>
+
+<td>0011</td>
+
+</tr>
+
+
+<tr>
+
+<td>2 ones</td>
+
+<td>9</td>
+
+<td>1001</td>
+
+</tr>
+
+
+<tr>
+
+<td>2 ones</td>
+
+<td>10</td>
+
+<td>1010</td>
+
+</tr>
+
+
+<tr>
+
+<td>3 ones</td>
+
+<td>11</td>
+
+<td>1011</td>
+
+</tr>
+
+</table>
+
+
+<!-- STEP 4 -->
+
+<span class="step-label">
+STEP 4
+</span>
+
+<h3>First Combination</h3>
+
+<p>
+
+Compare terms from adjacent groups.
+Terms that differ in exactly one bit can be combined.
+The differing bit is replaced by <strong>–</strong>.
+
+</p>
+
+
+<table class="qm-table">
+
+<tr>
+
+<th>Minterms</th>
+
+<th>Combination</th>
+
+</tr>
+
+
+<tr>
+<td>0,1</td>
+<td>000-</td>
+</tr>
+
+<tr>
+<td>0,2</td>
+<td>00-0</td>
+</tr>
+
+<tr>
+<td>0,8</td>
+<td>-000</td>
+</tr>
+
+<tr>
+<td>1,3</td>
+<td>00-1</td>
+</tr>
+
+<tr>
+<td>1,9</td>
+<td>-001</td>
+</tr>
+
+<tr>
+<td>2,3</td>
+<td>001-</td>
+</tr>
+
+<tr>
+<td>2,10</td>
+<td>-010</td>
+</tr>
+
+<tr>
+<td>8,9</td>
+<td>100-</td>
+</tr>
+
+<tr>
+<td>8,10</td>
+<td>10-0</td>
+</tr>
+
+<tr>
+<td>9,11</td>
+<td>10-1</td>
+</tr>
+
+<tr>
+<td>10,11</td>
+<td>101-</td>
+</tr>
+
+</table>
+
+
+<!-- STEP 5 -->
+
+<span class="step-label">
+STEP 5
+</span>
+
+<h3>Second Combination</h3>
+
+<p>
+
+The combinations from the previous step are compared again.
+Terms differing in one remaining position can be combined.
+
+</p>
+
+
+<table class="qm-table">
+
+<tr>
+
+<th>Minterms</th>
+
+<th>Combined Pattern</th>
+
+</tr>
+
+
+<tr>
+<td>0,1,2,3</td>
+<td>00--</td>
+</tr>
+
+<tr>
+<td>0,1,8,9</td>
+<td>-00-</td>
+</tr>
+
+<tr>
+<td>0,2,8,10</td>
+<td>-0-0</td>
+</tr>
+
+<tr>
+<td>1,3,9,11</td>
+<td>-0-1</td>
+</tr>
+
+<tr>
+<td>2,3,10,11</td>
+<td>-01-</td>
+</tr>
+
+<tr>
+<td>8,9,10,11</td>
+<td>10--</td>
+</tr>
+
+</table>
+
+
+<!-- STEP 6 -->
+
+<span class="step-label">
+STEP 6
+</span>
+
+<h3>Final Combination</h3>
+
+<p>
+
+The combinations can be compared further.
+
+The common pattern that covers all the required minterms is:
+
+</p>
+
+
+<table class="qm-table">
+
+<tr>
+
+<th>Minterms Covered</th>
+
+<th>Pattern</th>
+
+<th>Meaning</th>
+
+</tr>
+
+
+<tr>
+
+<td>
+0,1,2,3,8,9,10,11
+</td>
+
+<td>
+<strong>-0--</strong>
+</td>
+
+<td>
+B = 0
+</td>
+
+</tr>
+
+</table>
+
+
+<p>
+
+The pattern <strong>-0--</strong> means:
+
+</p>
+
+
+<ul>
+
+<li>
+A can be either 0 or 1 → A is eliminated
+</li>
+
+<li>
+B is always 0 → B′ remains
+</li>
+
+<li>
+C can be either 0 or 1 → C is eliminated
+</li>
+
+<li>
+D can be either 0 or 1 → D is eliminated
+</li>
+
+</ul>
+
+
+<!-- STEP 7 -->
+
+<span class="step-label">
+STEP 7
+</span>
+
+<h3>Prime Implicant</h3>
+
+
+<table class="qm-table">
+
+<tr>
+
+<th>Prime Implicant</th>
+
+<th>Boolean Expression</th>
+
+<th>Minterms Covered</th>
+
+</tr>
+
+
+<tr>
+
+<td>
+<strong>-0--</strong>
+</td>
+
+<td>
+<strong>B′</strong>
+</td>
+
+<td>
+0,1,2,3,8,9,10,11
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- STEP 8 -->
+
+<span class="step-label">
+STEP 8
+</span>
+
+<h3>Prime Implicant Chart</h3>
+
+
+<table class="qm-table">
+
+<tr>
+
+<th>Prime Implicant</th>
+
+<th>0</th>
+
+<th>1</th>
+
+<th>2</th>
+
+<th>3</th>
+
+<th>8</th>
+
+<th>9</th>
+
+<th>10</th>
+
+<th>11</th>
+
+</tr>
+
+
+<tr>
+
+<td>
+<strong>B′</strong>
+</td>
+
+<td>✓</td>
+
+<td>✓</td>
+
+<td>✓</td>
+
+<td>✓</td>
+
+<td>✓</td>
+
+<td>✓</td>
+
+<td>✓</td>
+
+<td>✓</td>
+
+</tr>
+
+</table>
+
+
+<!-- STEP 9 -->
+
+<span class="step-label">
+STEP 9
+</span>
+
+<h3>Essential Prime Implicant</h3>
+
+
+<p>
+
+The prime implicant <strong>B′</strong> covers all the minterms
+in the function. Therefore, it is the essential prime implicant.
+
+</p>
+
+
+<div class="qm-result">
+
+<div class="final-expression">
+
+Essential Prime Implicant = B′
+
+</div>
+
+</div>
+
+
+<!-- STEP 10 -->
+
+<span class="step-label">
+STEP 10
+</span>
+
+<h3>Final Simplified Expression</h3>
+
+
+<div class="qm-result">
+
+<div class="final-expression">
+
+F(A,B,C,D) = B′
+
+</div>
+
+</div>
+
+
+<p style="text-align:center; margin-top:20px;">
+
+🎉 <strong>
+Therefore, the minimized Boolean function is B′.
+</strong>
+
+</p>
+
+
+</div>
+
+
+<!-- =====================================================
+     INTERACTIVE QUINE–MCCLUSKEY
+     ===================================================== -->
+
+<div class="qm-section">
+
+<h2>🖥️ Interactive Quine–McCluskey</h2>
+
+<p>
+
+Enter the minterms separated by commas.
+Select the number of variables and click
+<strong>Minimize Function</strong>.
+
+</p>
+
+
+<div class="qm-input-area">
+
+<label>
+
+<strong>Number of Variables:</strong>
+
+</label>
+
+
+<select id="variableCount">
+
+<option value="2">
+2 Variables
+</option>
+
+<option value="3">
+3 Variables
+</option>
+
+<option value="4" selected>
+4 Variables
+</option>
+
+</select>
+
+
+<br>
+
+
+<input
+type="text"
+id="qmInput"
+placeholder="Example: 0,1,2,3,8,9,10,11"
+>
+
+
+<br>
+
+
+<button
+class="qm-btn"
+onclick="solveQM()">
+
+🔍 Minimize Function
+
+</button>
+
+
+<button
+class="qm-btn clear-btn"
+onclick="clearQM()">
+
+Clear
+
+</button>
+
+
+<p class="small-note">
+
+Example:
+0,1,2,3,8,9,10,11
+
+</p>
+
+</div>
+
+
+<div id="qmOutput"></div>
+
+</div>
+
+
+<!-- =====================================================
+     PRACTICE
+     ===================================================== -->
+
+<div class="qm-section">
+
+<h2>🎯 Practice Questions</h2>
+
+
+<!-- QUESTION 1 -->
+
+<div class="practice-question">
+
+<strong>
+Question 1
+</strong>
+
+
+<p>
+
+Simplify:
+
+F(A,B,C) = Σm(1,3,5,7)
+
+</p>
+
+
+<button
+class="show-answer"
+onclick="showAnswer('ans1')">
+
+Show Answer
+
+</button>
+
+
+<div id="ans1" class="answer">
+
+<strong>Answer:</strong>
+
+F = C
+
+</div>
+
+</div>
+
+
+<!-- QUESTION 2 -->
+
+<div class="practice-question">
+
+<strong>
+Question 2
+</strong>
+
+
+<p>
+
+Simplify:
+
+F(A,B,C) = Σm(0,2,4,6)
+
+</p>
+
+
+<button
+class="show-answer"
+onclick="showAnswer('ans2')">
+
+Show Answer
+
+</button>
+
+
+<div id="ans2" class="answer">
+
+<strong>Answer:</strong>
+
+F = C′
+
+</div>
+
+</div>
+
+
+<!-- QUESTION 3 -->
+
+<div class="practice-question">
+
+<strong>
+Question 3
+</strong>
+
+
+<p>
+
+Simplify:
+
+F(A,B,C,D) = Σm(0,1,2,3)
+
+</p>
+
+
+<button
+class="show-answer"
+onclick="showAnswer('ans3')">
+
+Show Answer
+
+</button>
+
+
+<div id="ans3" class="answer">
+
+<strong>Answer:</strong>
+
+F = A′B′
+
+</div>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+
+/* =========================================================
+   CONVERT NUMBER TO BINARY
+   ========================================================= */
+
+function toBinary(number, variables){
+
+    return number
+        .toString(2)
+        .padStart(variables,"0");
+
+}
+
+
+/* =========================================================
+   COUNT ONES
+   ========================================================= */
+
+function countOnes(pattern){
+
+    return pattern
+        .split("")
+        .filter(x => x === "1")
+        .length;
+
+}
+
+
+/* =========================================================
+   COMBINE TWO PATTERNS
+   ========================================================= */
+
+function combinePatterns(a,b){
+
+    let difference = 0;
+
+    let result = "";
+
+
+    for(let i=0;i<a.length;i++){
+
+        if(a[i] !== b[i]){
+
+            difference++;
+
+            result += "-";
+
+        }
+
+        else{
+
+            result += a[i];
+
+        }
+
+    }
+
+
+    if(difference === 1){
+
+        return result;
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   CHECK WHETHER PATTERN COVERS MINTERM
+   ========================================================= */
+
+function covers(pattern,minterm,variables){
+
+    let binary =
+        toBinary(
+            minterm,
+            variables
+        );
+
+
+    for(let i=0;i<pattern.length;i++){
+
+        if(
+            pattern[i] !== "-" &&
+            pattern[i] !== binary[i]
+        ){
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================================
+   REMOVE DUPLICATE IMPLICANTS
+   ========================================================= */
+
+function uniqueImplicants(list){
+
+    let map = new Map();
+
+
+    list.forEach(item => {
+
+        map.set(
+            item.pattern,
+            item
+        );
+
+    });
+
+
+    return Array.from(
+        map.values()
+    );
+
+}
+
+
+/* =========================================================
+   INITIAL GROUPS
+   ========================================================= */
+
+function createInitialGroups(
+    minterms,
+    variables
+){
+
+    let groups = {};
+
+
+    minterms.forEach(m => {
+
+        let pattern =
+            toBinary(
+                m,
+                variables
+            );
+
+
+        let ones =
+            countOnes(pattern);
+
+
+        if(!groups[ones]){
+
+            groups[ones] = [];
+
+        }
+
+
+        groups[ones].push({
+
+            pattern:pattern,
+
+            minterms:[m],
+
+            combined:false
+
+        });
+
+    });
+
+
+    return groups;
+
+}
+
+
+/* =========================================================
+   REMOVE DUPLICATES FROM GROUPS
+   ========================================================= */
+
+function uniqueGroupItems(groups){
+
+    let result = {};
+
+
+    Object.keys(groups)
+    .forEach(key => {
+
+        result[key] =
+            uniqueImplicants(
+                groups[key]
+            );
+
+    });
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   COMBINE GROUPS
+   ========================================================= */
+
+function combineGroups(groups){
+
+    let newGroups = {};
+
+    let primes = [];
+
+
+    let keys =
+        Object.keys(groups)
+        .map(Number)
+        .sort((a,b)=>a-b);
+
+
+    for(
+        let i=0;
+        i<keys.length-1;
+        i++
+    ){
+
+        let g1 =
+            groups[keys[i]];
+
+
+        let g2 =
+            groups[keys[i+1]];
+
+
+        g1.forEach(a => {
+
+            g2.forEach(b => {
+
+                let combined =
+                    combinePatterns(
+                        a.pattern,
+                        b.pattern
+                    );
+
+
+                if(combined){
+
+                    a.combined = true;
+
+                    b.combined = true;
+
+
+                    let minterms = [
+
+                        ...new Set([
+
+                            ...a.minterms,
+
+                            ...b.minterms
+
+                        ])
+
+                    ].sort(
+                        (x,y)=>x-y
+                    );
+
+
+                    let ones =
+                        countOnes(
+                            combined.replace(
+                                /-/g,
+                                ""
+                            )
+                        );
+
+
+                    if(!newGroups[ones]){
+
+                        newGroups[ones] = [];
+
+                    }
+
+
+                    newGroups[ones].push({
+
+                        pattern:combined,
+
+                        minterms:minterms,
+
+                        combined:false
+
+                    });
+
+                }
+
+            });
+
+        });
+
+    }
+
+
+    /*
+       Uncombined terms are prime implicants
+    */
+
+    Object.values(groups)
+    .flat()
+    .forEach(item => {
+
+        if(!item.combined){
+
+            primes.push(item);
+
+        }
+
+    });
+
+
+    return {
+
+        groups:
+            uniqueGroupItems(
+                newGroups
+            ),
+
+        primes:
+            uniqueImplicants(
+                primes
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   FIND PRIME IMPLICANTS
+   ========================================================= */
+
+function findPrimeImplicants(
+    minterms,
+    variables
+){
+
+    let groups =
+        createInitialGroups(
+            minterms,
+            variables
+        );
+
+
+    let allPrimes = [];
+
+    let stages = [];
+
+
+    while(
+        Object.keys(groups).length > 0
+    ){
+
+        stages.push(groups);
+
+
+        let result =
+            combineGroups(
+                groups
+            );
+
+
+        allPrimes.push(
+            ...result.primes
+        );
+
+
+        if(
+            Object.keys(
+                result.groups
+            ).length === 0
+        ){
+
+            break;
+
+        }
+
+
+        groups =
+            result.groups;
+
+    }
+
+
+    return {
+
+        primes:
+            uniqueImplicants(
+                allPrimes
+            ),
+
+        stages:stages
+
+    };
+
+}
+
+
+/* =========================================================
+   PRIME IMPLICANT CHART
+   ========================================================= */
+
+function createChart(
+    primes,
+    minterms,
+    variables
+){
+
+    return primes.map(
+        prime => {
+
+            let covered =
+                minterms.filter(
+                    m =>
+                    covers(
+                        prime.pattern,
+                        m,
+                        variables
+                    )
+                );
+
+
+            return {
+
+                pattern:
+                    prime.pattern,
+
+                minterms:
+                    covered
+
+            };
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   FIND MINIMUM COVER
+   ========================================================= */
+
+function findMinimumCover(
+    chart,
+    minterms
+){
+
+    let essential = [];
+
+
+    let remaining =
+        new Set(minterms);
+
+
+    /*
+       Find essential prime implicants
+    */
+
+    minterms.forEach(m => {
+
+        let covering =
+            chart.filter(
+                p =>
+                p.minterms.includes(m)
+            );
+
+
+        if(covering.length === 1){
+
+            let p =
+                covering[0];
+
+
+            if(
+                !essential.includes(p)
+            ){
+
+                essential.push(p);
+
+            }
+
+        }
+
+    });
+
+
+    /*
+       Remove minterms already covered
+    */
+
+    essential.forEach(p => {
+
+        p.minterms.forEach(m => {
+
+            remaining.delete(m);
+
+        });
+
+    });
+
+
+    if(remaining.size === 0){
+
+        return {
+
+            essential:essential,
+
+            selected:essential
+
+        };
+
+    }
+
+
+    /*
+       Remaining candidates
+    */
+
+    let candidates =
+        chart.filter(
+            p =>
+            !essential.includes(p)
+        );
+
+
+    let best = null;
+
+
+    let n =
+        candidates.length;
+
+
+    /*
+       Exact subset search
+    */
+
+    for(
+        let mask=0;
+
+        mask < (1 << n);
+
+        mask++
+    ){
+
+        let selected = [];
+
+        let covered =
+            new Set();
+
+
+        for(
+            let i=0;
+            i<n;
+            i++
+        ){
+
+            if(
+                mask & (1 << i)
+            ){
+
+                selected.push(
+                    candidates[i]
+                );
+
+
+                candidates[i]
+                .minterms
+                .forEach(m => {
+
+                    covered.add(m);
+
+                });
+
+            }
+
+        }
+
+
+        let complete = true;
+
+
+        remaining.forEach(m => {
+
+            if(
+                !covered.has(m)
+            ){
+
+                complete = false;
+
+            }
+
+        });
+
+
+        if(complete){
+
+            if(
+                best === null ||
+                selected.length < best.length
+            ){
+
+                best = selected;
+
+            }
+
+        }
+
+    }
+
+
+    if(best === null){
+
+        best = [];
+
+    }
+
+
+    return {
+
+        essential:essential,
+
+        selected:[
+
+            ...essential,
+
+            ...best
+
+        ]
+
+    };
+
+}
+
+
+/* =========================================================
+   CONVERT PATTERN TO BOOLEAN EXPRESSION
+   ========================================================= */
+
+function patternToExpression(pattern){
+
+    const variables = [
+
+        "A",
+        "B",
+        "C",
+        "D"
+
+    ];
+
+
+    let expression = "";
+
+
+    for(
+        let i=0;
+        i<pattern.length;
+        i++
+    ){
+
+        if(
+            pattern[i] === "1"
+        ){
+
+            expression +=
+                variables[i];
+
+        }
+
+        else if(
+            pattern[i] === "0"
+        ){
+
+            expression +=
+                variables[i] + "'";
+
+        }
+
+    }
+
+
+    if(
+        expression === ""
+    ){
+
+        return "1";
+
+    }
+
+
+    return expression;
+
+}
+
+
+/* =========================================================
+   DISPLAY BINARY TABLE
+   ========================================================= */
+
+function displayBinaryTable(
+    minterms,
+    variables
+){
+
+    let html = `
+
+    <h3>
+    Step 1: Binary Conversion
+    </h3>
+
+    <table class="qm-table">
+
+    <tr>
+
+    <th>Minterm</th>
+
+    <th>Binary</th>
+
+    <th>Number of 1s</th>
+
+    </tr>
+
+    `;
+
+
+    minterms.forEach(m => {
+
+        let binary =
+            toBinary(
+                m,
+                variables
+            );
+
+
+        html += `
+
+        <tr>
+
+        <td>${m}</td>
+
+        <td>${binary}</td>
+
+        <td>
+        ${countOnes(binary)}
+        </td>
+
+        </tr>
+
+        `;
+
+    });
+
+
+    html += "</table>";
+
+
+    return html;
+
+}
+
+
+/* =========================================================
+   DISPLAY INITIAL GROUPS
+   ========================================================= */
+
+function displayInitialGroups(
+    minterms,
+    variables
+){
+
+    let groups =
+        createInitialGroups(
+            minterms,
+            variables
+        );
+
+
+    let html = `
+
+    <h3>
+    Step 2: Grouping by Number of 1s
+    </h3>
+
+    <table class="qm-table">
+
+    <tr>
+
+    <th>Group</th>
+
+    <th>Minterms</th>
+
+    <th>Binary</th>
+
+    </tr>
+
+    `;
+
+
+    Object.keys(groups)
+    .sort(
+        (a,b)=>a-b
+    )
+    .forEach(group => {
+
+        groups[group]
+        .forEach(item => {
+
+            html += `
+
+            <tr>
+
+            <td>${group}</td>
+
+            <td>
+            ${item.minterms.join(", ")}
+            </td>
+
+            <td>
+            ${item.pattern}
+            </td>
+
+            </tr>
+
+            `;
+
+        });
+
+    });
+
+
+    html += "</table>";
+
+
+    return html;
+
+}
+
+
+/* =========================================================
+   DISPLAY COMBINATION STAGES
+   ========================================================= */
+
+function displayCombinationStages(
+    stages
+){
+
+    let html = "";
+
+
+    stages.forEach(
+        (groups,index) => {
+
+            html += `
+
+            <h3>
+
+            Step ${index+3}:
+            Combination Stage ${index+1}
+
+            </h3>
+
+            <table class="qm-table">
+
+            <tr>
+
+            <th>Group</th>
+
+            <th>Pattern</th>
+
+            <th>Minterms</th>
+
+            </tr>
+
+            `;
+
+
+            Object.keys(groups)
+            .sort(
+                (a,b)=>a-b
+            )
+            .forEach(group => {
+
+                groups[group]
+                .forEach(item => {
+
+                    html += `
+
+                    <tr>
+
+                    <td>${group}</td>
+
+                    <td>
+                    ${item.pattern}
+                    </td>
+
+                    <td>
+                    ${item.minterms.join(", ")}
+                    </td>
+
+                    </tr>
+
+                    `;
+
+                });
+
+            });
+
+
+            html += "</table>";
+
+        }
+    );
+
+
+    return html;
+
+}
+
+
+/* =========================================================
+   DISPLAY PRIME IMPLICANTS
+   ========================================================= */
+
+function displayPrimeImplicants(
+    primes
+){
+
+    let html = `
+
+    <h3>
+    Prime Implicants
+    </h3>
+
+    <table class="qm-table">
+
+    <tr>
+
+    <th>Pattern</th>
+
+    <th>Boolean Term</th>
+
+    <th>Minterms</th>
+
+    </tr>
+
+    `;
+
+
+    primes.forEach(p => {
+
+        html += `
+
+        <tr>
+
+        <td>
+        ${p.pattern}
+        </td>
+
+        <td>
+        ${patternToExpression(
+            p.pattern
+        )}
+        </td>
+
+        <td>
+        ${p.minterms.join(", ")}
+        </td>
+
+        </tr>
+
+        `;
+
+    });
+
+
+    html += "</table>";
+
+
+    return html;
+
+}
+
+
+/* =========================================================
+   DISPLAY PRIME IMPLICANT CHART
+   ========================================================= */
+
+function displayPrimeChart(
+    chart,
+    minterms
+){
+
+    let html = `
+
+    <h3>
+    Prime Implicant Chart
+    </h3>
+
+    <table class="qm-table">
+
+    <tr>
+
+    <th>
+    Prime Implicant
+    </th>
+
+    `;
+
+
+    minterms.forEach(m => {
+
+        html += `
+        <th>${m}</th>
+        `;
+
+    });
+
+
+    html += "</tr>";
+
+
+    chart.forEach(p => {
+
+        html += `
+
+        <tr>
+
+        <td>
+        ${patternToExpression(
+            p.pattern
+        )}
+        </td>
+
+        `;
+
+
+        minterms.forEach(m => {
+
+            html += `
+
+            <td>
+
+            ${
+                p.minterms.includes(m)
+                ? "✓"
+                : ""
+            }
+
+            </td>
+
+            `;
+
+        });
+
+
+        html += "</tr>";
+
+    });
+
+
+    html += "</table>";
+
+
+    return html;
+
+}
+
+
+/* =========================================================
+   MAIN SOLVER
+   ========================================================= */
+
+function solveQM(){
+
+    const input =
+        document
+        .getElementById(
+            "qmInput"
+        )
+        .value
+        .trim();
+
+
+    const variables =
+        parseInt(
+            document
+            .getElementById(
+                "variableCount"
+            )
+            .value
+        );
+
+
+    const output =
+        document
+        .getElementById(
+            "qmOutput"
+        );
+
+
+    /* Empty input */
+
+    if(!input){
+
+        output.innerHTML = `
+
+        <div class="qm-error">
+
+        Please enter minterms.
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* Parse minterms */
+
+    let minterms =
+        input
+        .split(",")
+        .map(
+            x =>
+            parseInt(
+                x.trim()
+            )
+        )
+        .filter(
+            x =>
+            !isNaN(x)
+        );
+
+
+    const maximum =
+        Math.pow(
+            2,
+            variables
+        ) - 1;
+
+
+    /* Invalid input */
+
+    if(
+        minterms.length === 0
+    ){
+
+        output.innerHTML = `
+
+        <div class="qm-error">
+
+        Please enter valid minterms.
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* Check range */
+
+    if(
+        minterms.some(
+            m =>
+            m < 0 ||
+            m > maximum
+        )
+    ){
+
+        output.innerHTML = `
+
+        <div class="qm-error">
+
+        For ${variables} variables,
+        valid minterms are 0 to ${maximum}.
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* Remove duplicates */
+
+    minterms =
+        [
+            ...new Set(
+                minterms
+            )
+        ]
+        .sort(
+            (a,b)=>a-b
+        );
+
+
+    /* Find prime implicants */
+
+    const result =
+        findPrimeImplicants(
+            minterms,
+            variables
+        );
+
+
+    const primes =
+        result.primes;
+
+
+    if(
+        primes.length === 0
+    ){
+
+        output.innerHTML = `
+
+        <div class="qm-error">
+
+        No prime implicants found.
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* Prime chart */
+
+    const chart =
+        createChart(
+            primes,
+            minterms,
+            variables
+        );
+
+
+    /* Minimum cover */
+
+    const cover =
+        findMinimumCover(
+            chart,
+            minterms
+        );
+
+
+    let html = "";
+
+
+    /* Binary */
+
+    html +=
+        displayBinaryTable(
+            minterms,
+            variables
+        );
+
+
+    /* Initial groups */
+
+    html +=
+        displayInitialGroups(
+            minterms,
+            variables
+        );
+
+
+    /* Combination stages */
+
+    html +=
+        displayCombinationStages(
+            result.stages
+        );
+
+
+    /* Prime implicants */
+
+    html +=
+        displayPrimeImplicants(
+            chart
+        );
+
+
+    /* Prime chart */
+
+    html +=
+        displayPrimeChart(
+            chart,
+            minterms
+        );
+
+
+    /* Essential prime implicants */
+
+    html += `
+
+    <h3>
+    Essential Prime Implicants
+    </h3>
+
+    <table class="qm-table">
+
+    <tr>
+
+    <th>
+    Implicant
+    </th>
+
+    <th>
+    Expression
+    </th>
+
+    </tr>
+
+    `;
+
+
+    cover.essential
+    .forEach(p => {
+
+        html += `
+
+        <tr>
+
+        <td>
+        ${p.pattern}
+        </td>
+
+        <td>
+        ${patternToExpression(
+            p.pattern
+        )}
+        </td>
+
+        </tr>
+
+        `;
+
+    });
+
+
+    html += "</table>";
+
+
+    /* Final terms */
+
+    const finalTerms =
+        cover.selected.map(
+            p =>
+            patternToExpression(
+                p.pattern
+            )
+        );
+
+
+    const finalExpression =
+        finalTerms.length > 0
+        ? finalTerms.join(" + ")
+        : "0";
+
+
+    /* Final result */
+
+    html += `
+
+    <div class="qm-result">
+
+    <h3>
+    🎯 Final Simplified Expression
+    </h3>
+
+    <div class="final-expression">
+
+    F = ${finalExpression}
+
+    </div>
+
+    </div>
+
+    `;
+
+
+    output.innerHTML = html;
+
+
+    /* Scroll to result */
+
+    output.scrollIntoView({
+
+        behavior:"smooth",
+
+        block:"start"
+
+    });
+
+}
+
+
+/* =========================================================
+   CLEAR
+   ========================================================= */
+
+function clearQM(){
+
+    document
+    .getElementById(
+        "qmInput"
+    )
+    .value = "";
+
+
+    document
+    .getElementById(
+        "qmOutput"
+    )
+    .innerHTML = "";
+
+}
+
+
+/* =========================================================
+   PRACTICE ANSWERS
+   ========================================================= */
+
+function showAnswer(id){
+
+    const element =
+        document
+        .getElementById(id);
+
+
+    if(
+        element.style.display ===
+        "block"
+    ){
+
+        element.style.display =
+            "none";
+
+    }
+
+    else{
+
+        element.style.display =
+            "block";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>

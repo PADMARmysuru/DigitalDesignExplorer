@@ -4,6 +4,7 @@
 <head>
     <title>Digital Design Explorer - Student Login</title>
     <link rel="stylesheet" href="style.css">
+    <script src="supabase-config.js"></script>
 </head>
 
 <body>
@@ -63,9 +64,9 @@
 </div>
 
 <script>
-
-function registerStudent() {
-
+async function registerStudent() {
+    const studentId = crypto.randomUUID();
+localStorage.setItem("studentId", studentId);
     let student = {
 
         name:
@@ -91,17 +92,108 @@ function registerStudent() {
 
     };
 
+    // Keep the existing local login system
     localStorage.setItem(
         "studentAccount",
         JSON.stringify(student)
     );
 
-    document.getElementById("registerMessage")
-        .innerText =
-        "✅ Registration successful! You can now login.";
+    // Save student information to Supabase
+    try {
 
-    document.getElementById("registerMessage")
-        .style.color = "green";
+        const response = await fetch(
+            SUPABASE_URL + "/rest/v1/STUDENTS",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization":
+                        "Bearer " + SUPABASE_ANON_KEY,
+                 "Prefer": "return=minimal"
+                },
+
+                body: JSON.stringify({
+                    id: studentId,
+                    student_id: student.usn,
+                    student_name: student.name,
+                    email: student.email,
+                    branch: student.branch,
+                    semester: student.semester,
+                    section: student.section
+                })
+            }
+        );
+
+        if (!response.ok) {
+
+            const errorText = await response.text();
+
+            console.error(
+                "Supabase registration error:",
+                errorText
+            );
+
+            document.getElementById("registerMessage")
+                .innerText =
+                "Registration saved locally, but database saving failed.";
+
+            document.getElementById("registerMessage")
+                .style.color = "orange";
+
+            return;
+        }
+
+        
+const progressResponse = await fetch(
+    SUPABASE_URL + "/rest/v1/student_progress",
+    {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization":
+                "Bearer " + SUPABASE_ANON_KEY,
+            "Prefer": "return=minimal"
+        },
+
+        body: JSON.stringify({
+            student_id: studentId,
+            logic_gates: 0,
+            digital_circuits: 0,
+            quiz_score: 0,
+            quiz_total: 110,
+            kmap: 0,
+            verilog: 0,
+            certificate: false
+        })
+    }
+);
+
+        document.getElementById("registerMessage")
+            .innerText =
+            "✅ Registration successful! You can now login.";
+
+        document.getElementById("registerMessage")
+            .style.color = "green";
+
+    } catch (error) {
+
+        console.error(
+            "Supabase connection error:",
+            error
+        );
+
+        document.getElementById("registerMessage")
+            .innerText =
+            "Registration saved locally. Database connection failed.";
+
+        document.getElementById("registerMessage")
+            .style.color = "orange";
+    }
+
 }
 
 
