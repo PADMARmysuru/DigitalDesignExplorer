@@ -316,33 +316,7 @@
 <!-- =====================================================
      NAVIGATION
      ===================================================== -->
-
-<nav>
-
-<a href="index.html">Home</a>
-
-<a href="logic-gates.html">Logic Gates</a>
-
-<a href="half-adder.html">Half Adder</a>
-
-<a href="full-adder.html">Full Adder</a>
-
-<a href="kmap.html">K-Map</a>
-
-<a href="quine-mccluskey.html">
-Quine–McCluskey
-</a>
-
-<a href="verilog.html">Verilog</a>
-
-<a href="practice.html">Practice</a>
-
-<a href="quiz.html">Quiz</a>
-
-<a href="dashboard.html">Dashboard</a>
-
-</nav>
-
+<nav><a href="index.html">Home</a><a href="logic-gates.html">Logic Gates</a><div class="dropdown"><a href="#">Digital Circuits ▾</a><div class="dropdown-content"><a href="half-adder.html">Half Adder</a><a href="full-adder.html">Full Adder</a></div></div><a href="verilog.html">Verilog</a><a href="practice.html">Practice</a><a href="digital-logic-lab.html">Digital Logic Lab</a><a href="quiz.html">Quiz</a><a href="kmap.html">K-Map</a><a href="quine-mccluskey.html">Quine–McCluskey</a><a href="dashboard.html">Dashboard</a><a href="#" onclick="logout()">Logout</a></nav>
 
 <!-- =====================================================
      HEADER
@@ -1253,134 +1227,6 @@ Example:
 
 </div>
 
-
-<!-- =====================================================
-     PRACTICE
-     ===================================================== -->
-
-<div class="qm-section">
-
-<h2>🎯 Practice Questions</h2>
-
-
-<!-- QUESTION 1 -->
-
-<div class="practice-question">
-
-<strong>
-Question 1
-</strong>
-
-
-<p>
-
-Simplify:
-
-F(A,B,C) = Σm(1,3,5,7)
-
-</p>
-
-
-<button
-class="show-answer"
-onclick="showAnswer('ans1')">
-
-Show Answer
-
-</button>
-
-
-<div id="ans1" class="answer">
-
-<strong>Answer:</strong>
-
-F = C
-
-</div>
-
-</div>
-
-
-<!-- QUESTION 2 -->
-
-<div class="practice-question">
-
-<strong>
-Question 2
-</strong>
-
-
-<p>
-
-Simplify:
-
-F(A,B,C) = Σm(0,2,4,6)
-
-</p>
-
-
-<button
-class="show-answer"
-onclick="showAnswer('ans2')">
-
-Show Answer
-
-</button>
-
-
-<div id="ans2" class="answer">
-
-<strong>Answer:</strong>
-
-F = C′
-
-</div>
-
-</div>
-
-
-<!-- QUESTION 3 -->
-
-<div class="practice-question">
-
-<strong>
-Question 3
-</strong>
-
-
-<p>
-
-Simplify:
-
-F(A,B,C,D) = Σm(0,1,2,3)
-
-</p>
-
-
-<button
-class="show-answer"
-onclick="showAnswer('ans3')">
-
-Show Answer
-
-</button>
-
-
-<div id="ans3" class="answer">
-
-<strong>Answer:</strong>
-
-F = A′B′
-
-</div>
-
-</div>
-
-
-</div>
-
-
-</div>
 
 
 <!-- =====================================================
@@ -2823,36 +2669,460 @@ function clearQM(){
 
 }
 
+<!-- =========================================================
+     QUINE–McCLUSKEY INTERACTIVE PRACTICE
+     ========================================================= -->
 
+<section class="qm-practice">
+
+    <h2>📝 Quine–McCluskey Practice</h2>
+
+    <p>
+        Test your understanding of the Quine–McCluskey method.
+        Select the correct answer and click <b>Submit Answer</b>.
+    </p>
+
+    <div id="qmQuiz">
+
+        <div id="qmQuestion"></div>
+
+        <div id="qmOptions"></div>
+
+        <button id="qmSubmit" onclick="checkQMAnswer()">
+            Submit Answer
+        </button>
+
+        <div id="qmFeedback"></div>
+
+        <button id="qmNext"
+                onclick="nextQMQuestion()"
+                style="display:none;">
+            Next Question →
+        </button>
+
+    </div>
+
+    <div id="qmResult" style="display:none;">
+
+        <h3>🎉 Practice Completed!</h3>
+
+        <p id="qmScore"></p>
+
+        <button onclick="restartQMQuiz()">
+            Practice Again
+        </button>
+
+    </div>
+
+</section>
 /* =========================================================
-   PRACTICE ANSWERS
+   QUINE–McCLUSKEY INTERACTIVE PRACTICE
    ========================================================= */
 
-function showAnswer(id){
+const qmQuestions = [
 
-    const element =
-        document
-        .getElementById(id);
+    {
+        question:
+        "What is the first step in the Quine–McCluskey method?",
+
+        options: [
+            "Draw the K-Map",
+            "Group minterms according to the number of 1s",
+            "Find essential prime implicants",
+            "Draw the logic circuit"
+        ],
+
+        answer: 1,
+
+        explanation:
+        "The minterms are first grouped according to the number of 1s in their binary representation."
+    },
+
+    {
+        question:
+        "Minimize F(A,B,C) = Σm(1,3,5,7).",
+
+        options: [
+            "A",
+            "B",
+            "C",
+            "A + B"
+        ],
+
+        answer: 2,
+
+        explanation:
+        "The minterms 1, 3, 5 and 7 all have C = 1, so F = C."
+    },
+
+    {
+        question:
+        "In a Quine–McCluskey implicant, what does a dash (–) represent?",
+
+        options: [
+            "A complemented variable",
+            "A variable that does not affect the term",
+            "An invalid minterm",
+            "A don't-care minterm only"
+        ],
+
+        answer: 1,
+
+        explanation:
+        "A dash means that the corresponding variable can be either 0 or 1."
+    },
+
+    {
+        question:
+        "What is a prime implicant?",
+
+        options: [
+            "An implicant that cannot be combined further",
+            "Any individual minterm",
+            "A don't-care term",
+            "The original Boolean expression"
+        ],
+
+        answer: 0,
+
+        explanation:
+        "A prime implicant is an implicant that cannot be combined further to eliminate another variable."
+    },
+
+    {
+        question:
+        "What is an essential prime implicant?",
+
+        options: [
+            "An implicant containing all variables",
+            "A prime implicant that uniquely covers at least one required minterm",
+            "The largest minterm",
+            "A don't-care term"
+        ],
+
+        answer: 1,
+
+        explanation:
+        "An essential prime implicant covers at least one required minterm that no other prime implicant covers."
+    },
+
+    {
+        question:
+        "What is the main purpose of combining two compatible implicants?",
+
+        options: [
+            "To add another variable",
+            "To eliminate one variable",
+            "To create a new minterm",
+            "To increase the number of terms"
+        ],
+
+        answer: 1,
+
+        explanation:
+        "Combining compatible implicants eliminates one variable and produces a simpler expression."
+    },
+
+    {
+        question:
+        "Which terms may be used during minimization to help form larger groups?",
+
+        options: [
+            "Only maxterms",
+            "Don't-care terms",
+            "Only zero terms",
+            "None"
+        ],
+
+        answer: 1,
+
+        explanation:
+        "Don't-care terms can be included in combinations when they help simplify the Boolean expression."
+    },
+
+    {
+        question:
+        "For a Boolean function with four variables, how many bits are required to represent each minterm?",
+
+        options: [
+            "2 bits",
+            "3 bits",
+            "4 bits",
+            "8 bits"
+        ],
+
+        answer: 2,
+
+        explanation:
+        "Four variables require a 4-bit binary representation."
+    },
+
+    {
+        question:
+        "Which chart is used to determine which prime implicants cover each minterm?",
+
+        options: [
+            "Truth table",
+            "Prime implicant chart",
+            "State table",
+            "Excitation table"
+        ],
+
+        answer: 1,
+
+        explanation:
+        "The prime implicant chart shows the relationship between prime implicants and the minterms they cover."
+    },
+
+    {
+        question:
+        "What is the main objective of the Quine–McCluskey method?",
+
+        options: [
+            "To maximize a Boolean expression",
+            "To systematically minimize a Boolean expression",
+            "To convert decimal numbers to hexadecimal",
+            "To design a memory circuit"
+        ],
+
+        answer: 1,
+
+        explanation:
+        "The Quine–McCluskey method is a systematic tabular method for Boolean function minimization."
+    }
+
+];
 
 
-    if(
-        element.style.display ===
-        "block"
-    ){
+let qmCurrentQuestion = 0;
+let qmScore = 0;
+let qmAnswered = false;
 
-        element.style.display =
-            "none";
+
+/* =========================================================
+   LOAD QUESTION
+   ========================================================= */
+
+function loadQMQuestion(){
+
+    const question =
+        qmQuestions[qmCurrentQuestion];
+
+    document.getElementById("qmQuestion").innerHTML =
+        `<h3>Question ${qmCurrentQuestion + 1} of ${qmQuestions.length}</h3>
+         <p>${question.question}</p>`;
+
+    let optionsHTML = "";
+
+    question.options.forEach(
+        (option, index) => {
+
+            optionsHTML += `
+                <label class="qm-option">
+                    <input
+                        type="radio"
+                        name="qmAnswer"
+                        value="${index}">
+                    <span>
+                        ${String.fromCharCode(65 + index)}.
+                        ${option}
+                    </span>
+                </label>
+            `;
+
+        }
+    );
+
+    document.getElementById("qmOptions").innerHTML =
+        optionsHTML;
+
+    document.getElementById("qmFeedback").innerHTML =
+        "";
+
+    document.getElementById("qmSubmit").style.display =
+        "inline-block";
+
+    document.getElementById("qmNext").style.display =
+        "none";
+
+    qmAnswered = false;
+}
+
+
+/* =========================================================
+   CHECK ANSWER
+   ========================================================= */
+
+function checkQMAnswer(){
+
+    if(qmAnswered){
+        return;
+    }
+
+    const selected =
+        document.querySelector(
+            'input[name="qmAnswer"]:checked'
+        );
+
+    if(!selected){
+
+        document.getElementById(
+            "qmFeedback"
+        ).innerHTML =
+            "<p>Please select an answer.</p>";
+
+        return;
+    }
+
+    const selectedAnswer =
+        Number(selected.value);
+
+    const question =
+        qmQuestions[qmCurrentQuestion];
+
+    qmAnswered = true;
+
+    if(selectedAnswer === question.answer){
+
+        qmScore++;
+
+        document.getElementById(
+            "qmFeedback"
+        ).innerHTML =
+            `<p class="qm-correct">
+                ✅ Correct!<br>
+                ${question.explanation}
+            </p>`;
 
     }
 
     else{
 
-        element.style.display =
-            "block";
+        document.getElementById(
+            "qmFeedback"
+        ).innerHTML =
+            `<p class="qm-wrong">
+                ❌ Incorrect.<br>
+                Correct answer:
+                ${String.fromCharCode(
+                    65 + question.answer
+                )}. ${question.options[question.answer]}
+                <br><br>
+                ${question.explanation}
+            </p>`;
+
+    }
+
+    document.getElementById(
+        "qmSubmit"
+    ).style.display =
+        "none";
+
+    if(
+        qmCurrentQuestion <
+        qmQuestions.length - 1
+    ){
+
+        document.getElementById(
+            "qmNext"
+        ).style.display =
+            "inline-block";
+
+    }
+
+    else{
+
+        showQMResult();
 
     }
 
 }
+
+
+/* =========================================================
+   NEXT QUESTION
+   ========================================================= */
+
+function nextQMQuestion(){
+
+    qmCurrentQuestion++;
+
+    loadQMQuestion();
+
+}
+
+
+/* =========================================================
+   SHOW RESULT
+   ========================================================= */
+
+function showQMResult(){
+
+    document.getElementById(
+        "qmQuiz"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "qmResult"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "qmScore"
+    ).innerHTML =
+        `Your Score: <b>${qmScore} / ${qmQuestions.length}</b>`;
+
+    /* Save score */
+
+    localStorage.setItem(
+        "qmPracticeScore",
+        qmScore
+    );
+
+    localStorage.setItem(
+        "qmPracticeTotal",
+        qmQuestions.length
+    );
+    if (qmQuestions.length === 10 && qmScore >= 0) {
+    localStorage.setItem("qmPracticeCompleted", "true");
+}
+
+}
+
+
+/* =========================================================
+   RESTART QUIZ
+   ========================================================= */
+
+function restartQMQuiz(){
+
+    qmCurrentQuestion = 0;
+
+    qmScore = 0;
+
+    qmAnswered = false;
+
+    document.getElementById(
+        "qmQuiz"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "qmResult"
+    ).style.display =
+        "none";
+
+    loadQMQuestion();
+
+}
+
+
+/* =========================================================
+   START QUIZ
+   ========================================================= */
+
+loadQMQuestion();
 
 </script>
 

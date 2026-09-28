@@ -19,27 +19,8 @@ if (loggedIn !== "true") {
 }
 
 </script>
-<nav>
+<nav><a href="index.html">Home</a><a href="logic-gates.html">Logic Gates</a><div class="dropdown"><a href="#">Digital Circuits ▾</a><div class="dropdown-content"><a href="half-adder.html">Half Adder</a><a href="full-adder.html">Full Adder</a></div></div><a href="verilog.html">Verilog</a><a href="practice.html">Practice</a><a href="digital-logic-lab.html">Digital Logic Lab</a><a href="quiz.html">Quiz</a><a href="kmap.html">K-Map</a><a href="quine-mccluskey.html">Quine–McCluskey</a><a href="dashboard.html">Dashboard</a><a href="#" onclick="logout()">Logout</a></nav>
 
-    <a href="index.html">Home</a>
-
-    <a href="logic-gates.html">Logic Gates</a>
-
-    <a href="half-adder.html">Half Adder</a>
-
-    <a href="full-adder.html">Full Adder</a>
-
-    <a href="verilog.html">Verilog</a>
-
-    <a href="practice.html">Practice</a>
-
-    <a href="quiz.html">Quiz</a>
-
-    <a href="kmap.html">K-Map</a>
-
-    <a href="dashboard.html">Dashboard</a>
-
-</nav>
 <header>
     <h1>🧩 K-Map Learning</h1>
     <p>Learn Karnaugh Maps Step by Step</p>
@@ -1493,7 +1474,12 @@ async function saveKmapProgress() {
 
 </script>
 </div>
-
+<script>
+function logout() {
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href = "login.html";
+}
+</script>
 </body>
 
 </html>

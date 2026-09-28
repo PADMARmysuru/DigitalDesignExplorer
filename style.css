@@ -29,15 +29,21 @@ nav {
     background-color: #162746;
     text-align: center;
     padding: 15px;
+    white-space: nowrap;
 }
 
 nav a {
     color: white;
     text-decoration: none;
-    margin: 0 20px;
+    margin: 0 12px;
     font-size: 16px;
+    display: inline-block;
 }
 
+.dropdown {
+    display: inline-block;
+    position: relative;
+}
 /* Welcome section */
 
 .welcome {
@@ -654,4 +660,102 @@ color: white;
 
 font-size: 15px;
 
+}
+
+.practice-answer {
+    display: none;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* =========================================================
+   QUINE–McCLUSKEY PRACTICE
+   ========================================================= */
+
+.qm-practice {
+    margin-top: 40px;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.qm-option {
+    display: block;
+    margin: 12px 0;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.qm-option input {
+    margin-right: 10px;
+}
+
+#qmSubmit,
+#qmNext,
+#qmResult button {
+    padding: 10px 20px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#qmFeedback {
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.qm-correct {
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.qm-wrong {
+    padding: 12px;
+    border-radius: 8px;
+}
+
+#qmResult {
+    text-align: center;
+    margin-top: 25px;
+}
+
+/* ==============================
+   DIGITAL CIRCUITS DROPDOWN
+   ============================== */
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown > a {
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 180px;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+.dropdown-content a {
+    color: #162746;
+    padding: 12px 18px;
+    background: white;
+    display: block;
+    margin: 0;
+}
+
+.dropdown-content a:hover {
+    background: #f0f3f8;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }

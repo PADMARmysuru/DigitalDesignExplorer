@@ -41,6 +41,7 @@
         <a href="verilog.html">Verilog</a>
 
         <a href="practice.html">Practice</a>
+        <a href="digital-logic-lab.html">Digital Logic Lab</a>
 
         <a href="quiz.html">Quiz</a>
 
@@ -49,7 +50,7 @@
         <a href="quine-mccluskey.html">Quine–McCluskey</a>
 
         <a href="dashboard.html">Dashboard</a>
-
+<a href="#" onclick="logout()">Logout</a>
     </nav>
 
 
@@ -265,7 +266,12 @@
 
     </footer>
 
-
+<script>
+function logout() {
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href = "login.html";
+}
+</script>
 </body>
 
 </html>
