@@ -306,6 +306,11 @@
 
 
 <body>
+    <script>
+    if (localStorage.getItem("studentLoggedIn") !== "true") {
+        window.location.href = "login.html";
+    }
+</script>
 
 
 <!-- =====================================================
