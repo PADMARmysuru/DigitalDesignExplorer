@@ -12,32 +12,396 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <style>
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background: #eef2f7;
+            font-family: "Georgia", "Times New Roman", serif;
+        }
+
+        /* MAIN CERTIFICATE */
+
+        .certificate {
+            max-width: 950px;
+            margin: auto;
+            padding: 55px 65px;
+            background: #ffffff;
+            position: relative;
+            text-align: center;
+
+            border: 10px solid #162746;
+            outline: 3px solid #c9a227;
+            outline-offset: -22px;
+
+            box-shadow: 0 10px 35px rgba(0,0,0,0.18);
+
+            min-height: 700px;
+
+            box-sizing: border-box;
+        }
+
+        /* DECORATIVE CORNERS */
+
+        .certificate::before,
+        .certificate::after {
+            content: "◆";
+            position: absolute;
+            color: #c9a227;
+            font-size: 28px;
+        }
+
+        .certificate::before {
+            top: 22px;
+            left: 30px;
+        }
+
+        .certificate::after {
+            top: 22px;
+            right: 30px;
+        }
+
+        /* SEAL */
+
+        .certificate-seal {
+            width: 105px;
+            height: 105px;
+
+            margin: 0 auto 15px;
+
+            border-radius: 50%;
+
+            background: #c9a227;
+
+            border: 6px double #162746;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+
+            font-size: 42px;
+
+            box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+        }
+
+        /* HEADING */
+
+        .certificate h1 {
+            margin: 10px 0;
+
+            color: #162746;
+
+            font-size: 42px;
+
+            letter-spacing: 2px;
+
+            text-transform: uppercase;
+        }
+
+        .certificate-title {
+            color: #c9a227;
+
+            font-size: 27px;
+
+            font-weight: bold;
+
+            letter-spacing: 3px;
+
+            margin: 10px 0 30px;
+        }
+
+        .certificate > p {
+            color: #444;
+
+            font-size: 18px;
+
+            line-height: 1.6;
+        }
+
+        /* STUDENT NAME */
+
+        #certificateName {
+            margin: 18px auto 12px;
+
+            color: #162746;
+
+            font-size: 38px;
+
+            font-family: "Georgia", serif;
+
+            border-bottom: 2px solid #c9a227;
+
+            display: table;
+
+            padding: 0 45px 8px;
+        }
+
+        /* USN */
+
+        #certificateUSN {
+            color: #162746;
+
+            font-size: 18px;
+        }
+
+        /* DESCRIPTION */
+
+        .certificate-description {
+            max-width: 720px;
+
+            margin: 25px auto;
+
+            font-size: 18px;
+
+            line-height: 1.8;
+
+            color: #444;
+        }
+
+        /* COURSE DETAILS */
+
+        .certificate-details {
+            max-width: 700px;
+
+            margin: 30px auto;
+
+            padding: 20px 30px;
+
+            background: #f7f9fc;
+
+            border-left: 5px solid #c9a227;
+
+            border-right: 5px solid #c9a227;
+
+            text-align: left;
+        }
+
+        .certificate-details p {
+            margin: 10px 0;
+
+            font-size: 17px;
+
+            color: #333;
+        }
+
+        .certificate-details strong {
+            color: #162746;
+        }
+
+        /* DATE */
+
+        .certificate-date {
+            margin-top: 25px;
+
+            font-size: 17px !important;
+
+            color: #444;
+        }
+
+        /* INSTRUCTOR */
+
+        .faculty-signature {
+            margin: 35px auto 0;
+
+            width: 400px;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #777;
+        }
+
+        .faculty-signature p {
+            margin: 4px 0;
+
+            font-size: 15px;
+
+            color: #444;
+        }
+
+        .faculty-signature .instructor-title {
+            color: #162746;
+
+            font-size: 16px;
+
+            font-weight: bold;
+        }
+
+        .faculty-signature .instructor-name {
+            font-size: 19px;
+
+            color: #162746;
+
+            font-weight: bold;
+        }
+
+        /* PRINT BUTTON */
+
+        .print-button {
+            display: block;
+
+            margin: 30px auto;
+
+            padding: 13px 28px;
+
+            background: #162746;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 6px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .print-button:hover {
+            background: #c9a227;
+
+            color: #162746;
+        }
+
+        /* PRINT */
+
+        @media print {
+
+            body {
+                background: white;
+
+                padding: 0;
+            }
+
+            .certificate {
+                max-width: none;
+
+                width: 100%;
+
+                min-height: 100vh;
+
+                box-shadow: none;
+
+                margin: 0;
+
+                page-break-inside: avoid;
+            }
+
+            .print-button {
+                display: none;
+            }
+
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .certificate {
+                padding: 45px 25px;
+
+                min-height: auto;
+            }
+
+            .certificate h1 {
+                font-size: 28px;
+            }
+
+            .certificate-title {
+                font-size: 20px;
+            }
+
+            #certificateName {
+                font-size: 28px;
+
+                padding: 0 20px 8px;
+            }
+
+            .certificate-details {
+                padding: 15px;
+            }
+
+            .faculty-signature {
+                width: 90%;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
+
     <div class="certificate">
 
-        <h1>🏆 Certificate of Completion</h1>
+
+        <!-- CERTIFICATE SEAL -->
+
+        <div class="certificate-seal">
+            🏆
+        </div>
+
+
+        <!-- HEADING -->
+
+        <h1>
+            Certificate of Completion
+        </h1>
+
 
         <p class="certificate-title">
             Digital Design Explorer
         </p>
 
-        <p>This certificate is proudly presented to</p>
 
-        <h2 id="certificateName">Student Name</h2>
+        <p>
+            This certificate is proudly presented to
+        </p>
+
+
+        <!-- STUDENT NAME -->
+
+        <h2 id="certificateName">
+            Student Name
+        </h2>
+
+
+        <!-- USN -->
 
         <p>
             <strong>USN:</strong>
-            <span id="certificateUSN">USN</span>
+
+            <span id="certificateUSN">
+                USN
+            </span>
         </p>
 
-        <p>
+
+        <!-- DESCRIPTION -->
+
+        <p class="certificate-description">
+
             for successfully completing the
             Digital System Design learning activities
-            using Verilog.
+            using Verilog, digital logic concepts,
+            K-Map techniques and related interactive
+            learning modules.
+
         </p>
+
+
+        <!-- COURSE DETAILS -->
 
         <div class="certificate-details">
 
@@ -56,51 +420,167 @@
                 GSSSIETW, Mysuru
             </p>
 
+            <p>
+                <strong>Section:</strong>
+                <span id="certificateSection">Section</span>
+            </p>
+
         </div>
 
+
+        <!-- DATE -->
+
         <p class="certificate-date">
-            Date: <span id="certificateDate"></span>
+
+            <strong>Date:</strong>
+
+            <span id="certificateDate"></span>
+
         </p>
+
+
+        <!-- INSTRUCTOR -->
+
         <div class="faculty-signature">
 
-    <p><strong>Course Instructor</strong></p>
+            <p class="instructor-title">
+                Course Instructor
+            </p>
 
-    <p><strong>Mrs. Padma R</strong></p>
+            <p class="instructor-name"
+               id="instructorName">
+                Mrs. Padma R
+            </p>
 
-    <p>Assistant Professor</p>
+            <p>
+                Assistant Professor
+            </p>
 
-    <p>Department of Electronics and Communication Engineering</p>
+            <p>
+                Department of Electronics and Communication Engineering
+            </p>
 
-    <p>GSSSIETW, Mysuru</p>
+            <p>
+                GSSSIETW, Mysuru
+            </p>
 
-</div>
+        </div>
+
 
     </div>
-    <button onclick="window.print()" class="print-button">
-    🖨️ Print / Save as PDF
-</button>
+
+
+    <!-- PRINT BUTTON -->
+
+    <button
+        onclick="window.print()"
+        class="print-button">
+
+        🖨️ Print / Save as PDF
+
+    </button>
+
 
     <script>
 
+
+        /* ==============================
+           GET STUDENT DETAILS
+        ============================== */
+
         let student =
-            JSON.parse(localStorage.getItem("studentAccount"));
+            JSON.parse(
+                localStorage.getItem("studentAccount")
+            );
+
 
         if (student) {
 
-            document.getElementById("certificateName").innerText =
-                student.name;
+            /* Student Name */
 
-            document.getElementById("certificateUSN").innerText =
-                student.usn;
+            document.getElementById(
+                "certificateName"
+            ).innerText =
+                student.name || "Student Name";
+
+
+            /* USN */
+
+            document.getElementById(
+                "certificateUSN"
+            ).innerText =
+                student.usn || "USN";
+
+
+            /* SECTION */
+
+            let section =
+                (student.section || "")
+                .trim()
+                .toUpperCase();
+
+
+            document.getElementById(
+                "certificateSection"
+            ).innerText =
+                section
+                ? "Section " + section
+                : "Section";
+
+
+            /* ==============================
+               SECTION-WISE INSTRUCTOR
+            ============================== */
+
+            let instructorName =
+                "Mrs. Padma R";
+
+
+            if (section === "A") {
+
+                instructorName =
+                    "Mrs. Lalitha K";
+
+            }
+
+            else if (section === "B") {
+
+                instructorName =
+                    "Dr. Manjula G";
+
+            }
+
+            else if (section === "C") {
+
+                instructorName =
+                    "Mrs. Padma R";
+
+            }
+
+
+            document.getElementById(
+                "instructorName"
+            ).innerText =
+                instructorName;
 
         }
 
+
+        /* ==============================
+           AUTOMATIC DATE
+        ============================== */
+
         let today = new Date();
 
-        document.getElementById("certificateDate").innerText =
+
+        document.getElementById(
+            "certificateDate"
+        ).innerText =
             today.toLocaleDateString();
 
+
     </script>
+
 
 </body>
 

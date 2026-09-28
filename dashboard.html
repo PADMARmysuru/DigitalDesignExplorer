@@ -12,6 +12,84 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <style>
+        .certificate-section {
+            background: white;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+        }
+
+        .certificate-section h2 {
+            color: #243b64;
+        }
+
+        #certificateButton {
+            background: #243b64;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #certificateButton:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        /* MODULE PROGRESS DASHBOARD */
+        .overall-progress {
+            background: white;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+            text-align: center;
+        }
+
+        .overall-progress h2 {
+            color: #243b64;
+            margin-top: 0;
+        }
+
+        .overall-bar {
+            height: 24px;
+            background: #e2e6eb;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 15px auto 10px;
+            max-width: 850px;
+        }
+
+        #overallProgress {
+            height: 100%;
+            width: 0%;
+            background: #243b64;
+            color: white;
+            line-height: 24px;
+            font-size: 14px;
+            transition: width 0.5s ease;
+        }
+
+        .module-logic { border-top: 6px solid #4f6fad; }
+        .module-half { border-top: 6px solid #5b8c5a; }
+        .module-full { border-top: 6px solid #c47f35; }
+        .module-verilog { border-top: 6px solid #7b61a8; }
+        .module-quiz { border-top: 6px solid #d15b5b; }
+        .module-kmap { border-top: 6px solid #2d8c8c; }
+        .module-qm { border-top: 6px solid #6f7f3f; }
+
+        .progress-card .progress {
+            transition: width 0.5s ease;
+        }
+
+    </style>
+
 </head>
 
 <body>
@@ -24,129 +102,121 @@
 
 </header>
 
-<nav>
+<nav><a href="index.html">Home</a><a href="logic-gates.html">Logic Gates</a><div class="dropdown"><a href="#">Digital Circuits ▾</a><div class="dropdown-content"><a href="half-adder.html">Half Adder</a><a href="full-adder.html">Full Adder</a></div></div><a href="verilog.html">Verilog</a><a href="practice.html">Practice</a><a href="digital-logic-lab.html">Digital Logic Lab</a><a href="quiz.html">Quiz</a><a href="kmap.html">K-Map</a><a href="quine-mccluskey.html">Quine–McCluskey</a><a href="dashboard.html">Dashboard</a><a href="#" onclick="logout()">Logout</a></nav>
 
-    <a href="index.html">Home</a>
-    <a href="logic-gates.html">Logic Gates</a>
-    <a href="half-adder.html">Half Adder</a>
-    <a href="full-adder.html">Full Adder</a>
-    <a href="verilog.html">Verilog</a>
-    <a href="practice.html">Practice</a>
-    <a href="quiz.html">Quiz</a>
-    <a href="kmap.html">K-Map</a>
-    <a href="dashboard.html">Dashboard</a>
-
-</nav>
 
 <main>
 
-   <section class="welcome">
+    <section class="welcome">
 
-    <h2>👩‍🎓 My Learning Dashboard</h2>
+        <h2>👩‍🎓 My Learning Dashboard</h2>
 
-    <p>
-        Track your Digital System Design learning progress.
-    </p>
+        <p>
+            Track your Digital System Design learning progress.
+        </p>
 
-   
-
-</section>
-
-<div class="student-info">
-
-    <h2>👨‍🎓 Student Details</h2>
-
-    <p><strong>Name:</strong> <span id="displayName"></span></p>
-
-    <p><strong>USN:</strong> <span id="displayUSN"></span></p>
-
-    <p><strong>Branch:</strong> <span id="displayBranch"></span></p>
-
-    <p><strong>Semester:</strong> <span id="displaySemester"></span></p>
-
-    <p><strong>Section:</strong> <span id="displaySection"></span></p>
-
-    <p><strong>Email:</strong> <span id="displayEmail"></span></p>
-
-</div>
-    <section class="dashboard-cards">
-
-        <div class="progress-card">
-
-            <h2>💡 Logic Gates</h2>
-
-            <div class="progress-bar">
-
-                <div class="progress"
-                     style="width: 100%;">
-
-                    100%
-
-                </div>
-
-            </div>
-
-            <p>7 / 7 Gates Completed</p>
-
-        </div>
+    </section>
 
 
-        <div class="progress-card">
+    <div class="student-info">
 
-            <h2>🔧 Digital Circuits</h2>
+        <h2>👨‍🎓 Student Details</h2>
 
-            <div class="progress-bar">
+        <p>
+            <strong>Name:</strong>
+            <span id="displayName"></span>
+        </p>
 
-                <div class="progress"
-                     style="width: 50%;">
+        <p>
+            <strong>USN:</strong>
+            <span id="displayUSN"></span>
+        </p>
 
-                    50%
+        <p>
+            <strong>Branch:</strong>
+            <span id="displayBranch"></span>
+        </p>
 
-                </div>
+        <p>
+            <strong>Semester:</strong>
+            <span id="displaySemester"></span>
+        </p>
 
-            </div>
+        <p>
+            <strong>Section:</strong>
+            <span id="displaySection"></span>
+        </p>
 
-            <p>2 / 4 Circuits Completed</p>
-
-        </div>
-
-
-        <div class="progress-card">
-
-    <h2>💻 Verilog Practice</h2>
-
-    <div class="progress-bar">
-
-        <div class="progress"
-             id="practiceProgress"
-             style="width: 0%;">
-
-            0%
-
-        </div>
+        <p>
+            <strong>Email:</strong>
+            <span id="displayEmail"></span>
+        </p>
 
     </div>
 
-    <p id="practiceCompleted">
-        0 / 10 Programs Completed
-    </p>
 
-</div>
+    <section class="overall-progress">
+        <h2>📊 Overall Learning Progress</h2>
+        <div class="overall-bar">
+            <div id="overallProgress">0%</div>
+        </div>
+        <p id="overallProgressText">0 / 7 Modules Completed</p>
+    </section>
 
+    <section class="dashboard-cards">
 
-        <div class="progress-card">
+        <div class="progress-card module-logic">
+            <h2>💡 Logic Gates</h2>
+            <div class="progress-bar">
+                <div class="progress" id="logicProgress">0%</div>
+            </div>
+            <p id="logicProgressText">0 / 7 Gates Completed</p>
+        </div>
 
+        <div class="progress-card module-half">
+            <h2>➕ Half Adder</h2>
+            <div class="progress-bar">
+                <div class="progress" id="halfAdderProgress">0%</div>
+            </div>
+            <p id="halfAdderProgressText">Not Completed</p>
+        </div>
+
+        <div class="progress-card module-full">
+            <h2>➕ Full Adder</h2>
+            <div class="progress-bar">
+                <div class="progress" id="fullAdderProgress">0%</div>
+            </div>
+            <p id="fullAdderProgressText">Not Completed</p>
+        </div>
+
+        <div class="progress-card module-verilog">
+            <h2>💻 Verilog Practice</h2>
+            <div class="progress-bar">
+                <div class="progress" id="practiceProgress">0%</div>
+            </div>
+            <p id="practiceCompleted">0 / 10 Programs Completed</p>
+        </div>
+
+        <div class="progress-card module-quiz">
             <h2>📝 Quiz</h2>
+            <div class="score-display" id="quizScore">-- / 110</div>
+            <p id="quizProgressText">Quiz Not Completed</p>
+        </div>
 
-            <div class="score-display"
-     id="quizScore">
+        <div class="progress-card module-kmap">
+            <h2>🧩 K-Map</h2>
+            <div class="progress-bar">
+                <div class="progress" id="kmapProgress">0%</div>
+            </div>
+            <p id="kmapProgressText">Not Completed</p>
+        </div>
 
-    -- / 110
-
-</div>
-
-            <p>Latest Quiz Score</p>
-
+        <div class="progress-card module-qm">
+            <h2>🧮 Quine–McCluskey</h2>
+            <div class="progress-bar">
+                <div class="progress" id="qmProgress">0%</div>
+            </div>
+            <p id="qmProgressText">Not Completed</p>
         </div>
 
     </section>
@@ -157,23 +227,16 @@
         <h2>🏆 Achievements</h2>
 
         <div class="badges">
-           <div id="certificateSection">
 
-    <button id="certificateButton" onclick="openCertificate()">
-        🏆 Generate Certificate
-    </button>
 
-    <p id="certificateMessage"></p>
+            <div class="badge" id="logicBadge">
 
-</div>
+                🔒
 
-           <div class="badge" id="logicBadge">
+                <p>Logic Gate Explorer</p>
 
-    🔒
+            </div>
 
-    <p>Logic Gate Explorer</p>
-
-</div>
 
             <div class="badge">
 
@@ -183,6 +246,7 @@
 
             </div>
 
+
             <div class="badge">
 
                 🔒
@@ -190,6 +254,7 @@
                 <p>Circuit Designer</p>
 
             </div>
+
 
             <div class="badge">
 
@@ -199,47 +264,198 @@
 
             </div>
 
+
         </div>
 
     </section>
 
+
+    <!-- CERTIFICATE -->
+
+    <section class="certificate-section">
+
+        <h2>🏆 Certificate</h2>
+
+        <p id="certificateMessage">
+            🔒 Complete all modules to unlock your certificate.
+        </p>
+
+        <button id="certificateButton"
+                onclick="openCertificate()"
+                disabled>
+
+            🔒 Generate Certificate
+
+        </button>
+
+    </section>
+
+
 </main>
+
+
+<!-- ALL MODULE PROGRESS -->
+
 <script>
-    
 
-let completedPrograms = 0;
+function updateModuleProgress() {
 
-for (let i = 1; i <= 10; i++) {
+    /* Logic Gates */
+    let completedGates =
+        JSON.parse(localStorage.getItem("completedGates")) || [];
 
-    if (
-        localStorage.getItem("practice" + i)
-        === "completed"
-    ) {
-        completedPrograms++;
+    let logicPercent =
+        Math.round((completedGates.length / 7) * 100);
+
+    document.getElementById("logicProgress").style.width =
+        logicPercent + "%";
+
+    document.getElementById("logicProgress").innerText =
+        logicPercent + "%";
+
+    document.getElementById("logicProgressText").innerText =
+        completedGates.length + " / 7 Gates Completed";
+
+
+    /* Half Adder */
+    let halfAdderDone =
+        localStorage.getItem("halfAdderCompleted") === "true";
+
+    document.getElementById("halfAdderProgress").style.width =
+        (halfAdderDone ? 100 : 0) + "%";
+
+    document.getElementById("halfAdderProgress").innerText =
+        (halfAdderDone ? "100%" : "0%");
+
+    document.getElementById("halfAdderProgressText").innerText =
+        halfAdderDone ? "Completed" : "Not Completed";
+
+
+    /* Full Adder */
+    let fullAdderDone =
+        localStorage.getItem("fullAdderCompleted") === "true";
+
+    document.getElementById("fullAdderProgress").style.width =
+        (fullAdderDone ? 100 : 0) + "%";
+
+    document.getElementById("fullAdderProgress").innerText =
+        (fullAdderDone ? "100%" : "0%");
+
+    document.getElementById("fullAdderProgressText").innerText =
+        fullAdderDone ? "Completed" : "Not Completed";
+
+
+    /* Verilog Practice */
+    let completedPrograms = 0;
+
+    for (let i = 1; i <= 10; i++) {
+        if (localStorage.getItem("practice" + i) === "completed") {
+            completedPrograms++;
+        }
     }
+
+    let practicePercent =
+        Math.round((completedPrograms / 10) * 100);
+
+    document.getElementById("practiceProgress").style.width =
+        practicePercent + "%";
+
+    document.getElementById("practiceProgress").innerText =
+        practicePercent + "%";
+
+    document.getElementById("practiceCompleted").innerText =
+        completedPrograms + " / 10 Programs Completed";
+
+
+    /* Quiz */
+    let savedScore =
+        localStorage.getItem("quizScore");
+
+    let savedTotal =
+        localStorage.getItem("quizTotal");
+
+    let quizDone = savedScore !== null;
+
+    if (quizDone) {
+
+        document.getElementById("quizScore").innerText =
+            savedScore + " / " + (savedTotal || "110");
+
+        document.getElementById("quizProgressText").innerText =
+            "Quiz Completed";
+
+    } else {
+
+        document.getElementById("quizScore").innerText =
+            "-- / 110";
+
+        document.getElementById("quizProgressText").innerText =
+            "Quiz Not Completed";
+    }
+
+
+    /* K-Map */
+    let kmapDone =
+        localStorage.getItem("kmapCompleted") === "true";
+
+    document.getElementById("kmapProgress").style.width =
+        (kmapDone ? 100 : 0) + "%";
+
+    document.getElementById("kmapProgress").innerText =
+        (kmapDone ? "100%" : "0%");
+
+    document.getElementById("kmapProgressText").innerText =
+        kmapDone ? "Completed" : "Not Completed";
+
+
+    /* Quine–McCluskey */
+    let qmDone =
+        localStorage.getItem("qmPracticeCompleted") === "true";
+
+    document.getElementById("qmProgress").style.width =
+        (qmDone ? 100 : 0) + "%";
+
+    document.getElementById("qmProgress").innerText =
+        (qmDone ? "100%" : "0%");
+
+    document.getElementById("qmProgressText").innerText =
+        qmDone ? "Completed" : "Not Completed";
+
+
+    /* Overall module completion */
+    let completedModules = 0;
+
+    if (completedGates.length === 7) completedModules++;
+    if (halfAdderDone) completedModules++;
+    if (fullAdderDone) completedModules++;
+    if (completedPrograms === 10) completedModules++;
+    if (quizDone) completedModules++;
+    if (kmapDone) completedModules++;
+    if (qmDone) completedModules++;
+
+    let overallPercent =
+        Math.round((completedModules / 7) * 100);
+
+    document.getElementById("overallProgress").style.width =
+        overallPercent + "%";
+
+    document.getElementById("overallProgress").innerText =
+        overallPercent + "%";
+
+    document.getElementById("overallProgressText").innerText =
+        completedModules + " / 7 Modules Completed";
 
 }
 
-let practicePercent =
-    Math.round((completedPrograms / 10) * 100);
 
-
-document.getElementById("practiceProgress")
-    .style.width =
-    practicePercent + "%";
-
-
-document.getElementById("practiceProgress")
-    .innerText =
-    practicePercent + "%";
-
-
-document.getElementById("practiceCompleted")
-    .innerText =
-    completedPrograms +
-    " / 10 Programs Completed";
+/* Update dashboard */
+updateModuleProgress();
 
 </script>
+
+
+<!-- QUIZ SCORE -->
+
 
 <script>
 
@@ -260,6 +476,8 @@ if (savedScore !== null) {
 </script>
 
 
+<!-- LOGIC GATE BADGE -->
+
 <script>
 
 let logicBadge =
@@ -278,6 +496,10 @@ if (completedGates.length === 7) {
 }
 
 </script>
+
+
+<!-- STUDENT DETAILS + LOGIN CHECK -->
+
 <script>
 
 let savedStudent =
@@ -285,42 +507,68 @@ let savedStudent =
         localStorage.getItem("studentAccount")
     );
 
+
 if (savedStudent) {
 
     document.getElementById("displayName")
-        .innerText = savedStudent.name;
+        .innerText =
+        savedStudent.name;
+
 
     document.getElementById("displayUSN")
-        .innerText = savedStudent.usn;
+        .innerText =
+        savedStudent.usn;
+
 
     document.getElementById("displayBranch")
-        .innerText = savedStudent.branch;
+        .innerText =
+        savedStudent.branch;
+
 
     document.getElementById("displaySemester")
-        .innerText = savedStudent.semester;
+        .innerText =
+        savedStudent.semester;
+
 
     document.getElementById("displaySection")
-        .innerText = savedStudent.section;
+        .innerText =
+        savedStudent.section;
+
 
     document.getElementById("displayEmail")
-        .innerText = savedStudent.email;
+        .innerText =
+        savedStudent.email;
 
 }
 
+
 let loggedIn =
     localStorage.getItem("studentLoggedIn");
+
 
 if (loggedIn !== "true") {
 
     window.location.href = "login.html";
 
 }
-function openCertificate() {
+
+</script>
+
+
+<!-- CERTIFICATE CHECK -->
+
+<script>
+
+function checkCertificateEligibility() {
 
     let completedGates =
-        JSON.parse(localStorage.getItem("completedGates")) || [];
+        JSON.parse(
+            localStorage.getItem("completedGates")
+        ) || [];
+
 
     let completedPrograms = 0;
+
 
     for (let i = 1; i <= 10; i++) {
 
@@ -328,34 +576,149 @@ function openCertificate() {
             localStorage.getItem("practice" + i)
             === "completed"
         ) {
+
             completedPrograms++;
+
         }
 
     }
 
+
     let quizCompleted =
         localStorage.getItem("quizScore") !== null;
 
-  if (
-    completedGates.length === 7 &&
-   completedPrograms === 10 &&
-localStorage.getItem("halfAdderCompleted") === "true" &&
-localStorage.getItem("fullAdderCompleted") === "true" &&
-quizCompleted &&
-localStorage.getItem("kmapCompleted") === "true"
-) {
 
-        window.location.href = "certificate.html";
+    let allModulesCompleted =
 
-    } else {
+        completedGates.length === 7 &&
 
-        document.getElementById("certificateMessage").innerText =
-            "🔒 Complete all required learning activities to unlock your certificate.";
+        completedPrograms === 10 &&
+
+        localStorage.getItem("halfAdderCompleted")
+            === "true" &&
+
+        localStorage.getItem("fullAdderCompleted")
+            === "true" &&
+
+        quizCompleted &&
+
+        localStorage.getItem("kmapCompleted")
+            === "true" &&
+
+        localStorage.getItem("qmPracticeCompleted")
+            === "true";
+
+
+    let certificateButton =
+        document.getElementById(
+            "certificateButton"
+        );
+
+
+    let certificateMessage =
+        document.getElementById(
+            "certificateMessage"
+        );
+
+
+    if (allModulesCompleted) {
+
+        certificateButton.disabled = false;
+
+        certificateButton.innerText =
+            "🏆 Generate Certificate";
+
+        certificateMessage.innerText =
+            "🎉 Congratulations! You have completed all modules.";
 
     }
 
 }
+
+
+/* OPEN CERTIFICATE */
+
+function openCertificate() {
+
+    let completedGates =
+        JSON.parse(
+            localStorage.getItem("completedGates")
+        ) || [];
+
+
+    let completedPrograms = 0;
+
+
+    for (let i = 1; i <= 10; i++) {
+
+        if (
+            localStorage.getItem("practice" + i)
+            === "completed"
+        ) {
+
+            completedPrograms++;
+
+        }
+
+    }
+
+
+    let quizCompleted =
+        localStorage.getItem("quizScore") !== null;
+
+
+    let allModulesCompleted =
+
+        completedGates.length === 7 &&
+
+        completedPrograms === 10 &&
+
+        localStorage.getItem("halfAdderCompleted")
+            === "true" &&
+
+        localStorage.getItem("fullAdderCompleted")
+            === "true" &&
+
+        quizCompleted &&
+
+        localStorage.getItem("kmapCompleted")
+            === "true" &&
+
+        localStorage.getItem("qmPracticeCompleted")
+            === "true";
+
+
+    if (allModulesCompleted) {
+
+        window.location.href =
+            "certificate.html";
+
+    }
+
+    else {
+
+        document.getElementById(
+            "certificateMessage"
+        ).innerText =
+            "🔒 Complete all modules to unlock your certificate.";
+
+    }
+
+}
+
+
+/* CHECK WHEN DASHBOARD LOADS */
+
+checkCertificateEligibility();
+
+function logout() {
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href = "login.html";
+}
+
 </script>
+
+
 </body>
 
 </html>

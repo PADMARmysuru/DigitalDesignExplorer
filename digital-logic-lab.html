@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Logic Laboratory</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #162746;
+}
+
+header {
+    background: #243b64;
+    color: white;
+    text-align: center;
+    padding: 22px 15px;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+}
+
+header p {
+    margin: 0;
+    font-size: 16px;
+}
+
+nav {
+    background-color: #162746;
+    text-align: center;
+    padding: 15px;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 12px;
+    font-size: 15px;
+    display: inline-block;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 28px auto;
+    padding: 0 18px;
+}
+
+.lab-intro {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 22px;
+}
+
+.lab-intro h2 {
+    margin-top: 0;
+}
+
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-bottom: 24px;
+}
+
+.tab-button {
+    border: none;
+    background: #dfe7f5;
+    color: #162746;
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.tab-button:hover,
+.tab-button.active {
+    background: #243b64;
+    color: white;
+}
+
+.experiment {
+    display: none;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 9px rgba(0,0,0,0.08);
+}
+
+.experiment.active {
+    display: block;
+}
+
+.experiment h2 {
+    text-align: center;
+    margin-top: 0;
+    color: #162746;
+}
+
+.aim {
+    background: #f0f3f8;
+    border-left: 5px solid #243b64;
+    padding: 13px 16px;
+    margin-bottom: 24px;
+}
+
+.blackbox-area {
+    display: grid;
+    grid-template-columns: 1fr 230px 1fr;
+    align-items: center;
+    gap: 28px;
+    min-height: 250px;
+}
+
+.io-column {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.io-title {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.io-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.io-label {
+    min-width: 70px;
+    text-align: right;
+    font-size: 15px;
+}
+
+.bit-button,
+.output-bit {
+    width: 62px;
+    height: 48px;
+    border-radius: 8px;
+    background: #263f70;
+    color: white;
+    border: none;
+    font-size: 21px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 48px;
+}
+
+.bit-button {
+    cursor: pointer;
+}
+
+.bit-button:hover {
+    background: #35578f;
+}
+
+.bit-button.on,
+.output-bit.on {
+    background: #2d7a55;
+}
+
+.black-box {
+    min-height: 145px;
+    border: 3px solid #263f70;
+    border-radius: 15px;
+    background: #e9eff8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 18px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #162746;
+}
+
+.controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+select,
+input[type="number"],
+input[type="text"] {
+    padding: 10px 12px;
+    border: 1px solid #aeb9cc;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+.action-btn {
+    border: none;
+    background: #243b64;
+    color: white;
+    padding: 11px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+    margin: 5px;
+    font-weight: bold;
+}
+
+.action-btn:hover {
+    background: #162746;
+}
+
+.result-box {
+    margin-top: 20px;
+    background: #f5f7fb;
+    border-radius: 10px;
+    padding: 17px;
+    text-align: center;
+    font-size: 17px;
+}
+
+.truth-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 22px;
+}
+
+.truth-table th,
+.truth-table td {
+    border: 1px solid #ccd4e2;
+    padding: 9px;
+    text-align: center;
+}
+
+.truth-table th {
+    background: #243b64;
+    color: white;
+}
+
+.practice-box {
+    margin-top: 25px;
+    padding: 18px;
+    background: #f0f3f8;
+    border-radius: 10px;
+}
+
+.complete-btn {
+    display: block;
+    margin: 25px auto 0;
+    background: #2d7a55;
+    border: none;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.status {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #2d7a55;
+}
+
+.counter-display {
+    font-size: 42px;
+    font-weight: bold;
+    text-align: center;
+    margin: 18px;
+    color: #243b64;
+}
+
+.operation-note {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+@media (max-width: 800px) {
+    .blackbox-area {
+        grid-template-columns: 1fr;
+    }
+
+    .black-box {
+        order: 2;
+    }
+
+    .io-column {
+        order: 1;
+    }
+
+    .io-column:last-child {
+        order: 3;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Digital Logic Laboratory</h1>
+    <p>Interactive Digital Logic Experiments</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="logic-gates.html">Logic Gates</a>
+    <a href="half-adder.html">Half Adder</a>
+    <a href="full-adder.html">Full Adder</a>
+    <a href="verilog.html">Verilog</a>
+    <a href="practice.html">Practice</a>
+    <a href="digital-logic-lab.html">Digital Logic Lab</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="kmap.html">K-Map</a>
+    <a href="quine-mccluskey.html">Quine–McCluskey</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<div class="container">
+
+    <div class="lab-intro">
+        <h2>Interactive Digital Logic Laboratory</h2>
+        <p>
+            Select an experiment below. Each experiment is represented as a
+            <strong>black-box digital component</strong>. Toggle the inputs and
+            observe the outputs without viewing the internal gate-level circuit.
+        </p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-button active" onclick="showExperiment(1)">1. Boolean Expressions</button>
+        <button class="tab-button" onclick="showExperiment(2)">2. Adder/Subtractor</button>
+        <button class="tab-button" onclick="showExperiment(3)">3. 4-bit ALU</button>
+        <button class="tab-button" onclick="showExperiment(4)">4. Code Converters</button>
+        <button class="tab-button" onclick="showExperiment(5)">5. MUX & Encoders</button>
+        <button class="tab-button" onclick="showExperiment(6)">6. DEMUX & Decoder</button>
+        <button class="tab-button" onclick="showExperiment(7)">7. Flip-Flops</button>
+        <button class="tab-button" onclick="showExperiment(8)">8. Counters</button>
+    </div>
+
+    <!-- 1 -->
+    <section class="experiment active" id="exp1">
+        <h2>Interactive Boolean Expression</h2>
+        <div class="aim">
+            <strong>Experiment:</strong> Simplify the given Boolean expression and observe its output.
+        </div>
+
+        <div class="blackbox-area">
+            <div class="io-column">
+                <div class="io-title">INPUTS</div>
+                <div class="io-row"><span class="io-label">A</span><button class="bit-button" id="beA" onclick="toggleBit('beA'); updateBoolean()">0</button></div>
+                <div class="io-row"><span class="io-label">B</span><button class="bit-button" id="beB" onclick="toggleBit('beB'); updateBoolean()">0</button></div>
+                <div class="io-row"><span class="io-label">C</span><button class="bit-button" id="beC" onclick="toggleBit('beC'); updateBoolean()">0</button></div>
+            </div>
+
+            <div class="black-box">BOOLEAN<br>EXPRESSION</div>
+
+            <div class="io-column">
+                <div class="io-title">OUTPUT</div>
+                <div class="io-row"><span class="io-label">Y</span><span class="output-bit" id="beY">0</span></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <p><strong>Expression used:</strong> Y = AB + C</p>
+        </div>
+
+        <table class="truth-table">
+            <thead><tr><th>A</th><th>B</th><th>C</th><th>Y = AB + C</th></tr></thead>
+            <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+                <tr><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+            </tbody>
+        </table>
+
+        <button class="complete-btn" onclick="completeExperiment(1)">Mark Experiment 1 Complete</button>
+        <div class="status" id="status1"></div>
+    </section>
+
+    <!-- 2 -->
+    <section class="experiment" id="exp2">
+        <h2>Interactive Adder / Subtractor</h2>
+        <div class="aim">
+            <strong>Experiment:</strong> Observe Half Adder, Full Adder, Half Subtractor and Full Subtractor operation.
+        </div>
+
+        <div class="controls">
+            <select id="asType" onchange="updateAdderSubtractor()">
+                <option value="ha">Half Adder</option>
+                <option value="fa">Full Adder</option>
+                <option value="hs">Half Subtractor</option>
+                <option value="fs">Full Subtractor</option>
+            </select>
+        </div>
+
+        <div class="blackbox-area">
+            <div class="io-column">
+                <div class="io-title">INPUTS</div>
+                <div class="io-row"><span class="io-label">A</span><button class="bit-button" id="asA" onclick="toggleBit('asA'); updateAdderSubtractor()">0</button></div>
+                <div class="io-row"><span class="io-label">B</span><button class="bit-button" id="asB" onclick="toggleBit('asB'); updateAdderSubtractor()">0</button></div>
+                <div class="io-row" id="cinRow"><span class="io-label">Cin</span><button class="bit-button" id="asC" onclick="toggleBit('asC'); updateAdderSubtractor()">0</button></div>
+            </div>
+
+            <div class="black-box" id="asBox">HALF<br>ADDER</div>
+
+            <div class="io-column">
+                <div class="io-title">OUTPUTS</div>
+                <div class="io-row"><span class="io-label" id="mainOutLabel">SUM</span><span class="output-bit" id="asMain">0</span></div>
+                <div class="io-row"><span class="io-label" id="carryLabel">CARRY</span><span class="output-bit" id="asCarry">0</span></div>
+            </div>
+        </div>
+
+        <button class="complete-btn" onclick="completeExperiment(2)">Mark Experiment 2 Complete</button>
+        <div class="status" id="status2"></div>
+    </section>
+
+    <!-- 3 -->
+    <section class="experiment" id="exp3">
+        <h2>Interactive 4-bit ALU</h2>
+        <div class="aim">
+            <strong>Experiment:</strong> Perform basic arithmetic and logic operations using a 4-bit ALU.
+        </div>
+
+        <div class="blackbox-area">
+            <div class="io-column">
+                <div class="io-title">INPUT A</div>
+                <div class="io-row"><span class="io-label">A</span><input type="number" id="aluA" min="0" max="15" value="5" oninput="updateALU()"></div>
+                <div class="io-title">INPUT B</div>
+                <div class="io-row"><span class="io-label">B</span><input type="number" id="aluB" min="0" max="15" value="3" oninput="updateALU()"></div>
+            </div>
+
+            <div class="black-box">4-BIT<br>ALU</div>
+
+            <div class="io-column">
+                <div class="io-title">OUTPUT</div>
+                <div class="io-row"><span class="io-label">Y</span><span class="output-bit" id="aluY">8</span></div>
+                <div class="io-row"><span class="io-label">Binary</span><span id="aluBinary">1000</span></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <label><strong>Operation:</strong> </label>
+            <select id="aluOp" onchange="updateALU()">
+                <option value="ADD">A + B</option>
+                <option value="SUB">A - B</option>
+                <option value="AND">A AND B</option>
+                <option value="OR">A OR B</option>
+                <option value="XOR">A XOR B</option>
+            </select>
+        </div>
+
+        <button class="complete-btn" onclick="completeExperiment(3)">Mark Experiment 3 Complete</button>
+        <div class="status" id="status3"></div>
+    </section>
+
+    <!-- 4 -->
+    <section class="experiment" id="exp4">
+        <h2>Interactive Code Converters</h2>
+        <div class="aim">
+            <strong>Experiment:</strong> Explore Gray/Binary and Binary/Excess-3 conversion.
+        </div>
+
+        <div class="controls">
+            <select id="convType" onchange="updateConverter()">
+                <option value="b2g">Binary → Gray</option>
+                <option value="g2b">Gray → Binary</option>
+                <option value="b2e">Binary → Excess-3</option>
+                <option value="e2b">Excess-3 → Binary</option>
+            </select>
+            <br><br>
+            <input type="text" id="convInput" value="1010" maxlength="4" oninput="updateConverter()">
+        </div>
+
+        <div class="blackbox-area">
+            <div class="io-column">
+                <div class="io-title">INPUT</div>
+                <div class="io-row"><span id="convInLabel">Binary</span></div>
+                <div class="io-row"><span class="bit-button" id="convInDisplay">1010</span></div>
+            </div>
+
+            <div class="black-box" id="convBox">CODE<br>CONVERTER</div>
+
+            <div class="io-column">
+                <div class="io-title">OUTPUT</div>
+                <div class="io-row"><span id="convOutLabel">Gray</span></div>
+                <div class="io-row"><span class="output-bit" id="convOutput">1111</span></div>
+            </div>
+        </div>
+
+        <button class="complete-btn" onclick="completeExperiment(4)">Mark Experiment 4 Complete</button>
+        <div class="status" id="status4"></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="experiment" id="exp5">
+        <h2>Interactive MUX & Encoders</h2>
+        <div class="aim">
+            <strong>Experiment:</strong> Observe the operation of an 8:1 MUX, 8:3 Encoder and Priority Encoder.
+        </div>
+
+        <div class="controls">
+            <select id="encType" onchange="updateEncoder()">
+                <option value="mux">8:1 MUX</option>
+                <option value="encoder">8:3 Encoder</option>
+                <option value="priority">Priority Encoder</option>
+            </select>
+        </div>
+
+        <div class="blackbox-area">
+            <div class="io-column">
+                <div class="io-title">INPUTS</div>
+                <div class="io-row">
+                    <span class="io-label">Select</span>
+                    <select id="muxSelect" onchange="updateEncoder()">
+                        <option value="0">0</option><option value="1">1</option>
+                        <option value="2">2</option><option value="3">3</option>
+                        <option value="4">4</option><option value="5">5</option>
+                        <option value="6">6</option><option value="7">7</option>
+                    </select>
+                </div>
+                <div class="io-row"><span class="io-label">Inputs</span><button class="bit-button" id="encInput" onclick="toggleBit('encInput'); updateEncoder()">0</button></div>
+            </div>
+
+            <div class="black-box" id="encBox">8:1<br>MUX</div>
+
+            <div class="io-column">
+                <div class="io-title">OUTPUT</div>
+                <div class="io-row"><span class="io-label">Y</span><span class="output-bit" id="encOutput">0</span></div>
+            </div>
+        </div>
+
+        <div class="result-box" id="encNote">Select an experiment type above.</div>
+
+        <button class="complete-btn" onclick="completeExperiment(5)">Mark Experiment 5 Complete</button>
+        <div class="status" id="status5"></div>
+    </section>
+
+    <!-- 6 -->
+    <section class="experiment" id="exp6">
+        <h2>Interactive DEMUX, Decoder & Comparator</h2>
+        <div class="aim">
+            <strong>Experiment:</strong> Explore 1:8 DEMUX, 3:8 Decoder and 2-bit Comparator.
+        </div>
+
+        <div class="controls">
+            <select id="demuxType" onchange="updateDemux()">
+                <option value="demux">1:8 DEMUX</option>
+                <option value="decoder">3:8 Decoder</option>
+                <option value="comparator">2-bit Comparator</option>
+            </select>
+        </div>
+
+        <div class="blackbox-area">
+            <div class="io-column">
+                <div class="io-title">INPUTS</div>
+                <div class="io-row"><span class="io-label">A</span><button class="bit-button" id="dmA" onclick="toggleBit('dmA'); updateDemux()">0</button></div>
+                <div class="io-row"><span class="io-label">B</span><button class="bit-button" id="dmB" onclick="toggleBit('dmB'); updateDemux()">0</button></div>
+                <div class="io-row"><span class="io-label">C</span><button class="bit-button" id="dmC" onclick="toggleBit('dmC'); updateDemux()">0</button></div>
+            </div>
+
+            <div class="black-box" id="dmBox">1:8<br>DEMUX</div>
+
+            <div class="io-column">
+                <div class="io-title">OUTPUT</div>
+                <div class="io-row"><span class="io-label">Y</span><span class="output-bit" id="dmOutput">0</span></div>
+            </div>
+        </div>
+
+        <div class="result-box" id="dmNote">Output is updated according to the selected component.</div>
+
+        <button class="complete-btn" onclick="completeExperiment(6)">Mark Experiment 6 Complete</button>
+        <div class="status" id="status6"></div>
+    </section>
+
+    <!-- 7 -->
+    <section class="experiment" id="exp7">
+        <h2>Interactive Flip-Flops</h2>
+        <div class="aim">
+            <strong>Experiment:</strong> Explore JK, SR, T and D flip-flop behavior.
+        </div>
+
+        <div class="controls">
+            <select id="ffType" onchange="resetFF()">
+                <option value="JK">JK Flip-Flop</option>
+                <option value="SR">SR Flip-Flop</option>
+                <option value="T">T Flip-Flop</option>
+                <option value="D">D Flip-Flop</option>
+            </select>
+        </div>
+
+        <div class="blackbox-area">
+            <div class="io-column">
+                <div class="io-title">INPUT</div>
+                <div id="ffInputs"></div>
+                <div class="io-row">
+                    <span class="io-label">Clock</span>
+                    <button class="bit-button" id="ffClock" onclick="toggleBit('ffClock'); clockFF()">0</button>
+                </div>
+            </div>
+
+            <div class="black-box" id="ffBox">JK<br>FLIP-FLOP</div>
+
+            <div class="io-column">
+                <div class="io-title">OUTPUT</div>
+                <div class="io-row"><span class="io-label">Q</span><span class="output-bit" id="ffQ">0</span></div>
+                <div class="io-row"><span class="io-label">Q̅</span><span class="output-bit" id="ffQbar">1</span></div>
+            </div>
+        </div>
+
+        <div class="result-box">Click the clock to apply the selected input condition.</div>
+
+        <button class="complete-btn" onclick="completeExperiment(7)">Mark Experiment 7 Complete</button>
+        <div class="status" id="status7"></div>
+    </section>
+
+    <!-- 8 -->
+    <section class="experiment" id="exp8">
+        <h2>Interactive Counters</h2>
+        <div class="aim">
+            <strong>Experiment:</strong> Observe binary and BCD up/down counter operation.
+        </div>
+
+        <div class="controls">
+            <select id="counterType">
+                <option value="binary">Binary Counter</option>
+                <option value="bcd">BCD Counter</option>
+            </select>
+            <select id="counterDirection">
+                <option value="up">UP Counter</option>
+                <option value="down">DOWN Counter</option>
+            </select>
+            <button class="action-btn" onclick="counterClock()">Clock Pulse</button>
+            <button class="action-btn" onclick="resetCounter()">Reset</button>
+        </div>
+
+        <div class="blackbox-area">
+            <div class="io-column">
+                <div class="io-title">CONTROL</div>
+                <div class="io-row"><span class="io-label">Clock</span><span class="output-bit">↑</span></div>
+            </div>
+
+            <div class="black-box">COUNTER</div>
+
+            <div class="io-column">
+                <div class="io-title">OUTPUT</div>
+                <div class="counter-display" id="counterValue">0</div>
+            </div>
+        </div>
+
+        <button class="complete-btn" onclick="completeExperiment(8)">Mark Experiment 8 Complete</button>
+        <div class="status" id="status8"></div>
+    </section>
+
+</div>
+
+<script>
+function logout() {
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href = "login.html";
+}
+
+function showExperiment(number) {
+    document.querySelectorAll(".experiment").forEach(e => e.classList.remove("active"));
+    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+    document.getElementById("exp" + number).classList.add("active");
+    document.querySelectorAll(".tab-button")[number - 1].classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function toggleBit(id) {
+    const el = document.getElementById(id);
+    const value = el.textContent.trim() === "1" ? 0 : 1;
+    el.textContent = value;
+    el.classList.toggle("on", value === 1);
+}
+
+function getBit(id) {
+    return Number(document.getElementById(id).textContent.trim());
+}
+
+function setOutput(id, value) {
+    const el = document.getElementById(id);
+    el.textContent = value;
+    el.classList.toggle("on", Number(value) === 1);
+}
+
+function updateBoolean() {
+    const a = getBit("beA"), b = getBit("beB"), c = getBit("beC");
+    setOutput("beY", (a && b) || c ? 1 : 0);
+}
+
+function updateAdderSubtractor() {
+    const type = document.getElementById("asType").value;
+    const a = getBit("asA"), b = getBit("asB"), cin = getBit("asC");
+    const cinRow = document.getElementById("cinRow");
+    const box = document.getElementById("asBox");
+    const mainLabel = document.getElementById("mainOutLabel");
+    const carryLabel = document.getElementById("carryLabel");
+
+    let main = 0, second = 0;
+
+    if (type === "ha") {
+        box.innerHTML = "HALF<br>ADDER";
+        mainLabel.textContent = "SUM";
+        carryLabel.textContent = "CARRY";
+        cinRow.style.display = "none";
+        main = a ^ b;
+        second = a & b;
+    } else if (type === "fa") {
+        box.innerHTML = "FULL<br>ADDER";
+        mainLabel.textContent = "SUM";
+        carryLabel.textContent = "CARRY";
+        cinRow.style.display = "flex";
+        main = a ^ b ^ cin;
+        second = (a & b) | (b & cin) | (a & cin);
+    } else if (type === "hs") {
+        box.innerHTML = "HALF<br>SUBTRACTOR";
+        mainLabel.textContent = "DIFF";
+        carryLabel.textContent = "BORROW";
+        cinRow.style.display = "none";
+        main = a ^ b;
+        second = (!a && b) ? 1 : 0;
+    } else {
+        box.innerHTML = "FULL<br>SUBTRACTOR";
+        mainLabel.textContent = "DIFF";
+        carryLabel.textContent = "BORROW";
+        cinRow.style.display = "flex";
+        main = a ^ b ^ cin;
+        second = ((!a && b) || (!a && cin) || (b && cin)) ? 1 : 0;
+    }
+
+    setOutput("asMain", main);
+    setOutput("asCarry", second);
+}
+
+function updateALU() {
+    let a = Math.max(0, Math.min(15, Number(document.getElementById("aluA").value) || 0));
+    let b = Math.max(0, Math.min(15, Number(document.getElementById("aluB").value) || 0));
+    const op = document.getElementById("aluOp").value;
+    let y = 0;
+
+    if (op === "ADD") y = (a + b) & 15;
+    if (op === "SUB") y = (a - b + 16) & 15;
+    if (op === "AND") y = a & b;
+    if (op === "OR") y = a | b;
+    if (op === "XOR") y = a ^ b;
+
+    document.getElementById("aluY").textContent = y;
+    document.getElementById("aluBinary").textContent = y.toString(2).padStart(4, "0");
+}
+
+function updateConverter() {
+    let input = document.getElementById("convInput").value.replace(/[^01]/g, "").slice(0,4);
+    document.getElementById("convInput").value = input;
+    if (!input) input = "0000";
+
+    const type = document.getElementById("convType").value;
+    let output = "0000";
+    let inLabel = "Binary";
+    let outLabel = "Gray";
+
+    if (type === "b2g") {
+        const n = parseInt(input, 2);
+        output = (n ^ (n >> 1)).toString(2).padStart(4, "0");
+        inLabel = "Binary"; outLabel = "Gray";
+    } else if (type === "g2b") {
+        let n = parseInt(input, 2), b = n;
+        for (let shift = 1; shift < 4; shift++) b ^= n >> shift;
+        output = b.toString(2).padStart(4, "0");
+        inLabel = "Gray"; outLabel = "Binary";
+    } else if (type === "b2e") {
+        const n = parseInt(input, 2);
+        output = ((n + 3) & 15).toString(2).padStart(4, "0");
+        inLabel = "Binary"; outLabel = "Excess-3";
+    } else {
+        const n = parseInt(input, 2);
+        output = ((n - 3 + 16) & 15).toString(2).padStart(4, "0");
+        inLabel = "Excess-3"; outLabel = "Binary";
+    }
+
+    document.getElementById("convInLabel").textContent = inLabel;
+    document.getElementById("convOutLabel").textContent = outLabel;
+    document.getElementById("convInDisplay").textContent = input;
+    document.getElementById("convOutput").textContent = output;
+}
+
+function updateEncoder() {
+    const type = document.getElementById("encType").value;
+    const select = document.getElementById("muxSelect");
+    const input = getBit("encInput");
+    const box = document.getElementById("encBox");
+    const output = document.getElementById("encOutput");
+    const note = document.getElementById("encNote");
+
+    if (type === "mux") {
+        box.innerHTML = "8:1<br>MUX";
+        const y = input;
+        output.textContent = y;
+        note.textContent = "The selected input is passed to the output.";
+        select.style.display = "inline-block";
+    } else {
+        select.style.display = "none";
+        box.innerHTML = type === "encoder" ? "8:3<br>ENCODER" : "PRIORITY<br>ENCODER";
+
+        let code = "000";
+        if (input) code = "111";
+        output.textContent = code;
+        note.textContent = type === "encoder"
+            ? "For demonstration, the active input is represented by a 3-bit code."
+            : "Priority encoder demonstration: the active input is encoded.";
+    }
+}
+
+function updateDemux() {
+    const type = document.getElementById("demuxType").value;
+    const a = getBit("dmA"), b = getBit("dmB"), c = getBit("dmC");
+    const box = document.getElementById("dmBox");
+    const output = document.getElementById("dmOutput");
+    const note = document.getElementById("dmNote");
+
+    if (type === "demux") {
+        box.innerHTML = "1:8<br>DEMUX";
+        output.textContent = a;
+        note.textContent = "Input data is routed according to the selected line.";
+    } else if (type === "decoder") {
+        box.innerHTML = "3:8<br>DECODER";
+        output.textContent = (a << 2) | (b << 1) | c;
+        note.textContent = "The three input bits select one of eight output lines.";
+    } else {
+        box.innerHTML = "2-BIT<br>COMPARATOR";
+        const av = a * 2 + b;
+        const bv = c;
+        output.textContent = av === bv ? "EQUAL" : (av > bv ? "A>B" : "A<B");
+        note.textContent = "Comparator result for the selected input values.";
+    }
+}
+
+let ffQ = 0;
+
+function renderFFInputs() {
+    const type = document.getElementById("ffType").value;
+    const holder = document.getElementById("ffInputs");
+    holder.innerHTML = "";
+
+    const names = type === "JK" ? ["J", "K"] :
+                  type === "SR" ? ["S", "R"] :
+                  type === "T" ? ["T"] : ["D"];
+
+    names.forEach(name => {
+        const row = document.createElement("div");
+        row.className = "io-row";
+        row.innerHTML = `<span class="io-label">${name}</span><button class="bit-button" id="ff${name}" type="button">0</button>`;
+        holder.appendChild(row);
+        document.getElementById("ff" + name).addEventListener("click", function() {
+            toggleBit("ff" + name);
+        });
+    });
+
+    document.getElementById("ffBox").innerHTML = type + "<br>FLIP-FLOP";
+}
+
+function resetFF() {
+    ffQ = 0;
+    document.getElementById("ffClock").textContent = "0";
+    document.getElementById("ffClock").classList.remove("on");
+    renderFFInputs();
+    setOutput("ffQ", 0);
+    setOutput("ffQbar", 1);
+}
+
+function clockFF() {
+    const type = document.getElementById("ffType").value;
+    const clock = getBit("ffClock");
+    if (clock !== 1) return;
+
+    if (type === "JK") {
+        const j = getBit("ffJ"), k = getBit("ffK");
+        if (j === 0 && k === 0) {}
+        else if (j === 0 && k === 1) ffQ = 0;
+        else if (j === 1 && k === 0) ffQ = 1;
+        else ffQ = ffQ ? 0 : 1;
+    } else if (type === "SR") {
+        const s = getBit("ffS"), r = getBit("ffR");
+        if (s === 1 && r === 0) ffQ = 1;
+        else if (s === 0 && r === 1) ffQ = 0;
+    } else if (type === "T") {
+        if (getBit("ffT")) ffQ = ffQ ? 0 : 1;
+    } else {
+        ffQ = getBit("ffD");
+    }
+
+    setOutput("ffQ", ffQ);
+    setOutput("ffQbar", ffQ ? 0 : 1);
+    document.getElementById("ffClock").textContent = "0";
+    document.getElementById("ffClock").classList.remove("on");
+}
+
+let counter = 0;
+
+function counterClock() {
+    const type = document.getElementById("counterType").value;
+    const direction = document.getElementById("counterDirection").value;
+    const max = type === "bcd" ? 9 : 15;
+
+    if (direction === "up") counter = counter >= max ? 0 : counter + 1;
+    else counter = counter <= 0 ? max : counter - 1;
+
+    document.getElementById("counterValue").textContent = counter;
+}
+
+function resetCounter() {
+    counter = 0;
+    document.getElementById("counterValue").textContent = "0";
+}
+
+function completeExperiment(n) {
+    localStorage.setItem("digitalLabExp" + n, "true");
+    document.getElementById("status" + n).textContent = "✓ Experiment completed";
+
+    let allComplete = true;
+    for (let i = 1; i <= 8; i++) {
+        if (localStorage.getItem("digitalLabExp" + i) !== "true") {
+            allComplete = false;
+            break;
+        }
+    }
+    if (allComplete) {
+        localStorage.setItem("digitalLogicLabCompleted", "true");
+    }
+}
+
+function loadCompletion() {
+    for (let i = 1; i <= 8; i++) {
+        if (localStorage.getItem("digitalLabExp" + i) === "true") {
+            document.getElementById("status" + i).textContent = "✓ Experiment completed";
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    updateBoolean();
+    updateAdderSubtractor();
+    updateALU();
+    updateConverter();
+    updateEncoder();
+    updateDemux();
+    resetFF();
+    loadCompletion();
+});
+</script>
+
+</body>
+</html>
