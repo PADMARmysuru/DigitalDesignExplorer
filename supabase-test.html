@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supabase Connection Test</title>
+</head>
+<body>
+
+<h2>Supabase Connection Test</h2>
+<p id="status">Testing...</p>
+
+<script src="supabase-config.js"></script>
+
+<script>
+async function testSupabase() {
+
+    try {
+
+        const response = await fetch(
+            SUPABASE_URL + "/rest/v1/STUDENTS?select=id&limit=1",
+            {
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization":
+                        "Bearer " + SUPABASE_ANON_KEY
+                }
+            }
+        );
+
+        if (response.ok) {
+            document.getElementById("status").innerText =
+                "✅ Supabase connection successful!";
+        } else {
+            document.getElementById("status").innerText =
+                "❌ Connection reached Supabase, but access was denied. Status: "
+                + response.status;
+        }
+
+    } catch (error) {
+
+        document.getElementById("status").innerText =
+            "❌ Connection error: " + error.message;
+
+    }
+}
+
+testSupabase();
+</script>
+
+</body>
+</html>python -m http.server 8000

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Digital Design Explorer - Student Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>🎓 Digital Design Explorer</h1>
+    <p>Student Registration & Login</p>
+</header>
+
+<div class="login-container">
+
+    <h2>📝 Student Registration</h2>
+
+    <input type="text" id="studentName"
+           placeholder="Student Name">
+
+    <input type="text" id="studentUSN"
+           placeholder="USN">
+
+    <input type="text" id="studentBranch"
+           placeholder="Branch">
+
+    <input type="text" id="studentSemester"
+           placeholder="Semester">
+
+    <input type="text" id="studentSection"
+           placeholder="Section">
+
+    <input type="email" id="studentEmail"
+           placeholder="Email ID">
+
+    <input type="password" id="studentPassword"
+           placeholder="Password">
+
+    <button onclick="registerStudent()">
+        Register
+    </button>
+
+    <p id="registerMessage"></p>
+
+    <hr>
+
+    <h2>🔐 Student Login</h2>
+
+    <input type="email" id="loginEmail"
+           placeholder="Email ID">
+
+    <input type="password" id="loginPassword"
+           placeholder="Password">
+
+    <button onclick="loginStudent()">
+        Login
+    </button>
+
+    <p id="loginMessage"></p>
+
+</div>
+
+<script>
+
+function registerStudent() {
+
+    let student = {
+
+        name:
+            document.getElementById("studentName").value,
+
+        usn:
+            document.getElementById("studentUSN").value,
+
+        branch:
+            document.getElementById("studentBranch").value,
+
+        semester:
+            document.getElementById("studentSemester").value,
+
+        section:
+            document.getElementById("studentSection").value,
+
+        email:
+            document.getElementById("studentEmail").value,
+
+        password:
+            document.getElementById("studentPassword").value
+
+    };
+
+    localStorage.setItem(
+        "studentAccount",
+        JSON.stringify(student)
+    );
+
+    document.getElementById("registerMessage")
+        .innerText =
+        "✅ Registration successful! You can now login.";
+
+    document.getElementById("registerMessage")
+        .style.color = "green";
+}
+
+
+function loginStudent() {
+
+    let savedStudent =
+        JSON.parse(
+            localStorage.getItem("studentAccount")
+        );
+
+    let email =
+        document.getElementById("loginEmail").value;
+
+    let password =
+        document.getElementById("loginPassword").value;
+
+    if (!savedStudent) {
+
+        document.getElementById("loginMessage")
+            .innerText =
+            "❌ Please register first.";
+
+        return;
+    }
+
+    if (
+        email === savedStudent.email &&
+        password === savedStudent.password
+    ) {
+
+        localStorage.setItem(
+            "studentLoggedIn",
+            "true"
+        );
+
+        window.location.href =
+            "dashboard.html";
+
+    } else {
+
+        document.getElementById("loginMessage")
+            .innerText =
+            "❌ Invalid Email or Password.";
+
+        document.getElementById("loginMessage")
+            .style.color = "red";
+    }
+}
+</script>
+
+</body>
+</html>

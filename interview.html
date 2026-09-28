@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Questions | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#f4f7fb}
+.interview-header{text-align:center;padding:35px 20px 20px}
+.interview-header h2{color:#243b64;font-size:32px}
+.filters{text-align:center;margin:10px auto 25px}
+.filter-btn{border:0;background:#243b64;color:white;padding:11px 20px;margin:5px;border-radius:8px;cursor:pointer}
+.question-grid{width:92%;max-width:1100px;margin:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:18px;padding-bottom:40px}
+.question-card{background:white;border-radius:14px;padding:22px;box-shadow:0 3px 12px rgba(0,0,0,.09);border-top:5px solid #243b64}
+.question-card.verilog{border-top-color:#7b61a8}
+.question-card.digital{border-top-color:#2d8c8c}
+.q-number{font-size:13px;font-weight:bold;color:#777;margin-bottom:8px}
+.question-card h3{color:#243b64;font-size:18px;line-height:1.45}
+.answer-btn{background:#243b64;color:white;border:0;padding:9px 16px;border-radius:7px;cursor:pointer}
+.answer{display:none;margin-top:14px;padding:14px;background:#f1f5fa;border-radius:8px;line-height:1.55}
+.counter{text-align:center;color:#555;margin:10px 0 25px;font-weight:bold}
+@media(max-width:800px){.question-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>Digital Design Explorer</h1><p>Interview Preparation</p></header>
+<nav>
+<a href="index.html">Home</a><a href="logic-gates.html">Logic Gates</a>
+<div class="dropdown"><a href="#">Digital Circuits ▾</a><div class="dropdown-content">
+<a href="half-adder.html">Half Adder</a><a href="full-adder.html">Full Adder</a></div></div>
+<a href="verilog.html">Verilog</a><a href="practice.html">Practice</a>
+<a href="digital-logic-lab.html">Digital Logic Lab</a><a href="quiz.html">Quiz</a>
+<a href="kmap.html">K-Map</a><a href="quine-mccluskey.html">Quine–McCluskey</a>
+<a href="dashboard.html">Dashboard</a><a href="interview.html">🎯 Interview</a>
+<a href="interview-test.html">📝 Interview Test</a><a href="#" onclick="logout()">Logout</a>
+</nav>
+<main>
+<section class="interview-header"><h2>🎯 Verilog & Digital Circuits Interview Questions</h2>
+<p>100 important questions for interview preparation</p></section>
+<div class="filters">
+<button class="filter-btn" onclick="filterQuestions('all')">All 100</button>
+<button class="filter-btn" onclick="filterQuestions('verilog')">💻 Verilog 50</button>
+<button class="filter-btn" onclick="filterQuestions('digital')">🔌 Digital Circuits 50</button>
+</div>
+<div class="counter" id="counter">Showing 100 Questions</div>
+<section class="question-grid"><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 1</div>
+<h3>What is Verilog HDL?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Verilog is a hardware description language used to model, design, simulate, and verify digital electronic systems.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 2</div>
+<h3>What is the difference between Verilog and C?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Verilog describes hardware behavior and structure, while C primarily describes software algorithms executed on a processor.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 3</div>
+<h3>What is a Verilog module?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A module is the basic design unit in Verilog. It defines ports, internal signals, and the logic that implements a hardware block.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 4</div>
+<h3>What are input, output, and inout ports?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Input ports receive signals, output ports drive signals, and inout ports can both receive and drive signals.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 5</div>
+<h3>What is a wire?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A wire represents a net used to connect hardware elements and is driven by a source.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 6</div>
+<h3>What is a reg?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A reg is a procedural variable that can be assigned inside procedural blocks such as always or initial.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 7</div>
+<h3>Difference between wire and reg?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A wire is a net driven by a source, while a reg is a procedural variable.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 8</div>
+<h3>What is continuous assignment?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A continuous assignment uses assign to drive a net whenever the right-hand expression changes.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 9</div>
+<h3>What is an always block?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">An always block describes procedural behavior that executes when its triggering event occurs.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 10</div>
+<h3>What is an initial block?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">An initial block starts at simulation time zero and executes once, commonly in testbenches.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 11</div>
+<h3>Blocking vs non-blocking assignment?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Blocking (=) updates immediately in procedural order; non-blocking (&lt;=) schedules an update and is commonly used for sequential logic.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 12</div>
+<h3>Which assignment is preferred for flip-flops?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Non-blocking assignment (&lt;=) is generally used for clocked sequential logic.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 13</div>
+<h3>Which assignment is preferred for combinational procedural logic?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Blocking assignment (=) is commonly used.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 14</div>
+<h3>What does always @(*) mean?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It creates a combinational procedural block sensitive to signals read by the block.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 15</div>
+<h3>What is a sensitivity list?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It specifies the events or signals that cause an always block to execute.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 16</div>
+<h3>What are posedge and negedge?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">posedge detects 0-to-1 transitions; negedge detects 1-to-0 transitions.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 17</div>
+<h3>How is a D flip-flop described?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Use an always block triggered by posedge clk with a non-blocking assignment such as q &lt;= d.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 18</div>
+<h3>What is a clocked always block?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is an always block triggered by a clock edge and used for sequential logic.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 19</div>
+<h3>What is reset?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Reset initializes sequential elements to known states and may be synchronous or asynchronous.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 20</div>
+<h3>Synchronous vs asynchronous reset?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A synchronous reset acts on the active clock edge; an asynchronous reset can act independently of the clock.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 21</div>
+<h3>What is a latch?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A latch is a level-sensitive storage element.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 22</div>
+<h3>How can unintended latch inference be avoided?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Assign outputs for every possible condition using complete if/else or case logic.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 23</div>
+<h3>What is a case statement?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It selects one branch based on the value of an expression.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 24</div>
+<h3>Difference between case, casex, and casez?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">case uses exact matching; casex treats x and z as don&#x27;t-care values; casez treats z and ? as don&#x27;t-care values.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 25</div>
+<h3>What is a default case?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It handles values not matched by explicit case items.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 26</div>
+<h3>What is a parameter?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A parameter is a constant that can be overridden during module instantiation.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 27</div>
+<h3>What is a generate statement?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Generate constructs create repeated or conditional hardware structures during elaboration.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 28</div>
+<h3>What is a testbench?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A testbench is a simulation environment used to apply inputs and verify outputs.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 29</div>
+<h3>What is DUT?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">DUT means Design Under Test.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 30</div>
+<h3>What is a simulator?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A simulator executes a hardware description according to HDL simulation semantics.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 31</div>
+<h3>What is synthesis?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Synthesis converts synthesizable HDL into a hardware implementation representation.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 32</div>
+<h3>What is synthesizable Verilog?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is Verilog code that synthesis tools can translate into implementable hardware.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 33</div>
+<h3>Give examples of simulation-only constructs.</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Delays, many initial-block stimulus constructs, and system tasks such as $display are commonly simulation-oriented.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 34</div>
+<h3>What does #10 mean?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It specifies a simulation delay of 10 time units.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 35</div>
+<h3>What is `timescale?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It specifies simulation time unit and time precision.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 36</div>
+<h3>What is a vector?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A vector is a multi-bit signal such as [7:0].</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 37</div>
+<h3>Scalar vs vector?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A scalar is one bit; a vector contains multiple bits.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 38</div>
+<h3>How are signals concatenated?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Use braces, for example {a,b,c}.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 39</div>
+<h3>What is replication?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Replication repeats a value or vector a specified number of times.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 40</div>
+<h3>What is the ternary operator?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">The ?: operator selects one of two expressions based on a condition.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 41</div>
+<h3>How can a multiplexer be modeled?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Using a conditional operator, if/else, or case statement.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 42</div>
+<h3>How can a decoder be modeled?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Using combinational logic, case statements, or Boolean expressions.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 43</div>
+<h3>What is an FSM?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A finite state machine is a sequential model consisting of states and transitions.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 44</div>
+<h3>Mealy vs Moore FSM?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Mealy outputs depend on state and input; Moore outputs depend only on state.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 45</div>
+<h3>What is a race condition?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It occurs when simulation results depend on the order of simultaneous procedural updates.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 46</div>
+<h3>Why use non-blocking assignments in sequential logic?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">They model simultaneous register updates and reduce ordering-related simulation problems.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 47</div>
+<h3>What is a multiple-driver problem?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It occurs when unintended multiple sources drive the same signal.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 48</div>
+<h3>What is a test vector?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A test vector is a set of inputs applied during verification.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 49</div>
+<h3>What is RTL?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">RTL stands for Register Transfer Level and describes data transfers between registers and intervening logic.</div>
+</div><div class="question-card verilog" data-category="verilog">
+<div class="q-number">Question 50</div>
+<h3>What is the purpose of assertions?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Assertions specify expected properties and can automatically detect violations during verification.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 51</div>
+<h3>What is a digital circuit?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A digital circuit processes discrete signal levels, commonly represented as binary 0 and 1.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 52</div>
+<h3>What are the basic logic gates?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">AND, OR, and NOT are basic gates; NAND, NOR, XOR, and XNOR are also widely used.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 53</div>
+<h3>What is a universal gate?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A universal gate can implement any Boolean function. NAND and NOR are universal gates.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 54</div>
+<h3>Why is NAND universal?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">NOT, AND, and OR can all be constructed using only NAND gates.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 55</div>
+<h3>Why is NOR universal?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">NOT, OR, and AND can all be constructed using only NOR gates.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 56</div>
+<h3>What is XOR?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">XOR produces 1 when its inputs are different.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 57</div>
+<h3>What is XNOR?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">XNOR produces 1 when its inputs are equal.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 58</div>
+<h3>What is Boolean algebra?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is a mathematical system used to represent and simplify logical relationships.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 59</div>
+<h3>State De Morgan&#x27;s theorems.</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">The complement of a product equals the sum of complements, and the complement of a sum equals the product of complements.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 60</div>
+<h3>What is a minterm?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A minterm is a product term containing every variable exactly once.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 61</div>
+<h3>What is a maxterm?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A maxterm is a sum term containing every variable exactly once.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 62</div>
+<h3>What is a K-Map?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A Karnaugh map is a graphical method for simplifying Boolean expressions.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 63</div>
+<h3>Why use Gray-code ordering in K-Maps?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Adjacent cells then differ in only one variable.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 64</div>
+<h3>What group sizes are allowed in a K-Map?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Groups contain powers of two cells such as 1, 2, 4, 8, and 16.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 65</div>
+<h3>Can K-Map groups wrap around edges?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Yes. Opposite edges are considered adjacent.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 66</div>
+<h3>What is Quine–McCluskey method?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is a tabular systematic method for minimizing Boolean functions.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 67</div>
+<h3>What is a don&#x27;t-care condition?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is an input combination whose output is unimportant and may be used to simplify logic.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 68</div>
+<h3>What is a half adder?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It adds two one-bit binary numbers and produces Sum and Carry.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 69</div>
+<h3>Which gates are used in a half adder?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">XOR for Sum and AND for Carry.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 70</div>
+<h3>What is a full adder?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It adds two data bits and a carry-in and produces Sum and Carry-out.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 71</div>
+<h3>How is a full adder constructed from half adders?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Two half adders and an OR gate can form a full adder.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 72</div>
+<h3>What is a ripple-carry adder?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is an adder where carry propagates from one stage to the next.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 73</div>
+<h3>What is carry propagation delay?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is the delay associated with carry traveling through successive adder stages.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 74</div>
+<h3>What is a multiplexer?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A multiplexer selects one of several inputs and connects it to one output.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 75</div>
+<h3>What is a demultiplexer?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A demultiplexer routes one input to one of several outputs.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 76</div>
+<h3>What is an encoder?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">An encoder converts an active input into a binary code.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 77</div>
+<h3>What is a priority encoder?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It outputs the code of the highest-priority active input.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 78</div>
+<h3>What is a decoder?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A decoder converts an n-bit input into up to 2^n output lines.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 79</div>
+<h3>What is a comparator?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It determines whether one binary number is greater than, less than, or equal to another.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 80</div>
+<h3>What is a latch?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A latch is a level-sensitive storage element.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 81</div>
+<h3>What is a flip-flop?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A flip-flop is an edge-triggered storage element that stores one bit.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 82</div>
+<h3>Latch vs flip-flop?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A latch responds to a level; a flip-flop normally responds to a clock edge.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 83</div>
+<h3>What is an SR flip-flop?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It has Set and Reset controls and stores one bit.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 84</div>
+<h3>What is a D flip-flop?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It transfers the D input to its output on the active clock edge.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 85</div>
+<h3>What is a JK flip-flop?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It provides hold, set, reset, and toggle behavior based on J and K.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 86</div>
+<h3>What is a T flip-flop?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It toggles when T is active and holds when T is inactive.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 87</div>
+<h3>What is a register?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A register is a group of flip-flops used to store a multi-bit value.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 88</div>
+<h3>What is a shift register?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It stores data and shifts it left or right with clock pulses.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 89</div>
+<h3>What is a counter?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A counter is a sequential circuit that progresses through a sequence of states.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 90</div>
+<h3>Synchronous vs asynchronous counter?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Synchronous counters use a common clock; asynchronous counters ripple the clock from stage to stage.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 91</div>
+<h3>What is propagation delay?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is the time between an input change and the corresponding output change.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 92</div>
+<h3>What is setup time?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is the minimum time data must be stable before the active clock edge.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 93</div>
+<h3>What is hold time?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is the minimum time data must remain stable after the active clock edge.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 94</div>
+<h3>What is metastability?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It is an uncertain temporary state that can occur when timing requirements are violated.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 95</div>
+<h3>What is a synchronous circuit?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">It uses a clock to coordinate state changes.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 96</div>
+<h3>What is a combinational circuit?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Its outputs depend only on current inputs.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 97</div>
+<h3>What is a sequential circuit?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Its outputs depend on current inputs and stored previous state.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 98</div>
+<h3>What is an FSM?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">A finite state machine is a sequential model with a finite set of states and transitions.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 99</div>
+<h3>What is fan-in?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Fan-in is the number of inputs a logic gate accepts.</div>
+</div><div class="question-card digital" data-category="digital">
+<div class="q-number">Question 100</div>
+<h3>What is fan-out?</h3>
+<button class="answer-btn" onclick="toggleAnswer(this)">👁 Show Answer</button>
+<div class="answer">Fan-out is the number of standard logic inputs one output can reliably drive.</div>
+</div></section>
+</main>
+<script>
+function toggleAnswer(button){
+ const answer=button.nextElementSibling;
+ if(answer.style.display==="block"){answer.style.display="none";button.innerText="👁 Show Answer";}
+ else{answer.style.display="block";button.innerText="🔒 Hide Answer";}
+}
+function filterQuestions(category){
+ const cards=document.querySelectorAll(".question-card"); let visible=0;
+ cards.forEach(card=>{if(category==="all"||card.dataset.category===category){card.style.display="block";visible++;}else{card.style.display="none";}});
+ document.getElementById("counter").innerText="Showing "+visible+" Questions";
+}
+</script>
+</body>
+</html>

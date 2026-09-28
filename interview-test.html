@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Practice | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body { background:#f4f7fb; }
+.intro { text-align:center; padding:32px 15px 18px; }
+.intro h2 { color:#243b64; font-size:30px; margin-bottom:8px; }
+.progress-wrap { width:92%; max-width:900px; margin:0 auto 20px; background:#e2e6eb; height:12px; border-radius:10px; overflow:hidden; }
+#progressBar { width:0%; height:100%; background:#243b64; transition:width .3s; }
+.progress-text { text-align:center; color:#555; margin-bottom:20px; }
+.filters { text-align:center; margin-bottom:24px; }
+.filters button { background:#243b64; color:white; border:0; border-radius:8px; padding:11px 18px; margin:4px; cursor:pointer; }
+.question-grid { width:92%; max-width:1100px; margin:auto; display:grid; grid-template-columns:repeat(2,1fr); gap:18px; padding-bottom:30px; }
+.question-card { background:white; border-radius:14px; padding:20px; box-shadow:0 3px 12px rgba(0,0,0,.09); border-top:5px solid #243b64; }
+.question-card.verilog { border-top-color:#7b61a8; }
+.question-card.digital { border-top-color:#2d8c8c; }
+.num { font-size:13px; color:#777; font-weight:bold; margin-bottom:8px; }
+.question-card h3 { color:#243b64; font-size:18px; line-height:1.45; }
+pre { background:#172033; color:white; padding:15px; border-radius:9px; overflow-x:auto; font-size:15px; line-height:1.5; }
+.circuit-box { background:#eef4f7; border-left:4px solid #2d8c8c; padding:14px; border-radius:8px; font-weight:600; margin:12px 0; }
+.options { margin-top:15px; }
+.option { display:block; background:#f7f9fc; border:1px solid #d9dee7; border-radius:8px; padding:11px; margin:8px 0; cursor:pointer; }
+.option:hover { background:#edf2f8; }
+.option input { margin-right:8px; }
+.submit-area { text-align:center; padding:10px 20px 50px; }
+#submitBtn { background:#243b64; color:white; border:0; border-radius:9px; padding:13px 28px; font-size:17px; cursor:pointer; }
+#result { display:none; width:92%; max-width:650px; margin:0 auto 40px; background:white; border-radius:15px; padding:28px; text-align:center; box-shadow:0 3px 12px rgba(0,0,0,.1); }
+#result h2 { color:#243b64; }
+.result-number { font-size:34px; font-weight:bold; color:#243b64; margin:12px; }
+#retryBtn { background:#5b8c5a; color:white; border:0; border-radius:8px; padding:11px 20px; cursor:pointer; }
+.review { display:none; margin-top:15px; text-align:left; }
+.review-item { padding:10px; border-radius:8px; margin:7px 0; }
+.correct { background:#e9f6ea; }
+.wrong { background:#fbeaea; }
+@media(max-width:800px) { .question-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+<h1>Digital Design Explorer</h1>
+<p>Interview Preparation</p>
+</header>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="logic-gates.html">Logic Gates</a>
+<div class="dropdown"><a href="#">Digital Circuits ▾</a><div class="dropdown-content">
+<a href="half-adder.html">Half Adder</a><a href="full-adder.html">Full Adder</a>
+</div></div>
+<a href="verilog.html">Verilog</a>
+<a href="practice.html">Practice</a>
+<a href="digital-logic-lab.html">Digital Logic Lab</a>
+<a href="quiz.html">Quiz</a>
+<a href="kmap.html">K-Map</a>
+<a href="quine-mccluskey.html">Quine–McCluskey</a>
+<a href="dashboard.html">Dashboard</a>
+<a href="interview.html">🎯 Interview</a>
+<a href="interview-test.html">📝 Interview Test</a>
+<a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main>
+<section class="intro">
+<h2>🎯 Practical Interview Test</h2>
+<p>Answer all 100 questions first. Your result and correct answers appear only after submission.</p>
+</section>
+
+<div class="filters">
+<button onclick="filterQuestions('all')">All 100</button>
+<button onclick="filterQuestions('verilog')">💻 Verilog 50</button>
+<button onclick="filterQuestions('digital')">🔌 Digital Analysis 50</button>
+</div>
+
+<div class="progress-text" id="progressText">Answered: 0 / 100</div>
+<div class="progress-wrap"><div id="progressBar"></div></div>
+
+<section class="question-grid">
+
+<article class="question-card verilog" id="question1" data-category="verilog">
+  <div class="num">💻 Verilog 1</div>
+  <h3>What circuit is represented by this code?</h3>
+  <pre><code>always @(posedge clk)
+    q &lt;= d;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q1" value="0"> <span>JK Flip-Flop</span></label><label class="option"><input type="radio" name="q1" value="1"> <span>T Flip-Flop</span></label><label class="option"><input type="radio" name="q1" value="2"> <span>Latch</span></label><label class="option"><input type="radio" name="q1" value="3"> <span>D Flip-Flop</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question2" data-category="verilog">
+  <div class="num">💻 Verilog 2</div>
+  <h3>What does this code implement?</h3>
+  <pre><code>assign y = sel ? a : b;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q2" value="0"> <span>4:1 Multiplexer</span></label><label class="option"><input type="radio" name="q2" value="1"> <span>Decoder</span></label><label class="option"><input type="radio" name="q2" value="2"> <span>2:1 Multiplexer</span></label><label class="option"><input type="radio" name="q2" value="3"> <span>Encoder</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question3" data-category="verilog">
+  <div class="num">💻 Verilog 3</div>
+  <h3>What circuit is inferred?</h3>
+  <pre><code>always @(*) begin
+    if (en)
+        y = d;
+    else
+        y = 1&#x27;b0;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q3" value="0"> <span>An AND-type enable function: y = en &amp; d.</span></label><label class="option"><input type="radio" name="q3" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q3" value="2"> <span>1</span></label><label class="option"><input type="radio" name="q3" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question4" data-category="verilog">
+  <div class="num">💻 Verilog 4</div>
+  <h3>What does this counter do?</h3>
+  <pre><code>always @(posedge clk)
+    q &lt;= q + 1&#x27;b1;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q4" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q4" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q4" value="2"> <span>It increments by 1 on every active clock edge.</span></label><label class="option"><input type="radio" name="q4" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question5" data-category="verilog">
+  <div class="num">💻 Verilog 5</div>
+  <h3>What is the output of this code when a=1 and b=0?</h3>
+  <pre><code>assign y = a &amp; b;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q5" value="0"> <span>y = 0.</span></label><label class="option"><input type="radio" name="q5" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q5" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q5" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question6" data-category="verilog">
+  <div class="num">💻 Verilog 6</div>
+  <h3>What is the output when a=1 and b=0?</h3>
+  <pre><code>assign y = a | b;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q6" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q6" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q6" value="2"> <span>y = 1.</span></label><label class="option"><input type="radio" name="q6" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question7" data-category="verilog">
+  <div class="num">💻 Verilog 7</div>
+  <h3>What is the output when a=1 and b=0?</h3>
+  <pre><code>assign y = a ^ b;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q7" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q7" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q7" value="2"> <span>1</span></label><label class="option"><input type="radio" name="q7" value="3"> <span>y = 1.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question8" data-category="verilog">
+  <div class="num">💻 Verilog 8</div>
+  <h3>What is the output when a=1?</h3>
+  <pre><code>assign y = ~a;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q8" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q8" value="1"> <span>y = 0.</span></label><label class="option"><input type="radio" name="q8" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q8" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question9" data-category="verilog">
+  <div class="num">💻 Verilog 9</div>
+  <h3>Which gate is represented?</h3>
+  <pre><code>assign y = ~(a &amp; b);</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q9" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q9" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q9" value="2"> <span>NAND gate</span></label><label class="option"><input type="radio" name="q9" value="3"> <span>0</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question10" data-category="verilog">
+  <div class="num">💻 Verilog 10</div>
+  <h3>Which gate is represented?</h3>
+  <pre><code>assign y = ~(a | b);</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q10" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q10" value="1"> <span>NOR gate</span></label><label class="option"><input type="radio" name="q10" value="2"> <span>1</span></label><label class="option"><input type="radio" name="q10" value="3"> <span>0</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question11" data-category="verilog">
+  <div class="num">💻 Verilog 11</div>
+  <h3>Which gate is represented?</h3>
+  <pre><code>assign y = ~(a ^ b);</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q11" value="0"> <span>NAND</span></label><label class="option"><input type="radio" name="q11" value="1"> <span>XNOR gate</span></label><label class="option"><input type="radio" name="q11" value="2"> <span>XOR</span></label><label class="option"><input type="radio" name="q11" value="3"> <span>AND</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question12" data-category="verilog">
+  <div class="num">💻 Verilog 12</div>
+  <h3>What does this code implement?</h3>
+  <pre><code>assign y = (a &amp; b) | (c &amp; d);</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q12" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q12" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q12" value="2"> <span>Two AND gates feeding an OR gate.</span></label><label class="option"><input type="radio" name="q12" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question13" data-category="verilog">
+  <div class="num">💻 Verilog 13</div>
+  <h3>What is y for a=1, b=0, c=1, d=1?</h3>
+  <pre><code>assign y = (a &amp; b) | (c &amp; d);</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q13" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q13" value="1"> <span>y = 1.</span></label><label class="option"><input type="radio" name="q13" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q13" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question14" data-category="verilog">
+  <div class="num">💻 Verilog 14</div>
+  <h3>What circuit does this describe?</h3>
+  <pre><code>always @(*) begin
+    case(sel)
+        2&#x27;b00: y = a;
+        2&#x27;b01: y = b;
+        2&#x27;b10: y = c;
+        2&#x27;b11: y = d;
+    endcase
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q14" value="0"> <span>Decoder</span></label><label class="option"><input type="radio" name="q14" value="1"> <span>2:1 Multiplexer</span></label><label class="option"><input type="radio" name="q14" value="2"> <span>Demultiplexer</span></label><label class="option"><input type="radio" name="q14" value="3"> <span>4:1 Multiplexer</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question15" data-category="verilog">
+  <div class="num">💻 Verilog 15</div>
+  <h3>What happens if an output is not assigned in every branch?</h3>
+  <pre><code>always @(*) begin
+    if (en)
+        y = a;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q15" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q15" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q15" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q15" value="3"> <span>An unintended latch can be inferred.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question16" data-category="verilog">
+  <div class="num">💻 Verilog 16</div>
+  <h3>What type of logic is described?</h3>
+  <pre><code>always @(*) begin
+    y = a ^ b;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q16" value="0"> <span>Combinational logic.</span></label><label class="option"><input type="radio" name="q16" value="1"> <span>Sequential logic</span></label><label class="option"><input type="radio" name="q16" value="2"> <span>Counter</span></label><label class="option"><input type="radio" name="q16" value="3"> <span>Latch</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question17" data-category="verilog">
+  <div class="num">💻 Verilog 17</div>
+  <h3>What type of logic is described?</h3>
+  <pre><code>always @(posedge clk)
+    q &lt;= d;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q17" value="0"> <span>Sequential logic.</span></label><label class="option"><input type="radio" name="q17" value="1"> <span>Combinational logic</span></label><label class="option"><input type="radio" name="q17" value="2"> <span>Latch</span></label><label class="option"><input type="radio" name="q17" value="3"> <span>Decoder</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question18" data-category="verilog">
+  <div class="num">💻 Verilog 18</div>
+  <h3>What is the function of reset in this code?</h3>
+  <pre><code>always @(posedge clk or posedge reset)
+    if (reset) q &lt;= 1&#x27;b0;
+    else q &lt;= d;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q18" value="0"> <span>It is an asynchronous active-high reset for q.</span></label><label class="option"><input type="radio" name="q18" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q18" value="2"> <span>1</span></label><label class="option"><input type="radio" name="q18" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question19" data-category="verilog">
+  <div class="num">💻 Verilog 19</div>
+  <h3>What happens when reset is asserted?</h3>
+  <pre><code>always @(posedge clk or posedge reset)
+    if (reset) q &lt;= 1&#x27;b0;
+    else q &lt;= d;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q19" value="0"> <span>q becomes d</span></label><label class="option"><input type="radio" name="q19" value="1"> <span>q toggles</span></label><label class="option"><input type="radio" name="q19" value="2"> <span>q becomes 1</span></label><label class="option"><input type="radio" name="q19" value="3"> <span>q becomes 0 immediately, without waiting for a clock edge.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question20" data-category="verilog">
+  <div class="num">💻 Verilog 20</div>
+  <h3>What circuit is represented?</h3>
+  <pre><code>always @(posedge clk) begin
+    if (en)
+        q &lt;= d;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q20" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q20" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q20" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q20" value="3"> <span>A D flip-flop with clock enable.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question21" data-category="verilog">
+  <div class="num">💻 Verilog 21</div>
+  <h3>What does this code implement?</h3>
+  <pre><code>always @(posedge clk)
+    q &lt;= ~q;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q21" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q21" value="1"> <span>A T-type toggling flip-flop.</span></label><label class="option"><input type="radio" name="q21" value="2"> <span>1</span></label><label class="option"><input type="radio" name="q21" value="3"> <span>0</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question22" data-category="verilog">
+  <div class="num">💻 Verilog 22</div>
+  <h3>What is the next q if q=0 before the clock edge?</h3>
+  <pre><code>always @(posedge clk)
+    q &lt;= ~q;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q22" value="0"> <span>q becomes 1.</span></label><label class="option"><input type="radio" name="q22" value="1"> <span>q becomes d</span></label><label class="option"><input type="radio" name="q22" value="2"> <span>q toggles</span></label><label class="option"><input type="radio" name="q22" value="3"> <span>q becomes 0</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question23" data-category="verilog">
+  <div class="num">💻 Verilog 23</div>
+  <h3>What is the next q if q=1 before the clock edge?</h3>
+  <pre><code>always @(posedge clk)
+    q &lt;= ~q;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q23" value="0"> <span>q becomes 0.</span></label><label class="option"><input type="radio" name="q23" value="1"> <span>q becomes 1</span></label><label class="option"><input type="radio" name="q23" value="2"> <span>q becomes d</span></label><label class="option"><input type="radio" name="q23" value="3"> <span>q toggles</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question24" data-category="verilog">
+  <div class="num">💻 Verilog 24</div>
+  <h3>What circuit is represented?</h3>
+  <pre><code>always @(posedge clk)
+    q &lt;= {q[2:0], din};</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q24" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q24" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q24" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q24" value="3"> <span>A 4-bit left-shifting register.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question25" data-category="verilog">
+  <div class="num">💻 Verilog 25</div>
+  <h3>What does this code implement?</h3>
+  <pre><code>assign y = en ? data : 4&#x27;b0000;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q25" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q25" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q25" value="2"> <span>An enabled 4-bit data output; when en=0, y is zero.</span></label><label class="option"><input type="radio" name="q25" value="3"> <span>0</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question26" data-category="verilog">
+  <div class="num">💻 Verilog 26</div>
+  <h3>What is y when en=0 and data=4&#x27;b1010?</h3>
+  <pre><code>assign y = en ? data : 4&#x27;b0000;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q26" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q26" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q26" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q26" value="3"> <span>0000</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question27" data-category="verilog">
+  <div class="num">💻 Verilog 27</div>
+  <h3>What is y when en=1 and data=4&#x27;b1010?</h3>
+  <pre><code>assign y = en ? data : 4&#x27;b0000;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q27" value="0"> <span>1001</span></label><label class="option"><input type="radio" name="q27" value="1"> <span>1011</span></label><label class="option"><input type="radio" name="q27" value="2"> <span>1100</span></label><label class="option"><input type="radio" name="q27" value="3"> <span>1010</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question28" data-category="verilog">
+  <div class="num">💻 Verilog 28</div>
+  <h3>What circuit is described?</h3>
+  <pre><code>always @(*) begin
+    y = 1&#x27;b0;
+    if (a)
+        y = b;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q28" value="0"> <span>Combinational logic equivalent to y = a &amp; b.</span></label><label class="option"><input type="radio" name="q28" value="1"> <span>Sequential logic</span></label><label class="option"><input type="radio" name="q28" value="2"> <span>Latch</span></label><label class="option"><input type="radio" name="q28" value="3"> <span>Counter</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question29" data-category="verilog">
+  <div class="num">💻 Verilog 29</div>
+  <h3>What does this code produce?</h3>
+  <pre><code>assign {carry,sum} = a + b;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q29" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q29" value="1"> <span>It produces the binary addition result with sum bits and carry.</span></label><label class="option"><input type="radio" name="q29" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q29" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question30" data-category="verilog">
+  <div class="num">💻 Verilog 30</div>
+  <h3>What circuit is described?</h3>
+  <pre><code>always @(*) begin
+    case (sel)
+        1&#x27;b0: y = a;
+        1&#x27;b1: y = b;
+    endcase
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q30" value="0"> <span>Decoder</span></label><label class="option"><input type="radio" name="q30" value="1"> <span>Encoder</span></label><label class="option"><input type="radio" name="q30" value="2"> <span>4:1 Multiplexer</span></label><label class="option"><input type="radio" name="q30" value="3"> <span>2:1 Multiplexer</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question31" data-category="verilog">
+  <div class="num">💻 Verilog 31</div>
+  <h3>What is the likely problem here?</h3>
+  <pre><code>always @(posedge clk)
+    q = d;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q31" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q31" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q31" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q31" value="3"> <span>A blocking assignment is being used in clocked sequential logic; non-blocking assignment is generally preferred.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question32" data-category="verilog">
+  <div class="num">💻 Verilog 32</div>
+  <h3>What is the likely problem here?</h3>
+  <pre><code>always @(*) begin
+    if (a)
+        y = b;
+    else if (c)
+        y = d;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q32" value="0"> <span>y is not assigned when both conditions are false, so latch inference is possible.</span></label><label class="option"><input type="radio" name="q32" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q32" value="2"> <span>1</span></label><label class="option"><input type="radio" name="q32" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question33" data-category="verilog">
+  <div class="num">💻 Verilog 33</div>
+  <h3>What does this code implement?</h3>
+  <pre><code>assign y = (sel == 2&#x27;b00) ? a :
+           (sel == 2&#x27;b01) ? b :
+           (sel == 2&#x27;b10) ? c : d;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q33" value="0"> <span>4:1 Multiplexer</span></label><label class="option"><input type="radio" name="q33" value="1"> <span>Demultiplexer</span></label><label class="option"><input type="radio" name="q33" value="2"> <span>Decoder</span></label><label class="option"><input type="radio" name="q33" value="3"> <span>2:1 Multiplexer</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question34" data-category="verilog">
+  <div class="num">💻 Verilog 34</div>
+  <h3>What circuit is represented?</h3>
+  <pre><code>always @(posedge clk)
+    if (load)
+        q &lt;= d;
+    else
+        q &lt;= q + 1&#x27;b1;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q34" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q34" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q34" value="2"> <span>1</span></label><label class="option"><input type="radio" name="q34" value="3"> <span>A register with load and increment behavior.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question35" data-category="verilog">
+  <div class="num">💻 Verilog 35</div>
+  <h3>What is q after the clock edge if load=1?</h3>
+  <pre><code>always @(posedge clk)
+    if (load)
+        q &lt;= d;
+    else
+        q &lt;= q + 1&#x27;b1;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q35" value="0"> <span>q becomes 1</span></label><label class="option"><input type="radio" name="q35" value="1"> <span>q becomes 0</span></label><label class="option"><input type="radio" name="q35" value="2"> <span>q becomes d.</span></label><label class="option"><input type="radio" name="q35" value="3"> <span>q toggles</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question36" data-category="verilog">
+  <div class="num">💻 Verilog 36</div>
+  <h3>What is q after the clock edge if load=0?</h3>
+  <pre><code>always @(posedge clk)
+    if (load)
+        q &lt;= d;
+    else
+        q &lt;= q + 1&#x27;b1;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q36" value="0"> <span>q decrements by 1</span></label><label class="option"><input type="radio" name="q36" value="1"> <span>q increments by 1.</span></label><label class="option"><input type="radio" name="q36" value="2"> <span>q toggles</span></label><label class="option"><input type="radio" name="q36" value="3"> <span>q remains unchanged</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question37" data-category="verilog">
+  <div class="num">💻 Verilog 37</div>
+  <h3>What does this code implement?</h3>
+  <pre><code>assign y = (a &amp; ~b) | (~a &amp; b);</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q37" value="0"> <span>OR</span></label><label class="option"><input type="radio" name="q37" value="1"> <span>AND</span></label><label class="option"><input type="radio" name="q37" value="2"> <span>XNOR</span></label><label class="option"><input type="radio" name="q37" value="3"> <span>XOR function.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question38" data-category="verilog">
+  <div class="num">💻 Verilog 38</div>
+  <h3>What does this code implement?</h3>
+  <pre><code>assign y = (a &amp; b) | (~a &amp; ~b);</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q38" value="0"> <span>AND</span></label><label class="option"><input type="radio" name="q38" value="1"> <span>XOR</span></label><label class="option"><input type="radio" name="q38" value="2"> <span>NAND</span></label><label class="option"><input type="radio" name="q38" value="3"> <span>XNOR function.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question39" data-category="verilog">
+  <div class="num">💻 Verilog 39</div>
+  <h3>What is the output for a=1,b=1?</h3>
+  <pre><code>assign y = (a &amp; ~b) | (~a &amp; b);</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q39" value="0"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q39" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q39" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q39" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question40" data-category="verilog">
+  <div class="num">💻 Verilog 40</div>
+  <h3>What is the output for a=1,b=1?</h3>
+  <pre><code>assign y = (a &amp; b) | (~a &amp; ~b);</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q40" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q40" value="1"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q40" value="2"> <span>1</span></label><label class="option"><input type="radio" name="q40" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question41" data-category="verilog">
+  <div class="num">💻 Verilog 41</div>
+  <h3>What circuit is described?</h3>
+  <pre><code>always @(posedge clk) begin
+    q1 &lt;= d;
+    q2 &lt;= q1;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q41" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q41" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q41" value="2"> <span>A 2-stage shift/register pipeline.</span></label><label class="option"><input type="radio" name="q41" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question42" data-category="verilog">
+  <div class="num">💻 Verilog 42</div>
+  <h3>What is q2 after one clock edge if q1 initially contains 0 and d=1?</h3>
+  <pre><code>always @(posedge clk) begin
+    q1 &lt;= d;
+    q2 &lt;= q1;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q42" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q42" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q42" value="2"> <span>q2 remains 0 after that edge; q1 becomes 1.</span></label><label class="option"><input type="radio" name="q42" value="3"> <span>0</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question43" data-category="verilog">
+  <div class="num">💻 Verilog 43</div>
+  <h3>What does this code implement?</h3>
+  <pre><code>always @(posedge clk) begin
+    if (reset)
+        q &lt;= 0;
+    else if (up)
+        q &lt;= q + 1;
+    else
+        q &lt;= q - 1;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q43" value="0"> <span>An up/down counter with synchronous reset.</span></label><label class="option"><input type="radio" name="q43" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q43" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q43" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question44" data-category="verilog">
+  <div class="num">💻 Verilog 44</div>
+  <h3>What does this code describe?</h3>
+  <pre><code>assign y = a &amp; b &amp; c;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q44" value="0"> <span>3-input AND gate.</span></label><label class="option"><input type="radio" name="q44" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q44" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q44" value="3"> <span>0</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question45" data-category="verilog">
+  <div class="num">💻 Verilog 45</div>
+  <h3>What does this code describe?</h3>
+  <pre><code>assign y = a | b | c;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q45" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q45" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q45" value="2"> <span>1</span></label><label class="option"><input type="radio" name="q45" value="3"> <span>3-input OR gate.</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question46" data-category="verilog">
+  <div class="num">💻 Verilog 46</div>
+  <h3>What is y for a=1,b=1,c=0?</h3>
+  <pre><code>assign y = a &amp; b &amp; c;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q46" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q46" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q46" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q46" value="3"> <span>Depends on the clock</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question47" data-category="verilog">
+  <div class="num">💻 Verilog 47</div>
+  <h3>What is y for a=0,b=1,c=1?</h3>
+  <pre><code>assign y = a | b | c;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q47" value="0"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q47" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q47" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q47" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question48" data-category="verilog">
+  <div class="num">💻 Verilog 48</div>
+  <h3>What circuit is described?</h3>
+  <pre><code>always @(posedge clk)
+    q &lt;= d;
+always @(posedge clk)
+    r &lt;= q;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q48" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q48" value="1"> <span>Two cascaded clocked registers.</span></label><label class="option"><input type="radio" name="q48" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q48" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question49" data-category="verilog">
+  <div class="num">💻 Verilog 49</div>
+  <h3>Why is &lt;= used in this code?</h3>
+  <pre><code>always @(posedge clk) begin
+    q1 &lt;= d;
+    q2 &lt;= q1;
+end</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q49" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q49" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q49" value="2"> <span>Non-blocking assignments model simultaneous clocked register updates.</span></label><label class="option"><input type="radio" name="q49" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card verilog" id="question50" data-category="verilog">
+  <div class="num">💻 Verilog 50</div>
+  <h3>What is the output of this combinational code?</h3>
+  <pre><code>assign y = (a &amp; b) | c;</code></pre>
+  <div class="options">
+    <label class="option"><input type="radio" name="q50" value="0"> <span>y is 1 if c is 1, or if both a and b are 1.</span></label><label class="option"><input type="radio" name="q50" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q50" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q50" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question51" data-category="digital">
+  <div class="num">🔌 Digital Circuit 1</div>
+  <h3>For F = A + B, find F when A=0 and B=1.</h3>
+  <div class="circuit-box">F = A + B</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q51" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q51" value="1"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q51" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q51" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question52" data-category="digital">
+  <div class="num">🔌 Digital Circuit 2</div>
+  <h3>For F = AB, find F when A=1 and B=0.</h3>
+  <div class="circuit-box">F = A B</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q52" value="0"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q52" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q52" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q52" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question53" data-category="digital">
+  <div class="num">🔌 Digital Circuit 3</div>
+  <h3>For F = A ⊕ B, find F when A=1 and B=0.</h3>
+  <div class="circuit-box">F = A XOR B</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q53" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q53" value="1"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q53" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q53" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question54" data-category="digital">
+  <div class="num">🔌 Digital Circuit 4</div>
+  <h3>For F = A XNOR B, find F when A=1 and B=1.</h3>
+  <div class="circuit-box">F = A XNOR B</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q54" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q54" value="1"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q54" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q54" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question55" data-category="digital">
+  <div class="num">🔌 Digital Circuit 5</div>
+  <h3>Evaluate F = AB + C for A=1, B=0, C=1.</h3>
+  <div class="circuit-box">F = AB + C</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q55" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q55" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q55" value="2"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q55" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question56" data-category="digital">
+  <div class="num">🔌 Digital Circuit 6</div>
+  <h3>Evaluate F = AB + C for A=1, B=1, C=0.</h3>
+  <div class="circuit-box">F = AB + C</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q56" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q56" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q56" value="2"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q56" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question57" data-category="digital">
+  <div class="num">🔌 Digital Circuit 7</div>
+  <h3>Evaluate F = (A+B)&#x27; for A=0, B=0.</h3>
+  <div class="circuit-box">F = (A+B)&#x27;</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q57" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q57" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q57" value="2"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q57" value="3"> <span>0</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question58" data-category="digital">
+  <div class="num">🔌 Digital Circuit 8</div>
+  <h3>Evaluate F = (AB)&#x27; for A=1, B=1.</h3>
+  <div class="circuit-box">F = (AB)&#x27;</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q58" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q58" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q58" value="2"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q58" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question59" data-category="digital">
+  <div class="num">🔌 Digital Circuit 9</div>
+  <h3>Simplify F = A + AB.</h3>
+  <div class="circuit-box">F = A + AB</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q59" value="0"> <span>F = B</span></label><label class="option"><input type="radio" name="q59" value="1"> <span>F = A+B</span></label><label class="option"><input type="radio" name="q59" value="2"> <span>F = AB</span></label><label class="option"><input type="radio" name="q59" value="3"> <span>F = A</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question60" data-category="digital">
+  <div class="num">🔌 Digital Circuit 10</div>
+  <h3>Simplify F = A(A+B).</h3>
+  <div class="circuit-box">F = A(A+B)</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q60" value="0"> <span>F = AB</span></label><label class="option"><input type="radio" name="q60" value="1"> <span>F = A+B</span></label><label class="option"><input type="radio" name="q60" value="2"> <span>F = A</span></label><label class="option"><input type="radio" name="q60" value="3"> <span>F = B</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question61" data-category="digital">
+  <div class="num">🔌 Digital Circuit 11</div>
+  <h3>Simplify F = A + A&#x27;.</h3>
+  <div class="circuit-box">F = A + A&#x27;</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q61" value="0"> <span>F = A&#x27;</span></label><label class="option"><input type="radio" name="q61" value="1"> <span>F = 1</span></label><label class="option"><input type="radio" name="q61" value="2"> <span>F = 0</span></label><label class="option"><input type="radio" name="q61" value="3"> <span>F = A</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question62" data-category="digital">
+  <div class="num">🔌 Digital Circuit 12</div>
+  <h3>Simplify F = AA&#x27;.</h3>
+  <div class="circuit-box">F = AA&#x27;</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q62" value="0"> <span>F = A</span></label><label class="option"><input type="radio" name="q62" value="1"> <span>F = 1</span></label><label class="option"><input type="radio" name="q62" value="2"> <span>F = A+B</span></label><label class="option"><input type="radio" name="q62" value="3"> <span>F = 0</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question63" data-category="digital">
+  <div class="num">🔌 Digital Circuit 13</div>
+  <h3>A half adder receives A=1 and B=1. Find Sum and Carry.</h3>
+  <div class="circuit-box">Half Adder</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q63" value="0"> <span>Sum=1, Carry=1</span></label><label class="option"><input type="radio" name="q63" value="1"> <span>Sum=0, Carry=0</span></label><label class="option"><input type="radio" name="q63" value="2"> <span>Sum=0, Carry=1</span></label><label class="option"><input type="radio" name="q63" value="3"> <span>Sum=1, Carry=0</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question64" data-category="digital">
+  <div class="num">🔌 Digital Circuit 14</div>
+  <h3>A half adder receives A=1 and B=0. Find Sum and Carry.</h3>
+  <div class="circuit-box">Half Adder</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q64" value="0"> <span>Sum=0, Carry=0</span></label><label class="option"><input type="radio" name="q64" value="1"> <span>Sum=1, Carry=0</span></label><label class="option"><input type="radio" name="q64" value="2"> <span>Sum=1, Carry=1</span></label><label class="option"><input type="radio" name="q64" value="3"> <span>Sum=0, Carry=1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question65" data-category="digital">
+  <div class="num">🔌 Digital Circuit 15</div>
+  <h3>A full adder receives A=1, B=1, Cin=0. Find Sum and Cout.</h3>
+  <div class="circuit-box">Full Adder</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q65" value="0"> <span>Sum=1, Cout=1</span></label><label class="option"><input type="radio" name="q65" value="1"> <span>Sum=0, Cout=0</span></label><label class="option"><input type="radio" name="q65" value="2"> <span>Sum=1, Cout=0</span></label><label class="option"><input type="radio" name="q65" value="3"> <span>Sum=0, Cout=1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question66" data-category="digital">
+  <div class="num">🔌 Digital Circuit 16</div>
+  <h3>A full adder receives A=1, B=0, Cin=1. Find Sum and Cout.</h3>
+  <div class="circuit-box">Full Adder</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q66" value="0"> <span>Sum=0, Cout=1</span></label><label class="option"><input type="radio" name="q66" value="1"> <span>Sum=1, Cout=0</span></label><label class="option"><input type="radio" name="q66" value="2"> <span>Sum=1, Cout=1</span></label><label class="option"><input type="radio" name="q66" value="3"> <span>Sum=0, Cout=0</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question67" data-category="digital">
+  <div class="num">🔌 Digital Circuit 17</div>
+  <h3>A full adder receives A=1, B=1, Cin=1. Find Sum and Cout.</h3>
+  <div class="circuit-box">Full Adder</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q67" value="0"> <span>Sum=0, Cout=1</span></label><label class="option"><input type="radio" name="q67" value="1"> <span>Sum=1, Cout=0</span></label><label class="option"><input type="radio" name="q67" value="2"> <span>Sum=0, Cout=0</span></label><label class="option"><input type="radio" name="q67" value="3"> <span>Sum=1, Cout=1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question68" data-category="digital">
+  <div class="num">🔌 Digital Circuit 18</div>
+  <h3>A 2:1 MUX has I0=0, I1=1 and S=0. Find Y.</h3>
+  <div class="circuit-box">2:1 MUX</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q68" value="0"> <span>Y=I1</span></label><label class="option"><input type="radio" name="q68" value="1"> <span>Y=0</span></label><label class="option"><input type="radio" name="q68" value="2"> <span>Y=1</span></label><label class="option"><input type="radio" name="q68" value="3"> <span>Y=I0</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question69" data-category="digital">
+  <div class="num">🔌 Digital Circuit 19</div>
+  <h3>A 2:1 MUX has I0=0, I1=1 and S=1. Find Y.</h3>
+  <div class="circuit-box">2:1 MUX</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q69" value="0"> <span>Y=0</span></label><label class="option"><input type="radio" name="q69" value="1"> <span>Y=1</span></label><label class="option"><input type="radio" name="q69" value="2"> <span>Y=I1</span></label><label class="option"><input type="radio" name="q69" value="3"> <span>Y=I0</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question70" data-category="digital">
+  <div class="num">🔌 Digital Circuit 20</div>
+  <h3>A 4:1 MUX has I0=0,I1=1,I2=0,I3=1. If S1S0=10, find Y.</h3>
+  <div class="circuit-box">4:1 MUX</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q70" value="0"> <span>Y=1</span></label><label class="option"><input type="radio" name="q70" value="1"> <span>Y=0</span></label><label class="option"><input type="radio" name="q70" value="2"> <span>Y=I0</span></label><label class="option"><input type="radio" name="q70" value="3"> <span>Y=I1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question71" data-category="digital">
+  <div class="num">🔌 Digital Circuit 21</div>
+  <h3>A 4:1 MUX has I0=0,I1=1,I2=0,I3=1. If S1S0=11, find Y.</h3>
+  <div class="circuit-box">4:1 MUX</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q71" value="0"> <span>Y=I1</span></label><label class="option"><input type="radio" name="q71" value="1"> <span>Y=I0</span></label><label class="option"><input type="radio" name="q71" value="2"> <span>Y=0</span></label><label class="option"><input type="radio" name="q71" value="3"> <span>Y=1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question72" data-category="digital">
+  <div class="num">🔌 Digital Circuit 22</div>
+  <h3>A 2-to-4 decoder receives input 10. Which output is active?</h3>
+  <div class="circuit-box">2-to-4 Decoder</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q72" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q72" value="1"> <span>The output corresponding to binary 10, normally Y2, is active.</span></label><label class="option"><input type="radio" name="q72" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q72" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question73" data-category="digital">
+  <div class="num">🔌 Digital Circuit 23</div>
+  <h3>A 2-to-4 decoder receives input 01. Which output is active?</h3>
+  <div class="circuit-box">2-to-4 Decoder</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q73" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q73" value="1"> <span>The output corresponding to binary 01, normally Y1, is active.</span></label><label class="option"><input type="radio" name="q73" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q73" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question74" data-category="digital">
+  <div class="num">🔌 Digital Circuit 24</div>
+  <h3>A 3-bit binary input 101 is applied to a decoder. What decimal value does it represent?</h3>
+  <div class="circuit-box">Binary decoding</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q74" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q74" value="1"> <span>5</span></label><label class="option"><input type="radio" name="q74" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q74" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question75" data-category="digital">
+  <div class="num">🔌 Digital Circuit 25</div>
+  <h3>Convert binary 1011 to decimal.</h3>
+  <div class="circuit-box">Binary conversion</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q75" value="0"> <span>9</span></label><label class="option"><input type="radio" name="q75" value="1"> <span>10</span></label><label class="option"><input type="radio" name="q75" value="2"> <span>11</span></label><label class="option"><input type="radio" name="q75" value="3"> <span>12</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question76" data-category="digital">
+  <div class="num">🔌 Digital Circuit 26</div>
+  <h3>Convert binary 1101 to decimal.</h3>
+  <div class="circuit-box">Binary conversion</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q76" value="0"> <span>11</span></label><label class="option"><input type="radio" name="q76" value="1"> <span>14</span></label><label class="option"><input type="radio" name="q76" value="2"> <span>13</span></label><label class="option"><input type="radio" name="q76" value="3"> <span>12</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question77" data-category="digital">
+  <div class="num">🔌 Digital Circuit 27</div>
+  <h3>Convert decimal 10 to binary.</h3>
+  <div class="circuit-box">Binary conversion</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q77" value="0"> <span>1011</span></label><label class="option"><input type="radio" name="q77" value="1"> <span>1001</span></label><label class="option"><input type="radio" name="q77" value="2"> <span>1100</span></label><label class="option"><input type="radio" name="q77" value="3"> <span>1010</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question78" data-category="digital">
+  <div class="num">🔌 Digital Circuit 28</div>
+  <h3>Convert decimal 15 to binary.</h3>
+  <div class="circuit-box">Binary conversion</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q78" value="0"> <span>1011</span></label><label class="option"><input type="radio" name="q78" value="1"> <span>1110</span></label><label class="option"><input type="radio" name="q78" value="2"> <span>1000</span></label><label class="option"><input type="radio" name="q78" value="3"> <span>1111</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question79" data-category="digital">
+  <div class="num">🔌 Digital Circuit 29</div>
+  <h3>What is the output of an XOR gate for inputs 0 and 0?</h3>
+  <div class="circuit-box">XOR</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q79" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q79" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q79" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q79" value="3"> <span>Depends on the clock</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question80" data-category="digital">
+  <div class="num">🔌 Digital Circuit 30</div>
+  <h3>What is the output of an XOR gate for inputs 1 and 1?</h3>
+  <div class="circuit-box">XOR</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q80" value="0"> <span>0</span></label><label class="option"><input type="radio" name="q80" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q80" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q80" value="3"> <span>Depends on the clock</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question81" data-category="digital">
+  <div class="num">🔌 Digital Circuit 31</div>
+  <h3>What is the output of an XNOR gate for inputs 0 and 0?</h3>
+  <div class="circuit-box">XNOR</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q81" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q81" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q81" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q81" value="3"> <span>Depends on the clock</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question82" data-category="digital">
+  <div class="num">🔌 Digital Circuit 32</div>
+  <h3>What is the output of a NAND gate for inputs 1 and 1?</h3>
+  <div class="circuit-box">NAND</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q82" value="0"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q82" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q82" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q82" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question83" data-category="digital">
+  <div class="num">🔌 Digital Circuit 33</div>
+  <h3>What is the output of a NOR gate for inputs 0 and 0?</h3>
+  <div class="circuit-box">NOR</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q83" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q83" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q83" value="2"> <span>Depends on the clock</span></label><label class="option"><input type="radio" name="q83" value="3"> <span>0</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question84" data-category="digital">
+  <div class="num">🔌 Digital Circuit 34</div>
+  <h3>For F(A,B,C)=Σm(1,3,5,7), identify the simplified function.</h3>
+  <div class="circuit-box">Minterm analysis</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q84" value="0"> <span>F = B</span></label><label class="option"><input type="radio" name="q84" value="1"> <span>F = C&#x27;</span></label><label class="option"><input type="radio" name="q84" value="2"> <span>F = A</span></label><label class="option"><input type="radio" name="q84" value="3"> <span>F = C</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question85" data-category="digital">
+  <div class="num">🔌 Digital Circuit 35</div>
+  <h3>For F(A,B,C)=Σm(0,2,4,6), identify the simplified function.</h3>
+  <div class="circuit-box">Minterm analysis</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q85" value="0"> <span>F = C</span></label><label class="option"><input type="radio" name="q85" value="1"> <span>F = C&#x27;</span></label><label class="option"><input type="radio" name="q85" value="2"> <span>F = B</span></label><label class="option"><input type="radio" name="q85" value="3"> <span>F = A</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question86" data-category="digital">
+  <div class="num">🔌 Digital Circuit 36</div>
+  <h3>For F(A,B,C)=Σm(3,7), simplify the function.</h3>
+  <div class="circuit-box">Minterm analysis</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q86" value="0"> <span>F = BC</span></label><label class="option"><input type="radio" name="q86" value="1"> <span>F = B&#x27;C</span></label><label class="option"><input type="radio" name="q86" value="2"> <span>F = B+C</span></label><label class="option"><input type="radio" name="q86" value="3"> <span>F = AC</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question87" data-category="digital">
+  <div class="num">🔌 Digital Circuit 37</div>
+  <h3>For F(A,B,C)=Σm(1,5), simplify the function.</h3>
+  <div class="circuit-box">Minterm analysis</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q87" value="0"> <span>F = B+C</span></label><label class="option"><input type="radio" name="q87" value="1"> <span>F = AC</span></label><label class="option"><input type="radio" name="q87" value="2"> <span>F = B&#x27;C</span></label><label class="option"><input type="radio" name="q87" value="3"> <span>F = BC</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question88" data-category="digital">
+  <div class="num">🔌 Digital Circuit 38</div>
+  <h3>A D flip-flop has D=1 at the active clock edge. What is Q after the edge?</h3>
+  <div class="circuit-box">D Flip-Flop</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q88" value="0"> <span>Q=1</span></label><label class="option"><input type="radio" name="q88" value="1"> <span>1</span></label><label class="option"><input type="radio" name="q88" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q88" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question89" data-category="digital">
+  <div class="num">🔌 Digital Circuit 39</div>
+  <h3>A D flip-flop has D=0 at the active clock edge. What is Q after the edge?</h3>
+  <div class="circuit-box">D Flip-Flop</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q89" value="0"> <span>Q=0</span></label><label class="option"><input type="radio" name="q89" value="1"> <span>2</span></label><label class="option"><input type="radio" name="q89" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q89" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question90" data-category="digital">
+  <div class="num">🔌 Digital Circuit 40</div>
+  <h3>A T flip-flop has T=1 and Q=0. What is the next Q?</h3>
+  <div class="circuit-box">T Flip-Flop</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q90" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q90" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q90" value="2"> <span>Q toggles to 1.</span></label><label class="option"><input type="radio" name="q90" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question91" data-category="digital">
+  <div class="num">🔌 Digital Circuit 41</div>
+  <h3>A T flip-flop has T=0 and Q=1. What is the next Q?</h3>
+  <div class="circuit-box">T Flip-Flop</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q91" value="0"> <span>2</span></label><label class="option"><input type="radio" name="q91" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q91" value="2"> <span>Q remains 1.</span></label><label class="option"><input type="radio" name="q91" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question92" data-category="digital">
+  <div class="num">🔌 Digital Circuit 42</div>
+  <h3>A JK flip-flop has J=1,K=1 and Q=0. What is next Q?</h3>
+  <div class="circuit-box">JK Flip-Flop</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q92" value="0"> <span>1</span></label><label class="option"><input type="radio" name="q92" value="1"> <span>Q toggles to 1.</span></label><label class="option"><input type="radio" name="q92" value="2"> <span>0</span></label><label class="option"><input type="radio" name="q92" value="3"> <span>2</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question93" data-category="digital">
+  <div class="num">🔌 Digital Circuit 43</div>
+  <h3>A JK flip-flop has J=1,K=1 and Q=1. What is next Q?</h3>
+  <div class="circuit-box">JK Flip-Flop</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q93" value="0"> <span>Q toggles to 0.</span></label><label class="option"><input type="radio" name="q93" value="1"> <span>0</span></label><label class="option"><input type="radio" name="q93" value="2"> <span>2</span></label><label class="option"><input type="radio" name="q93" value="3"> <span>1</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question94" data-category="digital">
+  <div class="num">🔌 Digital Circuit 44</div>
+  <h3>A 3-bit binary up-counter is at 101. What is the next state?</h3>
+  <div class="circuit-box">3-bit Counter</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q94" value="0"> <span>110</span></label><label class="option"><input type="radio" name="q94" value="1"> <span>101</span></label><label class="option"><input type="radio" name="q94" value="2"> <span>100</span></label><label class="option"><input type="radio" name="q94" value="3"> <span>111</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question95" data-category="digital">
+  <div class="num">🔌 Digital Circuit 45</div>
+  <h3>A 3-bit binary up-counter is at 111. What is the next state?</h3>
+  <div class="circuit-box">3-bit Counter</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q95" value="0"> <span>010</span></label><label class="option"><input type="radio" name="q95" value="1"> <span>111</span></label><label class="option"><input type="radio" name="q95" value="2"> <span>000</span></label><label class="option"><input type="radio" name="q95" value="3"> <span>001</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question96" data-category="digital">
+  <div class="num">🔌 Digital Circuit 46</div>
+  <h3>A 3-bit binary down-counter is at 100. What is the next state?</h3>
+  <div class="circuit-box">3-bit Counter</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q96" value="0"> <span>100</span></label><label class="option"><input type="radio" name="q96" value="1"> <span>010</span></label><label class="option"><input type="radio" name="q96" value="2"> <span>011</span></label><label class="option"><input type="radio" name="q96" value="3"> <span>101</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question97" data-category="digital">
+  <div class="num">🔌 Digital Circuit 47</div>
+  <h3>A 4-bit register contains 1011. Shift left by one with serial input 0. What is the result?</h3>
+  <div class="circuit-box">Shift Register</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q97" value="0"> <span>1100</span></label><label class="option"><input type="radio" name="q97" value="1"> <span>1011</span></label><label class="option"><input type="radio" name="q97" value="2"> <span>0011</span></label><label class="option"><input type="radio" name="q97" value="3"> <span>0110</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question98" data-category="digital">
+  <div class="num">🔌 Digital Circuit 48</div>
+  <h3>A 4-bit register contains 1011. Shift right by one with serial input 0. What is the result?</h3>
+  <div class="circuit-box">Shift Register</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q98" value="0"> <span>0101</span></label><label class="option"><input type="radio" name="q98" value="1"> <span>0110</span></label><label class="option"><input type="radio" name="q98" value="2"> <span>0011</span></label><label class="option"><input type="radio" name="q98" value="3"> <span>1010</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question99" data-category="digital">
+  <div class="num">🔌 Digital Circuit 49</div>
+  <h3>A circuit has a propagation delay of 8 ns per stage and four stages in series. What is the approximate total delay?</h3>
+  <div class="circuit-box">Timing analysis</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q99" value="0"> <span>8 ns</span></label><label class="option"><input type="radio" name="q99" value="1"> <span>16 ns</span></label><label class="option"><input type="radio" name="q99" value="2"> <span>32 ns</span></label><label class="option"><input type="radio" name="q99" value="3"> <span>24 ns</span></label>
+  </div>
+</article>
+
+<article class="question-card digital" id="question100" data-category="digital">
+  <div class="num">🔌 Digital Circuit 50</div>
+  <h3>A signal changes at 20 ns and the output changes at 27 ns. What is the propagation delay?</h3>
+  <div class="circuit-box">Timing analysis</div>
+  <div class="options">
+    <label class="option"><input type="radio" name="q100" value="0"> <span>5 ns</span></label><label class="option"><input type="radio" name="q100" value="1"> <span>10 ns</span></label><label class="option"><input type="radio" name="q100" value="2"> <span>8 ns</span></label><label class="option"><input type="radio" name="q100" value="3"> <span>7 ns</span></label>
+  </div>
+</article>
+
+</section>
+
+<div class="submit-area">
+<button id="submitBtn" onclick="submitTest()">✅ Submit Interview Test</button>
+</div>
+
+<section id="result">
+<h2>🎉 Interview Test Result</h2>
+<div class="result-number" id="score"></div>
+<p id="percentage"></p>
+<p id="correctText"></p>
+<p id="wrongText"></p>
+<button id="retryBtn" onclick="retryTest()">🔄 Try Again</button>
+<div class="review" id="review"></div>
+</section>
+</main>
+
+<script>
+const answerKey = [3,2,0,2,0,2,3,1,2,1,1,2,1,3,3,0,0,0,3,3,1,0,0,3,2,3,3,0,1,3,3,0,0,3,2,1,3,3,2,2,2,2,0,0,3,0,3,1,2,0,3,1,0,3,3,3,0,1,3,2,1,3,2,1,3,0,3,1,1,1,3,1,1,1,2,2,3,3,2,0,1,1,0,3,1,0,2,0,0,2,2,1,0,0,2,2,3,0,2,3];
+const total = answerKey.length;
+
+function updateProgress() {
+    let answered = 0;
+    for (let i = 1; i <= total; i++) {
+        if (document.querySelector('input[name="q' + i + '"]:checked')) answered++;
+    }
+    document.getElementById("progressText").innerText =
+        "Answered: " + answered + " / " + total;
+    document.getElementById("progressBar").style.width =
+        ((answered / total) * 100) + "%";
+}
+
+document.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener("change", updateProgress);
+});
+
+function submitTest() {
+    let score = 0;
+    let unanswered = 0;
+    let review = "";
+
+    for (let i = 1; i <= total; i++) {
+        const selected = document.querySelector('input[name="q' + i + '"]:checked');
+
+        if (!selected) {
+            unanswered++;
+            continue;
+        }
+
+        const selectedValue = Number(selected.value);
+        const card = document.getElementById("question" + i);
+        const question = card.querySelector("h3").innerText;
+        const options = card.querySelectorAll('input[name="q' + i + '"]');
+        const correctOption = options[answerKey[i - 1]].parentElement.innerText.trim();
+
+        if (selectedValue === answerKey[i - 1]) {
+            score++;
+            review += '<div class="review-item correct">✓ Q' + i + ': Correct</div>';
+        } else {
+            review += '<div class="review-item wrong">✗ Q' + i +
+                ': Correct answer — ' + escapeHtml(correctOption) + '</div>';
+        }
+    }
+
+    if (unanswered > 0) {
+        const proceed = confirm(
+            "You have " + unanswered +
+            " unanswered question(s). Submit anyway?"
+        );
+        if (!proceed) return;
+    }
+
+    const percentage = Math.round((score / total) * 100);
+
+    document.getElementById("score").innerText =
+        score + " / " + total;
+
+    document.getElementById("percentage").innerText =
+        "Percentage: " + percentage + "%";
+
+    document.getElementById("correctText").innerText =
+        "Correct: " + score;
+
+    document.getElementById("wrongText").innerText =
+        "Incorrect: " + (total - score);
+
+    document.getElementById("review").innerHTML = review;
+    document.getElementById("result").style.display = "block";
+
+    document.getElementById("result").scrollIntoView({ behavior:"smooth" });
+    document.getElementById("submitBtn").disabled = true;
+    document.getElementById("submitBtn").innerText = "Test Submitted";
+}
+
+function filterQuestions(category) {
+    document.querySelectorAll(".question-card").forEach(card => {
+        card.style.display =
+            category === "all" || card.dataset.category === category
+            ? "block" : "none";
+    });
+}
+
+function retryTest() {
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.checked = false;
+    });
+
+    document.getElementById("result").style.display = "none";
+    document.getElementById("submitBtn").disabled = false;
+    document.getElementById("submitBtn").innerText =
+        "✅ Submit Interview Test";
+
+    updateProgress();
+    window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+function escapeHtml(value) {
+    return value.replace(/[&<>"']/g, function(ch) {
+        return {
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#039;"
+        }[ch];
+    });
+}
+</script>
+
+</body>
+</html>
