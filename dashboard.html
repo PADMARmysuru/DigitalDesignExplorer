@@ -430,13 +430,12 @@ function updateModuleProgress() {
 
     document.getElementById("qmProgressText").innerText =
         qmDone ? "Completed" : "Not Completed";
-
 /* Digital Logic Lab */
 
 let completedLabExperiments = 0;
 
 for (let i = 1; i <= 8; i++) {
-    if (localStorage.getItem("digitalLabExp" + i) === "completed") {
+    if (localStorage.getItem("digitalLabExp" + i) === "true") {
         completedLabExperiments++;
     }
 }
@@ -474,7 +473,7 @@ document.getElementById("labProgressText").innerText =
         overallPercent + "%";
 
     document.getElementById("overallProgressText").innerText =
-        completedModules + " /  Modules Completed";
+        completedModules + " / 8 Modules Completed";
 
 }
 
@@ -618,6 +617,13 @@ function checkCertificateEligibility() {
     let quizCompleted =
         localStorage.getItem("quizScore") !== null;
 
+    let completedLabExperiments = 0;
+    for (let i = 1; i <= 8; i++) {
+        if (localStorage.getItem("digitalLabExp" + i) === "true") {
+            completedLabExperiments++;
+        }
+    }
+
 
     let allModulesCompleted =
 
@@ -637,7 +643,9 @@ function checkCertificateEligibility() {
             === "true" &&
 
         localStorage.getItem("qmPracticeCompleted")
-            === "true";
+            === "true" &&
+
+        completedLabExperiments === 8;
 
 
     let certificateButton =
@@ -696,6 +704,13 @@ function openCertificate() {
 
     let quizCompleted =
         localStorage.getItem("quizScore") !== null;
+
+    let completedLabExperiments = 0;
+    for (let i = 1; i <= 8; i++) {
+        if (localStorage.getItem("digitalLabExp" + i) === "true") {
+            completedLabExperiments++;
+        }
+    }
 
 
     let allModulesCompleted =
