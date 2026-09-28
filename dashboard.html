@@ -83,6 +83,7 @@
         .module-quiz { border-top: 6px solid #d15b5b; }
         .module-kmap { border-top: 6px solid #2d8c8c; }
         .module-qm { border-top: 6px solid #6f7f3f; }
+        .module-lab { border-top: 6px solid #3f7f8c; }
 
         .progress-card .progress {
             transition: width 0.5s ease;
@@ -160,7 +161,7 @@
         <div class="overall-bar">
             <div id="overallProgress">0%</div>
         </div>
-        <p id="overallProgressText">0 / 7 Modules Completed</p>
+        <p id="overallProgressText">0 / 8 Modules Completed</p>
     </section>
 
     <section class="dashboard-cards">
@@ -220,6 +221,15 @@
         </div>
 
     </section>
+            <div class="progress-card module-lab" style="grid-column: 1 / -1; max-width: 350px; width: 100%; justify-self: center;">
+            <h2>🧪 Digital Logic Lab</h2>
+
+            <div class="progress-bar">
+                <div class="progress" id="labProgress">0%</div>
+            </div>
+
+            <p id="labProgressText">0 / 8 Experiments Completed</p>
+        </div>
 
 
     <section class="gate-container">
@@ -421,7 +431,27 @@ function updateModuleProgress() {
     document.getElementById("qmProgressText").innerText =
         qmDone ? "Completed" : "Not Completed";
 
+/* Digital Logic Lab */
 
+let completedLabExperiments = 0;
+
+for (let i = 1; i <= 8; i++) {
+    if (localStorage.getItem("digitalLabExp" + i) === "completed") {
+        completedLabExperiments++;
+    }
+}
+
+let labPercent =
+    Math.round((completedLabExperiments / 8) * 100);
+
+document.getElementById("labProgress").style.width =
+    labPercent + "%";
+
+document.getElementById("labProgress").innerText =
+    labPercent + "%";
+
+document.getElementById("labProgressText").innerText =
+    completedLabExperiments + " / 8 Experiments Completed";
     /* Overall module completion */
     let completedModules = 0;
 
@@ -432,9 +462,10 @@ function updateModuleProgress() {
     if (quizDone) completedModules++;
     if (kmapDone) completedModules++;
     if (qmDone) completedModules++;
+    if (completedLabExperiments === 8) completedModules++;
 
     let overallPercent =
-        Math.round((completedModules / 7) * 100);
+        Math.round((completedModules /8) * 100);
 
     document.getElementById("overallProgress").style.width =
         overallPercent + "%";
@@ -443,7 +474,7 @@ function updateModuleProgress() {
         overallPercent + "%";
 
     document.getElementById("overallProgressText").innerText =
-        completedModules + " / 7 Modules Completed";
+        completedModules + " /  Modules Completed";
 
 }
 
