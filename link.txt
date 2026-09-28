@@ -1,0 +1,30 @@
+Dear Students,
+
+I’m happy to share that our Digital Design Explorer learning website is now live! 🎉
+
+You can access it here:
+🌐 https://padmarmysuru.github.io/DigitalDesignExplorer/
+
+You can use the website to learn, practice and test your knowledge in:
+
+🔹 Logic Gates
+🔹 Half Adder & Full Adder
+🔹 Verilog Programming
+🔹 Verilog Practice Programs
+🔹 K-Map Concepts & Interactive Practice 🧩
+🔹 Quine–McCluskey Method
+🔹 Quiz – 100+ Questions 📝
+🔹 Progress Dashboard 📊
+
+📌 Please register using your Name, USN, Branch, Semester, Section and Email ID.
+
+👉 Explore each topic, complete the practice activities and quiz, and track your learning progress through the Dashboard.
+
+💡 Learn • Practice • Test • Achieve!
+
+Happy Learning! 😊
+
+Mrs. Padma R
+Assistant Professor
+Department of ECE
+GSSSIETW, Mysuru
