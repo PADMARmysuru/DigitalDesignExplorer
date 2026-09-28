@@ -266,6 +266,97 @@
 
 
 /* =========================================================
+   INTERACTIVE PRACTICE
+   ========================================================= */
+
+.qm-practice{
+    background:white;
+    padding:25px;
+    margin:25px 0;
+    border-radius:15px;
+    box-shadow:0 3px 12px rgba(0,0,0,0.10);
+}
+
+.qm-practice h2{
+    color:#243b64;
+    text-align:center;
+    margin-top:0;
+}
+
+.qm-practice > p{
+    text-align:center;
+    color:#555;
+}
+
+.qm-option{
+    display:block;
+    background:#f4f7fb;
+    border:2px solid #d9e0ea;
+    padding:14px 16px;
+    margin:10px 0;
+    border-radius:9px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.qm-option:hover{
+    border-color:#243b64;
+    background:#eef3fa;
+}
+
+.qm-option input{
+    margin-right:10px;
+}
+
+.qm-correct{
+    background:#eaf6ea;
+    color:#17652c;
+    padding:15px;
+    border-radius:8px;
+    margin-top:15px;
+}
+
+.qm-wrong{
+    background:#ffe8e8;
+    color:#9b1c1c;
+    padding:15px;
+    border-radius:8px;
+    margin-top:15px;
+}
+
+#qmFeedback{
+    margin-top:15px;
+}
+
+#qmSubmit,
+#qmNext,
+#qmResult button{
+    margin-top:12px;
+    padding:11px 20px;
+    border:none;
+    border-radius:7px;
+    background:#243b64;
+    color:white;
+    cursor:pointer;
+    font-size:15px;
+}
+
+#qmSubmit:hover,
+#qmNext:hover,
+#qmResult button:hover{
+    opacity:0.9;
+}
+
+#qmResult{
+    text-align:center;
+    background:#f4f7fb;
+    padding:25px;
+    border-radius:10px;
+}
+
+
+
+/* =========================================================
    STEP LABELS
    ========================================================= */
 
@@ -1228,6 +1319,53 @@ Example:
 </div>
 
 
+
+<!-- =========================================================
+     QUINE–McCLUSKEY INTERACTIVE PRACTICE
+     ========================================================= -->
+
+<section class="qm-practice" id="qmPractice">
+
+    <h2>📝 Quine–McCluskey Practice</h2>
+
+    <p>
+        Test your understanding of the Quine–McCluskey method.
+        Select the correct answer and click <b>Submit Answer</b>.
+    </p>
+
+    <div id="qmQuiz">
+
+        <div id="qmQuestion"></div>
+
+        <div id="qmOptions"></div>
+
+        <button id="qmSubmit" onclick="checkQMAnswer()">
+            Submit Answer
+        </button>
+
+        <div id="qmFeedback"></div>
+
+        <button id="qmNext"
+                onclick="nextQMQuestion()"
+                style="display:none;">
+            Next Question →
+        </button>
+
+    </div>
+
+    <div id="qmResult" style="display:none;">
+
+        <h3>🎉 Practice Completed!</h3>
+
+        <p id="qmScore"></p>
+
+        <button onclick="restartQMQuiz()">
+            Practice Again
+        </button>
+
+    </div>
+
+</section>
 
 <!-- =====================================================
      JAVASCRIPT
@@ -2669,52 +2807,10 @@ function clearQM(){
 
 }
 
-<!-- =========================================================
-     QUINE–McCLUSKEY INTERACTIVE PRACTICE
-     ========================================================= -->
+</script>
 
-<section class="qm-practice">
 
-    <h2>📝 Quine–McCluskey Practice</h2>
-
-    <p>
-        Test your understanding of the Quine–McCluskey method.
-        Select the correct answer and click <b>Submit Answer</b>.
-    </p>
-
-    <div id="qmQuiz">
-
-        <div id="qmQuestion"></div>
-
-        <div id="qmOptions"></div>
-
-        <button id="qmSubmit" onclick="checkQMAnswer()">
-            Submit Answer
-        </button>
-
-        <div id="qmFeedback"></div>
-
-        <button id="qmNext"
-                onclick="nextQMQuestion()"
-                style="display:none;">
-            Next Question →
-        </button>
-
-    </div>
-
-    <div id="qmResult" style="display:none;">
-
-        <h3>🎉 Practice Completed!</h3>
-
-        <p id="qmScore"></p>
-
-        <button onclick="restartQMQuiz()">
-            Practice Again
-        </button>
-
-    </div>
-
-</section>
+<script>
 /* =========================================================
    QUINE–McCLUSKEY INTERACTIVE PRACTICE
    ========================================================= */
@@ -3084,9 +3180,7 @@ function showQMResult(){
         "qmPracticeTotal",
         qmQuestions.length
     );
-    if (qmQuestions.length === 10 && qmScore >= 0) {
     localStorage.setItem("qmPracticeCompleted", "true");
-}
 
 }
 
@@ -3123,9 +3217,7 @@ function restartQMQuiz(){
    ========================================================= */
 
 loadQMQuestion();
-
 </script>
-
 
 </body>
 
