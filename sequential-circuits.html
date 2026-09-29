@@ -216,6 +216,12 @@ button.secondary {
 </head>
 
 <body>
+    <script>
+    if (localStorage.getItem("level2Unlocked") !== "true") {
+        alert("🔒 Level 2 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+</script>
 
 <header>
     <h1>🔄 Level 2 — Sequential Circuits</h1>

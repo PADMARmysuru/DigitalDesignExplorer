@@ -37,7 +37,7 @@
 
         <a href="dashboard.html">Level 1 Dashboard</a>
 
-        <a href="level2-dashboard.html">⚡ Level 2 Dashboard</a>
+        <a href="#" onclick="openLevel2()">⚡ Level 2</a>
 
         <a href="#" onclick="logout()">Logout</a>
 
@@ -90,7 +90,7 @@
 
         <div class="card">
 
-            <h2>⚡ LEVEL 2</h2>
+            <h2>🔐 LEVEL 2</h2>
 
             <h3>Digital Circuit Design</h3>
 
@@ -99,13 +99,17 @@
                 Gate-Level Realization and Sequential Circuits.
             </p>
 
-            <a href="level2-dashboard.html">
+            <p id="level2Status">
 
-                <button>
-                    Open Level 2 →
-                </button>
+                🔒 <strong>Level 2 is Restricted</strong>
 
-            </a>
+            </p>
+
+            <button onclick="openLevel2()">
+
+                🔐 Request Level 2 Access
+
+            </button>
 
         </div>
 
@@ -143,13 +147,75 @@
 
     <script>
 
-    function logout() {
+        /*
+        ============================================
+        LEVEL 2 ACCESS CONTROL
+        ============================================
 
-        localStorage.removeItem("studentLoggedIn");
+        Change this PIN to your own faculty PIN.
 
-        window.location.href = "login.html";
+        IMPORTANT:
+        This is a basic client-side restriction.
+        For stronger security, we can later move
+        Level 2 authorization to Supabase.
+        */
 
-    }
+        const FACULTY_PIN = "padma@2026";
+
+
+        function openLevel2() {
+
+            // Check whether Level 2 is already unlocked
+            if (localStorage.getItem("level2Unlocked") === "true") {
+
+                window.location.href = "level2-dashboard.html";
+
+                return;
+
+            }
+
+
+            // Ask for faculty PIN
+            const enteredPIN = prompt(
+                "🔐 Level 2 is restricted.\n\nEnter Faculty PIN to unlock Level 2:"
+            );
+
+
+            if (enteredPIN === FACULTY_PIN) {
+
+                localStorage.setItem("level2Unlocked", "true");
+
+                alert(
+                    "✅ Level 2 access granted."
+                );
+
+                window.location.href = "level2-dashboard.html";
+
+            }
+
+            else if (enteredPIN !== null) {
+
+                alert(
+                    "❌ Incorrect Faculty PIN.\n\nLevel 2 remains locked."
+                );
+
+            }
+
+        }
+
+
+        function logout() {
+
+            localStorage.removeItem("studentLoggedIn");
+
+            /*
+            Keep Level 2 authorization unless faculty
+            explicitly locks it again.
+            */
+
+            window.location.href = "login.html";
+
+        }
 
     </script>
 

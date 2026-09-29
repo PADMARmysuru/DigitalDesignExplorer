@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Interactive Registers | Digital Design Explorer</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #162746;
+}
+
+header {
+    background: #243b64;
+    color: white;
+    text-align: center;
+    padding: 25px 15px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+
+h2 {
+    color: #243b64;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+select,
+input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    font-size: 16px;
+}
+
+button {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #243b64;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+button:hover {
+    background: #162746;
+}
+
+.register {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.bit {
+    width: 65px;
+    height: 65px;
+    border-radius: 10px;
+    border: 3px solid #243b64;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    background: #eef2f7;
+}
+
+.bit.one {
+    background: #243b64;
+    color: white;
+}
+
+.status {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px;
+}
+
+.practice-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+    gap: 12px;
+}
+
+.practice-options button {
+    background: #e8eef7;
+    color: #162746;
+    border: 2px solid #ccd5e3;
+}
+
+#practiceResult {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.completion {
+    text-align: center;
+    padding: 20px;
+}
+
+.navigation {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.navigation a {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #243b64;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+footer {
+    background: #162746;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+@media(max-width:600px) {
+
+    .bit {
+        width: 50px;
+        height: 50px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+    <script>
+    if (localStorage.getItem("level2Unlocked") !== "true") {
+        alert("🔒 Level 2 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+</script>
+
+<header>
+    <h1>📦 Interactive Registers</h1>
+    <p>Explore SISO, SIPO, PISO and PIPO Registers</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h2>📘 What is a Register?</h2>
+
+<p>
+A register is a group of flip-flops used to store and
+transfer binary information.
+</p>
+
+<p>
+Select a register type and use the controls to observe
+how the bits move through the register.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>⚙️ Register Simulator</h2>
+
+<div class="controls">
+
+<label>Register Type:</label>
+
+<select id="registerType">
+
+<option value="SISO">SISO</option>
+<option value="SIPO">SIPO</option>
+<option value="PISO">PISO</option>
+<option value="PIPO">PIPO</option>
+
+</select>
+
+<label>Input Bit:</label>
+
+<select id="inputBit">
+<option value="0">0</option>
+<option value="1">1</option>
+</select>
+
+<button id="clockBtn">
+⏱️ Clock
+</button>
+
+<button id="loadBtn">
+📥 Load
+</button>
+
+<button id="resetBtn">
+🔄 Reset
+</button>
+
+</div>
+
+
+<div class="status" id="status">
+Register: 0000
+</div>
+
+
+<div class="register" id="registerDisplay">
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>🔍 Register Operations</h2>
+
+<ul>
+
+<li><strong>SISO:</strong> Serial-In Serial-Out</li>
+
+<li><strong>SIPO:</strong> Serial-In Parallel-Out</li>
+
+<li><strong>PISO:</strong> Parallel-In Serial-Out</li>
+
+<li><strong>PIPO:</strong> Parallel-In Parallel-Out</li>
+
+</ul>
+
+<p>
+Try different register types and observe how the
+stored bits change after every clock pulse.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>📝 Practice Challenge</h2>
+
+<p>
+A 4-bit SISO register initially contains 0000.
+If the serial input is 1 and one clock pulse is applied,
+what is the new register value?
+</p>
+
+<div class="practice-options">
+
+<button class="practiceAnswer" data-answer="1">
+1000
+</button>
+
+<button class="practiceAnswer" data-answer="2">
+0001
+</button>
+
+<button class="practiceAnswer" data-answer="3">
+0010
+</button>
+
+<button class="practiceAnswer" data-answer="4">
+1111
+</button>
+
+</div>
+
+<div id="practiceResult"></div>
+
+</div>
+
+
+<div class="card">
+
+<div class="completion">
+
+<h2>🏆 Register Activity</h2>
+
+<p id="completionMessage">
+Complete the practice challenge to finish this activity.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="navigation">
+
+<a href="level2-dashboard.html">
+← Level 2 Dashboard
+</a>
+
+</div>
+
+</div>
+
+
+<footer>
+
+<p>Digital Design Explorer | ECE Department</p>
+
+<p>Developed by <strong>Mrs. Padma R</strong></p>
+
+<p>GSSSIETW, Mysuru</p>
+
+</footer>
+
+
+<script>
+
+let register = [0,0,0,0];
+
+const registerDisplay =
+document.getElementById("registerDisplay");
+
+const status =
+document.getElementById("status");
+
+const registerType =
+document.getElementById("registerType");
+
+const inputBit =
+document.getElementById("inputBit");
+
+const clockBtn =
+document.getElementById("clockBtn");
+
+const loadBtn =
+document.getElementById("loadBtn");
+
+const resetBtn =
+document.getElementById("resetBtn");
+
+
+function updateDisplay() {
+
+registerDisplay.innerHTML = "";
+
+register.forEach(function(bit) {
+
+const box =
+document.createElement("div");
+
+box.className = "bit";
+
+if(bit === 1) {
+box.classList.add("one");
+}
+
+box.textContent = bit;
+
+registerDisplay.appendChild(box);
+
+});
+
+status.textContent =
+"Register: " + register.join("");
+
+}
+
+
+function clockOperation() {
+
+const type =
+registerType.value;
+
+const bit =
+Number(inputBit.value);
+
+
+/* SISO */
+
+if(type === "SISO") {
+
+register.pop();
+
+register.unshift(bit);
+
+}
+
+
+/* SIPO */
+
+else if(type === "SIPO") {
+
+register.pop();
+
+register.unshift(bit);
+
+}
+
+
+/* PISO */
+
+else if(type === "PISO") {
+
+register.shift();
+
+register.push(0);
+
+}
+
+
+/* PIPO */
+
+else if(type === "PIPO") {
+
+register = register.slice();
+
+}
+
+updateDisplay();
+
+}
+
+
+clockBtn.addEventListener(
+"click",
+clockOperation
+);
+
+
+loadBtn.addEventListener(
+"click",
+function() {
+
+register =
+[1,0,1,1];
+
+updateDisplay();
+
+}
+);
+
+
+resetBtn.addEventListener(
+"click",
+function() {
+
+register =
+[0,0,0,0];
+
+updateDisplay();
+
+}
+);
+
+
+registerType.addEventListener(
+"change",
+function() {
+
+register =
+[0,0,0,0];
+
+updateDisplay();
+
+}
+);
+
+
+/* Practice */
+
+document
+.querySelectorAll(".practiceAnswer")
+.forEach(function(button) {
+
+button.addEventListener(
+"click",
+function() {
+
+const result =
+document.getElementById(
+"practiceResult"
+);
+
+if(this.dataset.answer === "1") {
+
+result.textContent =
+"✅ Correct! The new serial bit enters the left side, so the register becomes 1000.";
+
+result.style.color =
+"#2e7d32";
+
+localStorage.setItem(
+"registerActivityDone",
+"true"
+);
+
+document.getElementById(
+"completionMessage"
+).textContent =
+"🎉 Register Activity Completed!";
+
+}
+
+else {
+
+result.textContent =
+"❌ Try again. Think about the direction of serial shifting.";
+
+result.style.color =
+"#c62828";
+
+}
+
+});
+
+});
+
+
+updateDisplay();
+
+
+if(
+localStorage.getItem(
+"registerActivityDone"
+) === "true"
+) {
+
+document.getElementById(
+"completionMessage"
+).textContent =
+"🎉 Register Activity Completed!";
+
+}
+
+</script>
+
+</body>
+</html>

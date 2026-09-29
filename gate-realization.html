@@ -351,6 +351,15 @@ th{
 </head>
 
 <body>
+<script>
+(function () {
+    if (localStorage.getItem("level2Unlocked") !== "true") {
+        alert("🔒 Level 2 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+})();
+</script>
+
 
 <header>
     <h1>🔧 Gate-Level Realization</h1>

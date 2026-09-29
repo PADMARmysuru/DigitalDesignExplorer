@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Interactive Counters | Digital Design Explorer</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+
+    background: #f4f7fb;
+
+    color: #162746;
+
+}
+
+
+/* HEADER */
+
+header {
+
+    background: #243b64;
+
+    color: white;
+
+    text-align: center;
+
+    padding: 25px 15px;
+
+}
+
+header h1 {
+
+    margin: 0;
+
+    font-size: 30px;
+
+}
+
+header p {
+
+    margin-top: 8px;
+
+}
+
+
+/* MAIN */
+
+.container {
+
+    max-width: 1000px;
+
+    margin: 30px auto;
+
+    padding: 20px;
+
+}
+
+
+/* CARD */
+
+.card {
+
+    background: white;
+
+    border-radius: 15px;
+
+    padding: 25px;
+
+    margin-bottom: 25px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+
+}
+
+.card h2 {
+
+    color: #243b64;
+
+    margin-top: 0;
+
+}
+
+
+/* CONTROLS */
+
+.controls {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+    align-items: center;
+
+    margin-top: 15px;
+
+}
+
+label {
+
+    font-weight: bold;
+
+}
+
+select {
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    border: 1px solid #aaa;
+
+    font-size: 16px;
+
+}
+
+button {
+
+    padding: 12px 20px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #243b64;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+}
+
+button:hover {
+
+    background: #162746;
+
+}
+
+
+/* COUNTER DISPLAY */
+
+.counter-display {
+
+    text-align: center;
+
+    margin: 30px 0;
+
+}
+
+.count-number {
+
+    font-size: 60px;
+
+    font-weight: bold;
+
+    color: #243b64;
+
+}
+
+.binary {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    margin-top: 10px;
+
+}
+
+
+/* LED DISPLAY */
+
+.led-container {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 18px;
+
+    margin: 25px 0;
+
+    flex-wrap: wrap;
+
+}
+
+.led-box {
+
+    text-align: center;
+
+}
+
+.led {
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 50%;
+
+    background: #bbb;
+
+    border: 3px solid #777;
+
+    margin-bottom: 8px;
+
+}
+
+.led.on {
+
+    background: #2e7d32;
+
+    box-shadow: 0 0 15px #2e7d32;
+
+}
+
+
+/* SEQUENCE */
+
+.sequence {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+.state {
+
+    padding: 10px 15px;
+
+    border-radius: 8px;
+
+    background: #e8eef7;
+
+    border: 2px solid #c5d0e0;
+
+    font-weight: bold;
+
+}
+
+.state.current {
+
+    background: #243b64;
+
+    color: white;
+
+}
+
+
+/* PRACTICE */
+
+.practice-question {
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+
+}
+
+.practice-options {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+    gap: 12px;
+
+}
+
+.practice-options button {
+
+    background: #e8eef7;
+
+    color: #162746;
+
+    border: 2px solid #c5d0e0;
+
+}
+
+.practice-options button:hover {
+
+    background: #d8e3f3;
+
+}
+
+#practiceResult {
+
+    margin-top: 20px;
+
+    font-weight: bold;
+
+}
+
+
+/* COMPLETION */
+
+.completion {
+
+    text-align: center;
+
+    padding: 20px;
+
+    border-radius: 10px;
+
+    background: #f5f5f5;
+
+}
+
+#completionMessage {
+
+    font-weight: bold;
+
+    font-size: 18px;
+
+}
+
+
+/* NAVIGATION */
+
+.navigation {
+
+    text-align: center;
+
+    margin: 30px 0;
+
+}
+
+.navigation a {
+
+    display: inline-block;
+
+    margin: 8px;
+
+    padding: 12px 20px;
+
+    text-decoration: none;
+
+    background: #243b64;
+
+    color: white;
+
+    border-radius: 8px;
+
+}
+
+
+/* FOOTER */
+
+footer {
+
+    background: #162746;
+
+    color: white;
+
+    text-align: center;
+
+    padding: 20px;
+
+    margin-top: 40px;
+
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px) {
+
+    header h1 {
+
+        font-size: 24px;
+
+    }
+
+    .count-number {
+
+        font-size: 45px;
+
+    }
+
+    .binary {
+
+        font-size: 24px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+    <script>
+    if (localStorage.getItem("level2Unlocked") !== "true") {
+        alert("🔒 Level 2 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+</script>
+
+
+<header>
+
+    <h1>🔢 Interactive Counters</h1>
+
+    <p>Explore Binary Counters Step by Step</p>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- INTRODUCTION -->
+
+    <div class="card">
+
+        <h2>📘 What is a Counter?</h2>
+
+        <p>
+
+            A counter is a sequential digital circuit that
+
+            moves through a sequence of states in response
+
+            to clock pulses.
+
+        </p>
+
+        <p>
+
+            Use the controls below to observe how the
+
+            counter changes its binary state.
+
+        </p>
+
+    </div>
+
+
+    <!-- COUNTER SIMULATOR -->
+
+    <div class="card">
+
+        <h2>⚙️ Counter Simulator</h2>
+
+
+        <div class="controls">
+
+            <label for="modSelect">
+
+                Counter Type:
+
+            </label>
+
+            <select id="modSelect">
+
+                <option value="2">MOD-2</option>
+
+                <option value="4">MOD-4</option>
+
+                <option value="8" selected>MOD-8</option>
+
+            </select>
+
+
+            <label for="direction">
+
+                Direction:
+
+            </label>
+
+            <select id="direction">
+
+                <option value="up">
+
+                    Up Counter
+
+                </option>
+
+                <option value="down">
+
+                    Down Counter
+
+                </option>
+
+            </select>
+
+
+            <button id="clockBtn">
+
+                ⏱️ Clock Pulse
+
+            </button>
+
+
+            <button id="resetBtn">
+
+                🔄 Reset
+
+            </button>
+
+        </div>
+
+
+        <div class="counter-display">
+
+            <div class="count-number"
+
+                 id="countNumber">
+
+                0
+
+            </div>
+
+            <div class="binary"
+
+                 id="binaryNumber">
+
+                000
+
+            </div>
+
+        </div>
+
+
+        <!-- LEDS -->
+
+        <div class="led-container"
+
+             id="ledContainer">
+
+        </div>
+
+
+        <h3>Current State</h3>
+
+        <div class="sequence"
+
+             id="sequenceDisplay">
+
+        </div>
+
+    </div>
+
+
+    <!-- HOW IT WORKS -->
+
+    <div class="card">
+
+        <h2>💡 Observe the Counter</h2>
+
+        <p>
+
+            Click <strong>Clock Pulse</strong> repeatedly.
+
+            Observe how the binary value changes.
+
+        </p>
+
+        <ul>
+
+            <li>MOD-2 → 0, 1, 0, 1...</li>
+
+            <li>MOD-4 → 0, 1, 2, 3, 0...</li>
+
+            <li>MOD-8 → 0, 1, 2, 3, 4, 5, 6, 7, 0...</li>
+
+        </ul>
+
+    </div>
+
+
+    <!-- PRACTICE -->
+
+    <div class="card">
+
+        <h2>📝 Practice Challenge</h2>
+
+        <div class="practice-question">
+
+            For a MOD-8 counter, what is the state
+
+            after 9 clock pulses?
+
+        </div>
+
+
+        <div class="practice-options">
+
+            <button class="practiceAnswer"
+
+                    data-answer="1">
+
+                0
+
+            </button>
+
+            <button class="practiceAnswer"
+
+                    data-answer="2">
+
+                1
+
+            </button>
+
+            <button class="practiceAnswer"
+
+                    data-answer="3">
+
+                7
+
+            </button>
+
+            <button class="practiceAnswer"
+
+                    data-answer="4">
+
+                6
+
+            </button>
+
+        </div>
+
+
+        <div id="practiceResult"></div>
+
+    </div>
+
+
+    <!-- COMPLETION -->
+
+    <div class="card">
+
+        <div class="completion">
+
+            <h2>🏆 Counter Activity</h2>
+
+            <p id="completionMessage">
+
+                Complete the practice challenge
+
+                to finish this activity.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+
+    <div class="navigation">
+
+        <a href="level2-dashboard.html">
+
+            ← Level 2 Dashboard
+
+        </a>
+
+    </div>
+
+
+</div>
+
+
+<footer>
+
+    <p>
+
+        Digital Design Explorer | ECE Department
+
+    </p>
+
+    <p>
+
+        Developed by <strong>Mrs. Padma R</strong>
+
+    </p>
+
+    <p>
+
+        GSSSIETW, Mysuru
+
+    </p>
+
+</footer>
+
+
+<script>
+
+
+/* =====================================
+   COUNTER VARIABLES
+===================================== */
+
+let count = 0;
+
+
+/* =====================================
+   GET ELEMENTS
+===================================== */
+
+const modSelect =
+    document.getElementById("modSelect");
+
+const direction =
+    document.getElementById("direction");
+
+const clockBtn =
+    document.getElementById("clockBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+const countNumber =
+    document.getElementById("countNumber");
+
+const binaryNumber =
+    document.getElementById("binaryNumber");
+
+const ledContainer =
+    document.getElementById("ledContainer");
+
+const sequenceDisplay =
+    document.getElementById("sequenceDisplay");
+
+
+/* =====================================
+   GET NUMBER OF BITS
+===================================== */
+
+function getBits(mod) {
+
+    if (mod === 2) return 1;
+
+    if (mod === 4) return 2;
+
+    return 3;
+
+}
+
+
+/* =====================================
+   UPDATE DISPLAY
+===================================== */
+
+function updateDisplay() {
+
+    const mod =
+        Number(modSelect.value);
+
+    const bits =
+        getBits(mod);
+
+
+    /* Decimal */
+
+    countNumber.textContent =
+        count;
+
+
+    /* Binary */
+
+    binaryNumber.textContent =
+        count
+        .toString(2)
+        .padStart(bits, "0");
+
+
+    /* LEDs */
+
+    ledContainer.innerHTML = "";
+
+
+    for (let i = bits - 1; i >= 0; i--) {
+
+        const value =
+            (count >> i) & 1;
+
+
+        const box =
+            document.createElement("div");
+
+        box.className =
+            "led-box";
+
+
+        const led =
+            document.createElement("div");
+
+        led.className =
+            "led";
+
+
+        if (value === 1) {
+
+            led.classList.add("on");
+
+        }
+
+
+        const label =
+            document.createElement("div");
+
+        label.textContent =
+            "Q" + i;
+
+
+        box.appendChild(led);
+
+        box.appendChild(label);
+
+        ledContainer.appendChild(box);
+
+    }
+
+
+    /* Sequence */
+
+    sequenceDisplay.innerHTML = "";
+
+
+    for (let i = 0; i < mod; i++) {
+
+        const state =
+            document.createElement("div");
+
+        state.className = "state";
+
+
+        if (i === count) {
+
+            state.classList.add("current");
+
+        }
+
+
+        state.textContent =
+            i + " (" +
+            i.toString(2)
+             .padStart(bits, "0")
+            + ")";
+
+
+        sequenceDisplay.appendChild(state);
+
+    }
+
+}
+
+
+/* =====================================
+   CLOCK PULSE
+===================================== */
+
+clockBtn.addEventListener(
+    "click",
+    function() {
+
+        const mod =
+            Number(modSelect.value);
+
+
+        if (direction.value === "up") {
+
+            count++;
+
+            if (count >= mod) {
+
+                count = 0;
+
+            }
+
+        }
+
+        else {
+
+            count--;
+
+            if (count < 0) {
+
+                count = mod - 1;
+
+            }
+
+        }
+
+
+        updateDisplay();
+
+    }
+);
+
+
+/* =====================================
+   RESET
+===================================== */
+
+resetBtn.addEventListener(
+    "click",
+    function() {
+
+        count = 0;
+
+        updateDisplay();
+
+    }
+);
+
+
+/* =====================================
+   CHANGE COUNTER TYPE
+===================================== */
+
+modSelect.addEventListener(
+    "change",
+    function() {
+
+        count = 0;
+
+        updateDisplay();
+
+    }
+);
+
+
+/* =====================================
+   PRACTICE CHALLENGE
+===================================== */
+
+document
+    .querySelectorAll(".practiceAnswer")
+    .forEach(function(button) {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                const answer =
+                    this.dataset.answer;
+
+                const result =
+                    document.getElementById(
+                        "practiceResult"
+                    );
+
+
+                if (answer === "1") {
+
+                    result.textContent =
+                        "✅ Correct! MOD-8 repeats every 8 states. 9 mod 8 = 1, so the state is 1.";
+
+                    result.style.color =
+                        "#2e7d32";
+
+
+                    localStorage.setItem(
+                        "counterActivityDone",
+                        "true"
+                    );
+
+
+                    document.getElementById(
+                        "completionMessage"
+                    ).textContent =
+                        "🎉 Counter Activity Completed!";
+
+
+                }
+
+                else {
+
+                    result.textContent =
+                        "❌ Try again. Remember that a MOD-8 counter repeats after 8 states.";
+
+                    result.style.color =
+                        "#c62828";
+
+                }
+
+            }
+
+        );
+
+    });
+
+
+/* =====================================
+   INITIALIZE
+===================================== */
+
+updateDisplay();
+
+
+if (
+    localStorage.getItem(
+        "counterActivityDone"
+    ) === "true"
+) {
+
+    document.getElementById(
+        "completionMessage"
+    ).textContent =
+        "🎉 Counter Activity Completed!";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

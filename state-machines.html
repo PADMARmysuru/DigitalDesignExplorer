@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Interactive State Machines | Digital Design Explorer</title>
+
+<style>
+
+* {
+box-sizing:border-box;
+}
+
+body {
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f7fb;
+color:#162746;
+}
+
+header {
+background:#243b64;
+color:white;
+text-align:center;
+padding:25px 15px;
+}
+
+header h1 {
+margin:0;
+}
+
+.container {
+max-width:1000px;
+margin:30px auto;
+padding:20px;
+}
+
+.card {
+background:white;
+padding:25px;
+margin-bottom:25px;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+
+h2 {
+color:#243b64;
+}
+
+.machine {
+text-align:center;
+margin:30px 0;
+}
+
+.state-circle {
+width:120px;
+height:120px;
+border-radius:50%;
+border:5px solid #243b64;
+margin:20px auto;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+font-weight:bold;
+background:#eef2f7;
+}
+
+.state-circle.active {
+background:#243b64;
+color:white;
+}
+
+.controls {
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+}
+
+button {
+padding:12px 22px;
+border:none;
+border-radius:8px;
+background:#243b64;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover {
+background:#162746;
+}
+
+.transition {
+text-align:center;
+font-size:20px;
+font-weight:bold;
+margin:20px;
+}
+
+.sequence {
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.sequence span {
+padding:10px 15px;
+background:#e8eef7;
+border-radius:8px;
+font-weight:bold;
+}
+
+.practice-options {
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(150px,1fr));
+gap:12px;
+}
+
+.practice-options button {
+background:#e8eef7;
+color:#162746;
+border:2px solid #ccd5e3;
+}
+
+#practiceResult {
+margin-top:20px;
+font-weight:bold;
+}
+
+.completion {
+text-align:center;
+padding:20px;
+}
+
+.navigation {
+text-align:center;
+margin:30px 0;
+}
+
+.navigation a {
+display:inline-block;
+padding:12px 20px;
+background:#243b64;
+color:white;
+text-decoration:none;
+border-radius:8px;
+}
+
+footer {
+background:#162746;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+<script>
+    if (localStorage.getItem("level2Unlocked") !== "true") {
+        alert("🔒 Level 2 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+</script>
+
+<header>
+
+<h1>🔁 Interactive State Machines</h1>
+
+<p>Explore State Transitions Using Input Sequences</p>
+
+</header>
+
+
+<div class="container">
+
+
+<div class="card">
+
+<h2>📘 What is a State Machine?</h2>
+
+<p>
+A finite state machine is a sequential circuit
+that moves between defined states based on inputs.
+</p>
+
+<p>
+Use the buttons below to provide inputs and observe
+the state transitions.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>⚙️ Sequence Detector Simulator</h2>
+
+<p>
+This example detects the sequence:
+<strong>101</strong>
+</p>
+
+
+<div class="machine">
+
+<div class="state-circle active"
+id="stateCircle">
+
+S0
+
+</div>
+
+<div class="transition"
+id="transitionText">
+
+Current State: S0
+
+</div>
+
+<div class="controls">
+
+<button class="inputBtn"
+data-input="0">
+
+Input 0
+
+</button>
+
+<button class="inputBtn"
+data-input="1">
+
+Input 1
+
+</button>
+
+<button id="resetBtn">
+
+🔄 Reset
+
+</button>
+
+</div>
+
+</div>
+
+
+<h3>Input Sequence</h3>
+
+<div class="sequence"
+id="sequenceDisplay">
+
+</div>
+
+
+<p id="outputText">
+Output: 0
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>🔍 State Transition Table</h2>
+
+<table style="width:100%;border-collapse:collapse;text-align:center;">
+
+<tr>
+<th style="padding:12px;border:1px solid #ccc;">
+Present State
+</th>
+
+<th style="padding:12px;border:1px solid #ccc;">
+Input 0
+</th>
+
+<th style="padding:12px;border:1px solid #ccc;">
+Input 1
+</th>
+</tr>
+
+<tr>
+<td style="padding:12px;border:1px solid #ccc;">
+S0
+</td>
+
+<td style="padding:12px;border:1px solid #ccc;">
+S0
+</td>
+
+<td style="padding:12px;border:1px solid #ccc;">
+S1
+</td>
+</tr>
+
+<tr>
+<td style="padding:12px;border:1px solid #ccc;">
+S1
+</td>
+
+<td style="padding:12px;border:1px solid #ccc;">
+S0
+</td>
+
+<td style="padding:12px;border:1px solid #ccc;">
+S2
+</td>
+</tr>
+
+<tr>
+<td style="padding:12px;border:1px solid #ccc;">
+S2
+</td>
+
+<td style="padding:12px;border:1px solid #ccc;">
+S0
+</td>
+
+<td style="padding:12px;border:1px solid #ccc;">
+S3
+</td>
+</tr>
+
+<tr>
+<td style="padding:12px;border:1px solid #ccc;">
+S3
+</td>
+
+<td style="padding:12px;border:1px solid #ccc;">
+S0
+</td>
+
+<td style="padding:12px;border:1px solid #ccc;">
+S2
+</td>
+</tr>
+
+</table>
+
+</div>
+
+
+<div class="card">
+
+<h2>📝 Practice Challenge</h2>
+
+<p>
+For the sequence detector above, which input sequence
+produces detection of <strong>101</strong>?
+</p>
+
+<div class="practice-options">
+
+<button class="practiceAnswer"
+data-answer="1">
+
+101
+
+</button>
+
+<button class="practiceAnswer"
+data-answer="2">
+
+110
+
+</button>
+
+<button class="practiceAnswer"
+data-answer="3">
+
+111
+
+</button>
+
+<button class="practiceAnswer"
+data-answer="4">
+
+100
+
+</button>
+
+</div>
+
+<div id="practiceResult"></div>
+
+</div>
+
+
+<div class="card">
+
+<div class="completion">
+
+<h2>🏆 State Machine Activity</h2>
+
+<p id="completionMessage">
+
+Complete the practice challenge to finish
+this activity.
+
+</p>
+
+</div>
+
+</div>
+
+
+<div class="navigation">
+
+<a href="level2-dashboard.html">
+← Level 2 Dashboard
+</a>
+
+</div>
+
+
+</div>
+
+
+<footer>
+
+<p>
+Digital Design Explorer | ECE Department
+</p>
+
+<p>
+Developed by <strong>Mrs. Padma R</strong>
+</p>
+
+<p>
+GSSSIETW, Mysuru
+</p>
+
+</footer>
+
+
+<script>
+
+
+let currentState = "S0";
+
+let inputSequence = [];
+
+
+const stateCircle =
+document.getElementById(
+"stateCircle"
+);
+
+const transitionText =
+document.getElementById(
+"transitionText"
+);
+
+const sequenceDisplay =
+document.getElementById(
+"sequenceDisplay"
+);
+
+const outputText =
+document.getElementById(
+"outputText"
+);
+
+
+function updateStateDisplay() {
+
+stateCircle.textContent =
+currentState;
+
+transitionText.textContent =
+"Current State: " +
+currentState;
+
+
+stateCircle.classList.add(
+"active"
+);
+
+
+sequenceDisplay.innerHTML = "";
+
+
+inputSequence.forEach(
+function(bit) {
+
+const span =
+document.createElement("span");
+
+span.textContent = bit;
+
+sequenceDisplay.appendChild(
+span
+);
+
+});
+
+
+}
+
+
+function processInput(bit) {
+
+inputSequence.push(bit);
+
+
+let output = 0;
+
+
+if(currentState === "S0") {
+
+if(bit === "0") {
+
+currentState = "S0";
+
+}
+
+else {
+
+currentState = "S1";
+
+}
+
+}
+
+
+else if(currentState === "S1") {
+
+if(bit === "0") {
+
+currentState = "S0";
+
+}
+
+else {
+
+currentState = "S2";
+
+}
+
+}
+
+
+else if(currentState === "S2") {
+
+if(bit === "0") {
+
+currentState = "S0";
+
+}
+
+else {
+
+currentState = "S3";
+
+}
+
+}
+
+
+else if(currentState === "S3") {
+
+if(bit === "0") {
+
+currentState = "S0";
+
+}
+
+else {
+
+currentState = "S2";
+
+}
+
+output = 1;
+
+}
+
+
+if(currentState === "S3") {
+
+output = 1;
+
+}
+
+
+outputText.textContent =
+"Output: " + output;
+
+
+updateStateDisplay();
+
+}
+
+
+document
+.querySelectorAll(".inputBtn")
+.forEach(function(button) {
+
+button.addEventListener(
+"click",
+function() {
+
+processInput(
+this.dataset.input
+);
+
+});
+
+});
+
+
+document.getElementById(
+"resetBtn"
+).addEventListener(
+"click",
+function() {
+
+currentState = "S0";
+
+inputSequence = [];
+
+outputText.textContent =
+"Output: 0";
+
+updateStateDisplay();
+
+});
+
+
+/* Practice */
+
+document
+.querySelectorAll(".practiceAnswer")
+.forEach(function(button) {
+
+button.addEventListener(
+"click",
+function() {
+
+const result =
+document.getElementById(
+"practiceResult"
+);
+
+if(this.dataset.answer === "1") {
+
+result.textContent =
+"✅ Correct! The sequence 101 reaches the detection state.";
+
+result.style.color =
+"#2e7d32";
+
+
+localStorage.setItem(
+"stateMachineActivityDone",
+"true"
+);
+
+
+document.getElementById(
+"completionMessage"
+).textContent =
+"🎉 State Machine Activity Completed!";
+
+}
+
+else {
+
+result.textContent =
+"❌ Try again. Follow the state transitions for each input.";
+
+result.style.color =
+"#c62828";
+
+}
+
+});
+
+});
+
+
+updateStateDisplay();
+
+
+if(
+localStorage.getItem(
+"stateMachineActivityDone"
+) === "true"
+) {
+
+document.getElementById(
+"completionMessage"
+).textContent =
+"🎉 State Machine Activity Completed!";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

@@ -483,6 +483,18 @@ button:hover,
             ⏳ Sequential Circuit Problems
         </div>
 
+        <div class="activity" id="counterStatus">
+            ⏳ Counters
+        </div>
+
+        <div class="activity" id="registerStatus">
+            ⏳ Registers
+        </div>
+
+        <div class="activity" id="stateMachineStatus">
+            ⏳ State Machines
+        </div>
+
     </div>
 
 
@@ -492,7 +504,7 @@ button:hover,
         id="completionStatus"
         class="status incomplete">
 
-        Complete all three Level 2 activities
+        Complete all six Level 2 activities
         to unlock certificate printing.
 
     </div>
@@ -574,18 +586,137 @@ button:hover,
 
 <script>
 
-/* =====================================================
-   LOAD STUDENT DETAILS
-====================================================== */
-
 function loadStudentDetails() {
 
     const savedStudent =
         localStorage.getItem("studentAccount");
 
-
     if (savedStudent) {
-
         try {
+            const student = JSON.parse(savedStudent);
 
-            const
+            document.getElementById("studentName").textContent =
+                student.name || "Student Name";
+
+            document.getElementById("studentUSN").textContent =
+                student.usn || "-";
+
+            document.getElementById("studentSection").textContent =
+                student.section || "-";
+
+        } catch (error) {
+            console.log("Unable to load student details.");
+        }
+    }
+
+    document.getElementById("certificateDate").textContent =
+        new Date().toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        });
+}
+
+function setActivityStatus(id, completed) {
+
+    const element = document.getElementById(id);
+
+    if (!element) return;
+
+    const label = element.textContent
+        .replace("⏳ ", "")
+        .replace("✅ ", "");
+
+    element.textContent =
+        (completed ? "✅ " : "⏳ ") + label;
+}
+
+function checkLevel2Completion() {
+
+    let gateProblems = [];
+
+    try {
+        gateProblems = JSON.parse(
+            localStorage.getItem("completedGateProblems") || "[]"
+        );
+    } catch (error) {
+        gateProblems = [];
+    }
+
+    const gateDone = gateProblems.length >= 20;
+
+    const sequentialDone =
+        localStorage.getItem("sequentialChallengeDone") === "true";
+
+    const problemsDone =
+        localStorage.getItem("sequentialCircuitsDone") === "true";
+
+    const counterDone =
+        localStorage.getItem("counterActivityDone") === "true";
+
+    const registerDone =
+        localStorage.getItem("registerActivityDone") === "true";
+
+    const stateMachineDone =
+        localStorage.getItem("stateMachineActivityDone") === "true";
+
+    setActivityStatus("gateStatus", gateDone);
+    setActivityStatus("sequentialStatus", sequentialDone);
+    setActivityStatus("problemStatus", problemsDone);
+    setActivityStatus("counterStatus", counterDone);
+    setActivityStatus("registerStatus", registerDone);
+    setActivityStatus("stateMachineStatus", stateMachineDone);
+
+    const allDone =
+        gateDone &&
+        sequentialDone &&
+        problemsDone &&
+        counterDone &&
+        registerDone &&
+        stateMachineDone;
+
+    const status =
+        document.getElementById("completionStatus");
+
+    const printButton =
+        document.getElementById("printButton");
+
+    if (allDone) {
+
+        status.className = "status complete";
+
+        status.textContent =
+            "🎉 All six Level 2 activities completed. Certificate unlocked!";
+
+        printButton.style.display = "inline-block";
+
+    } else {
+
+        status.className = "status incomplete";
+
+        status.textContent =
+            "Complete all six Level 2 activities to unlock certificate printing.";
+
+        printButton.style.display = "none";
+    }
+}
+
+loadStudentDetails();
+checkLevel2Completion();
+
+window.addEventListener("pageshow", function() {
+    loadStudentDetails();
+    checkLevel2Completion();
+});
+
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "visible") {
+        loadStudentDetails();
+        checkLevel2Completion();
+    }
+});
+
+</script>
+
+</body>
+</html>

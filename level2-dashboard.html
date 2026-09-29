@@ -206,6 +206,15 @@
 
 
 <body>
+    <!-- Level 2 Access Protection -->
+    <script>
+        (function () {
+            if (localStorage.getItem("level2Unlocked") !== "true") {
+                alert("🔒 Level 2 is restricted. Faculty authorization is required.");
+                window.location.replace("index.html");
+            }
+        })();
+    </script>
 
 
     <!-- Header -->
@@ -262,7 +271,7 @@
             <div class="progress-text"
                  id="progressText">
 
-                0 / 3 Activities Completed
+                0 / 6 Activities Completed
 
             </div>
 
@@ -270,12 +279,12 @@
 
                 <div class="completed-box">
                     ✅ Completed:
-                    <strong id="completedCount">0</strong> / 3
+                    <strong id="completedCount">0</strong> / 6
                 </div>
 
                 <div class="pending-box">
                     ⏳ Pending:
-                    <strong id="pendingCount">3</strong> / 3
+                    <strong id="pendingCount">6</strong> / 6
                 </div>
 
             </div>
@@ -286,10 +295,10 @@
         🎉 Congratulations! Level 2 Completed!
     </p>
 
-    <a href="certificate.html"
+    <a href="level2-certificate.html"
        class="open-btn"
        style="background:#c9a227; color:#162746;">
-        🎓 Generate Certificate
+        🎓 Generate Level 2 Certificate
     </a>
 
 </div>
@@ -384,23 +393,21 @@
 
             <div class="module-card">
 
-                <span class="status future">
-                    COMING SOON
+                <span class="status available">
+                    AVAILABLE
                 </span>
 
                 <h2>🔢 Counters</h2>
 
                 <p>
-                    Learn and design synchronous and
-                    asynchronous counters.
+                    Explore MOD counters through an
+                    interactive counter simulator and practice challenge.
                 </p>
 
-                <button class="coming-soon"
-                        disabled>
-
-                    Coming Soon
-
-                </button>
+                <a href="counters.html"
+                   class="open-btn">
+                    Open Counters →
+                </a>
 
             </div>
 
@@ -409,23 +416,21 @@
 
             <div class="module-card">
 
-                <span class="status future">
-                    COMING SOON
+                <span class="status available">
+                    AVAILABLE
                 </span>
 
                 <h2>📦 Registers</h2>
 
                 <p>
-                    Explore shift registers and
-                    register-based digital circuits.
+                    Explore SISO, SIPO, PISO and PIPO
+                    registers through an interactive activity.
                 </p>
 
-                <button class="coming-soon"
-                        disabled>
-
-                    Coming Soon
-
-                </button>
+                <a href="registers.html"
+                   class="open-btn">
+                    Open Registers →
+                </a>
 
             </div>
 
@@ -434,23 +439,21 @@
 
             <div class="module-card">
 
-                <span class="status future">
-                    COMING SOON
+                <span class="status available">
+                    AVAILABLE
                 </span>
 
                 <h2>🔁 State Machines</h2>
 
                 <p>
-                    Learn finite state machines and
-                    sequence-detector design.
+                    Explore finite state machines and
+                    sequence-detector design interactively.
                 </p>
 
-                <button class="coming-soon"
-                        disabled>
-
-                    Coming Soon
-
-                </button>
+                <a href="state-machines.html"
+                   class="open-btn">
+                    Open State Machines →
+                </a>
 
             </div>
 
@@ -504,14 +507,11 @@
     </footer>
 
 <script>
-
 function updateLevel2Progress() {
 
     let completed = 0;
 
-    // 1. Gate-Level Realization
     let gateProblems = [];
-
     try {
         gateProblems = JSON.parse(
             localStorage.getItem("completedGateProblems") || "[]"
@@ -520,140 +520,79 @@ function updateLevel2Progress() {
         gateProblems = [];
     }
 
-    const gateCompleted =
-        gateProblems.length >= 20;
+    const gateCompleted = gateProblems.length >= 20;
 
-
-    // 2. Sequential Circuits
     const sequentialCompleted =
         localStorage.getItem("sequentialChallengeDone") === "true";
 
-
-    // 3. Sequential Circuit Problems
     const problemsCompleted =
         localStorage.getItem("sequentialCircuitsDone") === "true";
 
+    const counterCompleted =
+        localStorage.getItem("counterActivityDone") === "true";
 
-    // Count completed activities
-    if (gateCompleted) {
-        completed++;
-    }
+    const registerCompleted =
+        localStorage.getItem("registerActivityDone") === "true";
 
-    if (sequentialCompleted) {
-        completed++;
-    }
+    const stateMachineCompleted =
+        localStorage.getItem("stateMachineActivityDone") === "true";
 
-    if (problemsCompleted) {
-        completed++;
-    }
+    if (gateCompleted) completed++;
+    if (sequentialCompleted) completed++;
+    if (problemsCompleted) completed++;
+    if (counterCompleted) completed++;
+    if (registerCompleted) completed++;
+    if (stateMachineCompleted) completed++;
 
+    const total = 6;
+    const pending = total - completed;
+    const percentage = Math.round((completed / total) * 100);
 
-    // Pending activities
-    const pending = 3 - completed;
+    const progressBar = document.getElementById("progressBar");
+    if (progressBar) progressBar.style.width = percentage + "%";
 
-
-    // Percentage
-    const percentage =
-        Math.round((completed / 3) * 100);
-
-
-    // Update progress bar
-    const progressBar =
-        document.getElementById("progressBar");
-
-    if (progressBar) {
-        progressBar.style.width =
-            percentage + "%";
-    }
-
-
-    // Update old progress text
-    const progressText =
-        document.getElementById("progressText");
-
+    const progressText = document.getElementById("progressText");
     if (progressText) {
-        progressText.textContent =
-            completed + " / 3 Activities Completed";
+        progressText.textContent = completed + " / 6 Activities Completed";
     }
 
-
-    // Update percentage
     const progressPercentage =
         document.getElementById("progressPercentage");
 
     if (progressPercentage) {
-        progressPercentage.textContent =
-            percentage + "% Completed";
+        progressPercentage.textContent = percentage + "% Completed";
     }
 
-
-    // Update completed count
     const completedCount =
         document.getElementById("completedCount");
 
-    if (completedCount) {
-        completedCount.textContent =
-            completed;
-    }
+    if (completedCount) completedCount.textContent = completed;
 
-
-    // Update pending count
     const pendingCount =
         document.getElementById("pendingCount");
 
-    if (pendingCount) {
-        pendingCount.textContent =
-            pending;
-    }
+    if (pendingCount) pendingCount.textContent = pending;
 
-
-    // Show certificate only after all 3 activities
     const certificateSection =
         document.getElementById("certificateSection");
 
     if (certificateSection) {
-
-        if (completed === 3) {
-            certificateSection.style.display = "block";
-        } else {
-            certificateSection.style.display = "none";
-        }
-
+        certificateSection.style.display =
+            completed === total ? "block" : "none";
     }
-
 }
 
-
-// Run when dashboard opens
 updateLevel2Progress();
 
+window.addEventListener("pageshow", updateLevel2Progress);
 
-// Refresh when returning to dashboard
-window.addEventListener(
-    "pageshow",
-    updateLevel2Progress
-);
-
-
-// Refresh when browser tab becomes active
-document.addEventListener(
-    "visibilitychange",
-    function() {
-
-        if (document.visibilityState === "visible") {
-            updateLevel2Progress();
-        }
-
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "visible") {
+        updateLevel2Progress();
     }
-);
+});
 
-
-// Extra refresh after page loads
-setTimeout(
-    updateLevel2Progress,
-    1000
-);
-
+setTimeout(updateLevel2Progress, 1000);
 </script>
 
 </body>
