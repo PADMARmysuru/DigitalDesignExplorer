@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data-Flow Modeling | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.activity-container{max-width:1100px;margin:16px auto;padding:10px}
+.hero,.card{width:100%;box-sizing:border-box;background:#fff;padding:15px 18px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:14px}
+.hero{background:#243b64;color:#fff;text-align:center}.hero h2{color:#fff;margin:0 0 5px}.hero p{margin:0}
+.card h3{color:#243b64;margin:0 0 8px}
+.simple-box,.tip{padding:14px 16px;border-radius:8px;line-height:1.45;margin:8px 0}
+.simple-box{background:#f5f7fa;border-left:5px solid #4f6fad}.tip{background:#fff8e1;border-left:5px solid #c9a227}
+.code-box{width:100%;min-height:165px;box-sizing:border-box;padding:10px;border:1px solid #cfd6df;border-radius:8px;font-family:Consolas,monospace;font-size:14px;resize:vertical;background:#f8fafc}
+.button-row{text-align:center;margin-top:12px}
+button{margin:3px;padding:9px 16px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
+.primary-btn{background:#243b64;color:#fff}.secondary-btn{background:#eee;color:#555}
+.output{margin-top:12px;padding:10px 12px;border-radius:8px;background:#f5f7fa;min-height:28px;line-height:1.4}
+.gate-demo{text-align:center;margin:15px 0}.logic-display{font-size:18px;font-weight:bold;color:#243b64;margin:8px 0}
+.switch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.switch-btn{background:#eef2f7;color:#243b64;border:2px solid #d9dee7}.switch-btn.on{border-color:#243b64}
+.question{background:#f8fafc;padding:14px;border-radius:10px;margin:8px 0}
+.navigation{text-align:center;margin:18px 0}.navigation a{display:inline-block;text-decoration:none;background:#162746;color:#fff;padding:9px 16px;border-radius:8px;margin:3px;font-weight:bold}
+@media(max-width:650px){.activity-container{padding:10px}.switch-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+
+<body>
+<script>
+(function(){
+    if(localStorage.getItem("level3Unlocked")!=="true"){
+        alert("🔒 Level 3 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+})();
+</script>
+
+<header>
+<h1>Digital Design Explorer</h1>
+<p>Level 3 – Verilog for Beginners</p>
+</header>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="level3-dashboard.html">Level 3 Dashboard</a>
+<a href="dashboard.html">Level 1 Dashboard</a>
+<a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main class="activity-container">
+
+<section class="hero">
+<h2>📐 Activity 3 – Data-Flow Modeling</h2>
+<p>Describe what the output should be using expressions and continuous assignments.</p>
+</section>
+
+<section class="card">
+<h3>1. What is Data-Flow Modeling?</h3>
+<div class="simple-box">
+<strong>Data-flow modeling describes how data moves from inputs to outputs.</strong>
+</div>
+<p>We mainly use the <strong>assign</strong> statement and Boolean operators.</p>
+<p>Think: <strong>Input → Expression → Output</strong></p>
+<div class="tip">💡 Unlike structural modeling, we do not draw each gate. We write the logic expression directly.</div>
+</section>
+
+<section class="card">
+<h3>2. The Most Important Statement: assign</h3>
+<textarea class="code-box" readonly>module and_gate(
+    input a,
+    input b,
+    output y
+);
+
+assign y = a & b;
+
+endmodule</textarea>
+<div class="simple-box">
+<strong>Read it as:</strong> “Continuously make <span style="font-family:Consolas,monospace;">y</span> equal to <span style="font-family:Consolas,monospace;">a AND b</span>.”
+</div>
+</section>
+
+<section class="card">
+<h3>3. Interactive Operator Explorer</h3>
+<p>Toggle A and B to see how the expression changes.</p>
+<div class="switch-grid">
+<button id="opA" class="switch-btn" onclick="toggleOp('a')">A = 0</button>
+<button id="opB" class="switch-btn" onclick="toggleOp('b')">B = 0</button>
+<button class="switch-btn" onclick="setOp('&')">A &amp; B</button>
+<button class="switch-btn" onclick="setOp('|')">A | B</button>
+<button class="switch-btn" onclick="setOp('^')">A ^ B</button>
+<button class="switch-btn" onclick="setOp('~a')">~A</button>
+</div>
+<div class="logic-display" id="operatorDisplay">Expression: A &amp; B → Y = 0</div>
+</section>
+
+<section class="card">
+<h3>4. Build a Simple Data-Flow Circuit</h3>
+<p>Complete the code for <strong>y = a OR b</strong>.</p>
+<textarea class="code-box" id="studentCode">module or_gate(
+    input a,
+    input b,
+    output y
+);
+
+assign y = a | b;
+
+endmodule</textarea>
+<div class="button-row">
+<button class="primary-btn" onclick="checkCode()">✅ Check Code</button>
+<button class="secondary-btn" onclick="resetCode()">↺ Reset</button>
+</div>
+<div class="output" id="codeResult"></div>
+</section>
+
+<section class="card">
+<h3>5. Combinational Circuit Examples</h3>
+
+<p><strong>Example 1 – Half Adder using Data-Flow Modeling</strong></p>
+<textarea class="code-box" readonly>module half_adder(
+    input a,
+    input b,
+    output sum,
+    output carry
+);
+
+assign sum = a ^ b;
+assign carry = a & b;
+
+endmodule</textarea>
+<div class="gate-demo">
+<button class="primary-btn" onclick="toggleHA('a')">A = 0</button>
+<button class="primary-btn" onclick="toggleHA('b')">B = 0</button>
+<p class="logic-display" id="haOutput">Sum = 0 &nbsp;&nbsp; Carry = 0</p>
+</div>
+
+<hr style="margin:18px 0;border:0;border-top:1px solid #d9dee7">
+
+<p><strong>Example 2 – 2:1 Multiplexer</strong></p>
+<textarea class="code-box" readonly>module mux2to1(
+    input i0,
+    input i1,
+    input s,
+    output y
+);
+
+assign y = (~s & i0) | (s & i1);
+
+endmodule</textarea>
+<div class="gate-demo">
+<button class="primary-btn" onclick="toggleMux('i0')">I0 = 0</button>
+<button class="primary-btn" onclick="toggleMux('i1')">I1 = 0</button>
+<button class="secondary-btn" onclick="toggleMux('s')">S = 0</button>
+<p class="logic-display" id="muxOutput">Y = 0</p>
+</div>
+</section>
+
+<section class="card">
+<h3>6. More Data-Flow Examples</h3>
+<p><strong>4-bit Equality Comparator</strong></p>
+<textarea class="code-box" readonly>module equality4(
+    input [3:0] a,
+    input [3:0] b,
+    output equal
+);
+
+assign equal = (a == b);
+
+endmodule</textarea>
+<div class="tip">💡 Data-flow is especially convenient when the circuit can be written naturally as a Boolean or arithmetic expression.</div>
+
+<p><strong>Simple 4-bit Adder</strong></p>
+<textarea class="code-box" readonly>module adder4(
+    input [3:0] a,
+    input [3:0] b,
+    output [4:0] sum
+);
+
+assign sum = a + b;
+
+endmodule</textarea>
+</section>
+
+<section class="card">
+<h3>7. Quick Check</h3>
+
+<div class="question">
+<p><strong>Q1.</strong> Which keyword is commonly used for continuous assignment?</p>
+<label><input type="radio" name="q1" value="assign"> assign</label><br>
+<label><input type="radio" name="q1" value="always"> always</label><br>
+<label><input type="radio" name="q1" value="module"> module</label>
+</div>
+
+<div class="question">
+<p><strong>Q2.</strong> What does <span style="font-family:Consolas,monospace;">assign y = a &amp; b;</span> describe?</p>
+<label><input type="radio" name="q2" value="and"> AND operation</label><br>
+<label><input type="radio" name="q2" value="or"> OR operation</label><br>
+<label><input type="radio" name="q2" value="not"> NOT operation</label>
+</div>
+
+<div class="question">
+<p><strong>Q3.</strong> Data-flow modeling mainly describes:</p>
+<label><input type="radio" name="q3" value="logic"> Logic relationships between signals</label><br>
+<label><input type="radio" name="q3" value="pins"> Physical IC pin locations</label><br>
+<label><input type="radio" name="q3" value="comments"> Comments only</label>
+</div>
+
+<div class="button-row"><button class="primary-btn" onclick="checkQuiz()">✅ Check Answers</button></div>
+<div class="output" id="quizResult"></div>
+</section>
+
+<section class="card">
+<h3>8. Complex Data-Flow Challenge 🎯</h3>
+<div class="simple-box">
+<strong>Problem:</strong> Design a <strong>4-bit comparator</strong> that produces three outputs:
+<strong>GT</strong> when A &gt; B, <strong>EQ</strong> when A = B, and <strong>LT</strong> when A &lt; B.
+Use <strong>data-flow modeling only</strong>.
+</div>
+
+<p><strong>Starter:</strong></p>
+<textarea class="code-box" id="challengeCode">module comparator4(
+    input [3:0] a,
+    input [3:0] b,
+    output gt,
+    output eq,
+    output lt
+);
+
+// Write three continuous assignments here
+
+endmodule</textarea>
+
+<div class="tip">
+💡 Hint:
+<br><span style="font-family:Consolas,monospace;">assign gt = (a &gt; b);</span>
+<br><span style="font-family:Consolas,monospace;">assign eq = (a == b);</span>
+<br><span style="font-family:Consolas,monospace;">assign lt = (a &lt; b);</span>
+</div>
+
+<div class="button-row">
+<button class="primary-btn" onclick="checkChallenge()">🎯 Check Challenge</button>
+<button class="secondary-btn" onclick="showChallengeHint()">💡 Show Hint</button>
+</div>
+<div class="output" id="challengeResult"></div>
+</section>
+
+<div class="navigation">
+<a href="level3-dashboard.html">← Level 3 Dashboard</a>
+<a href="verilog-structural.html">← Activity 2</a>
+<a href="index.html">Home</a>
+</div>
+</main>
+
+<footer>
+<p>Digital Design Explorer | ECE Department</p>
+</footer>
+<footer class="site-footer">
+<p>Developed by <strong>Mrs. Padma R</strong></p>
+<p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+<p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+let opA=0, opB=0, opType="&";
+
+function opResult(){
+    if(opType==="&") return opA & opB;
+    if(opType==="|") return opA | opB;
+    if(opType==="^") return opA ^ opB;
+    if(opType==="~a") return opA ? 0 : 1;
+    return 0;
+}
+function toggleOp(v){
+    if(v==="a") opA = opA ? 0 : 1;
+    else opB = opB ? 0 : 1;
+    updateOp();
+}
+function setOp(v){ opType=v; updateOp(); }
+function updateOp(){
+    document.getElementById("opA").textContent="A = "+opA;
+    document.getElementById("opB").textContent="B = "+opB;
+    let expr = opType==="~a" ? "~A" : "A "+opType+" B";
+    document.getElementById("operatorDisplay").textContent =
+        "Expression: "+expr+" → Y = "+opResult();
+}
+
+let haA=0,haB=0;
+function updateHA(){
+    document.getElementById("haOutput").textContent =
+        "Sum = "+(haA^haB)+"    Carry = "+(haA&haB);
+}
+function toggleHA(v){
+    if(v==="a") haA=haA?0:1; else haB=haB?0:1;
+    updateHA();
+}
+
+let muxI0=0,muxI1=0,muxS=0;
+function updateMux(){
+    document.getElementById("muxOutput").textContent =
+        "Y = "+(muxS?muxI1:muxI0);
+}
+function toggleMux(v){
+    if(v==="i0") muxI0=muxI0?0:1;
+    if(v==="i1") muxI1=muxI1?0:1;
+    if(v==="s") muxS=muxS?0:1;
+    updateMux();
+}
+
+function cleanCode(code){
+    return code.toLowerCase().replace(/\s+/g,"");
+}
+function checkCode(){
+    const code=cleanCode(document.getElementById("studentCode").value);
+    const result=document.getElementById("codeResult");
+    const correct=
+        code.includes("moduleor_gate(") &&
+        code.includes("inputa") &&
+        code.includes("inputb") &&
+        code.includes("outputy") &&
+        code.includes("assigny=a|b;") &&
+        code.includes("endmodule");
+    if(correct){
+        result.innerHTML="✅ Correct! You have used data-flow modeling with a continuous assignment.";
+        result.style.color="#2e7d32";
+        localStorage.setItem("verilogDataflowCodeDone","true");
+    }else{
+        result.innerHTML="❌ Check the module name, ports, assign statement and endmodule.";
+        result.style.color="#c62828";
+    }
+}
+function resetCode(){
+    document.getElementById("studentCode").value=`module or_gate(
+    input a,
+    input b,
+    output y
+);
+
+assign y = a | b;
+
+endmodule`;
+    document.getElementById("codeResult").innerHTML="";
+}
+function checkQuiz(){
+    let score=0;
+    const q1=document.querySelector('input[name="q1"]:checked');
+    const q2=document.querySelector('input[name="q2"]:checked');
+    const q3=document.querySelector('input[name="q3"]:checked');
+    if(q1&&q1.value==="assign")score++;
+    if(q2&&q2.value==="and")score++;
+    if(q3&&q3.value==="logic")score++;
+    const r=document.getElementById("quizResult");
+    if(score===3){
+        r.innerHTML="✅ 3 / 3 — Excellent!";
+        r.style.color="#2e7d32";
+        localStorage.setItem("verilogDataflowQuizDone","true");
+    }else{
+        r.innerHTML="Score: "+score+" / 3 — Try again.";
+        r.style.color="#c62828";
+    }
+}
+function showChallengeHint(){
+    document.getElementById("challengeResult").innerHTML =
+        "💡 Use three continuous assignments comparing the two 4-bit buses.";
+}
+function checkChallenge(){
+    const code=cleanCode(document.getElementById("challengeCode").value);
+    const r=document.getElementById("challengeResult");
+    const correct=
+        code.includes("modulecomparator4(") &&
+        code.includes("input[3:0]a") &&
+        code.includes("input[3:0]b") &&
+        code.includes("outputgt") &&
+        code.includes("outputeq") &&
+        code.includes("outputlt") &&
+        code.includes("assigngt=(a>b);") &&
+        code.includes("assigneq=(a==b);") &&
+        code.includes("assignlt=(a<b);") &&
+        code.includes("endmodule");
+    if(correct){
+        r.innerHTML="✅ Challenge completed! Your 4-bit comparator uses data-flow modeling.";
+        r.style.color="#2e7d32";
+        localStorage.setItem("verilogDataflowChallengeDone","true");
+        localStorage.setItem("verilogDataflowDone","true");
+    }else{
+        r.innerHTML="❌ Incomplete. Check the three assign statements and the 4-bit ports.";
+        r.style.color="#c62828";
+    }
+}
+function logout(){
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href="login.html";
+}
+updateOp();updateHA();updateMux();
+</script>
+</body>
+</html>

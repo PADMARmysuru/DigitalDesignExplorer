@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RTL Modeling | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+.activity-container{
+    max-width:1100px;
+    margin:16px auto;
+    padding:10px;
+}
+
+.hero,.card{
+    width:100%;
+    box-sizing:border-box;
+    background:white;
+    padding:15px 18px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom:14px;
+}
+
+.hero{
+    background:#243b64;
+    color:white;
+    text-align:center;
+}
+
+.hero h2{
+    color:white;
+    margin:0 0 5px;
+}
+
+.hero p{
+    margin:0;
+}
+
+.card h3{
+    color:#243b64;
+    margin:0 0 8px;
+}
+
+.simple-box,.tip{
+    padding:14px 16px;
+    border-radius:8px;
+    line-height:1.45;
+    margin:8px 0;
+}
+
+.simple-box{
+    background:#f5f7fa;
+    border-left:5px solid #4f6fad;
+}
+
+.tip{
+    background:#fff8e1;
+    border-left:5px solid #c9a227;
+}
+
+.code-box{
+    width:100%;
+    min-height:170px;
+    box-sizing:border-box;
+    padding:10px;
+    border:1px solid #cfd6df;
+    border-radius:8px;
+    font-family:Consolas,monospace;
+    font-size:14px;
+    resize:vertical;
+    background:#f8fafc;
+}
+
+.button-row{
+    text-align:center;
+    margin-top:12px;
+}
+
+button{
+    margin:3px;
+    padding:9px 16px;
+    border:0;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.primary-btn{
+    background:#243b64;
+    color:white;
+}
+
+.secondary-btn{
+    background:#eeeeee;
+    color:#555;
+}
+
+.output{
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius:8px;
+    background:#f5f7fa;
+    min-height:28px;
+    line-height:1.4;
+}
+
+.logic-display{
+    font-size:18px;
+    font-weight:bold;
+    color:#243b64;
+    margin:10px 0;
+    text-align:center;
+}
+
+.control-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin:12px 0;
+}
+
+.control-box{
+    background:#f8fafc;
+    border:1px solid #d9dee7;
+    padding:12px;
+    border-radius:10px;
+    text-align:center;
+}
+
+.value{
+    font-size:24px;
+    font-weight:bold;
+    color:#243b64;
+    margin:6px 0;
+}
+
+.question{
+    background:#f8fafc;
+    padding:14px;
+    border-radius:10px;
+    margin:8px 0;
+}
+
+.navigation{
+    text-align:center;
+    margin:18px 0;
+}
+
+.navigation a{
+    display:inline-block;
+    text-decoration:none;
+    background:#162746;
+    color:white;
+    padding:9px 16px;
+    border-radius:8px;
+    margin:3px;
+    font-weight:bold;
+}
+
+@media(max-width:700px){
+    .activity-container{padding:10px;}
+    .control-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+
+<body>
+
+<script>
+(function(){
+    if(localStorage.getItem("level3Unlocked")!=="true"){
+        alert("🔒 Level 3 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+})();
+</script>
+
+<header>
+    <h1>Digital Design Explorer</h1>
+    <p>Level 3 – Verilog for Beginners</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="level3-dashboard.html">Level 3 Dashboard</a>
+    <a href="dashboard.html">Level 1 Dashboard</a>
+    <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main class="activity-container">
+
+<section class="hero">
+    <h2>⚙️ Activity 5 – RTL Modeling</h2>
+    <p>Describe digital hardware using registers, combinational logic and clocked operations.</p>
+</section>
+
+<section class="card">
+    <h3>1. What is RTL Modeling?</h3>
+
+    <div class="simple-box">
+        <strong>RTL means Register Transfer Level.</strong>
+        It describes how data moves between registers and what logic operates on that data.
+    </div>
+
+    <p>
+        RTL is widely used to describe synchronous digital systems such as
+        counters, registers, ALUs and control logic.
+    </p>
+
+    <div class="tip">
+        💡 Think of RTL as:
+        <strong>Register → Logic → Register</strong>
+    </div>
+</section>
+
+<section class="card">
+    <h3>2. Basic RTL Example</h3>
+
+    <textarea class="code-box" readonly>module register4(
+    input clk,
+    input reset,
+    input [3:0] d,
+    output reg [3:0] q
+);
+
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        q <= 4'b0000;
+    else
+        q <= d;
+end
+
+endmodule</textarea>
+
+    <div class="simple-box">
+        <strong>What happens?</strong><br>
+        On reset, the register becomes <strong>0000</strong>.
+        On the rising edge of the clock, the input <strong>d</strong> is transferred to <strong>q</strong>.
+    </div>
+</section>
+
+<section class="card">
+    <h3>3. Interactive 4-bit Register</h3>
+
+    <p>
+        Set a 4-bit value and press the clock. The register captures the input only when the clock is applied.
+    </p>
+
+    <div class="control-grid">
+
+        <div class="control-box">
+            <strong>D[3:0]</strong>
+            <div class="value" id="d3">0</div>
+            <button class="primary-btn" onclick="toggleBit(3)">Toggle</button>
+        </div>
+
+        <div class="control-box">
+            <strong>D[2:0]</strong>
+            <div class="value" id="d2">0</div>
+            <button class="primary-btn" onclick="toggleBit(2)">Toggle</button>
+        </div>
+
+        <div class="control-box">
+            <strong>D[1:0]</strong>
+            <div class="value" id="d1">0</div>
+            <button class="primary-btn" onclick="toggleBit(1)">Toggle</button>
+        </div>
+
+        <div class="control-box">
+            <strong>D[0]</strong>
+            <div class="value" id="d0">0</div>
+            <button class="primary-btn" onclick="toggleBit(0)">Toggle</button>
+        </div>
+
+    </div>
+
+    <div class="logic-display" id="registerInput">D = 0000</div>
+    <div class="logic-display" id="registerOutput">Q = 0000</div>
+
+    <div class="button-row">
+        <button class="secondary-btn" onclick="clockRegister()">⏱ Apply Clock</button>
+        <button class="secondary-btn" onclick="resetRegister()">Reset</button>
+    </div>
+
+    <div class="output" id="registerResult"></div>
+</section>
+
+<section class="card">
+    <h3>4. RTL Combinational + Sequential Thinking</h3>
+
+    <p>
+        An RTL design often contains both:
+    </p>
+
+    <div class="simple-box">
+        <strong>Combinational logic:</strong> calculates the next value.
+        <br>
+        <strong>Sequential logic:</strong> stores that value on a clock edge.
+    </div>
+
+    <textarea class="code-box" readonly>// Next-value logic
+always @(*) begin
+    next_q = q + 1'b1;
+end
+
+// Register update
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        q <= 4'b0000;
+    else
+        q <= next_q;
+end</textarea>
+
+    <div class="tip">
+        💡 The first block decides <strong>what the next state should be</strong>.
+        The second block decides <strong>when the state is stored</strong>.
+    </div>
+</section>
+
+<section class="card">
+    <h3>5. Example – RTL Up Counter</h3>
+
+    <textarea class="code-box" readonly>module counter4(
+    input clk,
+    input reset,
+    output reg [3:0] q
+);
+
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        q <= 4'b0000;
+    else
+        q <= q + 1'b1;
+end
+
+endmodule</textarea>
+
+    <div class="control-grid">
+
+        <div class="control-box">
+            <strong>Current Q</strong>
+            <div class="value" id="counterQ">0000</div>
+        </div>
+
+        <div class="control-box">
+            <strong>Next Q</strong>
+            <div class="value" id="counterNext">0001</div>
+        </div>
+
+        <div class="control-box">
+            <strong>Clock</strong>
+            <button class="secondary-btn" onclick="clockCounter()">⏱ Clock</button>
+        </div>
+
+        <div class="control-box">
+            <strong>Reset</strong>
+            <button class="secondary-btn" onclick="resetCounter()">Reset</button>
+        </div>
+
+    </div>
+
+    <div class="logic-display" id="counterState">Q = 0000</div>
+</section>
+
+<section class="card">
+    <h3>6. RTL Coding Practice</h3>
+
+    <p>
+        Write a <strong>4-bit register</strong> that:
+    </p>
+
+    <p>
+        • resets to 0000<br>
+        • loads <strong>d</strong> on the rising edge of <strong>clk</strong>
+    </p>
+
+    <textarea class="code-box" id="studentCode">module register4(
+    input clk,
+    input reset,
+    input [3:0] d,
+    output reg [3:0] q
+);
+
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        q <= 4'b0000;
+    else
+        q <= d;
+end
+
+endmodule</textarea>
+
+    <div class="button-row">
+        <button class="primary-btn" onclick="checkCode()">✅ Check RTL Code</button>
+        <button class="secondary-btn" onclick="resetCode()">↺ Reset</button>
+    </div>
+
+    <div class="output" id="codeResult"></div>
+</section>
+
+<section class="card">
+    <h3>7. Quick Check</h3>
+
+    <div class="question">
+        <p><strong>Q1.</strong> RTL stands for:</p>
+        <label><input type="radio" name="q1" value="register"> Register Transfer Level</label><br>
+        <label><input type="radio" name="q1" value="random"> Random Transfer Logic</label><br>
+        <label><input type="radio" name="q1" value="real"> Real Time Logic</label>
+    </div>
+
+    <div class="question">
+        <p><strong>Q2.</strong> Which event describes a rising clock edge?</p>
+        <label><input type="radio" name="q2" value="posedge"> posedge clk</label><br>
+        <label><input type="radio" name="q2" value="negedge"> negedge clk</label><br>
+        <label><input type="radio" name="q2" value="all"> always *</label>
+    </div>
+
+    <div class="question">
+        <p><strong>Q3.</strong> In a clocked RTL block, <span style="font-family:Consolas,monospace;">q &lt;= d;</span> means:</p>
+        <label><input type="radio" name="q3" value="transfer"> Transfer/store d into q on the clock event</label><br>
+        <label><input type="radio" name="q3" value="compare"> Compare q and d</label><br>
+        <label><input type="radio" name="q3" value="print"> Print d</label>
+    </div>
+
+    <div class="button-row">
+        <button class="primary-btn" onclick="checkQuiz()">✅ Check Answers</button>
+    </div>
+
+    <div class="output" id="quizResult"></div>
+</section>
+
+<section class="card">
+    <h3>8. Complex RTL Challenge 🎯</h3>
+
+    <div class="simple-box">
+        <strong>Problem:</strong>
+        Design a <strong>4-bit synchronous up/down counter</strong>.
+        When <strong>up_down = 1</strong>, it increments by 1.
+        When <strong>up_down = 0</strong>, it decrements by 1.
+        Reset must set the count to <strong>0000</strong>.
+    </div>
+
+    <textarea class="code-box" id="challengeCode">module updown_counter4(
+    input clk,
+    input reset,
+    input up_down,
+    output reg [3:0] q
+);
+
+always @(posedge clk or posedge reset) begin
+    // Write reset condition
+
+    // If up_down = 1, count up
+    // Else, count down
+end
+
+endmodule</textarea>
+
+    <div class="tip">
+        💡 Hint:
+        <br>
+        <span style="font-family:Consolas,monospace;">if (reset)</span> should load
+        <span style="font-family:Consolas,monospace;">4'b0000</span>.
+        <br>
+        For counting up use <span style="font-family:Consolas,monospace;">q &lt;= q + 1'b1;</span>.
+        <br>
+        For counting down use <span style="font-family:Consolas,monospace;">q &lt;= q - 1'b1;</span>.
+    </div>
+
+    <div class="button-row">
+        <button class="primary-btn" onclick="checkChallenge()">🎯 Check Challenge</button>
+        <button class="secondary-btn" onclick="showChallengeHint()">💡 Show Hint</button>
+    </div>
+
+    <div class="output" id="challengeResult"></div>
+</section>
+
+<div class="navigation">
+    <a href="level3-dashboard.html">← Level 3 Dashboard</a>
+    <a href="verilog-behavioral.html">← Activity 4</a>
+    <a href="index.html">Home</a>
+</div>
+
+</main>
+
+<footer>
+    <p>Digital Design Explorer | ECE Department</p>
+</footer>
+
+<footer class="site-footer">
+    <p>Developed by <strong>Mrs. Padma R</strong></p>
+    <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+    <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+let bits = [0,0,0,0];
+let regQ = 0;
+
+function bitString(value){
+    return value.toString(2).padStart(4,"0");
+}
+
+function updateRegister(){
+    document.getElementById("d3").textContent = bits[3];
+    document.getElementById("d2").textContent = bits[2];
+    document.getElementById("d1").textContent = bits[1];
+    document.getElementById("d0").textContent = bits[0];
+
+    const d =
+        (bits[3]<<3) |
+        (bits[2]<<2) |
+        (bits[1]<<1) |
+        bits[0];
+
+    document.getElementById("registerInput").textContent =
+        "D = " + bitString(d);
+
+    document.getElementById("registerOutput").textContent =
+        "Q = " + bitString(regQ);
+}
+
+function toggleBit(index){
+    bits[index] = bits[index] ? 0 : 1;
+    document.getElementById("registerResult").innerHTML = "";
+    updateRegister();
+}
+
+function clockRegister(){
+    const d =
+        (bits[3]<<3) |
+        (bits[2]<<2) |
+        (bits[1]<<1) |
+        bits[0];
+
+    regQ = d;
+
+    document.getElementById("registerResult").innerHTML =
+        "✅ Clock applied. Q captured D = " + bitString(regQ);
+
+    updateRegister();
+}
+
+function resetRegister(){
+    regQ = 0;
+    document.getElementById("registerResult").innerHTML =
+        "↺ Register reset to 0000.";
+    updateRegister();
+}
+
+let counterQ = 0;
+
+function updateCounter(){
+    const next = (counterQ + 1) % 16;
+
+    document.getElementById("counterQ").textContent =
+        bitString(counterQ);
+
+    document.getElementById("counterNext").textContent =
+        bitString(next);
+
+    document.getElementById("counterState").textContent =
+        "Q = " + bitString(counterQ);
+}
+
+function clockCounter(){
+    counterQ = (counterQ + 1) % 16;
+    updateCounter();
+}
+
+function resetCounter(){
+    counterQ = 0;
+    updateCounter();
+}
+
+function cleanCode(code){
+    return code.toLowerCase().replace(/\s+/g,"");
+}
+
+function checkCode(){
+    const code = cleanCode(document.getElementById("studentCode").value);
+    const result = document.getElementById("codeResult");
+
+    const correct =
+        code.includes("moduleregister4(") &&
+        code.includes("inputclk") &&
+        code.includes("inputreset") &&
+        code.includes("input[3:0]d") &&
+        code.includes("outputreg[3:0]q") &&
+        code.includes("always@(posedgeclkorposedgereset)") &&
+        code.includes("if(reset)") &&
+        code.includes("q<=4'b0000;") &&
+        code.includes("else") &&
+        code.includes("q<=d;") &&
+        code.includes("endmodule");
+
+    if(correct){
+        result.innerHTML =
+            "✅ Correct! You have described a 4-bit register using RTL modeling.";
+        result.style.color = "#2e7d32";
+
+        localStorage.setItem("verilogRTLCodeDone","true");
+    }else{
+        result.innerHTML =
+            "❌ Check the clock/reset event, 4-bit input/output and register transfer statement.";
+        result.style.color = "#c62828";
+    }
+}
+
+function resetCode(){
+    document.getElementById("studentCode").value =
+`module register4(
+    input clk,
+    input reset,
+    input [3:0] d,
+    output reg [3:0] q
+);
+
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        q <= 4'b0000;
+    else
+        q <= d;
+end
+
+endmodule`;
+
+    document.getElementById("codeResult").innerHTML = "";
+}
+
+function checkQuiz(){
+    let score = 0;
+
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    const q3 = document.querySelector('input[name="q3"]:checked');
+
+    if(q1 && q1.value==="register") score++;
+    if(q2 && q2.value==="posedge") score++;
+    if(q3 && q3.value==="transfer") score++;
+
+    const result = document.getElementById("quizResult");
+
+    if(score===3){
+        result.innerHTML = "✅ 3 / 3 — Excellent!";
+        result.style.color = "#2e7d32";
+        localStorage.setItem("verilogRTLQuizDone","true");
+    }else{
+        result.innerHTML = "Score: " + score + " / 3 — Try again.";
+        result.style.color = "#c62828";
+    }
+}
+
+function showChallengeHint(){
+    document.getElementById("challengeResult").innerHTML =
+        "💡 Use one always @(posedge clk or posedge reset) block with reset, then if(up_down) count up, else count down.";
+}
+
+function checkChallenge(){
+    const code = cleanCode(document.getElementById("challengeCode").value);
+    const result = document.getElementById("challengeResult");
+
+    const correct =
+        code.includes("moduleupdown_counter4(") &&
+        code.includes("inputclk") &&
+        code.includes("inputreset") &&
+        code.includes("inputup_down") &&
+        code.includes("outputreg[3:0]q") &&
+        code.includes("always@(posedgeclkorposedgereset)") &&
+        code.includes("if(reset)") &&
+        code.includes("q<=4'b0000;") &&
+        code.includes("if(up_down)") &&
+        code.includes("q<=q+1'b1;") &&
+        code.includes("else") &&
+        code.includes("q<=q-1'b1;") &&
+        code.includes("endmodule");
+
+    if(correct){
+        result.innerHTML =
+            "✅ Challenge completed! Your 4-bit RTL up/down counter is correctly described.";
+        result.style.color = "#2e7d32";
+
+        localStorage.setItem("verilogRTLChallengeDone","true");
+        localStorage.setItem("verilogRTLDone","true");
+    }else{
+        result.innerHTML =
+            "❌ Incomplete. Check reset, up/down control, increment and decrement statements.";
+        result.style.color = "#c62828";
+    }
+}
+
+function logout(){
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href = "login.html";
+}
+
+updateRegister();
+updateCounter();
+</script>
+
+</body>
+</html>

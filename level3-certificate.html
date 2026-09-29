@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 3 Certificate | Digital Design Explorer</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f9}
+.certificate{max-width:900px;margin:40px auto;padding:45px;background:white;border:10px solid #243b64;box-shadow:0 5px 20px rgba(0,0,0,.15);text-align:center}
+.certificate h1{color:#243b64;font-size:36px;margin:0 0 8px}
+.certificate h2{color:#c9a227;font-size:28px;margin:15px 0}
+.subtitle{font-size:18px;color:#555}
+.name{font-size:32px;font-weight:bold;color:#162746;margin:25px 0}
+.details{font-size:17px;line-height:1.8;margin:20px 0}
+.footer{margin-top:35px;display:flex;justify-content:space-between;gap:20px}
+.footer div{width:45%}
+.line{border-top:1px solid #333;margin-top:35px;padding-top:8px}
+button{margin-top:25px;padding:11px 20px;border:0;border-radius:8px;background:#243b64;color:white;font-weight:bold;cursor:pointer}
+@media print{
+    button{display:none}
+    body{background:white}
+    .certificate{margin:0;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<script>
+(function(){
+    const keys=[
+        "verilogBasicsDone",
+        "verilogStructuralDone",
+        "verilogDataflowDone",
+        "verilogBehavioralDone",
+        "verilogRTLDone",
+        "verilogVerificationDone"
+    ];
+
+    const complete=keys.every(k=>localStorage.getItem(k)==="true");
+
+    if(!complete){
+        alert("🔒 Complete all 6 Level 3 activities before generating the certificate.");
+        window.location.replace("level3-dashboard.html");
+    }
+})();
+</script>
+
+<div class="certificate">
+    <h1>Digital Design Explorer</h1>
+    <div class="subtitle">Level 3 – Verilog for Beginners</div>
+    <h2>🏆 Certificate of Completion</h2>
+
+    <p>This certificate is proudly presented to</p>
+
+    <div class="name" id="studentName">Student Name</div>
+
+    <div class="details">
+        <div><strong>USN:</strong> <span id="studentUSN">—</span></div>
+        <div><strong>Branch:</strong> <span id="studentBranch">—</span></div>
+        <div><strong>Semester:</strong> <span id="studentSemester">—</span></div>
+        <div><strong>Section:</strong> <span id="studentSection">—</span></div>
+    </div>
+
+    <p>
+        for successfully completing all six activities of
+        <strong>Level 3 – Verilog for Beginners</strong>,
+        including Structural Modeling, Data-Flow Modeling,
+        Behavioral Modeling, RTL Modeling, and Testbench &amp; Verification.
+    </p>
+
+    <div class="footer">
+        <div>
+            <div class="line">Mrs. Padma R</div>
+            Assistant Professor<br>
+            ECE Department
+        </div>
+        <div>
+            <div class="line">GSSSIETW, Mysuru</div>
+            Digital Design Explorer
+        </div>
+    </div>
+
+    <button onclick="window.print()">🖨 Print Certificate</button>
+    <button onclick="window.location.href='level3-dashboard.html'">← Back to Level 3</button>
+</div>
+
+<script>
+const student=JSON.parse(localStorage.getItem("studentAccount")||"null");
+
+if(student){
+    document.getElementById("studentName").textContent=student.name||"Student Name";
+    document.getElementById("studentUSN").textContent=student.usn||"—";
+    document.getElementById("studentBranch").textContent=student.branch||"—";
+    document.getElementById("studentSemester").textContent=student.semester||"—";
+    document.getElementById("studentSection").textContent=student.section||"—";
+}
+</script>
+
+</body>
+</html>

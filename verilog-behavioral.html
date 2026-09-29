@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Behavioral Modeling | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.activity-container{max-width:1100px;margin:16px auto;padding:10px}
+.hero,.card{width:100%;box-sizing:border-box;background:#fff;padding:15px 18px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:14px}
+.hero{background:#243b64;color:#fff;text-align:center}.hero h2{color:#fff;margin:0 0 5px}.hero p{margin:0}
+.card h3{color:#243b64;margin:0 0 8px}
+.simple-box,.tip{padding:14px 16px;border-radius:8px;line-height:1.45;margin:8px 0}
+.simple-box{background:#f5f7fa;border-left:5px solid #4f6fad}.tip{background:#fff8e1;border-left:5px solid #c9a227}
+.code-box{width:100%;min-height:170px;box-sizing:border-box;padding:10px;border:1px solid #cfd6df;border-radius:8px;font-family:Consolas,monospace;font-size:14px;resize:vertical;background:#f8fafc}
+.button-row{text-align:center;margin-top:12px}
+button{margin:3px;padding:9px 16px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
+.primary-btn{background:#243b64;color:#fff}.secondary-btn{background:#eee;color:#555}
+.output{margin-top:12px;padding:10px 12px;border-radius:8px;background:#f5f7fa;min-height:28px;line-height:1.4}
+.simulator{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin:12px 0}
+.sim-box{min-width:90px;text-align:center;background:#f8fafc;border:1px solid #d9dee7;border-radius:10px;padding:12px}
+.signal-value{font-size:22px;font-weight:bold;color:#243b64;margin-top:5px}
+.question{background:#f8fafc;padding:14px;border-radius:10px;margin:8px 0}
+.navigation{text-align:center;margin:18px 0}.navigation a{display:inline-block;text-decoration:none;background:#162746;color:#fff;padding:9px 16px;border-radius:8px;margin:3px;font-weight:bold}
+@media(max-width:650px){.activity-container{padding:10px}}
+</style>
+</head>
+
+<body>
+<script>
+(function(){
+    if(localStorage.getItem("level3Unlocked")!=="true"){
+        alert("🔒 Level 3 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+})();
+</script>
+
+<header>
+<h1>Digital Design Explorer</h1>
+<p>Level 3 – Verilog for Beginners</p>
+</header>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="level3-dashboard.html">Level 3 Dashboard</a>
+<a href="dashboard.html">Level 1 Dashboard</a>
+<a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main class="activity-container">
+
+<section class="hero">
+<h2>🧠 Activity 4 – Behavioral Modeling</h2>
+<p>Describe how a circuit behaves using always blocks, conditions and case statements.</p>
+</section>
+
+<section class="card">
+<h3>1. What is Behavioral Modeling?</h3>
+<div class="simple-box">
+<strong>Behavioral modeling describes what a circuit should do, rather than listing every gate connection.</strong>
+</div>
+<p>The main building block is the <strong>always</strong> block.</p>
+<p>Inside it, we can use <strong>if, else, case</strong> and other decision statements.</p>
+<div class="tip">💡 Think: “When this event happens, what should the circuit do?”</div>
+</section>
+
+<section class="card">
+<h3>2. First Behavioral Verilog Example</h3>
+<textarea class="code-box" readonly>module mux2to1(
+    input i0,
+    input i1,
+    input s,
+    output reg y
+);
+
+always @(*) begin
+    if (s == 1'b0)
+        y = i0;
+    else
+        y = i1;
+end
+
+endmodule</textarea>
+<div class="simple-box">
+<strong>Important:</strong> <span style="font-family:Consolas,monospace;">always @(*)</span> means the block responds whenever an input used inside the block changes.
+</div>
+</section>
+
+<section class="card">
+<h3>3. Interactive Behavioral MUX</h3>
+<p>Change the inputs and select line.</p>
+<div class="simulator">
+<div class="sim-box"><strong>I0</strong><div class="signal-value" id="i0v">0</div><button class="primary-btn" onclick="toggleB('i0')">Toggle</button></div>
+<div class="sim-box"><strong>I1</strong><div class="signal-value" id="i1v">0</div><button class="primary-btn" onclick="toggleB('i1')">Toggle</button></div>
+<div class="sim-box"><strong>S</strong><div class="signal-value" id="sv">0</div><button class="secondary-btn" onclick="toggleB('s')">Toggle</button></div>
+<div class="sim-box"><strong>Y</strong><div class="signal-value" id="yv">0</div></div>
+</div>
+<div class="logic-display" style="text-align:center" id="muxState">Y = I0 because S = 0</div>
+</section>
+
+<section class="card">
+<h3>4. if–else Example: 2:1 MUX</h3>
+<p>Behavior is written directly using a condition.</p>
+<textarea class="code-box" readonly>always @(*) begin
+    if (s == 1'b0)
+        y = i0;
+    else
+        y = i1;
+end</textarea>
+<div class="tip">💡 This style is easy to read: <strong>if S is 0, choose I0; otherwise choose I1.</strong></div>
+</section>
+
+<section class="card">
+<h3>5. case Statement Example: 4:1 MUX</h3>
+<textarea class="code-box" readonly>always @(*) begin
+    case (s)
+        2'b00: y = i0;
+        2'b01: y = i1;
+        2'b10: y = i2;
+        2'b11: y = i3;
+    endcase
+end</textarea>
+<p>The <strong>case</strong> statement is useful when there are several possible choices.</p>
+</section>
+
+<section class="card">
+<h3>6. Sequential Behavioral Example – D Flip-Flop</h3>
+<p>A flip-flop changes state when the clock edge occurs.</p>
+<textarea class="code-box" readonly>module d_ff(
+    input d,
+    input clk,
+    input reset,
+    output reg q
+);
+
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        q <= 1'b0;
+    else
+        q <= d;
+end
+
+endmodule</textarea>
+
+<div class="simulator">
+<div class="sim-box"><strong>D</strong><div class="signal-value" id="dv">0</div><button class="primary-btn" onclick="toggleD()">Toggle D</button></div>
+<div class="sim-box"><strong>Q</strong><div class="signal-value" id="qv">0</div></div>
+</div>
+<div class="button-row">
+<button class="secondary-btn" onclick="clockD()">⏱ Apply Clock</button>
+<button class="secondary-btn" onclick="resetD()">Reset</button>
+</div>
+<div class="logic-display" style="text-align:center" id="dffState">Q = 0</div>
+</section>
+
+<section class="card">
+<h3>7. Behavioral Coding Practice</h3>
+<p>Write a behavioral 2:1 MUX using <strong>always @(*)</strong> and <strong>if–else</strong>.</p>
+<textarea class="code-box" id="studentCode">module mux2to1(
+    input i0,
+    input i1,
+    input s,
+    output reg y
+);
+
+always @(*) begin
+    if (s == 1'b0)
+        y = i0;
+    else
+        y = i1;
+end
+
+endmodule</textarea>
+<div class="button-row">
+<button class="primary-btn" onclick="checkCode()">✅ Check Code</button>
+<button class="secondary-btn" onclick="resetCode()">↺ Reset</button>
+</div>
+<div class="output" id="codeResult"></div>
+</section>
+
+<section class="card">
+<h3>8. Quick Check</h3>
+
+<div class="question">
+<p><strong>Q1.</strong> Which construct is central to behavioral modeling?</p>
+<label><input type="radio" name="q1" value="always"> always</label><br>
+<label><input type="radio" name="q1" value="wire"> wire</label><br>
+<label><input type="radio" name="q1" value="primitive"> gate primitive</label>
+</div>
+
+<div class="question">
+<p><strong>Q2.</strong> Which statement is useful when there are many choices?</p>
+<label><input type="radio" name="q2" value="case"> case</label><br>
+<label><input type="radio" name="q2" value="xor"> xor</label><br>
+<label><input type="radio" name="q2" value="endmodule"> endmodule</label>
+</div>
+
+<div class="question">
+<p><strong>Q3.</strong> What does <span style="font-family:Consolas,monospace;">posedge clk</span> indicate?</p>
+<label><input type="radio" name="q3" value="rising"> Rising edge of the clock</label><br>
+<label><input type="radio" name="q3" value="falling"> Falling edge</label><br>
+<label><input type="radio" name="q3" value="level"> Constant level</label>
+</div>
+
+<div class="button-row"><button class="primary-btn" onclick="checkQuiz()">✅ Check Answers</button></div>
+<div class="output" id="quizResult"></div>
+</section>
+
+<section class="card">
+<h3>9. Complex Behavioral Challenge 🎯</h3>
+<div class="simple-box">
+<strong>Problem:</strong> Design a <strong>4-bit synchronous up counter</strong> using behavioral Verilog.
+The counter should reset to <strong>0000</strong> and increase by 1 on every rising clock edge.
+</div>
+
+<textarea class="code-box" id="challengeCode">module counter4(
+    input clk,
+    input reset,
+    output reg [3:0] q
+);
+
+always @(posedge clk or posedge reset) begin
+    // Write the reset and counting behavior
+end
+
+endmodule</textarea>
+
+<div class="tip">
+💡 Hint:
+<br>Use <span style="font-family:Consolas,monospace;">if (reset)</span> for reset.
+<br>Otherwise use <span style="font-family:Consolas,monospace;">q &lt;= q + 1'b1;</span>
+</div>
+
+<div class="button-row">
+<button class="primary-btn" onclick="checkChallenge()">🎯 Check Challenge</button>
+<button class="secondary-btn" onclick="showChallengeHint()">💡 Show Hint</button>
+</div>
+<div class="output" id="challengeResult"></div>
+</section>
+
+<div class="navigation">
+<a href="level3-dashboard.html">← Level 3 Dashboard</a>
+<a href="verilog-dataflow.html">← Activity 3</a>
+<a href="index.html">Home</a>
+</div>
+</main>
+
+<footer>
+<p>Digital Design Explorer | ECE Department</p>
+</footer>
+<footer class="site-footer">
+<p>Developed by <strong>Mrs. Padma R</strong></p>
+<p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+<p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+let bi0=0,bi1=0,bs=0;
+function updateMux(){
+    document.getElementById("i0v").textContent=bi0;
+    document.getElementById("i1v").textContent=bi1;
+    document.getElementById("sv").textContent=bs;
+    const y=bs?bi1:bi0;
+    document.getElementById("yv").textContent=y;
+    document.getElementById("muxState").textContent=
+        "Y = I"+(bs?"1":"0")+" because S = "+bs;
+}
+function toggleB(v){
+    if(v==="i0")bi0=bi0?0:1;
+    if(v==="i1")bi1=bi1?0:1;
+    if(v==="s")bs=bs?0:1;
+    updateMux();
+}
+
+let dv=0,qv=0;
+function updateD(){
+    document.getElementById("dv").textContent=dv;
+    document.getElementById("qv").textContent=qv;
+    document.getElementById("dffState").textContent="Q = "+qv;
+}
+function toggleD(){dv=dv?0:1;updateD();}
+function clockD(){qv=dv;updateD();}
+function resetD(){qv=0;updateD();}
+
+function cleanCode(code){return code.toLowerCase().replace(/\s+/g,"");}
+
+function checkCode(){
+    const code=cleanCode(document.getElementById("studentCode").value);
+    const r=document.getElementById("codeResult");
+    const correct=
+        code.includes("modulemux2to1(") &&
+        code.includes("inputi0") &&
+        code.includes("inputi1") &&
+        code.includes("inputs") &&
+        code.includes("outputregy") &&
+        code.includes("always@(*)") &&
+        code.includes("if(s==1'b0)") &&
+        code.includes("y=i0;") &&
+        code.includes("else") &&
+        code.includes("y=i1;") &&
+        code.includes("endmodule");
+    if(correct){
+        r.innerHTML="✅ Correct! This is a behavioral description of a 2:1 MUX.";
+        r.style.color="#2e7d32";
+        localStorage.setItem("verilogBehavioralCodeDone","true");
+    }else{
+        r.innerHTML="❌ Check the always block, if–else logic, ports and endmodule.";
+        r.style.color="#c62828";
+    }
+}
+function resetCode(){
+    document.getElementById("studentCode").value=`module mux2to1(
+    input i0,
+    input i1,
+    input s,
+    output reg y
+);
+
+always @(*) begin
+    if (s == 1'b0)
+        y = i0;
+    else
+        y = i1;
+end
+
+endmodule`;
+    document.getElementById("codeResult").innerHTML="";
+}
+function checkQuiz(){
+    let score=0;
+    const q1=document.querySelector('input[name="q1"]:checked');
+    const q2=document.querySelector('input[name="q2"]:checked');
+    const q3=document.querySelector('input[name="q3"]:checked');
+    if(q1&&q1.value==="always")score++;
+    if(q2&&q2.value==="case")score++;
+    if(q3&&q3.value==="rising")score++;
+    const r=document.getElementById("quizResult");
+    if(score===3){
+        r.innerHTML="✅ 3 / 3 — Excellent!";
+        r.style.color="#2e7d32";
+        localStorage.setItem("verilogBehavioralQuizDone","true");
+    }else{
+        r.innerHTML="Score: "+score+" / 3 — Try again.";
+        r.style.color="#c62828";
+    }
+}
+function showChallengeHint(){
+    document.getElementById("challengeResult").innerHTML =
+        "💡 Use an if–else inside always @(posedge clk or posedge reset). On reset set q to 4'b0000; otherwise increment q by 1.";
+}
+function checkChallenge(){
+    const code=cleanCode(document.getElementById("challengeCode").value);
+    const r=document.getElementById("challengeResult");
+    const correct=
+        code.includes("modulecounter4(") &&
+        code.includes("inputclk") &&
+        code.includes("inputreset") &&
+        code.includes("outputreg[3:0]q") &&
+        code.includes("always@(posedgeclkorposedgereset)") &&
+        code.includes("if(reset)") &&
+        code.includes("q<=4'b0000;") &&
+        code.includes("else") &&
+        code.includes("q<=q+1'b1;") &&
+        code.includes("endmodule");
+    if(correct){
+        r.innerHTML="✅ Challenge completed! Your behavioral 4-bit counter is correctly described.";
+        r.style.color="#2e7d32";
+        localStorage.setItem("verilogBehavioralChallengeDone","true");
+        localStorage.setItem("verilogBehavioralDone","true");
+    }else{
+        r.innerHTML="❌ Incomplete. Check the reset value, clock event and count statement.";
+        r.style.color="#c62828";
+    }
+}
+function logout(){
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href="login.html";
+}
+updateMux();updateD();
+</script>
+</body>
+</html>

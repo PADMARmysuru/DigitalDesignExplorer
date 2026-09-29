@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testbench & Verification | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+.activity-container{
+    max-width:1100px;
+    margin:16px auto;
+    padding:10px;
+}
+
+.hero,.card{
+    width:100%;
+    box-sizing:border-box;
+    background:white;
+    padding:15px 18px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom:14px;
+}
+
+.hero{
+    background:#243b64;
+    color:white;
+    text-align:center;
+}
+
+.hero h2{
+    color:white;
+    margin:0 0 5px;
+}
+
+.hero p{
+    margin:0;
+}
+
+.card h3{
+    color:#243b64;
+    margin:0 0 8px;
+}
+
+.simple-box,.tip{
+    padding:14px 16px;
+    border-radius:8px;
+    line-height:1.45;
+    margin:8px 0;
+}
+
+.simple-box{
+    background:#f5f7fa;
+    border-left:5px solid #4f6fad;
+}
+
+.tip{
+    background:#fff8e1;
+    border-left:5px solid #c9a227;
+}
+
+.code-box{
+    width:100%;
+    min-height:175px;
+    box-sizing:border-box;
+    padding:10px;
+    border:1px solid #cfd6df;
+    border-radius:8px;
+    font-family:Consolas,monospace;
+    font-size:14px;
+    resize:vertical;
+    background:#f8fafc;
+}
+
+.button-row{
+    text-align:center;
+    margin-top:12px;
+}
+
+button{
+    margin:3px;
+    padding:9px 16px;
+    border:0;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.primary-btn{
+    background:#243b64;
+    color:white;
+}
+
+.secondary-btn{
+    background:#eeeeee;
+    color:#555;
+}
+
+.output{
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius:8px;
+    background:#f5f7fa;
+    min-height:28px;
+    line-height:1.4;
+}
+
+.logic-display{
+    font-size:18px;
+    font-weight:bold;
+    color:#243b64;
+    margin:10px 0;
+    text-align:center;
+}
+
+.signal-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin:12px 0;
+}
+
+.signal-box{
+    background:#f8fafc;
+    border:1px solid #d9dee7;
+    padding:12px;
+    border-radius:10px;
+    text-align:center;
+}
+
+.signal-value{
+    font-size:24px;
+    font-weight:bold;
+    color:#243b64;
+    margin:6px 0;
+}
+
+.pass{
+    color:#2e7d32;
+    font-weight:bold;
+}
+
+.fail{
+    color:#c62828;
+    font-weight:bold;
+}
+
+.question{
+    background:#f8fafc;
+    padding:14px;
+    border-radius:10px;
+    margin:8px 0;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th,td{
+    border:1px solid #cfd6df;
+    padding:8px;
+    text-align:center;
+}
+
+th{
+    background:#243b64;
+    color:white;
+}
+
+.navigation{
+    text-align:center;
+    margin:18px 0;
+}
+
+.navigation a{
+    display:inline-block;
+    text-decoration:none;
+    background:#162746;
+    color:white;
+    padding:9px 16px;
+    border-radius:8px;
+    margin:3px;
+    font-weight:bold;
+}
+
+@media(max-width:700px){
+    .activity-container{
+        padding:10px;
+    }
+
+    .signal-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<script>
+(function(){
+    if(localStorage.getItem("level3Unlocked")!=="true"){
+        alert("🔒 Level 3 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+})();
+</script>
+
+<header>
+    <h1>Digital Design Explorer</h1>
+    <p>Level 3 – Verilog for Beginners</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="level3-dashboard.html">Level 3 Dashboard</a>
+    <a href="dashboard.html">Level 1 Dashboard</a>
+    <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main class="activity-container">
+
+<section class="hero">
+    <h2>🧪 Activity 6 – Testbench & Verification</h2>
+    <p>Test your Verilog design by applying inputs and checking the outputs.</p>
+</section>
+
+<section class="card">
+    <h3>1. What is a Testbench?</h3>
+
+    <div class="simple-box">
+        <strong>A testbench is a Verilog program used to test a design.</strong>
+    </div>
+
+    <p>
+        The circuit being tested is called the <strong>DUT (Design Under Test)</strong>.
+    </p>
+
+    <p>
+        A simple verification flow is:
+        <strong>Apply Inputs → Observe Output → Compare Expected Result</strong>
+    </p>
+
+    <div class="tip">
+        💡 A testbench normally does not have physical input/output ports.
+        It generates stimulus for the DUT.
+    </div>
+</section>
+
+<section class="card">
+    <h3>2. First Testbench Example – AND Gate</h3>
+
+    <p><strong>DUT:</strong></p>
+
+    <textarea class="code-box" readonly>module and_gate(
+    input a,
+    input b,
+    output y
+);
+
+assign y = a & b;
+
+endmodule</textarea>
+
+    <p><strong>Testbench:</strong></p>
+
+    <textarea class="code-box" readonly>module tb_and_gate;
+
+reg a;
+reg b;
+wire y;
+
+and_gate dut(
+    .a(a),
+    .b(b),
+    .y(y)
+);
+
+initial begin
+
+    a = 0; b = 0;
+    #10;
+
+    a = 0; b = 1;
+    #10;
+
+    a = 1; b = 0;
+    #10;
+
+    a = 1; b = 1;
+    #10;
+
+end
+
+endmodule</textarea>
+
+    <div class="simple-box">
+        <strong>Here:</strong>
+        <span style="font-family:Consolas,monospace;">dut</span> is an instance of the circuit being tested.
+        The testbench changes <strong>a</strong> and <strong>b</strong> and observes <strong>y</strong>.
+    </div>
+</section>
+
+<section class="card">
+    <h3>3. Interactive Testbench – AND Gate</h3>
+
+    <p>
+        Change the inputs. The simulator shows the actual and expected output.
+    </p>
+
+    <div class="signal-grid">
+
+        <div class="signal-box">
+            <strong>Input A</strong>
+            <div class="signal-value" id="andA">0</div>
+            <button class="primary-btn" onclick="toggleAnd('a')">Toggle</button>
+        </div>
+
+        <div class="signal-box">
+            <strong>Input B</strong>
+            <div class="signal-value" id="andB">0</div>
+            <button class="primary-btn" onclick="toggleAnd('b')">Toggle</button>
+        </div>
+
+        <div class="signal-box">
+            <strong>Actual Y</strong>
+            <div class="signal-value" id="andY">0</div>
+        </div>
+
+        <div class="signal-box">
+            <strong>Expected Y</strong>
+            <div class="signal-value" id="andExpected">0</div>
+        </div>
+
+    </div>
+
+    <div class="button-row">
+        <button class="secondary-btn" onclick="runAndTest()">▶ Run Test</button>
+        <button class="secondary-btn" onclick="resetAndTest()">↺ Reset</button>
+    </div>
+
+    <div class="output" id="andResult"></div>
+</section>
+
+<section class="card">
+    <h3>4. Verification Using Expected Results</h3>
+
+    <p>
+        A testbench can apply different input combinations and compare the output with the expected value.
+    </p>
+
+    <table>
+        <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>Expected Y = A &amp; B</th>
+        </tr>
+        <tr><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td></tr>
+    </table>
+
+    <div class="tip">
+        💡 Verification means checking whether the DUT behaves as expected for the applied test cases.
+    </div>
+</section>
+
+<section class="card">
+    <h3>5. Clock and Reset in a Testbench</h3>
+
+    <p>
+        Sequential circuits need a clock. A testbench can generate a clock and apply reset.
+    </p>
+
+    <textarea class="code-box" readonly>reg clk;
+reg reset;
+
+always #5 clk = ~clk;
+
+initial begin
+
+    clk = 0;
+    reset = 1;
+
+    #10 reset = 0;
+
+end</textarea>
+
+    <div class="simple-box">
+        <strong>Clock:</strong> <span style="font-family:Consolas,monospace;">always #5 clk = ~clk;</span>
+        repeatedly changes the clock.
+        <br>
+        <strong>Reset:</strong> gives the DUT a known starting state.
+    </div>
+</section>
+
+<section class="card">
+    <h3>6. Sequential Verification Example – D Flip-Flop</h3>
+
+    <p><strong>DUT:</strong></p>
+
+    <textarea class="code-box" readonly>module d_ff(
+    input d,
+    input clk,
+    input reset,
+    output reg q
+);
+
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        q <= 1'b0;
+    else
+        q <= d;
+end
+
+endmodule</textarea>
+
+    <p><strong>Simple Testbench:</strong></p>
+
+    <textarea class="code-box" readonly>module tb_d_ff;
+
+reg d;
+reg clk;
+reg reset;
+wire q;
+
+d_ff dut(
+    .d(d),
+    .clk(clk),
+    .reset(reset),
+    .q(q)
+);
+
+always #5 clk = ~clk;
+
+initial begin
+
+    clk = 0;
+    reset = 1;
+    d = 0;
+
+    #10 reset = 0;
+
+    d = 1;
+    #10;
+
+    d = 0;
+    #10;
+
+end
+
+endmodule</textarea>
+
+    <div class="tip">
+        💡 The testbench changes <strong>d</strong>, generates the clock and checks how <strong>q</strong> responds.
+    </div>
+</section>
+
+<section class="card">
+    <h3>7. Interactive D Flip-Flop Verification</h3>
+
+    <div class="signal-grid">
+
+        <div class="signal-box">
+            <strong>D</strong>
+            <div class="signal-value" id="tbD">0</div>
+            <button class="primary-btn" onclick="toggleTBd()">Toggle D</button>
+        </div>
+
+        <div class="signal-box">
+            <strong>Clock</strong>
+            <div class="signal-value" id="tbClk">0</div>
+            <button class="secondary-btn" onclick="applyTBClock()">⏱ Clock</button>
+        </div>
+
+        <div class="signal-box">
+            <strong>Q</strong>
+            <div class="signal-value" id="tbQ">0</div>
+        </div>
+
+        <div class="signal-box">
+            <strong>Expected Q</strong>
+            <div class="signal-value" id="tbExpected">0</div>
+        </div>
+
+    </div>
+
+    <div class="button-row">
+        <button class="secondary-btn" onclick="resetTBD()">Reset</button>
+        <button class="secondary-btn" onclick="verifyTBD()">✅ Verify</button>
+    </div>
+
+    <div class="output" id="tbResult"></div>
+</section>
+
+<section class="card">
+    <h3>8. Verification Coding Practice</h3>
+
+    <p>
+        Complete a testbench for the AND gate. Your testbench must instantiate the DUT and apply all four input combinations.
+    </p>
+
+    <textarea class="code-box" id="studentCode">module and_gate(
+    input a,
+    input b,
+    output y
+);
+assign y = a & b;
+endmodule
+
+module tb_and_gate;
+
+reg a;
+reg b;
+wire y;
+
+and_gate dut(
+    .a(a),
+    .b(b),
+    .y(y)
+);
+
+initial begin
+
+    a = 0; b = 0;
+    #10;
+
+    a = 0; b = 1;
+    #10;
+
+    a = 1; b = 0;
+    #10;
+
+    a = 1; b = 1;
+    #10;
+
+end
+
+endmodule</textarea>
+
+    <div class="button-row">
+        <button class="primary-btn" onclick="checkCode()">✅ Check Testbench</button>
+        <button class="secondary-btn" onclick="resetCode()">↺ Reset</button>
+    </div>
+
+    <div class="output" id="codeResult"></div>
+</section>
+
+<section class="card">
+    <h3>9. Quick Check</h3>
+
+    <div class="question">
+        <p><strong>Q1.</strong> DUT stands for:</p>
+        <label><input type="radio" name="q1" value="design"> Design Under Test</label><br>
+        <label><input type="radio" name="q1" value="data"> Data Under Transfer</label><br>
+        <label><input type="radio" name="q1" value="digital"> Digital Unit Test</label>
+    </div>
+
+    <div class="question">
+        <p><strong>Q2.</strong> Which block is commonly used to apply stimulus in a testbench?</p>
+        <label><input type="radio" name="q2" value="initial"> initial</label><br>
+        <label><input type="radio" name="q2" value="assign"> assign</label><br>
+        <label><input type="radio" name="q2" value="module"> module</label>
+    </div>
+
+    <div class="question">
+        <p><strong>Q3.</strong> Which construct is useful for generating a periodic clock?</p>
+        <label><input type="radio" name="q3" value="always"> always with a delay</label><br>
+        <label><input type="radio" name="q3" value="assign"> assign only</label><br>
+        <label><input type="radio" name="q3" value="wire"> wire</label>
+    </div>
+
+    <div class="button-row">
+        <button class="primary-btn" onclick="checkQuiz()">✅ Check Answers</button>
+    </div>
+
+    <div class="output" id="quizResult"></div>
+</section>
+
+<section class="card">
+    <h3>10. Final Verification Challenge 🎯</h3>
+
+    <div class="simple-box">
+        <strong>Problem:</strong>
+        Create a testbench for a <strong>2:1 Multiplexer</strong>.
+        The testbench should instantiate the DUT and test both select conditions:
+        <strong>S = 0</strong> and <strong>S = 1</strong>.
+    </div>
+
+    <textarea class="code-box" id="challengeCode">module mux2to1(
+    input i0,
+    input i1,
+    input s,
+    output y
+);
+
+assign y = (~s & i0) | (s & i1);
+
+endmodule
+
+module tb_mux2to1;
+
+reg i0;
+reg i1;
+reg s;
+wire y;
+
+mux2to1 dut(
+    .i0(i0),
+    .i1(i1),
+    .s(s),
+    .y(y)
+);
+
+initial begin
+
+    // Apply test cases here
+
+end
+
+endmodule</textarea>
+
+    <div class="tip">
+        💡 Test at least these cases:
+        <br>
+        <span style="font-family:Consolas,monospace;">i0=0, i1=1, s=0</span>
+        <br>
+        <span style="font-family:Consolas,monospace;">i0=0, i1=1, s=1</span>
+        <br>
+        You should include delays such as <span style="font-family:Consolas,monospace;">#10</span>.
+    </div>
+
+    <div class="button-row">
+        <button class="primary-btn" onclick="checkChallenge()">🎯 Check Challenge</button>
+        <button class="secondary-btn" onclick="showChallengeHint()">💡 Show Hint</button>
+    </div>
+
+    <div class="output" id="challengeResult"></div>
+</section>
+
+<section class="card">
+    <h3>🏆 Level 3 Completion</h3>
+    <div class="simple-box" id="completionText">
+        Complete the final verification challenge to finish Level 3.
+    </div>
+</section>
+
+<div class="navigation">
+    <a href="level3-dashboard.html">← Level 3 Dashboard</a>
+    <a href="verilog-rtl.html">← Activity 5</a>
+    <a href="index.html">Home</a>
+</div>
+
+</main>
+
+<footer>
+    <p>Digital Design Explorer | ECE Department</p>
+</footer>
+
+<footer class="site-footer">
+    <p>Developed by <strong>Mrs. Padma R</strong></p>
+    <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+    <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+let andA=0,andB=0;
+
+function updateAnd(){
+    const y=andA & andB;
+
+    document.getElementById("andA").textContent=andA;
+    document.getElementById("andB").textContent=andB;
+    document.getElementById("andY").textContent=y;
+    document.getElementById("andExpected").textContent=y;
+}
+
+function toggleAnd(v){
+    if(v==="a") andA=andA?0:1;
+    else andB=andB?0:1;
+
+    document.getElementById("andResult").innerHTML="";
+    updateAnd();
+}
+
+function runAndTest(){
+    const actual=andA & andB;
+    const expected=andA & andB;
+    const result=document.getElementById("andResult");
+
+    if(actual===expected){
+        result.innerHTML="<span class='pass'>✅ TEST PASSED — Actual output matches expected output.</span>";
+    }else{
+        result.innerHTML="<span class='fail'>❌ TEST FAILED — Output mismatch.</span>";
+    }
+}
+
+function resetAndTest(){
+    andA=0;
+    andB=0;
+    document.getElementById("andResult").innerHTML="";
+    updateAnd();
+}
+
+let tbD=0,tbQ=0,tbClk=0;
+
+function updateTBD(){
+    document.getElementById("tbD").textContent=tbD;
+    document.getElementById("tbQ").textContent=tbQ;
+    document.getElementById("tbExpected").textContent=tbQ;
+    document.getElementById("tbClk").textContent=tbClk;
+}
+
+function toggleTBd(){
+    tbD=tbD?0:1;
+    updateTBD();
+}
+
+function applyTBClock(){
+    tbClk=tbClk?0:1;
+
+    if(tbClk===1){
+        tbQ=tbD;
+    }
+
+    document.getElementById("tbResult").innerHTML =
+        "⏱ Clock event applied. Q captures D.";
+
+    updateTBD();
+}
+
+function resetTBD(){
+    tbD=0;
+    tbQ=0;
+    tbClk=0;
+
+    document.getElementById("tbResult").innerHTML =
+        "↺ D flip-flop reset to Q = 0.";
+
+    updateTBD();
+}
+
+function verifyTBD(){
+    const expected=tbD;
+    const result=document.getElementById("tbResult");
+
+    if(tbClk===1 && tbQ===expected){
+        result.innerHTML="<span class='pass'>✅ Verification PASSED — Q matches the expected value.</span>";
+    }else{
+        result.innerHTML="<span class='fail'>❌ Apply a clock after setting D, then verify again.</span>";
+    }
+}
+
+function cleanCode(code){
+    return code.toLowerCase().replace(/\s+/g,"");
+}
+
+function checkCode(){
+    const code=cleanCode(document.getElementById("studentCode").value);
+    const result=document.getElementById("codeResult");
+
+    const correct=
+        code.includes("moduleand_gate(") &&
+        code.includes("assigny=a&b;") &&
+        code.includes("moduletb_and_gate;") &&
+        code.includes("reg a;") &&
+        code.includes("reg b;") &&
+        code.includes("wirey;") &&
+        code.includes("and_gate dut(") &&
+        code.includes(".a(a)") &&
+        code.includes(".b(b)") &&
+        code.includes(".y(y)") &&
+        code.includes("initialbegin") &&
+        code.includes("a=0;b=0;") &&
+        code.includes("a=0;b=1;") &&
+        code.includes("a=1;b=0;") &&
+        code.includes("a=1;b=1;") &&
+        code.includes("#10;") &&
+        code.includes("endmodule");
+
+    if(correct){
+        result.innerHTML="✅ Correct! Your testbench instantiates the DUT and applies all four input combinations.";
+        result.style.color="#2e7d32";
+        localStorage.setItem("verilogVerificationCodeDone","true");
+    }else{
+        result.innerHTML="❌ Check the DUT instance, reg/wire declarations, initial block, four test cases and delays.";
+        result.style.color="#c62828";
+    }
+}
+
+function resetCode(){
+    document.getElementById("studentCode").value =
+`module and_gate(
+    input a,
+    input b,
+    output y
+);
+assign y = a & b;
+endmodule
+
+module tb_and_gate;
+
+reg a;
+reg b;
+wire y;
+
+and_gate dut(
+    .a(a),
+    .b(b),
+    .y(y)
+);
+
+initial begin
+
+    a = 0; b = 0;
+    #10;
+
+    a = 0; b = 1;
+    #10;
+
+    a = 1; b = 0;
+    #10;
+
+    a = 1; b = 1;
+    #10;
+
+end
+
+endmodule`;
+
+    document.getElementById("codeResult").innerHTML="";
+}
+
+function checkQuiz(){
+    let score=0;
+
+    const q1=document.querySelector('input[name="q1"]:checked');
+    const q2=document.querySelector('input[name="q2"]:checked');
+    const q3=document.querySelector('input[name="q3"]:checked');
+
+    if(q1&&q1.value==="design") score++;
+    if(q2&&q2.value==="initial") score++;
+    if(q3&&q3.value==="always") score++;
+
+    const result=document.getElementById("quizResult");
+
+    if(score===3){
+        result.innerHTML="✅ 3 / 3 — Excellent!";
+        result.style.color="#2e7d32";
+        localStorage.setItem("verilogVerificationQuizDone","true");
+    }else{
+        result.innerHTML="Score: "+score+" / 3 — Try again.";
+        result.style.color="#c62828";
+    }
+}
+
+function showChallengeHint(){
+    document.getElementById("challengeResult").innerHTML =
+        "💡 Instantiate mux2to1 as dut, then use an initial block. Assign i0 and i1, set s=0, wait #10, then set s=1 and wait #10.";
+}
+
+function checkChallenge(){
+    const code=cleanCode(document.getElementById("challengeCode").value);
+    const result=document.getElementById("challengeResult");
+
+    const correct=
+        code.includes("modulemux2to1(") &&
+        code.includes("assigny=(~s&i0)|(s&i1);") &&
+        code.includes("moduletb_mux2to1;") &&
+        code.includes("regi0;") &&
+        code.includes("regi1;") &&
+        code.includes("regs;") &&
+        code.includes("wirey;") &&
+        code.includes("mux2to1dut(") &&
+        code.includes(".i0(i0)") &&
+        code.includes(".i1(i1)") &&
+        code.includes(".s(s)") &&
+        code.includes(".y(y)") &&
+        code.includes("initialbegin") &&
+        code.includes("#10;") &&
+        code.includes("s=0;") &&
+        code.includes("s=1;") &&
+        code.includes("endmodule");
+
+    if(correct){
+        result.innerHTML="✅ Final Verification Challenge completed!";
+        result.style.color="#2e7d32";
+
+        localStorage.setItem("verilogVerificationChallengeDone","true");
+        localStorage.setItem("verilogVerificationDone","true");
+
+        document.getElementById("completionText").innerHTML =
+            "🎉 <strong>Level 3 Completed!</strong> All six Verilog activities are now complete.";
+        document.getElementById("completionText").style.color="#2e7d32";
+    }else{
+        result.innerHTML="❌ Incomplete. Check the DUT instance, reg/wire declarations, initial block, S=0 and S=1 test cases, and delays.";
+        result.style.color="#c62828";
+    }
+}
+
+function logout(){
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href="login.html";
+}
+
+updateAnd();
+updateTBD();
+
+if(localStorage.getItem("verilogVerificationDone")==="true"){
+    document.getElementById("completionText").innerHTML =
+        "🎉 <strong>Level 3 Completed!</strong> All six Verilog activities are complete.";
+    document.getElementById("completionText").style.color="#2e7d32";
+}
+</script>
+
+</body>
+</html>

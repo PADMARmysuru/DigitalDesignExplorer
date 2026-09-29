@@ -1,214 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Level 3 Dashboard | Digital Design Explorer</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <style>
-        .level3-container {
-            max-width: 1050px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-
-        .level-header {
-            background: #243b64;
-            color: white;
-            padding: 28px;
-            border-radius: 14px;
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .level-header h2 {
-            color: white;
-            margin: 0 0 8px;
-        }
-
-        .level-header p {
-            margin: 0;
-            line-height: 1.6;
-        }
-
-        .sequence-note,
-        .progress-card,
-        .certificate-card {
-            background: white;
-            border-radius: 14px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-            padding: 22px;
-            margin-bottom: 24px;
-        }
-
-        .sequence-note {
-            border-left: 6px solid #4f6fad;
-        }
-
-        .sequence-note h3,
-        .progress-card h3,
-        .certificate-card h3 {
-            color: #243b64;
-            margin-top: 0;
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            height: 22px;
-            background: #e0e0e0;
-            border-radius: 20px;
-            overflow: hidden;
-            margin: 12px 0 8px;
-        }
-
-        #level3ProgressBar {
-            height: 100%;
-            width: 0%;
-            background: #4f6fad;
-            border-radius: 20px;
-            transition: width 0.4s ease;
-        }
-
-        #level3ProgressText {
-            text-align: center;
-            font-weight: bold;
-            color: #243b64;
-        }
-
-        .activities {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-            gap: 20px;
-        }
-
-        .activity-card {
-            background: white;
-            border-radius: 14px;
-            padding: 22px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-            border-top: 6px solid #999;
-            text-align: center;
-        }
-
-        .activity-card.available {
-            border-top-color: #4f6fad;
-        }
-
-        .activity-card.completed {
-            border-top-color: #2e7d32;
-        }
-
-        .activity-card h3 {
-            color: #243b64;
-            margin: 8px 0;
-        }
-
-        .activity-card p {
-            line-height: 1.55;
-            min-height: 72px;
-        }
-
-        .status {
-            display: inline-block;
-            padding: 5px 11px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .status-ready {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .status-locked {
-            background: #eeeeee;
-            color: #666;
-        }
-
-        .status-done {
-            background: #dff2e1;
-            color: #1f6d2a;
-        }
-
-        .open-btn,
-        .locked-btn {
-            border: none;
-            border-radius: 8px;
-            padding: 11px 18px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .open-btn {
-            background: #243b64;
-            color: white;
-            cursor: pointer;
-        }
-
-        .locked-btn {
-            background: #eeeeee;
-            color: #666;
-            cursor: not-allowed;
-        }
-
-        .certificate-card {
-            text-align: center;
-        }
-
-        #certificateMessage {
-            line-height: 1.6;
-        }
-
-        #certificateButton {
-            border: none;
-            border-radius: 8px;
-            padding: 11px 20px;
-            font-weight: bold;
-            background: #999;
-            color: white;
-            cursor: not-allowed;
-        }
-
-        #certificateButton.ready {
-            background: #c9a227;
-            color: #162746;
-            cursor: pointer;
-        }
-
-        .navigation {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .navigation a {
-            display: inline-block;
-            text-decoration: none;
-            background: #162746;
-            color: white;
-            padding: 11px 20px;
-            border-radius: 8px;
-            margin: 5px;
-            font-weight: bold;
-        }
-
-        @media (max-width: 600px) {
-            .level3-container {
-                padding: 10px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 3 Dashboard | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.level3-container{max-width:1050px;margin:20px auto;padding:15px}
+.level-header,.progress-card,.sequence-note,.certificate-card,.activity-card{background:white;border-radius:14px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+.level-header{background:#243b64;color:white;padding:26px;text-align:center;margin-bottom:18px}
+.level-header h2{color:white;margin:0 0 8px}.level-header p{margin:0;line-height:1.5}
+.sequence-note,.progress-card,.certificate-card{padding:20px;margin-bottom:18px}
+.sequence-note{border-left:6px solid #4f6fad}.sequence-note h3,.progress-card h3,.certificate-card h3{color:#243b64;margin-top:0}
+.progress-bar-container{width:100%;height:22px;background:#e0e0e0;border-radius:20px;overflow:hidden;margin:12px 0 8px}
+#level3ProgressBar{height:100%;width:0%;background:#4f6fad;border-radius:20px;transition:width .4s}
+#level3ProgressText{text-align:center;font-weight:bold;color:#243b64}
+.activities{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px}
+.activity-card{padding:20px;text-align:center;border-top:6px solid #999}
+.activity-card.completed{border-top-color:#2e7d32}.activity-card.ready{border-top-color:#4f6fad}
+.activity-card h3{color:#243b64;margin:8px 0}
+.activity-card p{line-height:1.5;min-height:68px}
+.status{display:inline-block;padding:5px 11px;border-radius:20px;font-size:12px;font-weight:bold}
+.status-ready{background:#e8f5e9;color:#2e7d32}.status-locked{background:#eee;color:#666}.status-done{background:#dff2e1;color:#1f6d2a}
+.open-btn,.locked-btn{border:0;border-radius:8px;padding:10px 18px;font-weight:bold;font-size:14px;text-decoration:none}
+.open-btn{background:#243b64;color:white;cursor:pointer}.locked-btn{background:#eee;color:#666;cursor:not-allowed}
+.certificate-card{text-align:center}.certificate-card p{line-height:1.5}
+#certificateButton{border:0;border-radius:8px;padding:11px 20px;font-weight:bold;background:#999;color:white;cursor:not-allowed}
+#certificateButton.ready{background:#c9a227;color:#162746;cursor:pointer}
+.navigation{text-align:center;margin:25px 0}
+.navigation a{display:inline-block;text-decoration:none;background:#162746;color:white;padding:10px 18px;border-radius:8px;margin:4px;font-weight:bold}
+@media(max-width:600px){.level3-container{padding:10px}}
+</style>
 </head>
 
 <body>
 
 <script>
-(function () {
-    if (localStorage.getItem("level3Unlocked") !== "true") {
+(function(){
+    if(localStorage.getItem("level3Unlocked")!=="true"){
         alert("🔒 Level 3 is restricted. Faculty authorization is required.");
         window.location.replace("index.html");
     }
@@ -230,142 +59,88 @@
 
 <main class="level3-container">
 
-    <section class="level-header">
-        <h2>💻 LEVEL 3 – VERILOG FOR BEGINNERS</h2>
-        <p>
-            Practical Verilog learning from basic module structure
-            to modeling styles, RTL and verification.
-        </p>
-    </section>
+<section class="level-header">
+    <h2>💻 LEVEL 3 – VERILOG FOR BEGINNERS</h2>
+    <p>Practical Verilog learning from basic syntax to RTL and verification.</p>
+</section>
 
-    <section class="sequence-note">
-        <h3>🧭 Follow the Level in Order</h3>
-        <p>
-            Complete <strong>all 6 activities</strong> in sequence.
-            Each activity adds one practical Verilog skill.
-        </p>
-        <p>
-            <strong>Basics → Structural → Data-Flow → Behavioral → RTL → Testbench</strong>
-        </p>
-    </section>
+<section class="sequence-note">
+    <h3>🧭 Follow the Level in Order</h3>
+    <p>Complete <strong>all 6 activities</strong> in sequence.</p>
+    <p><strong>Basics → Structural → Data-Flow → Behavioral → RTL → Testbench &amp; Verification</strong></p>
+</section>
 
-    <section class="progress-card">
-        <h3>🏆 Level 3 Progress</h3>
-
-        <div class="progress-bar-container">
-            <div id="level3ProgressBar"></div>
-        </div>
-
-        <div id="level3ProgressText">
-            0 / 6 Activities Completed
-        </div>
-    </section>
-
-    <section class="activities">
-
-        <!-- Activity 1 -->
-        <div class="activity-card" id="card1">
-            <span class="status status-ready" id="status1">1 • READY</span>
-            <h3>1. Verilog Basics</h3>
-            <p>
-                Module structure, ports, keywords and a simple
-                Verilog coding challenge.
-            </p>
-            <button class="open-btn" onclick="openActivity(1)">
-                Start Activity →
-            </button>
-        </div>
-
-        <!-- Activity 2 -->
-        <div class="activity-card" id="card2">
-            <span class="status status-locked" id="status2">2 • LOCKED</span>
-            <h3>2. Structural / Gate-Level Modeling</h3>
-            <p>
-                Build circuits using Verilog gate primitives
-                and structural connections.
-            </p>
-            <button class="locked-btn" id="button2" disabled>
-                🔒 Complete Activity 1
-            </button>
-        </div>
-
-        <!-- Activity 3 -->
-        <div class="activity-card" id="card3">
-            <span class="status status-locked" id="status3">3 • LOCKED</span>
-            <h3>3. Data-Flow Modeling</h3>
-            <p>
-                Use continuous assignment and operators to
-                describe combinational circuits.
-            </p>
-            <button class="locked-btn" id="button3" disabled>
-                🔒 Complete Activity 2
-            </button>
-        </div>
-
-        <!-- Activity 4 -->
-        <div class="activity-card" id="card4">
-            <span class="status status-locked" id="status4">4 • LOCKED</span>
-            <h3>4. Behavioral Modeling</h3>
-            <p>
-                Practice <code>always</code>, conditions,
-                <code>case</code> and practical behavioral coding.
-            </p>
-            <button class="locked-btn" id="button4" disabled>
-                🔒 Complete Activity 3
-            </button>
-        </div>
-
-        <!-- Activity 5 -->
-        <div class="activity-card" id="card5">
-            <span class="status status-locked" id="status5">5 • LOCKED</span>
-            <h3>5. RTL Modeling</h3>
-            <p>
-                Write small combinational and sequential RTL
-                designs using clocked logic.
-            </p>
-            <button class="locked-btn" id="button5" disabled>
-                🔒 Complete Activity 4
-            </button>
-        </div>
-
-        <!-- Activity 6 -->
-        <div class="activity-card" id="card6">
-            <span class="status status-locked" id="status6">6 • LOCKED</span>
-            <h3>6. Testbench &amp; Verification</h3>
-            <p>
-                Give stimulus, check outputs and complete the
-                final practical Verilog challenge.
-            </p>
-            <button class="locked-btn" id="button6" disabled>
-                🔒 Complete Activity 5
-            </button>
-        </div>
-
-    </section>
-
-    <section class="certificate-card">
-        <h3>🎓 Level 3 Certificate</h3>
-        <p id="certificateMessage">
-            🔒 Complete all 6 Level 3 activities to unlock the certificate.
-        </p>
-
-        <button id="certificateButton" disabled onclick="openCertificate()">
-            🔒 Generate Certificate
-        </button>
-    </section>
-
-    <div class="navigation">
-        <a href="index.html">← Home</a>
-        <a href="dashboard.html">Level 1 Dashboard</a>
-        <a href="level2-dashboard.html">Level 2 Dashboard</a>
+<section class="progress-card">
+    <h3>🏆 Level 3 Progress</h3>
+    <div class="progress-bar-container">
+        <div id="level3ProgressBar"></div>
     </div>
+    <div id="level3ProgressText">0 / 6 Activities Completed</div>
+</section>
+
+<section class="activities">
+
+<div class="activity-card ready" id="card1">
+    <span class="status status-ready" id="status1">1 • READY</span>
+    <h3>1. Verilog Basics</h3>
+    <p>Module structure, ports, keywords and your first Verilog coding challenge.</p>
+    <button class="open-btn" id="button1" onclick="openActivity(1)">Start Activity →</button>
+</div>
+
+<div class="activity-card" id="card2">
+    <span class="status status-locked" id="status2">2 • LOCKED</span>
+    <h3>2. Structural / Gate-Level Modeling</h3>
+    <p>Build circuits using Verilog gate primitives and structural connections.</p>
+    <button class="locked-btn" id="button2" disabled>🔒 Complete Activity 1</button>
+</div>
+
+<div class="activity-card" id="card3">
+    <span class="status status-locked" id="status3">3 • LOCKED</span>
+    <h3>3. Data-Flow Modeling</h3>
+    <p>Use continuous assignments and operators to describe combinational circuits.</p>
+    <button class="locked-btn" id="button3" disabled>🔒 Complete Activity 2</button>
+</div>
+
+<div class="activity-card" id="card4">
+    <span class="status status-locked" id="status4">4 • LOCKED</span>
+    <h3>4. Behavioral Modeling</h3>
+    <p>Practice always blocks, if–else, case and practical behavioral coding.</p>
+    <button class="locked-btn" id="button4" disabled>🔒 Complete Activity 3</button>
+</div>
+
+<div class="activity-card" id="card5">
+    <span class="status status-locked" id="status5">5 • LOCKED</span>
+    <h3>5. RTL Modeling</h3>
+    <p>Write small combinational and sequential RTL designs using clocked logic.</p>
+    <button class="locked-btn" id="button5" disabled>🔒 Complete Activity 4</button>
+</div>
+
+<div class="activity-card" id="card6">
+    <span class="status status-locked" id="status6">6 • LOCKED</span>
+    <h3>6. Testbench &amp; Verification</h3>
+    <p>Apply stimulus, verify outputs and complete the final practical challenge.</p>
+    <button class="locked-btn" id="button6" disabled>🔒 Complete Activity 5</button>
+</div>
+
+</section>
+
+<section class="certificate-card">
+    <h3>🎓 Level 3 Certificate</h3>
+    <p id="certificateMessage">🔒 Complete all 6 Level 3 activities to unlock the certificate.</p>
+    <button id="certificateButton" disabled onclick="openCertificate()">🔒 Generate Certificate</button>
+</section>
+
+<div class="navigation">
+    <a href="index.html">← Home</a>
+    <a href="dashboard.html">Level 1 Dashboard</a>
+    <a href="level2-dashboard.html">Level 2 Dashboard</a>
+</div>
 
 </main>
 
 <footer>
     <p>Digital Design Explorer | ECE Department</p>
 </footer>
-
 <footer class="site-footer">
     <p>Developed by <strong>Mrs. Padma R</strong></p>
     <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
@@ -382,121 +157,108 @@ const activities = [
     "verilogVerificationDone"
 ];
 
-function completedCount() {
-    return activities.filter(
-        key => localStorage.getItem(key) === "true"
-    ).length;
+const pages = {
+    1:"verilog-basics.html",
+    2:"verilog-structural.html",
+    3:"verilog-dataflow.html",
+    4:"verilog-behavioral.html",
+    5:"verilog-rtl.html",
+    6:"verilog-testbench-verification.html"
+};
+
+function isDone(index){
+    return localStorage.getItem(activities[index-1]) === "true";
 }
 
-function openActivity(number) {
-    if (number === 1) {
-        window.location.href = "verilog-basics.html";
-        return;
+function completedCount(){
+    let count=0;
+    for(let i=1;i<=6;i++){
+        if(isDone(i)) count++;
     }
+    return count;
+}
 
-    const previousKey = activities[number - 2];
-
-    if (localStorage.getItem(previousKey) !== "true") {
+function openActivity(number){
+    if(number>1 && !isDone(number-1)){
         alert("🔒 Complete the previous Level 3 activity first.");
         return;
     }
-
-    const pages = {
-        2: "verilog-structural.html",
-        3: "verilog-dataflow.html",
-        4: "verilog-behavioral.html",
-        5: "verilog-rtl.html",
-        6: "verilog-testbench.html"
-    };
-
-    if (pages[number]) {
-        window.location.href = pages[number];
-    }
+    window.location.href=pages[number];
 }
 
-function updateLevel3Dashboard() {
-    const count = completedCount();
-    const percent = Math.round((count / 6) * 100);
+function updateDashboard(){
+    const count=completedCount();
+    const percent=Math.round((count/6)*100);
 
-    document.getElementById("level3ProgressBar").style.width =
-        percent + "%";
+    document.getElementById("level3ProgressBar").style.width=percent+"%";
+    document.getElementById("level3ProgressText").textContent=
+        count+" / 6 Activities Completed";
 
-    document.getElementById("level3ProgressText").textContent =
-        count + " / 6 Activities Completed";
+    for(let i=1;i<=6;i++){
+        const card=document.getElementById("card"+i);
+        const status=document.getElementById("status"+i);
+        const button=document.getElementById("button"+i);
+        const done=isDone(i);
 
-    for (let i = 1; i <= 6; i++) {
-        const done = localStorage.getItem(activities[i - 1]) === "true";
-        const status = document.getElementById("status" + i);
-        const card = document.getElementById("card" + i);
-
-        if (done) {
-            status.textContent = i + " • COMPLETED";
-            status.className = "status status-done";
+        if(done){
             card.classList.add("completed");
-        } else {
+            status.textContent=i+" • COMPLETED";
+            status.className="status status-done";
+            button.disabled=false;
+            button.className="open-btn";
+            button.textContent="Open Activity "+i+" →";
+            button.onclick=function(){openActivity(i);};
+        }else{
             card.classList.remove("completed");
-        }
-    }
 
-    for (let i = 2; i <= 6; i++) {
-        const previousDone =
-            localStorage.getItem(activities[i - 2]) === "true";
-
-        const button = document.getElementById("button" + i);
-
-        if (!button) continue;
-
-        if (previousDone) {
-            button.disabled = false;
-            button.className = "open-btn";
-            button.textContent = "Open Activity " + i + " →";
-            button.onclick = function () {
-                openActivity(i);
-            };
-
-            const status = document.getElementById("status" + i);
-
-            if (localStorage.getItem(activities[i - 1]) === "true") {
-                status.textContent = i + " • COMPLETED";
-                status.className = "status status-done";
-            } else {
-                status.textContent = i + " • READY";
-                status.className = "status status-ready";
+            if(i===1){
+                card.classList.add("ready");
+                status.textContent="1 • READY";
+                status.className="status status-ready";
+            }else{
+                card.classList.remove("ready");
+                const previousDone=isDone(i-1);
+                status.textContent=i+" • "+(previousDone?"READY":"LOCKED");
+                status.className="status "+(previousDone?"status-ready":"status-locked");
+                button.disabled=!previousDone;
+                button.className=previousDone?"open-btn":"locked-btn";
+                button.textContent=previousDone?
+                    "Open Activity "+i+" →":
+                    "🔒 Complete Activity "+(i-1);
+                button.onclick=previousDone?
+                    function(){openActivity(i);}:
+                    null;
             }
         }
     }
 
-    const certificateButton =
-        document.getElementById("certificateButton");
+    const certButton=document.getElementById("certificateButton");
+    const certMessage=document.getElementById("certificateMessage");
 
-    const certificateMessage =
-        document.getElementById("certificateMessage");
-
-    if (count === 6) {
-        certificateButton.disabled = false;
-        certificateButton.className = "ready";
-        certificateButton.textContent = "🎓 Generate Certificate";
-        certificateMessage.textContent =
-            "🎉 Congratulations! You have completed Level 3.";
-    } else {
-        certificateButton.disabled = true;
-        certificateButton.className = "";
-        certificateButton.textContent = "🔒 Generate Certificate";
+    if(count===6){
+        certButton.disabled=false;
+        certButton.className="ready";
+        certButton.textContent="🎓 Generate Certificate";
+        certMessage.textContent="🎉 Congratulations! You have completed Level 3.";
+    }else{
+        certButton.disabled=true;
+        certButton.className="";
+        certButton.textContent="🔒 Generate Certificate";
     }
 }
 
-function openCertificate() {
-    if (completedCount() === 6) {
-        window.location.href = "level3-certificate.html";
+function openCertificate(){
+    if(completedCount()===6){
+        window.location.href="level3-certificate.html";
     }
 }
 
-function logout() {
+function logout(){
     localStorage.removeItem("studentLoggedIn");
-    window.location.href = "login.html";
+    window.location.href="login.html";
 }
 
-updateLevel3Dashboard();
+updateDashboard();
 </script>
 
 </body>
