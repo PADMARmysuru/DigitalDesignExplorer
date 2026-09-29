@@ -12,6 +12,146 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <style>
+        .learning-path {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 10px 10px 30px;
+        }
+
+        .path-heading {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .path-heading h2 {
+            color: #243b64;
+            margin-bottom: 8px;
+        }
+
+        .path-heading p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .path {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .path::before {
+            content: "";
+            position: absolute;
+            left: 31px;
+            top: 30px;
+            bottom: 30px;
+            width: 5px;
+            background: #d8dde5;
+            border-radius: 10px;
+        }
+
+        .path-step {
+            position: relative;
+            display: grid;
+            grid-template-columns: 64px 1fr;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .path-circle {
+            position: relative;
+            z-index: 2;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #777;
+            color: white;
+            font-weight: bold;
+            border: 5px solid #f4f6f9;
+            box-sizing: border-box;
+        }
+
+        .path-step.open .path-circle {
+            background: #4f6fad;
+        }
+
+        .path-card {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+            border-left: 6px solid #777;
+        }
+
+        .path-step.open .path-card {
+            border-left-color: #4f6fad;
+        }
+
+        .path-card h3 {
+            margin: 0 0 8px;
+            color: #243b64;
+        }
+
+        .path-card p {
+            margin: 6px 0 12px;
+            line-height: 1.55;
+        }
+
+        .path-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .status-open {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-locked {
+            background: #eeeeee;
+            color: #666;
+        }
+
+        .path-button {
+            margin-top: 6px;
+        }
+
+        .path-note {
+            text-align: center;
+            margin-top: 26px;
+            padding: 14px 18px;
+            background: #f8fafc;
+            border-radius: 12px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            .path::before {
+                left: 26px;
+            }
+
+            .path-step {
+                grid-template-columns: 52px 1fr;
+                gap: 12px;
+            }
+
+            .path-circle {
+                width: 52px;
+                height: 52px;
+                font-size: 13px;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
@@ -35,11 +175,7 @@
 
         <a href="index.html">Home</a>
 
-        <a href="dashboard.html">Level 1 Dashboard</a>
-
-        <a href="#" onclick="openLevel2()">⚡ Level 2</a>
-
-        <a href="#" onclick="logout()">Logout</a>
+              <a href="#" onclick="logout()">Logout</a>
 
     </nav>
 
@@ -50,69 +186,179 @@
 
         <h2>Welcome to Digital Design Explorer!</h2>
 
-        <p>
-            Choose a learning level to begin your digital design journey.
-        </p>
+            </section>
 
-    </section>
+    <!-- 14-LEVEL SEQUENTIAL LEARNING PATH -->
 
+    <section class="modules learning-path">
 
-    <!-- LEVEL SELECTION -->
-
-    <section class="modules">
-
-
-        <!-- LEVEL 1 -->
-
-        <div class="card">
-
-            <h2>📘 LEVEL 1</h2>
-
-            <h3>Digital Design Fundamentals</h3>
-
-            <p>
-                Learn the fundamentals of digital system design through
-                interactive modules, practice, quizzes and laboratory activities.
-            </p>
-
-            <a href="dashboard.html">
-
-                <button>
-                    Open Level 1 →
-                </button>
-
-            </a>
-
+        <div class="path-heading">
+            <h2>🧭 14-Level Digital Design Learning Path</h2>
+            <p><strong>Students must complete all 14 levels in sequence.</strong></p>
         </div>
 
+        <div class="path">
 
-        <!-- LEVEL 2 -->
+            <div class="path-step open">
+                <div class="path-circle">L1</div>
+                <div class="path-card">
+                    <span class="path-status status-open">🟢 START HERE</span>
+                    <h3>LEVEL 1 — Digital Design Fundamentals</h3>
+                    <p>Logic gates, adders, Verilog practice, quiz, K-Map, Quine–McCluskey and digital logic lab.</p>
+                    <a href="dashboard.html">
+                        <button class="path-button">Start Level 1 →</button>
+                    </a>
+                </div>
+            </div>
+        
 
-        <div class="card">
+            <div class="path-step">
+                <div class="path-circle">L2</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 2 — Digital Circuit Design</h3>
+                    <p>Sequential circuits, sequential problems, counters, registers and state machines.</p>
+                    <button class="path-button" onclick="openLevel2()">🔐 Faculty Access to Level 2</button>
+                </div>
+            </div>
+        
 
-            <h2>🔐 LEVEL 2</h2>
+            <div class="path-step">
+                <div class="path-circle">L3</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 3 — Verilog for Beginners</h3>
+                    <p>Verilog HDL fundamentals, modules, operators and beginner RTL coding.</p>
+                    <button class="path-button" onclick="requestFutureLevel(3)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
 
-            <h3>Digital Circuit Design</h3>
+            <div class="path-step">
+                <div class="path-circle">L4</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 4 — VLSI Basics</h3>
+                    <p>Semiconductor concepts, CMOS basics and VLSI design foundations.</p>
+                    <button class="path-button" onclick="requestFutureLevel(4)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
 
-            <p>
-                Build, analyze and test digital circuits using
-                Gate-Level Realization and Sequential Circuits.
-            </p>
+            <div class="path-step">
+                <div class="path-circle">L5</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 5 — VLSI Testing</h3>
+                    <p>Fault models, test concepts and practical VLSI testing methods.</p>
+                    <button class="path-button" onclick="requestFutureLevel(5)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
 
-            <p id="level2Status">
+            <div class="path-step">
+                <div class="path-circle">L6</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 6 — SystemVerilog</h3>
+                    <p>SystemVerilog constructs and verification-oriented coding concepts.</p>
+                    <button class="path-button" onclick="requestFutureLevel(6)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
 
-                🔒 <strong>Level 2 is Restricted</strong>
+            <div class="path-step">
+                <div class="path-circle">L7</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 7 — Digital VLSI Design</h3>
+                    <p>Practical digital VLSI design concepts and implementation flow.</p>
+                    <button class="path-button" onclick="requestFutureLevel(7)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
 
-            </p>
+            <div class="path-step">
+                <div class="path-circle">L8</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 8 — VLSI Timing & Power</h3>
+                    <p>Timing behavior and power-related concepts in VLSI circuits.</p>
+                    <button class="path-button" onclick="requestFutureLevel(8)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
 
-            <button onclick="openLevel2()">
+            <div class="path-step">
+                <div class="path-circle">L9</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 9 — RTL Design & Synthesis</h3>
+                    <p>RTL design development and the synthesis process.</p>
+                    <button class="path-button" onclick="requestFutureLevel(9)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
 
-                🔐 Request Level 2 Access
+            <div class="path-step">
+                <div class="path-circle">L10</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 10 — Physical Design</h3>
+                    <p>Physical implementation stages of VLSI design.</p>
+                    <button class="path-button" onclick="requestFutureLevel(10)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
 
-            </button>
+            <div class="path-step">
+                <div class="path-circle">L11</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 11 — Advanced Verification</h3>
+                    <p>Advanced verification strategies and methodologies.</p>
+                    <button class="path-button" onclick="requestFutureLevel(11)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
 
+            <div class="path-step">
+                <div class="path-circle">L12</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 12 — DFT & Advanced Testing</h3>
+                    <p>Design-for-test concepts and advanced VLSI testing techniques.</p>
+                    <button class="path-button" onclick="requestFutureLevel(12)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
+
+            <div class="path-step">
+                <div class="path-circle">L13</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 13 — Processor / VLSI Architecture</h3>
+                    <p>Pipelining, hazards, branch prediction, speculation, cache and processor architecture.</p>
+                    <button class="path-button" onclick="requestFutureLevel(13)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
+
+            <div class="path-step">
+                <div class="path-circle">L14</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 14 — AI/ML for VLSI</h3>
+                    <p>Applications of artificial intelligence and machine learning in VLSI design.</p>
+                    <button class="path-button" onclick="requestFutureLevel(14)">🔒 Locked — Complete Previous Levels</button>
+                </div>
+            </div>
+        
         </div>
 
+        <div class="path-note">
+            🔐 Levels 2–14 are faculty restricted. Each level will be completed before progressing to the next level.
+        </div>
 
     </section>
 
@@ -161,6 +407,35 @@
         */
 
         const FACULTY_PIN = "padma@2026";
+
+
+        function requestFutureLevel(level) {
+
+            const unlockKey = "level" + level + "Unlocked";
+
+            if (localStorage.getItem(unlockKey) === "true") {
+                alert(
+                    "🔓 Level " + level + " is already unlocked.\n\n" +
+                    "This level is reserved for future content."
+                );
+                return;
+            }
+
+            const enteredPIN = prompt(
+                "🔐 Level " + level + " is restricted.\n\n" +
+                "Enter Faculty PIN:"
+            );
+
+            if (enteredPIN === FACULTY_PIN) {
+                localStorage.setItem(unlockKey, "true");
+                alert(
+                    "✅ Faculty access granted for Level " + level + ".\n\n" +
+                    "The content for this level will be added later."
+                );
+            } else if (enteredPIN !== null) {
+                alert("❌ Incorrect Faculty PIN.\n\nLevel " + level + " remains locked.");
+            }
+        }
 
 
         function openLevel2() {

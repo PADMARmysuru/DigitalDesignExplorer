@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Verilog Basics | Digital Design Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .activity-container {
+            max-width: 950px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .hero,
+        .learn-card,
+        .practice-card,
+        .challenge-card {
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            margin-bottom: 22px;
+        }
+
+        .hero {
+            background: #243b64;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h2 {
+            color: white;
+            margin: 0 0 8px;
+        }
+
+        .hero p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .learn-card h3,
+        .practice-card h3,
+        .challenge-card h3 {
+            color: #243b64;
+            margin-top: 0;
+        }
+
+        .simple-box {
+            background: #f5f7fa;
+            border-left: 5px solid #4f6fad;
+            padding: 14px 16px;
+            border-radius: 8px;
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        .flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            background: #eef2f7;
+            color: #243b64;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 115px;
+        }
+
+        .arrow {
+            font-size: 22px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .code-box {
+            width: 100%;
+            min-height: 240px;
+            box-sizing: border-box;
+            padding: 15px;
+            border: 1px solid #cfd6df;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            font-size: 15px;
+            resize: vertical;
+            background: #f8fafc;
+        }
+
+        .line-explain {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .line-explain th,
+        .line-explain td {
+            border: 1px solid #d9dee7;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .line-explain th {
+            background: #eef2f7;
+            color: #243b64;
+        }
+
+        .term {
+            display: inline-block;
+            background: #eef2f7;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+        }
+
+        .question {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 10px;
+            margin: 12px 0;
+        }
+
+        .button-row {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 11px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .primary-btn {
+            background: #243b64;
+            color: white;
+        }
+
+        .secondary-btn {
+            background: #eeeeee;
+            color: #555;
+        }
+
+        .output {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 10px;
+            background: #f5f7fa;
+            min-height: 35px;
+            line-height: 1.5;
+        }
+
+        .tip {
+            background: #fff8e1;
+            border-left: 5px solid #c9a227;
+            padding: 12px 15px;
+            border-radius: 8px;
+            line-height: 1.5;
+            margin-top: 14px;
+        }
+
+        .navigation {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .navigation a {
+            display: inline-block;
+            text-decoration: none;
+            background: #162746;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 8px;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 650px) {
+            .activity-container {
+                padding: 10px;
+            }
+
+            .line-explain {
+                font-size: 14px;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- LEVEL 3 ACCESS CHECK -->
+<script>
+(function () {
+    if (localStorage.getItem("level3Unlocked") !== "true") {
+        alert("🔒 Level 3 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+})();
+</script>
+
+<header>
+    <h1>Digital Design Explorer</h1>
+    <p>Level 3 – Verilog for Beginners</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="level3-dashboard.html">Level 3 Dashboard</a>
+    <a href="dashboard.html">Level 1 Dashboard</a>
+    <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main class="activity-container">
+
+    <section class="hero">
+        <h2>💻 Activity 1 – Verilog Basics</h2>
+        <p>Understand the idea first, then write your first Verilog program.</p>
+    </section>
+
+    <!-- 1 -->
+    <section class="learn-card">
+        <h3>1. What is Verilog?</h3>
+
+        <div class="simple-box">
+            <strong>Verilog is a Hardware Description Language (HDL).</strong>
+            <br>
+            It is used to describe the behavior and structure of digital circuits.
+        </div>
+
+        <p>
+            In this course, you will use Verilog to describe circuits such as
+            logic gates, adders, multiplexers, flip-flops and counters.
+        </p>
+
+        <div class="tip">
+            💡 Think of Verilog as a way to <strong>write the design of a digital circuit using code</strong>.
+        </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="learn-card">
+        <h3>2. Where Verilog Fits in the VLSI Design Flow</h3>
+
+        <p>
+            Verilog is mainly used when the digital design is described at the
+            <strong>RTL / HDL level</strong>.
+        </p>
+
+        <div class="flow">
+            <div class="flow-step">1. Specification</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">2. Architecture</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">3. RTL / Verilog</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">4. Simulation</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">5. Synthesis</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">6. Physical Design</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">7. Fabrication &amp; Test</div>
+        </div>
+
+        <div class="simple-box">
+            <strong>Your focus in Level 3:</strong>
+            learn how to describe the digital circuit using Verilog and check its behavior through simulation-oriented practice.
+        </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="learn-card">
+        <h3>3. Verilog Basics</h3>
+
+        <p>Before programming, remember these simple ideas:</p>
+
+        <table class="line-explain">
+            <tr>
+                <th>Term</th>
+                <th>Simple meaning</th>
+            </tr>
+            <tr>
+                <td><span class="term">module</span></td>
+                <td>A block that represents a digital circuit.</td>
+            </tr>
+            <tr>
+                <td><span class="term">input</span></td>
+                <td>A signal entering the circuit.</td>
+            </tr>
+            <tr>
+                <td><span class="term">output</span></td>
+                <td>A signal leaving the circuit.</td>
+            </tr>
+            <tr>
+                <td><span class="term">assign</span></td>
+                <td>Used for a continuous assignment in data-flow style.</td>
+            </tr>
+            <tr>
+                <td><span class="term">endmodule</span></td>
+                <td>Marks the end of the module.</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- 4 -->
+    <section class="learn-card">
+        <h3>4. Your First Verilog Program – AND Gate</h3>
+
+        <textarea class="code-box" id="exampleCode" readonly>module and_gate(
+    input a,
+    input b,
+    output y
+);
+
+assign y = a & b;
+
+endmodule</textarea>
+
+        <table class="line-explain">
+            <tr>
+                <th>Code</th>
+                <th>What it means</th>
+            </tr>
+            <tr>
+                <td><span class="term">module and_gate</span></td>
+                <td>Creates a module named <strong>and_gate</strong>.</td>
+            </tr>
+            <tr>
+                <td><span class="term">input a</span></td>
+                <td>First input signal.</td>
+            </tr>
+            <tr>
+                <td><span class="term">input b</span></td>
+                <td>Second input signal.</td>
+            </tr>
+            <tr>
+                <td><span class="term">output y</span></td>
+                <td>Output signal.</td>
+            </tr>
+            <tr>
+                <td><span class="term">assign y = a &amp; b;</span></td>
+                <td>The output follows the AND operation.</td>
+            </tr>
+            <tr>
+                <td><span class="term">endmodule</span></td>
+                <td>Ends the module.</td>
+            </tr>
+        </table>
+
+        <div class="tip">
+            💡 Circuit idea: <strong>y = a AND b</strong>.
+            The output is 1 only when both inputs are 1.
+        </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="learn-card">
+        <h3>5. Four Basic Operators</h3>
+
+        <table class="line-explain">
+            <tr>
+                <th>Operator</th>
+                <th>Meaning</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td><span class="term">&amp;</span></td>
+                <td>AND</td>
+                <td><span class="term">a &amp; b</span></td>
+            </tr>
+            <tr>
+                <td><span class="term">|</span></td>
+                <td>OR</td>
+                <td><span class="term">a | b</span></td>
+            </tr>
+            <tr>
+                <td><span class="term">~</span></td>
+                <td>NOT</td>
+                <td><span class="term">~a</span></td>
+            </tr>
+            <tr>
+                <td><span class="term">^</span></td>
+                <td>XOR</td>
+                <td><span class="term">a ^ b</span></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- 6 -->
+    <section class="practice-card">
+        <h3>6. Try Your First Program</h3>
+
+        <p>Type the AND-gate program and click <strong>Check Code</strong>.</p>
+
+        <textarea class="code-box" id="studentCode">module and_gate(
+    input a,
+    input b,
+    output y
+);
+
+assign y = a & b;
+
+endmodule</textarea>
+
+        <div class="button-row">
+            <button class="primary-btn" onclick="checkCode()">✅ Check Code</button>
+            <button class="secondary-btn" onclick="resetCode()">↺ Reset</button>
+        </div>
+
+        <div class="output" id="codeResult"></div>
+    </section>
+
+    <!-- 7 -->
+    <section class="practice-card">
+        <h3>7. Quick Check</h3>
+
+        <div class="question">
+            <p><strong>Q1.</strong> What does HDL stand for?</p>
+            <label><input type="radio" name="q1" value="hdl"> Hardware Description Language</label><br>
+            <label><input type="radio" name="q1" value="high"> High Design Language</label><br>
+            <label><input type="radio" name="q1" value="hardware"> Hardware Data Logic</label>
+        </div>
+
+        <div class="question">
+            <p><strong>Q2.</strong> Which keyword starts a Verilog module?</p>
+            <label><input type="radio" name="q2" value="module"> module</label><br>
+            <label><input type="radio" name="q2" value="begin"> begin</label><br>
+            <label><input type="radio" name="q2" value="assign"> assign</label>
+        </div>
+
+        <div class="question">
+            <p><strong>Q3.</strong> Which operator represents AND?</p>
+            <label><input type="radio" name="q3" value="&amp;"> &amp;</label><br>
+            <label><input type="radio" name="q3" value="|"> |</label><br>
+            <label><input type="radio" name="q3" value="^"> ^</label>
+        </div>
+
+        <div class="button-row">
+            <button class="primary-btn" onclick="checkQuiz()">✅ Check Answers</button>
+        </div>
+
+        <div class="output" id="quizResult"></div>
+    </section>
+
+    <!-- 8 -->
+    <section class="challenge-card">
+        <h3>8. Mini Challenge 🎯</h3>
+
+        <p>
+            Change the AND gate into an <strong>OR gate</strong>.
+            Keep the module structure the same.
+        </p>
+
+        <textarea class="code-box" id="challengeCode">module or_gate(
+    input a,
+    input b,
+    output y
+);
+
+assign y = a & b;
+
+endmodule</textarea>
+
+        <div class="button-row">
+            <button class="primary-btn" onclick="checkChallenge()">🎯 Check Challenge</button>
+        </div>
+
+        <div class="output" id="challengeResult"></div>
+    </section>
+
+    <div class="navigation">
+        <a href="level3-dashboard.html">← Level 3 Dashboard</a>
+        <a href="index.html">Home</a>
+    </div>
+
+</main>
+
+<footer>
+    <p>Digital Design Explorer | ECE Department</p>
+</footer>
+
+<footer class="site-footer">
+    <p>Developed by <strong>Mrs. Padma R</strong></p>
+    <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+    <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+function cleanCode(code) {
+    return code
+        .toLowerCase()
+        .replace(/\s+/g, "");
+}
+
+function checkCode() {
+    const code = cleanCode(document.getElementById("studentCode").value);
+    const result = document.getElementById("codeResult");
+
+    const correct =
+        code.includes("moduleand_gate(") &&
+        code.includes("inputa") &&
+        code.includes("inputb") &&
+        code.includes("outputy") &&
+        code.includes("assigny=a&b;") &&
+        code.includes("endmodule");
+
+    if (correct) {
+        result.innerHTML = "✅ Correct! Your first Verilog program is ready.";
+        result.style.color = "#2e7d32";
+        localStorage.setItem("verilogBasicsCodeDone", "true");
+    } else {
+        result.innerHTML =
+            "❌ Check the module name, inputs, output, assign statement and endmodule.";
+        result.style.color = "#c62828";
+    }
+}
+
+function resetCode() {
+    document.getElementById("studentCode").value =
+`module and_gate(
+    input a,
+    input b,
+    output y
+);
+
+assign y = a & b;
+
+endmodule`;
+
+    document.getElementById("codeResult").innerHTML = "";
+}
+
+function checkQuiz() {
+    let score = 0;
+
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    const q3 = document.querySelector('input[name="q3"]:checked');
+
+    if (q1 && q1.value === "hdl") score++;
+    if (q2 && q2.value === "module") score++;
+    if (q3 && q3.value === "&") score++;
+
+    const result = document.getElementById("quizResult");
+
+    if (score === 3) {
+        result.innerHTML = "✅ 3 / 3 — Excellent!";
+        result.style.color = "#2e7d32";
+        localStorage.setItem("verilogBasicsQuizDone", "true");
+    } else {
+        result.innerHTML = "Score: " + score + " / 3 — Try again.";
+        result.style.color = "#c62828";
+    }
+}
+
+function checkChallenge() {
+    const code = cleanCode(document.getElementById("challengeCode").value);
+    const result = document.getElementById("challengeResult");
+
+    if (code.includes("moduleor_gate(") && code.includes("assigny=a|b;")) {
+        result.innerHTML = "✅ Challenge completed! OR-gate code is correct.";
+        result.style.color = "#2e7d32";
+
+        localStorage.setItem("verilogBasicsChallengeDone", "true");
+        localStorage.setItem("verilogBasicsDone", "true");
+    } else {
+        result.innerHTML = "❌ Change the assignment to: assign y = a | b;";
+        result.style.color = "#c62828";
+    }
+}
+
+function logout() {
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>

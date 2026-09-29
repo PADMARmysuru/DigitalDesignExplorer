@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Structural Modeling | Digital Design Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .activity-container {
+            max-width: 1100px;
+            margin: 16px auto;
+            padding: 10px;
+        }
+
+        .hero,
+        .card {
+            width: 100%;
+            box-sizing: border-box;
+            background: white;
+            padding: 15px 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 14px;
+        }
+
+        .hero {
+            background: #243b64;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h2 {
+            color: white;
+            margin: 0 0 5px;
+        }
+
+        .hero p {
+            margin: 0;
+        }
+
+        .card h3 {
+            color: #243b64;
+            margin-top: 0; margin-bottom: 7px;
+        }
+
+        .simple-box,
+        .tip {
+            padding: 14px 16px;
+            border-radius: 8px;
+            line-height: 1.45;
+            margin: 8px 0;
+        }
+
+        .simple-box {
+            background: #f5f7fa;
+            border-left: 5px solid #4f6fad;
+        }
+
+        .tip {
+            background: #fff8e1;
+            border-left: 5px solid #c9a227;
+        }
+
+        .gate-buttons {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .gate-btn {
+            background: #eef2f7;
+            color: #243b64;
+            border: 2px solid #d9dee7;
+            padding: 12px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .gate-btn.active {
+            border-color: #243b64;
+        }
+
+        .circuit-box {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin: 10px 0;
+        }
+
+        .circuit-item {
+            background: #f8fafc;
+            border: 1px solid #d9dee7;
+            padding: 9px 12px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 75px;
+        }
+
+        .arrow {
+            font-size: 24px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .code-box {
+            width: 100%;
+            min-height: 170px;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #cfd6df;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            resize: vertical;
+            background: #f8fafc;
+        }
+
+        .button-row {
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        button {
+            margin: 3px;
+            padding: 9px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .primary-btn {
+            background: #243b64;
+            color: white;
+        }
+
+        .secondary-btn {
+            background: #eeeeee;
+            color: #555;
+        }
+
+        .output {
+            margin-top: 14px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            background: #f5f7fa;
+            min-height: 28px;
+            line-height: 1.4;
+        }
+
+        .question {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 10px;
+            margin: 7px 0;
+        }
+
+        .gate-demo {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .logic-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: #243b64;
+            margin: 7px 0;
+        }
+
+        .navigation {
+            text-align: center;
+            margin: 18px 0;
+        }
+
+        .navigation a {
+            display: inline-block;
+            text-decoration: none;
+            background: #162746;
+            color: white;
+            padding: 9px 16px;
+            border-radius: 8px;
+            margin: 3px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 650px) {
+            .activity-container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<script>
+(function () {
+    if (localStorage.getItem("level3Unlocked") !== "true") {
+        alert("🔒 Level 3 is restricted. Faculty authorization is required.");
+        window.location.replace("index.html");
+    }
+})();
+</script>
+
+<header>
+    <h1>Digital Design Explorer</h1>
+    <p>Level 3 – Verilog for Beginners</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="level3-dashboard.html">Level 3 Dashboard</a>
+    <a href="dashboard.html">Level 1 Dashboard</a>
+    <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main class="activity-container">
+
+    <section class="hero">
+        <h2>🔌 Activity 2 – Structural / Gate-Level Modeling</h2>
+        <p>Build a circuit by connecting gate primitives in Verilog.</p>
+    </section>
+
+    <section class="card">
+        <h3>1. What is Structural Modeling?</h3>
+
+        <div class="simple-box">
+            <strong>Structural modeling describes how gates are connected to form a circuit.</strong>
+        </div>
+
+        <p>
+            Think of it like drawing a circuit with gates and wires.
+            In Verilog, the gates and their connections are written as code.
+        </p>
+
+        <p>
+            Common gate primitives include:
+            <strong>and, or, not, nand, nor, xor, xnor</strong>.
+        </p>
+    </section>
+
+    <section class="card">
+        <h3>2. Interactive Gate Explorer</h3>
+
+        <p>Choose a gate and change the input values.</p>
+
+        <div class="gate-buttons">
+            <button class="gate-btn active" onclick="selectGate('and', this)">AND</button>
+            <button class="gate-btn" onclick="selectGate('or', this)">OR</button>
+            <button class="gate-btn" onclick="selectGate('xor', this)">XOR</button>
+            <button class="gate-btn" onclick="selectGate('nand', this)">NAND</button>
+            <button class="gate-btn" onclick="selectGate('nor', this)">NOR</button>
+            <button class="gate-btn" onclick="selectGate('xnor', this)">XNOR</button>
+        </div>
+
+        <div class="gate-demo">
+            <p><strong>Input A</strong></p>
+            <button id="aBtn" class="primary-btn" onclick="toggleInput('a')">A = 0</button>
+
+            <p><strong>Input B</strong></p>
+            <button id="bBtn" class="primary-btn" onclick="toggleInput('b')">B = 0</button>
+
+            <div class="logic-display" id="logicDisplay">
+                AND Output Y = 0
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h3>3. First Structural Verilog Example</h3>
+
+        <textarea class="code-box" readonly>module and_gate(
+    input a,
+    input b,
+    output y
+);
+
+and g1(y, a, b);
+
+endmodule</textarea>
+
+        <div class="simple-box">
+            <strong>Read it like this:</strong>
+            <br>
+            <span style="font-family:Consolas,monospace;">and g1(y, a, b);</span>
+            means an AND gate named <strong>g1</strong> is connected to the two inputs and the output.
+        </div>
+
+        <div class="tip">
+            💡 In structural modeling, you describe the <strong>parts and connections</strong> of the circuit.
+        </div>
+    </section>
+
+    <section class="card">
+        <h3>4. Build a Simple Circuit in Code</h3>
+
+        <p>
+            Complete the code for:
+            <strong>y = a AND b</strong>
+        </p>
+
+        <textarea class="code-box" id="studentCode">module and_gate(
+    input a,
+    input b,
+    output y
+);
+
+and g1(y, a, b);
+
+endmodule</textarea>
+
+        <div class="button-row">
+            <button class="primary-btn" onclick="checkCode()">✅ Check Structural Code</button>
+            <button class="secondary-btn" onclick="resetCode()">↺ Reset</button>
+        </div>
+
+        <div class="output" id="codeResult"></div>
+    </section>
+
+    <section class="card">
+        <h3>5. Combinational Circuit Examples</h3>
+
+        <p><strong>Example 1 – Half Adder</strong></p>
+
+        <div class="circuit-box">
+            <div class="circuit-item">A</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">XOR<br>SUM</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">Sum</div>
+
+            <div class="circuit-item">B</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">AND<br>CARRY</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">Carry</div>
+        </div>
+
+        <textarea class="code-box" readonly>module half_adder(
+    input a,
+    input b,
+    output sum,
+    output carry
+);
+
+xor x1(sum, a, b);
+and a1(carry, a, b);
+
+endmodule</textarea>
+
+        <div class="gate-demo">
+            <p><strong>Try the Half Adder</strong></p>
+            <button id="haAButton" class="primary-btn" onclick="toggleHA('a')">A = 0</button>
+            <button id="haBButton" class="primary-btn" onclick="toggleHA('b')">B = 0</button>
+            <p class="logic-display" id="haOutput">Sum = 0 &nbsp;&nbsp; Carry = 0</p>
+        </div>
+
+        <hr style="margin:18px 0; border:0; border-top:1px solid #d9dee7;">
+
+        <p><strong>Example 2 – 2:1 Multiplexer</strong></p>
+
+        <p>
+            A multiplexer selects one input using a select line.
+        </p>
+
+        <textarea class="code-box" readonly>module mux2to1(
+    input i0,
+    input i1,
+    input s,
+    output y
+);
+
+not n1(ns, s);
+and a1(w1, i0, ns);
+and a2(w2, i1, s);
+or  o1(y, w1, w2);
+
+endmodule</textarea>
+
+        <div class="gate-demo">
+            <p><strong>Try the 2:1 MUX</strong></p>
+            <button id="muxI0Button" class="primary-btn" onclick="toggleMux('i0')">I0 = 0</button>
+            <button id="muxI1Button" class="primary-btn" onclick="toggleMux('i1')">I1 = 0</button>
+            <button id="muxSButton" class="secondary-btn" onclick="toggleMux('s')">S = 0</button>
+            <p class="logic-display" id="muxOutput">Y = 0</p>
+        </div>
+    </section>
+
+    <section class="card">
+        <h3>6. Sequential Circuit Examples</h3>
+
+        <p><strong>Example 1 – D Flip-Flop</strong></p>
+
+        <p>
+            A D flip-flop stores the input value when the clock is triggered.
+        </p>
+
+        <textarea class="code-box" readonly>module d_ff(
+    input d,
+    input clk,
+    input reset,
+    output reg q
+);
+
+always @(posedge clk or posedge reset)
+begin
+    if (reset)
+        q <= 1'b0;
+    else
+        q <= d;
+end
+
+endmodule</textarea>
+
+        <div class="gate-demo">
+            <p><strong>Try the D Flip-Flop</strong></p>
+            <button id="dButton" class="primary-btn" onclick="toggleD()">D = 0</button>
+            <button class="secondary-btn" onclick="clockD()">⏱ Clock</button>
+            <button class="secondary-btn" onclick="resetD()">Reset</button>
+            <p class="logic-display" id="dffOutput">Q = 0</p>
+        </div>
+
+        <hr style="margin:18px 0; border:0; border-top:1px solid #d9dee7;">
+
+        <p><strong>Example 2 – 2-bit Up Counter</strong></p>
+
+        <textarea class="code-box" readonly>module counter_2bit(
+    input clk,
+    input reset,
+    output reg [1:0] q
+);
+
+always @(posedge clk or posedge reset)
+begin
+    if (reset)
+        q <= 2'b00;
+    else
+        q <= q + 1'b1;
+end
+
+endmodule</textarea>
+
+        <div class="gate-demo">
+            <p><strong>Press Clock to count</strong></p>
+            <button class="secondary-btn" onclick="clockCounter()">⏱ Clock</button>
+            <button class="secondary-btn" onclick="resetCounter()">Reset</button>
+            <p class="logic-display" id="counterOutput">Q = 00</p>
+        </div>
+
+        <div class="tip">
+            💡 These examples show where Verilog is used for both <strong>combinational</strong>
+            and <strong>sequential</strong> digital circuits. We will study the coding styles in detail in the next activities.
+        </div>
+    </section>
+
+    <section class="card">
+        <h3>7. Quick Check</h3>
+
+        <div class="question">
+            <p><strong>Q1.</strong> Structural modeling mainly describes:</p>
+            <label><input type="radio" name="q1" value="connections"> Gates and their connections</label><br>
+            <label><input type="radio" name="q1" value="numbers"> Only numbers</label><br>
+            <label><input type="radio" name="q1" value="comments"> Only comments</label>
+        </div>
+
+        <div class="question">
+            <p><strong>Q2.</strong> Which is a Verilog gate primitive?</p>
+            <label><input type="radio" name="q2" value="and"> and</label><br>
+            <label><input type="radio" name="q2" value="gate"> gate</label><br>
+            <label><input type="radio" name="q2" value="connect"> connect</label>
+        </div>
+
+        <div class="question">
+            <p><strong>Q3.</strong> In <span style="font-family:Consolas,monospace;">and g1(y,a,b);</span>, what is <strong>g1</strong>?</p>
+            <label><input type="radio" name="q3" value="name"> Gate instance name</label><br>
+            <label><input type="radio" name="q3" value="input"> Input signal</label><br>
+            <label><input type="radio" name="q3" value="output"> Output signal</label>
+        </div>
+
+        <div class="button-row">
+            <button class="primary-btn" onclick="checkQuiz()">✅ Check Answers</button>
+        </div>
+
+        <div class="output" id="quizResult"></div>
+    </section>
+
+    <section class="card">
+        <h3>8. Complex Structural Modeling Challenge 🎯</h3>
+
+        <div class="simple-box">
+            <strong>Problem:</strong>
+            Design a <strong>4-bit Ripple Carry Adder</strong> using structural Verilog.
+            Do not use <span style="font-family:Consolas,monospace;">assign</span> statements for the adder logic.
+            Build the circuit by connecting gate primitives and full-adder blocks.
+        </div>
+
+        <p><strong>Inputs:</strong> A[3:0], B[3:0], Cin</p>
+        <p><strong>Outputs:</strong> Sum[3:0], Cout</p>
+
+        <div class="circuit-box">
+            <div class="circuit-item">FA0<br>A0, B0, Cin</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">C1</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">FA1</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">C2</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">FA2</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">C3</div>
+            <div class="arrow">→</div>
+            <div class="circuit-item">FA3<br>→ Cout</div>
+        </div>
+
+        <p><strong>Build these four stages:</strong></p>
+        <ol>
+            <li>Full Adder 0 uses A[0], B[0], Cin and produces Sum[0], C1.</li>
+            <li>Full Adder 1 uses A[1], B[1], C1 and produces Sum[1], C2.</li>
+            <li>Full Adder 2 uses A[2], B[2], C2 and produces Sum[2], C3.</li>
+            <li>Full Adder 3 uses A[3], B[3], C3 and produces Sum[3], Cout.</li>
+        </ol>
+
+        <p><strong>Starter structure:</strong></p>
+
+        <textarea class="code-box" id="challengeCode">module full_adder(
+    input a,
+    input b,
+    input cin,
+    output sum,
+    output cout
+);
+    // Build this full adder using gate primitives
+endmodule
+
+module ripple_adder_4bit(
+    input [3:0] a,
+    input [3:0] b,
+    input cin,
+    output [3:0] sum,
+    output cout
+);
+
+wire c1, c2, c3;
+
+// Instantiate four full adders here
+
+endmodule</textarea>
+
+        <div class="tip">
+            💡 Hint for the Full Adder:
+            <br>
+            Sum = A XOR B XOR Cin
+            <br>
+            Cout can be formed using AND and OR gates.
+            <br><br>
+            Your main task is to <strong>connect the four full-adder instances correctly</strong>.
+        </div>
+
+        <div class="button-row">
+            <button class="primary-btn" onclick="checkChallenge()">🎯 Check Challenge</button>
+            <button class="secondary-btn" onclick="showChallengeHint()">💡 Show Hint</button>
+        </div>
+
+        <div class="output" id="challengeResult"></div>
+    </section>
+
+    <div class="navigation">
+        <a href="level3-dashboard.html">← Level 3 Dashboard</a>
+        <a href="verilog-basics.html">← Activity 1</a>
+        <a href="index.html">Home</a>
+    </div>
+
+</main>
+
+<footer>
+    <p>Digital Design Explorer | ECE Department</p>
+</footer>
+
+<footer class="site-footer">
+    <p>Developed by <strong>Mrs. Padma R</strong></p>
+    <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+    <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+let selectedGate = "and";
+let a = 0;
+let b = 0;
+
+function getOutput(gate, a, b) {
+    if (gate === "and") return a & b;
+    if (gate === "or") return a | b;
+    if (gate === "xor") return a ^ b;
+    if (gate === "nand") return Number(!(a & b));
+    if (gate === "nor") return Number(!(a | b));
+    if (gate === "xnor") return Number(!(a ^ b));
+    return 0;
+}
+
+function selectGate(gate, button) {
+    selectedGate = gate;
+
+    document.querySelectorAll(".gate-btn").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    button.classList.add("active");
+    updateGateDisplay();
+updateHA();
+updateMux();
+updateDFF();
+updateCounter();
+}
+
+function toggleInput(input) {
+    if (input === "a") {
+        a = a === 0 ? 1 : 0;
+    } else {
+        b = b === 0 ? 1 : 0;
+    }
+
+    updateGateDisplay();
+}
+
+function updateGateDisplay() {
+    document.getElementById("aBtn").textContent = "A = " + a;
+    document.getElementById("bBtn").textContent = "B = " + b;
+
+    const output = getOutput(selectedGate, a, b);
+
+    document.getElementById("logicDisplay").textContent =
+        selectedGate.toUpperCase() + " Output Y = " + output;
+}
+
+let haA = 0;
+let haB = 0;
+
+function updateHA() {
+    const sum = haA ^ haB;
+    const carry = haA & haB;
+
+    document.getElementById("haOutput").textContent =
+        "Sum = " + sum + "    Carry = " + carry;
+
+    document.getElementById("haAButton").textContent = "A = " + haA;
+    document.getElementById("haBButton").textContent = "B = " + haB;
+}
+
+function toggleHA(input) {
+    if (input === "a") {
+        haA = haA ? 0 : 1;
+    } else {
+        haB = haB ? 0 : 1;
+    }
+    updateHA();
+}
+
+let muxI0 = 0;
+let muxI1 = 0;
+let muxS = 0;
+
+function updateMux() {
+    const y = muxS ? muxI1 : muxI0;
+    document.getElementById("muxI0Button").textContent = "I0 = " + muxI0;
+    document.getElementById("muxI1Button").textContent = "I1 = " + muxI1;
+    document.getElementById("muxSButton").textContent = "S = " + muxS;
+
+    document.getElementById("muxOutput").textContent = "Y = " + y;
+}
+
+function toggleMux(input) {
+    if (input === "i0") {
+        muxI0 = muxI0 ? 0 : 1;
+    } else if (input === "i1") {
+        muxI1 = muxI1 ? 0 : 1;
+    } else {
+        muxS = muxS ? 0 : 1;
+    }
+    updateMux();
+}
+
+let dValue = 0;
+let qValue = 0;
+
+function updateDFF() {
+    document.getElementById("dButton").textContent = "D = " + dValue;
+    document.getElementById("dffOutput").textContent = "Q = " + qValue;
+}
+
+function toggleD() {
+    dValue = dValue ? 0 : 1;
+    updateDFF();
+}
+
+function clockD() {
+    qValue = dValue;
+    updateDFF();
+}
+
+function resetD() {
+    qValue = 0;
+    updateDFF();
+}
+
+let counterValue = 0;
+
+function updateCounter() {
+    document.getElementById("counterOutput").textContent =
+        "Q = " + counterValue.toString(2).padStart(2, "0");
+}
+
+function clockCounter() {
+    counterValue = (counterValue + 1) % 4;
+    updateCounter();
+}
+
+function resetCounter() {
+    counterValue = 0;
+    updateCounter();
+}
+
+function cleanCode(code) {
+    return code.toLowerCase().replace(/\s+/g, "");
+}
+
+function checkCode() {
+    const code = cleanCode(document.getElementById("studentCode").value);
+    const result = document.getElementById("codeResult");
+
+    const correct =
+        code.includes("moduleand_gate(") &&
+        code.includes("inputa") &&
+        code.includes("inputb") &&
+        code.includes("outputy") &&
+        code.includes("andg1(y,a,b);") &&
+        code.includes("endmodule");
+
+    if (correct) {
+        result.innerHTML = "✅ Correct! This is a structural AND-gate description.";
+        result.style.color = "#2e7d32";
+        localStorage.setItem("verilogStructuralCodeDone", "true");
+    } else {
+        result.innerHTML =
+            "❌ Check the module, ports, AND gate instance and endmodule.";
+        result.style.color = "#c62828";
+    }
+}
+
+function resetCode() {
+    document.getElementById("studentCode").value =
+`module and_gate(
+    input a,
+    input b,
+    output y
+);
+
+and g1(y, a, b);
+
+endmodule`;
+
+    document.getElementById("codeResult").innerHTML = "";
+}
+
+function checkQuiz() {
+    let score = 0;
+
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    const q3 = document.querySelector('input[name="q3"]:checked');
+
+    if (q1 && q1.value === "connections") score++;
+    if (q2 && q2.value === "and") score++;
+    if (q3 && q3.value === "name") score++;
+
+    const result = document.getElementById("quizResult");
+
+    if (score === 3) {
+        result.innerHTML = "✅ 3 / 3 — Excellent!";
+        result.style.color = "#2e7d32";
+        localStorage.setItem("verilogStructuralQuizDone", "true");
+    } else {
+        result.innerHTML = "Score: " + score + " / 3 — Try again.";
+        result.style.color = "#c62828";
+    }
+}
+
+function showChallengeHint() {
+    document.getElementById("challengeResult").innerHTML =
+        "💡 Full Adder hint: use XOR gates for Sum, AND gates for carry terms, " +
+        "and an OR gate for Cout. Then instantiate four full adders as FA0, FA1, FA2 and FA3.";
+}
+
+function checkChallenge() {
+    const code = cleanCode(document.getElementById("challengeCode").value);
+    const result = document.getElementById("challengeResult");
+
+    const hasFullAdder =
+        code.includes("modulefull_adder(") &&
+        code.includes("inputa") &&
+        code.includes("inputb") &&
+        code.includes("inputcin") &&
+        code.includes("outputsum") &&
+        code.includes("outputcout");
+
+    const hasStructuralGates =
+        code.includes("xor") &&
+        code.includes("and") &&
+        code.includes("or");
+
+    const hasRippleModule =
+        code.includes("moduleripple_adder_4bit(") &&
+        code.includes("input[3:0]a") &&
+        code.includes("input[3:0]b") &&
+        code.includes("output[3:0]sum") &&
+        code.includes("wirec1,c2,c3");
+
+    const fullAdderCount =
+        (code.match(/full_adder/g) || []).length >= 5;
+
+    const hasStageConnections =
+        code.includes("fa0") ||
+        (code.includes("full_adderfa0") && code.includes("full_adderfa1"));
+
+    const hasFourInstances =
+        code.includes("fa0") &&
+        code.includes("fa1") &&
+        code.includes("fa2") &&
+        code.includes("fa3");
+
+    if (
+        hasFullAdder &&
+        hasStructuralGates &&
+        hasRippleModule &&
+        fullAdderCount &&
+        hasStageConnections &&
+        hasFourInstances
+    ) {
+        result.innerHTML =
+            "✅ Challenge completed! You created the structure of a 4-bit ripple-carry adder.";
+        result.style.color = "#2e7d32";
+
+        localStorage.setItem("verilogStructuralChallengeDone", "true");
+        localStorage.setItem("verilogStructuralDone", "true");
+    } else {
+        result.innerHTML =
+            "❌ Incomplete. Check the Full Adder, gate primitives, wire c1/c2/c3, and four instances FA0–FA3.";
+        result.style.color = "#c62828";
+    }
+}
+
+function logout() {
+    localStorage.removeItem("studentLoggedIn");
+    window.location.href = "login.html";
+}
+
+updateGateDisplay();
+</script>
+
+</body>
+</html>
