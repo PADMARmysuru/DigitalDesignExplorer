@@ -1,0 +1,2404 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gate-Level Realization</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f7fb;
+    color:#1d2a3a;
+}
+
+header{
+    background:#243b64;
+    color:white;
+    padding:18px;
+    text-align:center;
+}
+
+header h1{margin:0}
+header p{margin:7px 0 0}
+
+.container{
+    width:95%;
+    max-width:1450px;
+    margin:20px auto;
+}
+
+.topbar{
+    background:white;
+    padding:15px 20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+}
+
+.problem-title{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.difficulty{
+    background:#e8eef8;
+    color:#243b64;
+    padding:8px 15px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.progress-container{
+    height:10px;
+    background:#ddd;
+    border-radius:10px;
+    margin-top:10px;
+    width:400px;
+    max-width:100%;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:#28a745;
+    border-radius:10px;
+}
+
+.expression{
+    background:white;
+    margin-top:15px;
+    padding:18px;
+    text-align:center;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.expression h2{
+    color:#243b64;
+    margin:5px;
+}
+
+.boolean-expression{
+    font-size:25px;
+    font-weight:bold;
+}
+
+.instructions{
+    background:#fff8df;
+    border-left:5px solid #f0ad4e;
+    padding:13px;
+    margin:15px 0;
+    border-radius:6px;
+    line-height:1.6;
+}
+
+.workspace{
+    display:grid;
+    grid-template-columns:190px 1fr;
+    gap:15px;
+}
+
+.toolbox{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.toolbox h3{
+    color:#243b64;
+    text-align:center;
+    margin-top:0;
+}
+
+.gate-item{
+    border:1px solid #ccd5e3;
+    background:#f8fafc;
+    padding:7px;
+    margin-bottom:8px;
+    border-radius:8px;
+    cursor:grab;
+    text-align:center;
+    font-weight:bold;
+}
+
+.gate-item:hover{
+    background:#eef4ff;
+}
+
+.gate-item svg{
+    width:105px;
+    height:50px;
+    display:block;
+    margin:auto;
+}
+
+.canvas-container{
+    background:white;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    overflow:auto;
+}
+
+#circuitCanvas{
+    position:relative;
+    width:1150px;
+    height:580px;
+    background:
+        linear-gradient(#edf2f8 1px,transparent 1px),
+        linear-gradient(90deg,#edf2f8 1px,transparent 1px);
+    background-size:25px 25px;
+}
+
+#wireLayer{
+    position:absolute;
+    z-index:5;
+    left:0;
+    top:0;
+    width:1150px;
+    height:580px;
+    pointer-events:none;
+}
+
+.wire{
+    stroke:#2878c8;
+    stroke-width:4;
+    fill:none;
+    pointer-events:stroke;
+    cursor:pointer;
+}
+
+.wire.selected{
+    stroke:#e53935;
+    stroke-width:7;
+}
+
+.temp-wire{
+    stroke:#20a05a;
+    stroke-width:4;
+    stroke-dasharray:8 6;
+    fill:none;
+    pointer-events:none;
+}
+
+.input-node,
+.output-node{
+    position:absolute;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-weight:bold;
+    z-index:20;
+}
+
+.input-node{left:20px}
+.output-node{right:20px}
+
+.terminal{
+    width:24px;
+    height:24px;
+    border:3px solid #243b64;
+    border-radius:50%;
+    background:white;
+    cursor:pointer;
+    z-index:100;
+    pointer-events:auto;
+}
+
+.terminal:hover{
+    background:#ffe082;
+    transform:scale(1.15);
+}
+
+.gate-node{
+    position:absolute;
+    width:130px;
+    height:95px;
+    cursor:move;
+    user-select:none;
+    z-index:10;
+}
+
+.gate-node svg{
+    width:130px;
+    height:95px;
+    pointer-events:none;
+}
+
+.gate-label{
+    position:absolute;
+    top:-17px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:12px;
+    font-weight:bold;
+    color:#243b64;
+}
+
+.gate-input-terminal,
+.gate-output-terminal{
+    position:absolute;
+    width:24px;
+    height:24px;
+    border:3px solid #243b64;
+    border-radius:50%;
+    background:white;
+    z-index:100;
+    pointer-events:auto;
+}
+
+.gate-input-terminal:hover,
+.gate-output-terminal:hover{
+    background:#ffe082;
+    transform:scale(1.15);
+}
+
+.gate-output-terminal{
+    right:-12px;
+    top:35px;
+    cursor:crosshair;
+}
+
+.controls{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:15px 0;
+}
+
+button{
+    border:0;
+    padding:11px 18px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{opacity:.88}
+
+.primary{background:#243b64;color:white}
+.success{background:#28a745;color:white}
+.warning{background:#f0ad4e;color:white}
+.danger{background:#dc3545;color:white}
+.secondary{background:#6c757d;color:white}
+
+.message{
+    display:none;
+    padding:13px;
+    text-align:center;
+    border-radius:8px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.message.success-msg{
+    display:block;
+    background:#d4edda;
+    color:#155724;
+}
+
+.message.error-msg{
+    display:block;
+    background:#f8d7da;
+    color:#721c24;
+}
+
+.truth-section{
+    background:white;
+    padding:18px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.truth-section h2{
+    color:#243b64;
+}
+
+table{
+    border-collapse:collapse;
+    width:100%;
+    text-align:center;
+}
+
+th,td{
+    border:1px solid #ccd5e3;
+    padding:8px;
+}
+
+th{
+    background:#243b64;
+    color:white;
+}
+
+.correct{background:#d4edda}
+.incorrect{background:#f8d7da}
+
+@media(max-width:850px){
+    .workspace{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🔧 Gate-Level Realization</h1>
+    <p>Construct and verify complex Boolean expressions using logic gates</p>
+</header>
+
+<div class="container">
+
+    <div class="topbar">
+
+        <div>
+            <div class="problem-title" id="problemTitle">
+                Problem 1 of 20
+            </div>
+
+            <div class="progress-container">
+                <div class="progress" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="difficulty" id="difficulty">
+            Advanced
+        </div>
+
+    </div>
+
+
+    <div class="expression">
+
+        <h2>Realize the Boolean Function</h2>
+
+        <div class="boolean-expression" id="expression"></div>
+
+    </div>
+
+
+    <div class="instructions">
+
+        <b>How to construct:</b><br>
+
+        Drag gates into the canvas and arrange them freely.<br>
+
+        Click a gate's <b>output terminal</b> → move to the required
+        <b>input terminal</b> → click to connect.<br>
+
+        Click a wire to <b>select</b> it.
+        Click the selected wire again to <b>deselect</b> it.<br>
+
+        Press <b>ESC</b> to cancel an unfinished wire or deselect a selected wire.<br>
+
+        Click an existing selected wire to <b>delete</b> it.
+    </div>
+
+
+    <div class="workspace">
+
+        <!-- TOOLBOX -->
+
+        <div class="toolbox">
+
+            <h3>Logic Gates</h3>
+
+            <!-- AND -->
+
+            <div class="gate-item" draggable="true" data-type="AND">
+                AND
+                <svg viewBox="0 0 120 60">
+                    <path d="M20 10 L55 10 Q100 10 100 30 Q100 50 55 50 L20 50 Z"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="20" x2="20" y2="20"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="40" x2="20" y2="40"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="100" y1="30" x2="115" y2="30"
+                    stroke="#243b64" stroke-width="3"/>
+                </svg>
+            </div>
+
+
+            <!-- OR -->
+
+            <div class="gate-item" draggable="true" data-type="OR">
+                OR
+                <svg viewBox="0 0 120 60">
+                    <path d="M15 10 Q55 10 105 30 Q55 50 15 50 Q40 30 15 10 Z"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="20" x2="25" y2="20"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="40" x2="25" y2="40"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="105" y1="30" x2="115" y2="30"
+                    stroke="#243b64" stroke-width="3"/>
+                </svg>
+            </div>
+
+
+            <!-- NOT -->
+
+            <div class="gate-item" draggable="true" data-type="NOT">
+                NOT
+                <svg viewBox="0 0 120 60">
+                    <path d="M20 10 L20 50 L85 30 Z"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <circle cx="91" cy="30" r="6"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="30" x2="20" y2="30"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="97" y1="30" x2="115" y2="30"
+                    stroke="#243b64" stroke-width="3"/>
+                </svg>
+            </div>
+
+
+            <!-- NAND -->
+
+            <div class="gate-item" draggable="true" data-type="NAND">
+                NAND
+                <svg viewBox="0 0 120 60">
+                    <path d="M20 10 L55 10 Q100 10 100 30 Q100 50 55 50 L20 50 Z"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <circle cx="106" cy="30" r="6"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="20" x2="20" y2="20"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="40" x2="20" y2="40"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="112" y1="30" x2="115" y2="30"
+                    stroke="#243b64" stroke-width="3"/>
+                </svg>
+            </div>
+
+
+            <!-- NOR -->
+
+            <div class="gate-item" draggable="true" data-type="NOR">
+                NOR
+                <svg viewBox="0 0 120 60">
+                    <path d="M15 10 Q55 10 105 30 Q55 50 15 50 Q40 30 15 10 Z"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <circle cx="106" cy="30" r="6"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="20" x2="25" y2="20"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="40" x2="25" y2="40"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="112" y1="30" x2="115" y2="30"
+                    stroke="#243b64" stroke-width="3"/>
+                </svg>
+            </div>
+
+
+            <!-- XOR -->
+
+            <div class="gate-item" draggable="true" data-type="XOR">
+                XOR
+                <svg viewBox="0 0 120 60">
+                    <path d="M15 10 Q55 10 105 30 Q55 50 15 50 Q40 30 15 10 Z"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <path d="M8 10 Q30 30 8 50"
+                    fill="none" stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="20" x2="25" y2="20"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="40" x2="25" y2="40"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="105" y1="30" x2="115" y2="30"
+                    stroke="#243b64" stroke-width="3"/>
+                </svg>
+            </div>
+
+
+            <!-- XNOR -->
+
+            <div class="gate-item" draggable="true" data-type="XNOR">
+                XNOR
+                <svg viewBox="0 0 120 60">
+                    <path d="M15 10 Q55 10 105 30 Q55 50 15 50 Q40 30 15 10 Z"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <path d="M8 10 Q30 30 8 50"
+                    fill="none" stroke="#243b64" stroke-width="3"/>
+                    <circle cx="106" cy="30" r="6"
+                    fill="white" stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="20" x2="25" y2="20"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="5" y1="40" x2="25" y2="40"
+                    stroke="#243b64" stroke-width="3"/>
+                    <line x1="112" y1="30" x2="115" y2="30"
+                    stroke="#243b64" stroke-width="3"/>
+                </svg>
+            </div>
+
+        </div>
+
+
+        <!-- CIRCUIT CANVAS -->
+
+        <div class="canvas-container">
+
+            <div id="circuitCanvas">
+
+                <svg id="wireLayer"></svg>
+
+
+                <div class="input-node" style="top:90px;">
+                    A
+                    <div class="terminal input-terminal"
+                         data-input="A"></div>
+                </div>
+
+
+                <div class="input-node" style="top:190px;">
+                    B
+                    <div class="terminal input-terminal"
+                         data-input="B"></div>
+                </div>
+
+
+                <div class="input-node" style="top:290px;">
+                    C
+                    <div class="terminal input-terminal"
+                         data-input="C"></div>
+                </div>
+
+
+                <div class="input-node"
+                     id="inputDNode"
+                     style="top:390px;display:none;">
+                    D
+                    <div class="terminal input-terminal"
+                         data-input="D"></div>
+                </div>
+
+
+                <div class="output-node" style="top:270px;">
+                    <div class="terminal output-terminal"
+                         id="outputTerminal"></div>
+                    Y
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="controls">
+
+        <button class="success"
+                onclick="checkCircuit()">
+            ✓ Check Circuit
+        </button>
+
+        <button class="warning"
+                onclick="clearCircuit()">
+            🗑 Clear Circuit
+        </button>
+
+        <button class="secondary"
+                onclick="previousProblem()">
+            ← Previous
+        </button>
+
+        <button class="primary"
+                onclick="nextProblem()">
+            Next →
+        </button>
+
+    </div>
+
+
+    <div id="message" class="message"></div>
+
+
+    <div class="truth-section">
+
+        <h2>Truth Table Verification</h2>
+
+        <table id="truthTable"></table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   20 COMPLEX BOOLEAN PROBLEMS
+========================================================= */
+
+const problems = [
+
+    {
+        expression:"Y = (A · B) + (A̅ · C)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = (A + B) · (A̅ + C)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = (A ⊕ B) + (B · C)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = (A · B̅) + (A̅ · C)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = (A + B̅) · (A̅ + C)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = (A · B) + (B̅ · C) + (A̅ · C)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = (A + B) · (B + C) · (A̅ + C)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = (A ⊕ B) · (A + C)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = (A ⊙ B) + (B · C̅)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = [(A · B) + C] · (A̅ + B)",
+        difficulty:"Advanced",
+        vars:["A","B","C"]
+    },
+
+    {
+        expression:"Y = (A · B̅) + (C · D)",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    },
+
+    {
+        expression:"Y = (A + B̅) · (C + D̅)",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    },
+
+    {
+        expression:"Y = (A ⊕ B) + (C ⊙ D)",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    },
+
+    {
+        expression:"Y = [(A · B) + (C · D)]̅",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    },
+
+    {
+        expression:"Y = [(A + B) · (C + D)]̅",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    },
+
+    {
+        expression:"Y = (A · B̅) + (C̅ · D) + (A ⊕ D)",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    },
+
+    {
+        expression:"Y = (A + B̅) · (C + D) + (A̅ · C)",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    },
+
+    {
+        expression:"Y = [(A ⊕ B) · C] + [(C ⊙ D) · A]",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    },
+
+    {
+        expression:"Y = (A · B) + (B̅ · C) + (C̅ · D)",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    },
+
+    {
+        expression:"Y = [(A + B̅) · (C + D)] + [(A ⊕ C) · D̅]",
+        difficulty:"Expert",
+        vars:["A","B","C","D"]
+    }
+
+];
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let currentProblem = 0;
+
+let gates = [];
+let connections = [];
+
+let gateCounter = 0;
+
+let wiringFrom = null;
+let selectedWire = null;
+let tempWire = null;
+
+let completedProblems =
+    JSON.parse(localStorage.getItem("completedGateProblems") || "[]");
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const canvas =
+    document.getElementById("circuitCanvas");
+
+const wireLayer =
+    document.getElementById("wireLayer");
+
+const message =
+    document.getElementById("message");
+
+
+/* =========================================================
+   LOAD PROBLEM
+========================================================= */
+
+function loadProblem(){
+
+    const p = problems[currentProblem];
+
+    document.getElementById("problemTitle").textContent =
+        `Problem ${currentProblem + 1} of ${problems.length}`;
+
+    document.getElementById("expression").textContent =
+        p.expression;
+
+    document.getElementById("difficulty").textContent =
+        p.difficulty;
+
+    const percent =
+        (completedProblems.length / problems.length) * 100;
+
+    document.getElementById("progressBar").style.width =
+        percent + "%";
+
+
+    document.getElementById("inputDNode").style.display =
+        p.vars.includes("D") ? "flex" : "none";
+
+
+    clearCircuitWithoutMessage();
+
+    generateTruthTable();
+
+    hideMessage();
+}
+
+
+/* =========================================================
+   DRAG GATES FROM TOOLBOX
+========================================================= */
+
+document.querySelectorAll(".gate-item").forEach(item => {
+
+    item.addEventListener("dragstart", e => {
+
+        e.dataTransfer.setData(
+            "gateType",
+            item.dataset.type
+        );
+
+    });
+
+});
+
+
+canvas.addEventListener("dragover", e => {
+    e.preventDefault();
+});
+
+
+canvas.addEventListener("drop", e => {
+
+    e.preventDefault();
+
+    const type =
+        e.dataTransfer.getData("gateType");
+
+    if(!type) return;
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    const x =
+        e.clientX - rect.left - 65;
+
+    const y =
+        e.clientY - rect.top - 45;
+
+    createGate(
+        type,
+        Math.max(80,x),
+        Math.max(30,y)
+    );
+
+});
+
+
+/* =========================================================
+   CREATE GATE
+========================================================= */
+
+function createGate(type,x,y){
+
+    gateCounter++;
+
+    const id =
+        "gate_" + gateCounter;
+
+    const gate =
+        document.createElement("div");
+
+    gate.className = "gate-node";
+
+    gate.id = id;
+
+    gate.dataset.type = type;
+
+    gate.style.left = x + "px";
+    gate.style.top = y + "px";
+
+
+    gate.innerHTML = `
+        <div class="gate-label">${type}</div>
+
+        ${gateSVG(type)}
+
+        <div class="gate-input-terminal"
+             data-gate="${id}"
+             data-port="0"></div>
+
+        ${type === "NOT" ? "" :
+        `<div class="gate-input-terminal"
+             data-gate="${id}"
+             data-port="1"></div>`}
+
+        <div class="gate-output-terminal"
+             data-gate="${id}">
+        </div>
+    `;
+
+
+    canvas.appendChild(gate);
+
+    positionInputTerminals(gate,type);
+
+
+    gates.push({
+        id:id,
+        type:type
+    });
+
+
+    makeGateMovable(gate);
+    attachTerminalEvents(gate);
+
+
+}
+
+
+/* =========================================================
+   GATE SVG
+========================================================= */
+
+function gateSVG(type){
+
+    if(type==="AND"){
+
+        return `
+        <svg viewBox="0 0 130 90">
+            <path d="M20 15 L60 15
+            Q110 15 110 45
+            Q110 75 60 75 L20 75 Z"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+        </svg>`;
+    }
+
+
+    if(type==="OR"){
+
+        return `
+        <svg viewBox="0 0 130 90">
+            <path d="M15 15
+            Q60 15 115 45
+            Q60 75 15 75
+            Q40 45 15 15 Z"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+        </svg>`;
+    }
+
+
+    if(type==="NOT"){
+
+        return `
+        <svg viewBox="0 0 130 90">
+            <path d="M20 15 L20 75 L95 45 Z"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+            <circle cx="103" cy="45" r="7"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+        </svg>`;
+    }
+
+
+    if(type==="NAND"){
+
+        return `
+        <svg viewBox="0 0 130 90">
+            <path d="M20 15 L60 15
+            Q110 15 110 45
+            Q110 75 60 75 L20 75 Z"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+            <circle cx="118" cy="45" r="7"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+        </svg>`;
+    }
+
+
+    if(type==="NOR"){
+
+        return `
+        <svg viewBox="0 0 130 90">
+            <path d="M15 15
+            Q60 15 110 45
+            Q60 75 15 75
+            Q40 45 15 15 Z"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+            <circle cx="118" cy="45" r="7"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+        </svg>`;
+    }
+
+
+    if(type==="XOR"){
+
+        return `
+        <svg viewBox="0 0 130 90">
+            <path d="M15 15
+            Q60 15 110 45
+            Q60 75 15 75
+            Q40 45 15 15 Z"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+
+            <path d="M7 15 Q32 45 7 75"
+            fill="none"
+            stroke="#243b64"
+            stroke-width="3"/>
+        </svg>`;
+    }
+
+
+    if(type==="XNOR"){
+
+        return `
+        <svg viewBox="0 0 130 90">
+            <path d="M15 15
+            Q60 15 110 45
+            Q60 75 15 75
+            Q40 45 15 15 Z"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+
+            <path d="M7 15 Q32 45 7 75"
+            fill="none"
+            stroke="#243b64"
+            stroke-width="3"/>
+
+            <circle cx="118" cy="45" r="7"
+            fill="white"
+            stroke="#243b64"
+            stroke-width="3"/>
+        </svg>`;
+    }
+
+    return "";
+}
+
+
+/* =========================================================
+   POSITION INPUT TERMINALS
+========================================================= */
+
+function positionInputTerminals(gate,type){
+
+    const inputs =
+        gate.querySelectorAll(".gate-input-terminal");
+
+    if(inputs.length >= 1){
+
+        inputs[0].style.left = "-10px";
+        inputs[0].style.top =
+            type==="NOT" ? "37px" : "25px";
+    }
+
+    if(inputs.length >= 2){
+
+        inputs[1].style.left = "-10px";
+        inputs[1].style.top = "57px";
+    }
+}
+
+
+/* =========================================================
+   MOVE GATE
+========================================================= */
+
+function makeGateMovable(gate){
+
+    let moving = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    gate.addEventListener("pointerdown",e=>{
+
+        if(e.target.closest && e.target.closest(
+            ".gate-input-terminal, .gate-output-terminal"
+        )) return;
+
+        moving = true;
+
+        const rect =
+            gate.getBoundingClientRect();
+
+        offsetX =
+            e.clientX - rect.left;
+
+        offsetY =
+            e.clientY - rect.top;
+
+        gate.setPointerCapture(e.pointerId);
+
+    });
+
+
+    gate.addEventListener("pointermove",e=>{
+
+        if(!moving) return;
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+        let x =
+            e.clientX - rect.left - offsetX;
+
+        let y =
+            e.clientY - rect.top - offsetY;
+
+        x = Math.max(0,
+            Math.min(1020,x));
+
+        y = Math.max(0,
+            Math.min(485,y));
+
+        gate.style.left =
+            x + "px";
+
+        gate.style.top =
+            y + "px";
+
+        drawAllWires();
+
+    });
+
+
+    gate.addEventListener("pointerup",e=>{
+        moving=false;
+    });
+
+}
+
+
+/* =========================================================
+   TERMINAL WIRING
+   Click a source terminal -> move -> click destination terminal
+========================================================= */
+
+function attachTerminalEvents(root){
+
+    root.querySelectorAll(
+        ".gate-output-terminal, .gate-input-terminal"
+    ).forEach(terminal => {
+
+        terminal.addEventListener("pointerdown", function(e){
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            /* Gate input = destination */
+            if(this.classList.contains("gate-input-terminal")){
+
+                if(!wiringFrom) return;
+
+                const gate = this.closest(".gate-node");
+                if(!gate) return;
+
+                connectToGateInput(
+                    gate.id,
+                    Number(this.dataset.port)
+                );
+                return;
+            }
+
+            /* Gate output = source */
+            const gate = this.closest(".gate-node");
+            if(!gate) return;
+
+            if(!wiringFrom){
+
+                deselectWire();
+
+                wiringFrom = {
+                    type:"gate",
+                    gateId:gate.id,
+                    port:"output"
+                };
+
+                createTempWire(e);
+                return;
+            }
+        });
+    });
+}
+
+/* Primary input terminals A/B/C/D */
+document.querySelectorAll(".input-terminal").forEach(terminal => {
+
+    terminal.addEventListener("pointerdown", function(e){
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        if(wiringFrom) return;
+
+        deselectWire();
+
+        wiringFrom = {
+            type:"input",
+            input:this.dataset.input
+        };
+
+        createTempWire(e);
+    });
+});
+
+/* Output Y is a destination */
+document.getElementById("outputTerminal")
+.addEventListener("pointerdown", function(e){
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if(!wiringFrom) return;
+
+    connectToOutput();
+});
+
+/* =========================================================
+   SELECT / DESELECT WIRES
+========================================================= */
+
+wireLayer.addEventListener("click", function(e){
+
+    const line = e.target.closest && e.target.closest(".wire");
+    if(!line) return;
+
+    e.stopPropagation();
+
+    if(selectedWire === line){
+        line.classList.remove("selected");
+        selectedWire = null;
+    }
+    else{
+        deselectWire();
+        line.classList.add("selected");
+        selectedWire = line;
+    }
+});
+
+/* =========================================================
+   START TEMP WIRE
+========================================================= */
+
+function createTempWire(e){
+
+    if(tempWire)
+        tempWire.remove();
+
+    tempWire =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+
+    tempWire.setAttribute(
+        "class",
+        "temp-wire"
+    );
+
+    wireLayer.appendChild(tempWire);
+
+    updateTempWire(e.clientX,e.clientY);
+
+}
+
+
+/* =========================================================
+   MOUSE FOLLOW
+========================================================= */
+
+document.addEventListener(
+    "pointermove",
+    e=>{
+
+        if(!wiringFrom) return;
+
+        updateTempWire(
+            e.clientX,
+            e.clientY
+        );
+
+    }
+);
+
+
+function updateTempWire(clientX,clientY){
+
+    if(!tempWire || !wiringFrom)
+        return;
+
+    const start =
+        getPortPosition(wiringFrom);
+
+    if(!start) return;
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    const x =
+        clientX - rect.left;
+
+    const y =
+        clientY - rect.top;
+
+    tempWire.setAttribute(
+        "x1",
+        start.x
+    );
+
+    tempWire.setAttribute(
+        "y1",
+        start.y
+    );
+
+    tempWire.setAttribute(
+        "x2",
+        x
+    );
+
+    tempWire.setAttribute(
+        "y2",
+        y
+    );
+
+}
+
+
+/* =========================================================
+   CONNECT TO GATE INPUT
+========================================================= */
+
+function connectToGateInput(
+    gateId,
+    port
+){
+
+    if(
+        wiringFrom.type==="gate" &&
+        wiringFrom.gateId===gateId
+    ){
+        cancelWiring();
+        return;
+    }
+
+
+    connections =
+        connections.filter(c =>
+            !(c.to.type==="gate" &&
+              c.to.gateId===gateId &&
+              c.to.port===port)
+        );
+
+
+    connections.push({
+
+        from:{...wiringFrom},
+
+        to:{
+            type:"gate",
+            gateId:gateId,
+            port:port
+        }
+
+    });
+
+
+    finishWiring();
+
+}
+
+
+/* =========================================================
+   CONNECT TO INPUT
+========================================================= */
+
+function connectToInput(input){
+
+    connections =
+        connections.filter(c =>
+            !(c.to.type==="input" &&
+              c.to.input===input)
+        );
+
+
+    connections.push({
+
+        from:{...wiringFrom},
+
+        to:{
+            type:"input",
+            input:input
+        }
+
+    });
+
+
+    finishWiring();
+
+}
+
+
+/* =========================================================
+   CONNECT TO OUTPUT
+========================================================= */
+
+function connectToOutput(){
+
+    connections =
+        connections.filter(c =>
+            !(c.to.type==="output")
+        );
+
+
+    connections.push({
+
+        from:{...wiringFrom},
+
+        to:{
+            type:"output"
+        }
+
+    });
+
+
+    finishWiring();
+
+}
+
+
+/* =========================================================
+   FINISH WIRING
+========================================================= */
+
+function finishWiring(){
+
+    wiringFrom = null;
+
+    if(tempWire){
+
+        tempWire.remove();
+
+        tempWire=null;
+
+    }
+
+    drawAllWires();
+
+}
+
+
+/* =========================================================
+   CANCEL WIRING
+========================================================= */
+
+function cancelWiring(){
+
+    wiringFrom=null;
+
+    if(tempWire){
+
+        tempWire.remove();
+
+        tempWire=null;
+
+    }
+
+}
+
+
+/* =========================================================
+   SELECT / DESELECT WIRES
+========================================================= */
+
+function deselectWire(){
+
+    if(selectedWire){
+
+        selectedWire.classList.remove(
+            "selected"
+        );
+
+        selectedWire=null;
+
+    }
+
+}
+
+
+/* =========================================================
+   DRAW WIRES
+========================================================= */
+
+function drawAllWires(){
+
+    wireLayer
+        .querySelectorAll(".wire")
+        .forEach(w=>w.remove());
+
+
+    connections.forEach((connection,index)=>{
+
+        const from =
+            getPortPosition(connection.from);
+
+        const to =
+            getPortPosition(connection.to);
+
+
+        if(!from || !to) return;
+
+
+        const line =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+
+        line.setAttribute(
+            "class",
+            "wire"
+        );
+
+        line.dataset.index=index;
+
+        line.setAttribute(
+            "x1",
+            from.x
+        );
+
+        line.setAttribute(
+            "y1",
+            from.y
+        );
+
+        line.setAttribute(
+            "x2",
+            to.x
+        );
+
+        line.setAttribute(
+            "y2",
+            to.y
+        );
+
+
+        wireLayer.appendChild(line);
+
+    });
+
+}
+
+
+/* =========================================================
+   GET PORT POSITION
+========================================================= */
+
+function getPortPosition(port){
+
+    let element=null;
+
+    if(port.type==="gate"){
+
+        const gate =
+            document.getElementById(
+                port.gateId
+            );
+
+        if(!gate) return null;
+
+        if(port.port==="output"){
+
+            element =
+                gate.querySelector(
+                    ".gate-output-terminal"
+                );
+
+        }
+        else{
+
+            element =
+                gate.querySelector(
+                    `.gate-input-terminal[data-port="${port.port}"]`
+                );
+
+        }
+
+    }
+
+
+    else if(port.type==="input"){
+
+        element =
+            document.querySelector(
+                `.input-terminal[data-input="${port.input}"]`
+            );
+
+    }
+
+
+    else if(port.type==="output"){
+
+        element =
+            document.getElementById(
+                "outputTerminal"
+            );
+
+    }
+
+
+    if(!element) return null;
+
+
+    const r =
+        element.getBoundingClientRect();
+
+    const c =
+        canvas.getBoundingClientRect();
+
+
+    return {
+
+        x:r.left-c.left+r.width/2,
+
+        y:r.top-c.top+r.height/2
+
+    };
+
+}
+
+
+/* =========================================================
+   ESCAPE KEY
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    e=>{
+
+        if(e.key==="Escape"){
+
+            cancelWiring();
+
+            deselectWire();
+
+        }
+
+    }
+);
+
+document.addEventListener("keydown", e=>{
+
+    if((e.key === "Delete" || e.key === "Backspace") && selectedWire){
+
+        const index = Number(selectedWire.dataset.index);
+
+        if(!Number.isNaN(index)){
+            connections.splice(index,1);
+        }
+
+        selectedWire = null;
+        drawAllWires();
+    }
+});
+
+
+/* =========================================================
+   CLICK EMPTY CANVAS
+========================================================= */
+
+canvas.addEventListener(
+    "pointerdown",
+    e=>{
+
+        if(
+            e.target===canvas ||
+            e.target===wireLayer
+        ){
+
+            cancelWiring();
+
+            deselectWire();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CLEAR CIRCUIT
+========================================================= */
+
+function clearCircuitWithoutMessage(){
+
+    cancelWiring();
+
+    deselectWire();
+
+    connections=[];
+
+    gates=[];
+
+    document
+        .querySelectorAll(".gate-node")
+        .forEach(g=>g.remove());
+
+    drawAllWires();
+
+}
+
+
+function clearCircuit(){
+
+    clearCircuitWithoutMessage();
+
+    showMessage(
+        "Circuit cleared. Build the circuit again.",
+        "error"
+    );
+
+}
+
+
+/* =========================================================
+   EVALUATE GATE
+========================================================= */
+
+function evaluateGate(type,inputs){
+
+    if(type==="AND"){
+        return inputs[0] & inputs[1];
+    }
+
+    if(type==="OR"){
+        return inputs[0] | inputs[1];
+    }
+
+    if(type==="NOT"){
+        return inputs[0] ? 0 : 1;
+    }
+
+    if(type==="NAND"){
+        return (inputs[0] & inputs[1]) ? 0 : 1;
+    }
+
+    if(type==="NOR"){
+        return (inputs[0] | inputs[1]) ? 0 : 1;
+    }
+
+    if(type==="XOR"){
+        return inputs[0] ^ inputs[1];
+    }
+
+    if(type==="XNOR"){
+        return inputs[0]===inputs[1] ? 1 : 0;
+    }
+
+    return null;
+}
+
+
+/* =========================================================
+   GET GATE INPUTS
+========================================================= */
+
+function getGateInput(
+    gateId,
+    port,
+    values,
+    cache,
+    visiting
+){
+
+    const connection =
+        connections.find(c =>
+            c.to.type==="gate" &&
+            c.to.gateId===gateId &&
+            c.to.port===port
+        );
+
+
+    if(!connection)
+        return null;
+
+
+    return evaluateSource(
+        connection.from,
+        values,
+        cache,
+        visiting
+    );
+
+}
+
+
+/* =========================================================
+   EVALUATE SOURCE
+========================================================= */
+
+function evaluateSource(
+    source,
+    values,
+    cache,
+    visiting
+){
+
+    if(source.type==="input"){
+
+        return values[source.input];
+
+    }
+
+
+    if(source.type==="gate"){
+
+        return evaluateGateNode(
+            source.gateId,
+            values,
+            cache,
+            visiting
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   EVALUATE GATE NODE
+========================================================= */
+
+function evaluateGateNode(
+    gateId,
+    values,
+    cache,
+    visiting
+){
+
+    if(cache[gateId] !== undefined)
+        return cache[gateId];
+
+
+    if(visiting.has(gateId))
+        return null;
+
+
+    const gate =
+        gates.find(g=>g.id===gateId);
+
+    if(!gate)
+        return null;
+
+
+    visiting.add(gateId);
+
+
+    let inputs=[];
+
+
+    if(gate.type==="NOT"){
+
+        const input =
+            getGateInput(
+                gateId,
+                0,
+                values,
+                cache,
+                visiting
+            );
+
+        if(input===null){
+            visiting.delete(gateId);
+            return null;
+        }
+
+        inputs=[input];
+
+    }
+    else{
+
+        const input0 =
+            getGateInput(
+                gateId,
+                0,
+                values,
+                cache,
+                visiting
+            );
+
+        const input1 =
+            getGateInput(
+                gateId,
+                1,
+                values,
+                cache,
+                visiting
+            );
+
+        if(input0===null || input1===null){
+
+            visiting.delete(gateId);
+
+            return null;
+        }
+
+        inputs=[
+            input0,
+            input1
+        ];
+
+    }
+
+
+    const result =
+        evaluateGate(
+            gate.type,
+            inputs
+        );
+
+
+    visiting.delete(gateId);
+
+    cache[gateId]=result;
+
+    return result;
+
+}
+
+
+/* =========================================================
+   SIMULATE CIRCUIT
+========================================================= */
+
+function simulate(values){
+
+    const outputConnection =
+        connections.find(
+            c=>c.to.type==="output"
+        );
+
+
+    if(!outputConnection)
+        return null;
+
+
+    const cache={};
+
+    const visiting=new Set();
+
+
+    return evaluateSource(
+        outputConnection.from,
+        values,
+        cache,
+        visiting
+    );
+
+}
+
+
+/* =========================================================
+   EXPECTED BOOLEAN FUNCTION
+========================================================= */
+
+function expectedValue(
+    problemIndex,
+    A,B,C,D
+){
+
+    switch(problemIndex){
+
+        case 0:
+            return (A&B) | ((!A)&C);
+
+        case 1:
+            return (A|B) & ((!A)|C);
+
+        case 2:
+            return (A^B) | (B&C);
+
+        case 3:
+            return (A&(!B)) | ((!A)&C);
+
+        case 4:
+            return (A|(!B)) & ((!A)|C);
+
+        case 5:
+            return (A&B) | ((!B)&C) | ((!A)&C);
+
+        case 6:
+            return (A|B) & (B|C) & ((!A)|C);
+
+        case 7:
+            return (A^B) & (A|C);
+
+        case 8:
+            return (A===B ? 1:0) | (B&(!C));
+
+        case 9:
+            return ((A&B)|C) & ((!A)|B);
+
+        case 10:
+            return (A&(!B)) | (C&D);
+
+        case 11:
+            return (A|(!B)) & (C|(!D));
+
+        case 12:
+            return (A^B) | (C===D ? 1:0);
+
+        case 13:
+            return !((A&B)|(C&D)) ? 1:0;
+
+        case 14:
+            return !((A|B)&(C|D)) ? 1:0;
+
+        case 15:
+            return (A&(!B)) |
+                   ((!C)&D) |
+                   (A^D);
+
+        case 16:
+            return ((A|(!B))&(C|D)) |
+                   ((!A)&C);
+
+        case 17:
+            return ((A^B)&C) |
+                   ((C===D ? 1:0)&A);
+
+        case 18:
+            return (A&B) |
+                   ((!B)&C) |
+                   ((!C)&D);
+
+        case 19:
+            return (((A|(!B))&(C|D)) |
+                   ((A^C)&(!D))) ? 1:0;
+
+        default:
+            return null;
+    }
+
+}
+
+
+/* =========================================================
+   TRUTH TABLE
+========================================================= */
+
+function generateTruthTable(){
+
+    const p=problems[currentProblem];
+
+    let html="<tr>";
+
+    p.vars.forEach(v=>{
+        html += `<th>${v}</th>`;
+    });
+
+    html += "<th>Expected Y</th>";
+    html += "<th>Circuit Y</th>";
+    html += "</tr>";
+
+
+    const rows =
+        Math.pow(2,p.vars.length);
+
+
+    for(let i=0;i<rows;i++){
+
+        const A =
+            (i >> (p.vars.length-1)) & 1;
+
+        const B =
+            (i >> (p.vars.length-2)) & 1;
+
+        const C =
+            p.vars.length>=3
+            ? (i >> (p.vars.length-3)) & 1
+            : 0;
+
+        const D =
+            p.vars.length>=4
+            ? i & 1
+            : 0;
+
+
+        const values={
+            A:A,
+            B:B,
+            C:C,
+            D:D
+        };
+
+
+        const expected =
+            expectedValue(
+                currentProblem,
+                A,B,C,D
+            );
+
+
+        const actual =
+            simulate(values);
+
+
+        let rowClass="";
+
+        if(actual!==null){
+
+            rowClass =
+                actual===expected
+                ? "correct"
+                : "incorrect";
+
+        }
+
+
+        html += `<tr class="${rowClass}">`;
+
+
+        p.vars.forEach(v=>{
+            html += `<td>${values[v]}</td>`;
+        });
+
+
+        html += `<td>${expected}</td>`;
+
+        html += `<td>${
+            actual===null ? "-" : actual
+        }</td>`;
+
+        html += "</tr>";
+
+    }
+
+
+    document.getElementById(
+        "truthTable"
+    ).innerHTML=html;
+
+}
+
+
+/* =========================================================
+   CHECK CIRCUIT
+========================================================= */
+
+function checkCircuit(){
+
+    const p=problems[currentProblem];
+
+    const rows =
+        Math.pow(2,p.vars.length);
+
+
+    for(let i=0;i<rows;i++){
+
+        const A =
+            (i >> (p.vars.length-1)) & 1;
+
+        const B =
+            (i >> (p.vars.length-2)) & 1;
+
+        const C =
+            p.vars.length>=3
+            ? (i >> (p.vars.length-3)) & 1
+            : 0;
+
+        const D =
+            p.vars.length>=4
+            ? i & 1
+            : 0;
+
+
+        const values={
+            A:A,
+            B:B,
+            C:C,
+            D:D
+        };
+
+
+        const expected =
+            expectedValue(
+                currentProblem,
+                A,B,C,D
+            );
+
+
+        const actual =
+            simulate(values);
+
+
+        if(actual===null){
+
+            showMessage(
+                "❌ Circuit is incomplete. Make sure all required gates are connected and Y is connected.",
+                "error"
+            );
+
+            generateTruthTable();
+
+            return;
+
+        }
+
+
+        if(actual!==expected){
+
+            showMessage(
+                "❌ Circuit is not correct. Check the gate arrangement and connections.",
+                "error"
+            );
+
+            generateTruthTable();
+
+            return;
+
+        }
+
+    }
+
+
+    if(!completedProblems.includes(
+        currentProblem
+    )){
+
+        completedProblems.push(
+            currentProblem
+        );
+
+        localStorage.setItem(
+            "completedGateProblems",
+            JSON.stringify(completedProblems)
+        );
+
+    }
+
+
+    generateTruthTable();
+
+    const percent =
+        (completedProblems.length / problems.length) * 100;
+
+    document.getElementById(
+        "progressBar"
+    ).style.width=percent+"%";
+
+
+    if(completedProblems.length === problems.length){
+
+        localStorage.setItem(
+            "gateRealizationDone",
+            "true"
+        );
+
+        showMessage(
+            "🎉 Excellent! You have completed all 20 Gate-Level Realization problems!",
+            "success"
+        );
+
+    }
+    else{
+
+        showMessage(
+            `✅ Correct! Problem ${currentProblem+1} completed.`,
+            "success"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NEXT PROBLEM
+========================================================= */
+
+function nextProblem(){
+
+    if(currentProblem < problems.length-1){
+
+        currentProblem++;
+
+        loadProblem();
+
+    }
+    else{
+
+        showMessage(
+            "You are already on the final problem.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PREVIOUS PROBLEM
+========================================================= */
+
+function previousProblem(){
+
+    if(currentProblem > 0){
+
+        currentProblem--;
+
+        loadProblem();
+
+    }
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(text,type){
+
+    message.textContent=text;
+
+    message.className =
+        "message " +
+        (type==="success"
+        ? "success-msg"
+        : "error-msg");
+
+}
+
+
+function hideMessage(){
+
+    message.textContent="";
+
+    message.className="message";
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+loadProblem();
+
+</script>
+
+</body>
+</html>
+```

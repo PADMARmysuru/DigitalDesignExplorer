@@ -1,0 +1,859 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sequential Circuits | Level 2</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #222;
+}
+
+header {
+    background: #243b64;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 25px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #243b64;
+}
+
+select,
+input[type="number"] {
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 7px;
+    font-size: 16px;
+}
+
+.control-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+button {
+    padding: 11px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #243b64;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #162746;
+}
+
+button.secondary {
+    background: #555;
+}
+
+.simulator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+}
+
+.signal {
+    text-align: center;
+}
+
+.signal-box {
+    width: 90px;
+    padding: 18px 10px;
+    margin-top: 8px;
+    border-radius: 10px;
+    background: #eef3fb;
+    border: 2px solid #243b64;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.flipflop {
+    width: 180px;
+    padding: 30px 15px;
+    text-align: center;
+    border: 3px solid #243b64;
+    border-radius: 12px;
+    background: #f8faff;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.output {
+    text-align: center;
+    padding: 20px;
+    background: #eef3fb;
+    border-radius: 10px;
+}
+
+.output-value {
+    font-size: 40px;
+    color: #243b64;
+    font-weight: bold;
+}
+
+.truth-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.truth-table th,
+.truth-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.truth-table th {
+    background: #243b64;
+    color: white;
+}
+
+.truth-table tr:nth-child(even) {
+    background: #f5f7fa;
+}
+
+.result {
+    display: none;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.success {
+    background: #e8f5e9;
+    border-left: 5px solid #2e7d32;
+}
+
+.info {
+    background: #fff8e1;
+    border-left: 5px solid #f9a825;
+}
+
+.progress {
+    text-align: center;
+    font-weight: bold;
+    color: #243b64;
+}
+
+.back {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.back a {
+    text-decoration: none;
+    background: #162746;
+    color: white;
+    padding: 11px 20px;
+    border-radius: 8px;
+}
+
+@media(max-width:600px) {
+
+    .container {
+        padding: 10px;
+    }
+
+    .flipflop {
+        width: 150px;
+    }
+
+    .signal-box {
+        width: 70px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🔄 Level 2 — Sequential Circuits</h1>
+    <p>Digital Design Explorer</p>
+</header>
+
+<div class="container">
+
+    <!-- INTRODUCTION -->
+
+    <div class="card">
+
+        <h2>📘 What is a Sequential Circuit?</h2>
+
+        <p>
+            A sequential circuit is a digital circuit whose output depends on
+            both the present input and the previous state.
+        </p>
+
+        <p>
+            Flip-flops are the basic memory elements used in sequential circuits.
+        </p>
+
+    </div>
+
+
+    <!-- FLIP FLOP SELECTOR -->
+
+    <div class="card">
+
+        <h2>⚙️ Interactive Flip-Flop Simulator</h2>
+
+        <div class="control-row">
+
+            <label>
+                <b>Select Flip-Flop:</b>
+            </label>
+
+            <select id="ffType">
+
+                <option value="D">D Flip-Flop</option>
+                <option value="JK">JK Flip-Flop</option>
+                <option value="T">T Flip-Flop</option>
+                <option value="SR">SR Flip-Flop</option>
+
+            </select>
+
+        </div>
+
+
+        <!-- INPUTS -->
+
+        <div class="control-row">
+
+            <div class="switch">
+                <label>Input A:</label>
+
+                <select id="inputA">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                </select>
+            </div>
+
+
+            <div class="switch" id="inputBContainer">
+
+                <label>Input B:</label>
+
+                <select id="inputB">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- SIMULATOR -->
+
+        <div class="simulator">
+
+            <div class="signal">
+
+                <b>INPUT</b>
+
+                <div class="signal-box" id="inputDisplay">
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="flipflop" id="flipflopDisplay">
+
+                D
+                <br>
+                Flip-Flop
+
+            </div>
+
+
+            <div class="signal">
+
+                <b>Q</b>
+
+                <div class="signal-box" id="qDisplay">
+                    0
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="output">
+
+            <div>Current State</div>
+
+            <div class="output-value" id="currentQ">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="control-row">
+
+            <button type="button" id="clockBtn">
+                ⏱ Apply Clock
+            </button>
+
+            <button type="button" class="secondary" id="resetBtn">
+                ↺ Reset
+            </button>
+
+        </div>
+
+
+        <div id="simResult" class="result"></div>
+
+    </div>
+
+
+    <!-- TRUTH TABLE -->
+
+    <div class="card">
+
+        <h2>📋 Truth Table</h2>
+
+        <div id="truthTable"></div>
+
+    </div>
+
+
+    <!-- CHALLENGE -->
+
+    <div class="card">
+
+        <h2>🎯 Mini Challenge</h2>
+
+        <p>
+            Select the correct next state for the given flip-flop condition.
+        </p>
+
+        <p id="challengeQuestion">
+            For a D flip-flop, if D = 1 and the clock is applied,
+            what will Q become?
+        </p>
+
+        <div class="control-row">
+
+            <button type="button" class="answerBtn" data-answer="0">
+                Q = 0
+            </button>
+
+            <button type="button" class="answerBtn" data-answer="1">
+                Q = 1
+            </button>
+
+        </div>
+
+        <div id="challengeResult" class="result"></div>
+
+    </div>
+
+
+    <!-- PROGRESS -->
+
+    <div class="card">
+
+        <h2>🏆 Level 2 Progress</h2>
+
+        <p class="progress">
+            Sequential Circuits Activity
+        </p>
+
+        <div id="progressText">
+            Not completed
+        </div>
+
+    </div>
+
+
+    <div class="card" style="text-align:center;">
+        <h2>🎯 Practice 20 Sequential Circuit Problems</h2>
+        <p>Test your understanding with 20 practical sequential-circuit problems.</p>
+     <a href="sequential-circuits-20-problems.html"
+   style="display:inline-block;text-decoration:none;background:#243b64;color:white;
+          padding:12px 22px;border-radius:8px;font-weight:bold;">
+    Start 20 Problems →
+</a>
+    </div>
+
+    <div class="back">
+        <a href="index.html">← Back to Home</a>
+    </div>
+
+</div>
+
+
+<script>
+
+let q = 0;
+
+
+/* ELEMENTS */
+
+const ffType = document.getElementById("ffType");
+const inputA = document.getElementById("inputA");
+const inputB = document.getElementById("inputB");
+
+const inputBContainer =
+    document.getElementById("inputBContainer");
+
+const inputDisplay =
+    document.getElementById("inputDisplay");
+
+const qDisplay =
+    document.getElementById("qDisplay");
+
+const currentQ =
+    document.getElementById("currentQ");
+
+const flipflopDisplay =
+    document.getElementById("flipflopDisplay");
+
+const truthTable =
+    document.getElementById("truthTable");
+
+const simResult =
+    document.getElementById("simResult");
+
+
+/* UPDATE INPUTS */
+
+function updateInterface() {
+
+    const type = ffType.value;
+
+    if (type === "JK" || type === "SR") {
+
+        inputBContainer.style.display = "inline-flex";
+
+    } else {
+
+        inputBContainer.style.display = "none";
+
+    }
+
+
+    if (type === "D") {
+
+        inputDisplay.textContent = inputA.value;
+
+    }
+
+    else if (type === "T") {
+
+        inputDisplay.textContent = inputA.value;
+
+    }
+
+    else {
+
+        inputDisplay.textContent =
+            inputA.value + " " + inputB.value;
+
+    }
+
+
+    flipflopDisplay.innerHTML =
+        type + "<br>Flip-Flop";
+
+
+    createTruthTable(type);
+
+}
+
+
+ffType.addEventListener("change", updateInterface);
+inputA.addEventListener("change", updateInterface);
+inputB.addEventListener("change", updateInterface);
+
+
+/* CLOCK */
+
+document.getElementById("clockBtn").addEventListener(
+    "click",
+    function() {
+
+        const type = ffType.value;
+
+        const a = Number(inputA.value);
+        const b = Number(inputB.value);
+
+
+        if (type === "D") {
+
+            q = a;
+
+        }
+
+
+        else if (type === "T") {
+
+            if (a === 1) {
+                q = q === 0 ? 1 : 0;
+            }
+
+        }
+
+
+        else if (type === "JK") {
+
+            if (a === 0 && b === 0) {
+                q = q;
+            }
+
+            else if (a === 0 && b === 1) {
+                q = 0;
+            }
+
+            else if (a === 1 && b === 0) {
+                q = 1;
+            }
+
+            else if (a === 1 && b === 1) {
+                q = q === 0 ? 1 : 0;
+            }
+
+        }
+
+
+        else if (type === "SR") {
+
+            if (a === 0 && b === 0) {
+                q = q;
+            }
+
+            else if (a === 0 && b === 1) {
+                q = 0;
+            }
+
+            else if (a === 1 && b === 0) {
+                q = 1;
+            }
+
+            else if (a === 1 && b === 1) {
+
+                simResult.className =
+                    "result info";
+
+                simResult.innerHTML =
+                    "⚠ S = 1 and R = 1 is an invalid condition for a basic SR flip-flop.";
+
+                simResult.style.display = "block";
+
+                return;
+            }
+
+        }
+
+
+        qDisplay.textContent = q;
+        currentQ.textContent = q;
+
+        simResult.className = "result success";
+
+        simResult.innerHTML =
+            "⏱ Clock applied successfully. New state: Q = " + q;
+
+        simResult.style.display = "block";
+
+
+        localStorage.setItem(
+            "sequentialActivityStarted",
+            "true"
+        );
+
+    }
+);
+
+
+/* RESET */
+
+document.getElementById("resetBtn").addEventListener(
+    "click",
+    function() {
+
+        q = 0;
+
+        qDisplay.textContent = "0";
+        currentQ.textContent = "0";
+
+        simResult.style.display = "none";
+
+    }
+);
+
+
+/* TRUTH TABLE */
+
+function createTruthTable(type) {
+
+    let html = "";
+
+    if (type === "D") {
+
+        html = `
+        <table class="truth-table">
+
+            <tr>
+                <th>D</th>
+                <th>Q(next)</th>
+            </tr>
+
+            <tr>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+
+            <tr>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+
+        </table>
+        `;
+
+    }
+
+
+    else if (type === "T") {
+
+        html = `
+        <table class="truth-table">
+
+            <tr>
+                <th>T</th>
+                <th>Q(next)</th>
+            </tr>
+
+            <tr>
+                <td>0</td>
+                <td>Q</td>
+            </tr>
+
+            <tr>
+                <td>1</td>
+                <td>Q'</td>
+            </tr>
+
+        </table>
+        `;
+
+    }
+
+
+    else if (type === "JK") {
+
+        html = `
+        <table class="truth-table">
+
+            <tr>
+                <th>J</th>
+                <th>K</th>
+                <th>Q(next)</th>
+            </tr>
+
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>Q</td>
+            </tr>
+
+            <tr>
+                <td>0</td>
+                <td>1</td>
+                <td>0</td>
+            </tr>
+
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>1</td>
+            </tr>
+
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>Q'</td>
+            </tr>
+
+        </table>
+        `;
+
+    }
+
+
+    else if (type === "SR") {
+
+        html = `
+        <table class="truth-table">
+
+            <tr>
+                <th>S</th>
+                <th>R</th>
+                <th>Q(next)</th>
+            </tr>
+
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>Q</td>
+            </tr>
+
+            <tr>
+                <td>0</td>
+                <td>1</td>
+                <td>0</td>
+            </tr>
+
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>1</td>
+            </tr>
+
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>Invalid</td>
+            </tr>
+
+        </table>
+        `;
+
+    }
+
+
+    truthTable.innerHTML = html;
+
+}
+
+
+/* MINI CHALLENGE */
+
+document.querySelectorAll(".answerBtn").forEach(
+    button => {
+
+        button.addEventListener("click", function() {
+
+            const answer = this.dataset.answer;
+
+            const challengeResult =
+                document.getElementById("challengeResult");
+
+
+            if (answer === "1") {
+
+                challengeResult.className =
+                    "result success";
+
+                challengeResult.innerHTML =
+                    "✅ Correct! For a D flip-flop, Q(next) = D. Therefore Q = 1.";
+
+                challengeResult.style.display = "block";
+
+
+                localStorage.setItem(
+                    "sequentialChallengeDone",
+                    "true"
+                );
+
+                document.getElementById(
+                    "progressText"
+                ).innerHTML =
+                    "✅ Sequential Circuits Activity Completed";
+
+            }
+
+            else {
+
+                challengeResult.className =
+                    "result info";
+
+                challengeResult.innerHTML =
+                    "❌ Try again. Remember: Q(next) = D.";
+
+                challengeResult.style.display = "block";
+
+            }
+
+        });
+
+    }
+);
+
+
+/* INITIALIZE */
+
+updateInterface();
+
+if (
+    localStorage.getItem("sequentialChallengeDone")
+    === "true"
+) {
+
+    document.getElementById(
+        "progressText"
+    ).innerHTML =
+        "✅ Sequential Circuits Activity Completed";
+
+}
+
+</script>
+
+</body>
+</html>
+```
