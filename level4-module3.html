@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 Module 3 | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<script src="m3-engine.js"></script>
+<style>
+.w{max-width:1000px;margin:16px auto;padding:10px}
+.hero{background:#243b64;color:#fff;text-align:center;padding:18px;border-radius:12px;margin-bottom:14px}
+.hero h2{color:#fff;margin:0 0 5px}
+.steps{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.steps button{background:#243b64;color:#fff;font-weight:bold}
+.steps button.cur{background:#c9a227;color:#162746}
+.steps button[disabled]{background:#e3e7ee;color:#8a94a6;cursor:not-allowed}
+.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:14px;width:auto}
+.card h3{color:#243b64;margin-top:0;text-align:left}
+.lead{font-size:17px;line-height:1.55}
+.def{background:#eef3fb;border-left:5px solid #4f6fad;padding:12px 16px;border-radius:8px;margin:10px 0}
+.diagram{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:6px}
+.diagram svg{width:100%;height:auto;display:block}
+.ctl{text-align:center;margin:10px 0}
+.ctl button{font-size:17px;padding:12px 22px;margin:4px;background:#e8eef8;color:#243b64;font-weight:bold}
+.ctl button.on{background:#243b64;color:#fff}
+.status{background:#fff8e1;border-left:5px solid #c9a227;padding:12px 16px;border-radius:8px;font-size:17px;min-height:26px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.sym{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:10px;text-align:center}
+.sym svg{width:100%;max-width:260px;height:auto}
+.chips button{background:#e8eef8;color:#243b64;margin:3px;font-weight:bold}
+.chips button.on{background:#4f6fad;color:#fff}
+.info{background:#f5f7fa;border-left:5px solid #4f6fad;padding:10px 14px;border-radius:8px;margin:10px 0;min-height:24px}
+.opt{display:block;margin:8px 0;padding:12px;border:2px solid #d5dce8;border-radius:10px;cursor:pointer;background:#fafcff;font-size:16px}
+.opt:hover{background:#eef4ff}
+.opt.correct{border-color:#2e7d32;background:#e8f5e9}
+.opt.wrong{border-color:#c62828;background:#ffebee}
+.btns button{margin:4px;font-weight:bold}
+.btns .alt{background:#e8eef8;color:#243b64}
+.fb{margin-top:10px;padding:12px;border-radius:8px;display:none;line-height:1.5}
+.fb.ok{display:block;background:#e8f5e9;color:#14532d}
+.fb.no{display:block;background:#ffebee;color:#7f1d1d}
+.fb.hint{display:block;background:#fff8e1;color:#5f4500}
+.fb.sol{display:block;background:#eef3fb;color:#162746}
+.check li{list-style:none;margin:6px 0;font-size:16px}
+.done{background:#e8f5e9;border:2px solid #2e7d32;color:#14532d;padding:12px;border-radius:10px;font-weight:bold;text-align:center;margin-top:10px;display:none}
+.flow{stroke:#1b8a3a;stroke-width:6;fill:none;stroke-dasharray:10 8;animation:fl .6s linear infinite}
+@keyframes fl{to{stroke-dashoffset:-18}}
+@media (prefers-reduced-motion:reduce){.flow{animation:none}}
+.nav2{text-align:center;margin:18px 0}
+.nav2 a{display:inline-block;text-decoration:none;background:#162746;color:#fff;padding:9px 16px;border-radius:8px;margin:3px;font-weight:bold}
+
+.pg{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;font-size:17px;margin:10px 0}
+.pg select{font-size:17px;padding:8px;border-radius:8px;border:2px solid #aab6cc}
+.chipsrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
+.chipsrow span{padding:9px 16px;border-radius:20px;font-weight:bold;background:#eef3fb;color:#243b64}
+.chipsrow span.on{background:#c8e6c9;color:#14532d}
+.tt{border-collapse:collapse;margin:10px auto;font-size:17px}
+.tt th,.tt td{border:1px solid #ccc;padding:9px 18px;text-align:center}
+.tt th{background:#243b64;color:#fff}
+.tt tr.cur td{background:#fff8e1;font-weight:bold}
+
+.cbw{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.cbnet{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:10px}
+.gp{border:2px solid #4f6fad;border-radius:10px;padding:6px;margin:4px 0;background:#fff}
+.gp.par{border-color:#e08a00}
+.gh{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:6px}
+.gh button{padding:5px 8px;font-size:13px;background:#e8eef8;color:#243b64}
+.kids{display:flex;gap:6px}.kids.col{flex-direction:column}.kids.row{flex-direction:row;flex-wrap:wrap}
+.lf{display:flex;align-items:center;gap:6px;border:1px solid #cbd5e1;border-radius:8px;padding:4px 6px;background:#fdfdff}
+.lf select,.cbnet select{padding:5px;border-radius:6px;border:1px solid #aab6cc;font-size:14px}
+.x{background:#fde8e8;color:#9b1c1c;padding:4px 9px}
+.ck{padding:6px 10px;margin:3px 0;border-radius:6px;font-size:15px}
+.ck.ok{background:#e8f5e9;color:#14532d}.ck.no{background:#ffebee;color:#7f1d1d}
+.cbbtn{text-align:center;margin:10px 0}
+.cbbtn button{margin:3px;font-weight:bold}.cbbtn .alt{background:#e8eef8;color:#243b64}
+.cbbtn button[disabled]{background:#e3e7ee;color:#8a94a6;cursor:not-allowed}
+.opt2{display:block;margin:6px 0;padding:10px;border:2px solid #d5dce8;border-radius:10px;cursor:pointer;background:#fafcff}
+
+.rep{font-size:17px;max-width:540px;margin:10px auto}
+.rl{display:flex;gap:6px;align-items:flex-end;margin:4px 0}
+.dots{flex:1;border-bottom:2px dotted #999;margin-bottom:5px}
+.mbar{height:18px;background:#e0e0e0;border-radius:12px;overflow:hidden;margin:8px 0}
+.mbar div{height:100%;background:#4f6fad;transition:width .4s}
+.mgrp{margin:6px 0;font-size:15px}
+.mgrp span{display:inline-block;margin:2px 6px 2px 0;padding:3px 9px;border-radius:14px;background:#eef3fb}
+.mgrp span.d{background:#c8e6c9;color:#14532d}
+.qcard{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:12px;margin:12px 0}
+.qcard.good{border-color:#2e7d32;background:#f1fbf3}.qcard.bad{border-color:#c62828;background:#fff5f5}
+</style>
+</head>
+<body>
+<script>M3.guard();</script>
+
+<header><h1>Digital Design Explorer</h1><p>Level 4 – VLSI Basics</p></header>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="level4-dashboard.html">Level 4 Dashboard</a>
+  <a href="level4-module2.html">Module 2</a>
+  <a href="#" onclick="M3.logout()">Logout</a>
+</nav>
+
+<main class="w">
+<section class="hero">
+  <h2>🔬 Module 3 – CMOS Logic &amp; Transistor-Level Design</h2>
+  <p>Learn by interacting with real transistor circuits.</p>
+</section>
+
+<section class="card" id="mprog"></section>
+
+<div class="steps">
+  <button id="t1" class="cur" onclick="showSec(1)">3.1 Introduction to CMOS</button>
+  <button id="t2" onclick="showSec(2)">3.2 Inverter</button>
+  <button id="t3" onclick="showSec(3)">3.3 NAND</button>
+  <button id="t4" onclick="showSec(4)">3.4 NOR</button>
+  <button id="t5" onclick="showSec(5)">3.5 Gate → Transistor</button>
+  <button id="t6" onclick="showSec(6)">3.6 Challenges</button>
+  <button id="t7" onclick="showSec(7)">3.7 Transistor → Gate</button>
+  <button id="t8" onclick="showSec(8)">3.8 Transistor States</button>
+  <button id="t9" onclick="showSec(9)">3.9 Truth Table → Circuit</button>
+  <button id="t10" onclick="showSec(10)">3.10 Circuit → Truth Table</button>
+  <button id="t11" onclick="showSec(11)">3.11 Debug</button>
+  <button id="t12" onclick="showSec(12)">3.12 Build Circuit</button>
+  <button id="t13" onclick="showSec(13)">3.13 Compound Logic</button>
+  <button id="t14" onclick="showSec(14)">3.14 Design Challenge</button>
+  <button id="t15" onclick="showSec(15)">3.15 Practice Set</button>
+  <button id="t16" onclick="showSec(16)">3.16 Quiz</button>
+</div>
+
+<div id="sec31">
+<!-- 3.1 -->
+<section class="card">
+  <h3>3.1 Introduction to CMOS</h3>
+  <p class="lead"><b>CMOS</b> stands for <b>Complementary Metal-Oxide-Semiconductor</b>. Every CMOS gate uses two networks of transistors that work as opposites:</p>
+  <div class="def">
+    <b>PMOS network</b> (pull-up) connects the output to <b>V<sub>DD</sub></b>.<br>
+    <b>NMOS network</b> (pull-down) connects the output to <b>GND</b>.<br>
+    For any input, one network conducts and the other is OFF.
+  </div>
+
+  <h4>Watch it work: change the input</h4>
+  <div class="ctl">
+    <button id="b0" onclick="setA(0)">Input A = 0</button>
+    <button id="b1" onclick="setA(1)">Input A = 1</button>
+  </div>
+  <div class="diagram" id="dg"></div>
+  <div class="status" id="st">Choose an input value above.</div>
+
+  <h4>Key terms (tap one)</h4>
+  <div class="chips" id="chips"></div>
+  <div class="info" id="chipInfo">Tap a term.</div>
+</section>
+
+<section class="card">
+  <h3>Why PMOS pulls up and NMOS pulls down</h3>
+  <div class="two">
+    <div class="sym"><svg viewBox="0 0 300 190" id="symP"></svg>
+      <p><b>PMOS</b> is ON when the gate is <b>0</b>.<br>It passes a full logic 1 (V<sub>DD</sub>) but a weak 0, so it is used <b>only between V<sub>DD</sub> and the output</b>.</p></div>
+    <div class="sym"><svg viewBox="0 0 300 190" id="symN"></svg>
+      <p><b>NMOS</b> is ON when the gate is <b>1</b>.<br>It passes a full logic 0 but a weak 1 (about V<sub>DD</sub> − V<sub>TH</sub>), so it is used <b>only between the output and GND</b>.</p></div>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Check your understanding</h3>
+  <p class="lead"><b>Which transistor network connects the output to V<sub>DD</sub>?</b></p>
+  <div id="opts">
+    <label class="opt" id="o_p"><input type="radio" name="q" value="p"> PMOS network (pull-up)</label>
+    <label class="opt" id="o_n"><input type="radio" name="q" value="n"> NMOS network (pull-down)</label>
+    <label class="opt" id="o_b"><input type="radio" name="q" value="b"> Both networks at the same time</label>
+    <label class="opt" id="o_x"><input type="radio" name="q" value="x"> Neither network</label>
+  </div>
+  <div class="btns">
+    <button onclick="checkQ()">CHECK</button>
+    <button class="alt" onclick="hintQ()">GET HINT</button>
+    <button class="alt" onclick="resetQ()">TRY AGAIN</button>
+    <button class="alt" onclick="solQ()">SHOW SOLUTION</button>
+  </div>
+  <div class="fb" id="fb"></div>
+</section>
+
+<section class="card">
+  <h3>Lesson 3.1 checklist</h3>
+  <ul class="check" style="padding-left:0">
+    <li id="c0">⬜ Try input A = 0</li>
+    <li id="c1">⬜ Try input A = 1</li>
+    <li id="cq">⬜ Answer the question correctly</li>
+  </ul>
+  <div class="done" id="done">✅ Lesson 3.1 completed. Section 3.2 (CMOS Inverter) comes next.</div>
+</section>
+
+</div><!-- end sec31 -->
+
+<div id="sec32" style="display:none">
+<section class="card">
+  <h3>3.2 CMOS Inverter</h3>
+  <p class="lead">The <b>inverter (NOT gate)</b> is the simplest CMOS gate: <b>one PMOS</b> above the output and <b>one NMOS</b> below it, both driven by the same input <b>A</b>.</p>
+  <div class="ctl">
+    <button id="i0" onclick="setI(0)">Input A = 0</button>
+    <button id="i1" onclick="setI(1)">Input A = 1</button>
+  </div>
+  <div class="diagram" id="dg2"></div>
+  <div class="chipsrow" id="chips2"></div>
+  <div class="status" id="st2">Choose an input value above.</div>
+  <table class="tt"><tr><th>A</th><th>PMOS</th><th>NMOS</th><th>Y</th></tr>
+    <tr id="tr0"><td>0</td><td>ON</td><td>OFF</td><td>1</td></tr>
+    <tr id="tr1"><td>1</td><td>OFF</td><td>ON</td><td>0</td></tr></table>
+  <div class="def">Only one transistor conducts at a time, so there is never a direct path from V<sub>DD</sub> to GND. This is why CMOS uses very little static power.</div>
+</section>
+
+<section class="card">
+  <h3>Predict the circuit</h3>
+  <p class="lead">The input is fixed. Decide what each part does, then press CHECK.</p>
+  <div class="diagram" id="dgp"></div>
+  <p class="lead" style="text-align:center">Input <b>A = <span id="pa">0</span></b></p>
+  <div class="pg">
+    PMOS: <select id="sp"><option value="">?</option><option>ON</option><option>OFF</option></select> <span id="mp"></span>
+    NMOS: <select id="sn"><option value="">?</option><option>ON</option><option>OFF</option></select> <span id="mn"></span>
+    Output Y: <select id="sy"><option value="">?</option><option>0</option><option>1</option></select> <span id="my"></span>
+  </div>
+  <div class="btns" style="text-align:center">
+    <button onclick="checkP()">CHECK ANSWER</button>
+    <button class="alt" onclick="hintP()">GET HINT</button>
+    <button class="alt" onclick="newP()">TRY AGAIN</button>
+    <button class="alt" onclick="solP()">SHOW SOLUTION</button>
+  </div>
+  <div class="fb" id="fbp"></div>
+</section>
+
+<section class="card">
+  <h3>Lesson 3.2 checklist</h3>
+  <ul class="check" style="padding-left:0">
+    <li id="k0">⬜ Try input A = 0</li>
+    <li id="k1">⬜ Try input A = 1</li>
+    <li id="k2">⬜ Predict the circuit correctly for A = 0</li>
+    <li id="k3">⬜ Predict the circuit correctly for A = 1</li>
+  </ul>
+  <div class="done" id="done2">✅ Lesson 3.2 completed. Section 3.3 (CMOS NAND) comes next.</div>
+</section>
+</div><!-- end sec32 -->
+<div id="sec33" style="display:none"></div>
+<div id="sec34" style="display:none"></div>
+<div id="sec35" style="display:none"></div>
+<div id="sec36" style="display:none"></div>
+<div id="sec37" style="display:none"></div>
+<div id="sec38" style="display:none"></div>
+<div id="sec39" style="display:none"></div>
+<div id="sec310" style="display:none"></div>
+<div id="sec311" style="display:none"></div>
+<div id="sec312" style="display:none"></div>
+<div id="sec313" style="display:none"></div>
+<div id="sec314" style="display:none"></div>
+<div id="sec315" style="display:none"></div>
+<div id="sec316" style="display:none"></div>
+
+<div class="nav2"><a href="level4-dashboard.html">← Level 4 Dashboard</a><a href="level4-module2.html">← Module 2</a></div>
+</main>
+
+<footer><p>Digital Design Explorer | ECE Department</p></footer>
+<footer class="site-footer">
+  <p>Developed by <strong>Mrs. Padma R</strong></p>
+  <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+  <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+var $ = function (i) { return document.getElementById(i); };
+var seen = { 0: false, 1: false }, answered = false, tries = 0;
+
+/* ---------- main animated diagram ---------- */
+function draw(a) {
+  var pOn = (a === 0), nOn = (a === 1), y = pOn ? 1 : 0;
+  var P = M3.COL.pmos;
+  var s = '<svg viewBox="0 0 760 480" role="img" aria-label="CMOS structure: PMOS network, output, NMOS network">';
+
+  /* rails */
+  s += '<line x1="190" y1="30" x2="570" y2="30" stroke="' + P + '" stroke-width="6"/>';
+  s += '<text x="180" y="37" text-anchor="end" font-size="18" font-weight="bold" fill="' + P + '">VDD (logic 1)</text>';
+  s += '<line x1="190" y1="445" x2="570" y2="445" stroke="#243b64" stroke-width="6"/>';
+  s += '<text x="180" y="452" text-anchor="end" font-size="18" font-weight="bold" fill="#243b64">GND (logic 0)</text>';
+
+  /* network boxes */
+  s += '<rect x="250" y="55" width="270" height="150" rx="14" fill="' + (pOn ? "#e6f4ea" : "#fdf1f0") + '" stroke="' + (pOn ? "#1b8a3a" : "#d9a19c") + '" stroke-width="3" stroke-dasharray="8 6"/>';
+  s += '<rect x="250" y="265" width="270" height="150" rx="14" fill="' + (nOn ? "#e6f4ea" : "#eef3fb") + '" stroke="' + (nOn ? "#1b8a3a" : "#9db7e8") + '" stroke-width="3" stroke-dasharray="8 6"/>';
+
+  /* wires between rails, networks and output node */
+  var wire = 'stroke="#243b64" stroke-width="4" fill="none" stroke-linecap="round"';
+  s += '<polyline points="380,30 380,68" ' + wire + '/>';
+  s += '<polyline points="380,188 380,280" ' + wire + '/>';
+  s += '<polyline points="380,400 380,445" ' + wire + '/>';
+
+  /* input wiring: A feeds both gates */
+  s += '<polyline points="150,128 150,340" ' + wire + '/>';
+  s += '<polyline points="150,128 270,128" ' + wire + '/>';
+  s += '<polyline points="150,340 270,340" ' + wire + '/>';
+  s += '<polyline points="110,234 150,234" ' + wire + '/>';
+  s += '<circle cx="150" cy="234" r="6" fill="#243b64"/>';
+  s += '<rect x="30" y="212" width="80" height="44" rx="22" fill="#243b64"/>';
+  s += '<text x="70" y="241" text-anchor="middle" font-size="20" font-weight="bold" fill="#fff">A = ' + a + '</text>';
+
+  /* transistors */
+  s += M3.mos("p", 340, 128, { state: pOn ? "on" : "off", pins: true });
+  s += M3.mos("n", 340, 340, { state: nOn ? "on" : "off", pins: true });
+
+  /* network labels */
+  s += '<g font-size="16" font-weight="bold">';
+  s += '<text x="400" y="100" fill="' + P + '">PMOS network</text><text x="400" y="120" fill="' + P + '">(pull-up)</text>';
+  s += '<text x="400" y="155" fill="' + (pOn ? "#1b8a3a" : "#5b6b8a") + '">' + (pOn ? "ON: conducts" : "OFF") + '</text>';
+  s += '<text x="400" y="312" fill="#243b64">NMOS network</text><text x="400" y="332" fill="#243b64">(pull-down)</text>';
+  s += '<text x="400" y="367" fill="' + (nOn ? "#1b8a3a" : "#5b6b8a") + '">' + (nOn ? "ON: conducts" : "OFF") + '</text>';
+  s += '</g>';
+
+  /* output node and output bubble */
+  s += '<polyline points="380,234 600,234" ' + wire + '/>';
+  s += '<circle cx="380" cy="234" r="7" fill="#243b64"/>';
+  s += '<circle cx="660" cy="234" r="42" fill="' + (y ? "#243b64" : "#fff") + '" stroke="#243b64" stroke-width="4"/>';
+  s += '<text x="660" y="242" text-anchor="middle" font-size="24" font-weight="bold" fill="' + (y ? "#fff" : "#243b64") + '">Y = ' + y + '</text>';
+  s += '<text x="600" y="222" text-anchor="middle" font-size="14" fill="#555">output</text>';
+
+  /* animated conduction path */
+  if (pOn) s += '<polyline class="flow" points="380,30 380,68"/><polyline class="flow" points="380,188 380,234"/>';
+  if (nOn) s += '<polyline class="flow" points="380,234 380,280"/><polyline class="flow" points="380,400 380,445"/>';
+
+  return s + '</svg>';
+}
+
+function setA(a) {
+  seen[a] = true;
+  $("dg").innerHTML = draw(a);
+  $("b0").className = a === 0 ? "on" : "";
+  $("b1").className = a === 1 ? "on" : "";
+  $("st").innerHTML = a === 0
+    ? "<b>A = 0:</b> the PMOS network is <b>ON</b> and the NMOS network is <b>OFF</b>. The output is connected to V<sub>DD</sub>, so <b>Y = 1</b>."
+    : "<b>A = 1:</b> the PMOS network is <b>OFF</b> and the NMOS network is <b>ON</b>. The output is connected to GND, so <b>Y = 0</b>.";
+  progress();
+}
+$("dg").innerHTML = draw(0);
+
+/* ---------- symbol panels ---------- */
+$("symP").innerHTML = M3.mos("p", 130, 95, { pins: true, label: "PMOS", scale: 1.25 });
+$("symN").innerHTML = M3.mos("n", 130, 95, { pins: true, label: "NMOS", scale: 1.25 });
+
+/* ---------- key terms ---------- */
+var terms = {
+  "VDD": "<b>V<sub>DD</sub>:</b> the positive supply voltage. It represents logic 1.",
+  "GND": "<b>GND:</b> ground, 0 V. It represents logic 0.",
+  "Input": "<b>Input (A):</b> the signal applied to the transistor gates. It decides which network conducts.",
+  "Output": "<b>Output (Y):</b> the node between the two networks. It is pulled to V<sub>DD</sub> or to GND.",
+  "PMOS network": "<b>PMOS network (pull-up):</b> PMOS transistors between V<sub>DD</sub> and the output.",
+  "NMOS network": "<b>NMOS network (pull-down):</b> NMOS transistors between the output and GND."
+};
+Object.keys(terms).forEach(function (k) {
+  var b = document.createElement("button");
+  b.textContent = k;
+  b.onclick = function () {
+    $("chipInfo").innerHTML = terms[k];
+    [].forEach.call($("chips").children, function (x) { x.classList.toggle("on", x === b); });
+  };
+  $("chips").appendChild(b);
+});
+
+/* ---------- question ---------- */
+function clearMarks() {
+  ["p", "n", "b", "x"].forEach(function (k) { $("o_" + k).className = "opt"; });
+}
+function checkQ() {
+  var c = document.querySelector('input[name="q"]:checked'), f = $("fb");
+  clearMarks();
+  if (!c) { f.className = "fb hint"; f.textContent = "Select an answer first, then press CHECK."; return; }
+  tries++;
+  if (c.value === "p") {
+    $("o_p").classList.add("correct");
+    f.className = "fb ok";
+    f.innerHTML = "✓ <b>Correct.</b> The PMOS network sits between V<sub>DD</sub> and the output. When its gate input is 0 it turns ON and pulls the output up to logic 1.";
+    answered = true;
+    progress();
+  } else {
+    $("o_" + c.value).classList.add("wrong");
+    f.className = "fb no";
+    f.innerHTML = "✗ <b>Incorrect.</b> " + (tries >= 2 ? "Press GET HINT for a clue." : "Look at the diagram above and see which network touches the V<sub>DD</sub> rail.");
+  }
+}
+function hintQ() {
+  $("fb").className = "fb hint";
+  $("fb").innerHTML = "💡 <b>Hint:</b> in the diagram, the network between the V<sub>DD</sub> rail and the output node is drawn in red. It is also the one that turns ON when A = 0.";
+}
+function resetQ() {
+  var c = document.querySelector('input[name="q"]:checked');
+  if (c) c.checked = false;
+  clearMarks();
+  $("fb").className = "fb";
+  $("fb").innerHTML = "";
+}
+function solQ() {
+  clearMarks();
+  $("o_p").classList.add("correct");
+  $("fb").className = "fb sol";
+  $("fb").innerHTML = "<b>Solution:</b> the <b>PMOS network (pull-up)</b> connects the output to V<sub>DD</sub>. Use TRY AGAIN and answer it yourself to complete this lesson.";
+}
+
+/* ---------- progress ---------- */
+function progress() {
+  $("c0").textContent = (seen[0] ? "✅" : "⬜") + " Try input A = 0";
+  $("c1").textContent = (seen[1] ? "✅" : "⬜") + " Try input A = 1";
+  $("cq").textContent = (answered ? "✅" : "⬜") + " Answer the question correctly";
+  if (seen[0] && seen[1] && answered) {
+    M3.flag("vlsiM3_s31", true);
+  }
+  $("done").style.display = M3.flag("vlsiM3_s31") ? "block" : "none";
+}
+if (M3.flag("vlsiM3_s31")) { seen[0] = seen[1] = answered = true; }
+progress();
+/* ================= 3.2 CMOS inverter ================= */
+function showSec(n) {
+  for (var i = 1; i <= 16; i++) {
+    $("sec3" + i).style.display = i === n ? "block" : "none";
+    $("t" + i).classList.toggle("cur", i === n);
+  }
+  window.scrollTo(0, 0);
+}
+
+/* hide = true draws neutral transistors with unknown output (for the prediction task) */
+function inv(a, hide) {
+  var sc = 1.4, pOn = a === 0, nOn = a === 1, y = pOn ? 1 : 0, P = M3.COL.pmos;
+  var W = 'stroke="#243b64" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+  var h = '<svg viewBox="0 0 780 620" role="img" aria-label="CMOS inverter">';
+  h += '<line x1="190" y1="30" x2="590" y2="30" stroke="' + P + '" stroke-width="6"/>';
+  h += '<text x="180" y="37" text-anchor="end" font-size="18" font-weight="bold" fill="' + P + '">VDD (logic 1)</text>';
+  h += '<line x1="190" y1="560" x2="590" y2="560" stroke="#243b64" stroke-width="6"/>';
+  h += '<text x="180" y="567" text-anchor="end" font-size="18" font-weight="bold" fill="#243b64">GND (logic 0)</text>';
+  h += '<polyline points="386,30 386,91" ' + W + '/><polyline points="386,259 386,341" ' + W + '/><polyline points="386,509 386,560" ' + W + '/>';
+  /* input A feeds both gates */
+  h += '<polyline points="150,175 232,175" ' + W + '/><polyline points="150,175 150,425" ' + W + '/><polyline points="150,425 232,425" ' + W + '/>';
+  h += '<polyline points="110,300 150,300" ' + W + '/><circle cx="150" cy="300" r="6" fill="#243b64"/>';
+  h += '<rect x="26" y="278" width="84" height="44" rx="22" fill="#243b64"/>';
+  h += '<text x="68" y="307" text-anchor="middle" font-size="20" font-weight="bold" fill="#fff">' + (hide === 2 ? "A" : "A = " + a) + '</text>';
+  /* transistors */
+  h += M3.mos("p", 330, 175, { state: hide ? undefined : (pOn ? "on" : "off"), pins: true, label: "PMOS", badge: !hide, scale: sc });
+  h += M3.mos("n", 330, 425, { state: hide ? undefined : (nOn ? "on" : "off"), pins: true, label: "NMOS", badge: !hide, scale: sc });
+  /* output */
+  h += '<polyline points="386,300 620,300" ' + W + '/><circle cx="386" cy="300" r="7" fill="#243b64"/>';
+  h += '<circle cx="690" cy="300" r="44" fill="' + (hide ? "#fff" : (y ? "#243b64" : "#fff")) + '" stroke="#243b64" stroke-width="4"/>';
+  h += '<text x="690" y="309" text-anchor="middle" font-size="24" font-weight="bold" fill="' + (hide ? "#243b64" : (y ? "#fff" : "#243b64")) + '">' + (hide === 2 ? "Y" : "Y = " + (hide ? "?" : y)) + '</text>';
+  h += '<text x="620" y="286" text-anchor="middle" font-size="14" fill="#555">output</text>';
+  /* animated conduction path through the ON transistor */
+  if (!hide && pOn) h += '<polyline class="flow" points="386,30 ' + M3.through(330, 175, sc) + ' 386,300"/>';
+  if (!hide && nOn) h += '<polyline class="flow" points="386,300 ' + M3.through(330, 425, sc) + ' 386,560"/>';
+  return h + '</svg>';
+}
+
+var seen2 = { 0: false, 1: false }, got = { 0: false, 1: false }, pA = null, pShown = false;
+
+function setI(a) {
+  seen2[a] = true;
+  $("dg2").innerHTML = inv(a, false);
+  $("i0").className = a === 0 ? "on" : "";
+  $("i1").className = a === 1 ? "on" : "";
+  var pOn = a === 0;
+  $("chips2").innerHTML =
+    '<span class="' + (pOn ? "on" : "") + '">PMOS: ' + (pOn ? "ON" : "OFF") + '</span>' +
+    '<span class="' + (!pOn ? "on" : "") + '">NMOS: ' + (!pOn ? "ON" : "OFF") + '</span>' +
+    '<span class="on">Y = ' + (pOn ? 1 : 0) + '</span>' +
+    '<span>' + (pOn ? "Path: VDD → PMOS → Y" : "Path: Y → NMOS → GND") + '</span>';
+  $("st2").innerHTML = pOn
+    ? "<b>A = 0:</b> the PMOS gate is low, so the PMOS turns <b>ON</b>. The NMOS is <b>OFF</b>. Current flows from V<sub>DD</sub> to the output, so <b>Y = 1</b>."
+    : "<b>A = 1:</b> the NMOS gate is high, so the NMOS turns <b>ON</b>. The PMOS is <b>OFF</b>. The output is connected to GND, so <b>Y = 0</b>.";
+  $("tr0").className = pOn ? "cur" : "";
+  $("tr1").className = pOn ? "" : "cur";
+  progress2();
+}
+$("dg2").innerHTML = inv(0, false);
+
+/* ---- prediction activity ---- */
+function clearP() {
+  ["sp", "sn", "sy"].forEach(function (i) { $(i).value = ""; });
+  ["mp", "mn", "my"].forEach(function (i) { $(i).textContent = ""; });
+  $("fbp").className = "fb"; $("fbp").innerHTML = "";
+  pShown = false;
+}
+function newP() {
+  pA = (pA === null) ? 0 : 1 - pA;
+  $("pa").textContent = pA;
+  $("dgp").innerHTML = inv(pA, true);
+  clearP();
+}
+function expected() { return { p: pA === 0 ? "ON" : "OFF", n: pA === 1 ? "ON" : "OFF", y: pA === 0 ? "1" : "0" }; }
+function mark(id, ok) { $(id).textContent = ok ? "✓" : "✗"; $(id).style.color = ok ? "#2e7d32" : "#c62828"; }
+function checkP() {
+  var f = $("fbp"), e = expected(), v = { p: $("sp").value, n: $("sn").value, y: $("sy").value };
+  if (!v.p || !v.n || !v.y) { f.className = "fb hint"; f.textContent = "Answer all three questions first, then press CHECK ANSWER."; return; }
+  var okp = v.p === e.p, okn = v.n === e.n, oky = v.y === e.y;
+  mark("mp", okp); mark("mn", okn); mark("my", oky);
+  $("dgp").innerHTML = inv(pA, false);
+  if (okp && okn && oky) {
+    f.className = "fb ok";
+    f.innerHTML = "✓ <b>Correct.</b> With A = " + pA + ", the " + (pA === 0 ? "PMOS" : "NMOS") + " conducts and connects the output to " + (pA === 0 ? "V<sub>DD</sub>" : "GND") + ", so Y = " + e.y + ".";
+    if (!pShown) { got[pA] = true; progress2(); }
+  } else {
+    f.className = "fb no";
+    f.innerHTML = "✗ <b>Incorrect.</b> The circuit above now shows the real states. Compare it with your answers, then press TRY AGAIN. Use GET HINT if you are stuck.";
+  }
+}
+function hintP() {
+  $("fbp").className = "fb hint";
+  $("fbp").innerHTML = "💡 <b>Hint:</b> PMOS is ON when its gate is 0. NMOS is ON when its gate is 1. Only one of them conducts, and the output takes the value of the supply it is connected to.";
+}
+function solP() {
+  var e = expected();
+  $("sp").value = e.p; $("sn").value = e.n; $("sy").value = e.y;
+  ["mp", "mn", "my"].forEach(function (i) { $(i).textContent = ""; });
+  $("dgp").innerHTML = inv(pA, false);
+  pShown = true;
+  $("fbp").className = "fb sol";
+  $("fbp").innerHTML = "<b>Solution:</b> PMOS = " + e.p + ", NMOS = " + e.n + ", Y = " + e.y + ". Press TRY AGAIN and answer it yourself to earn credit.";
+}
+newP();
+
+function progress2() {
+  $("k0").textContent = (seen2[0] ? "✅" : "⬜") + " Try input A = 0";
+  $("k1").textContent = (seen2[1] ? "✅" : "⬜") + " Try input A = 1";
+  $("k2").textContent = (got[0] ? "✅" : "⬜") + " Predict the circuit correctly for A = 0";
+  $("k3").textContent = (got[1] ? "✅" : "⬜") + " Predict the circuit correctly for A = 1";
+  if (seen2[0] && seen2[1] && got[0] && got[1]) M3.flag("vlsiM3_s32", true);
+  $("done2").style.display = M3.flag("vlsiM3_s32") ? "block" : "none";
+}
+if (M3.flag("vlsiM3_s32")) { seen2[0] = seen2[1] = got[0] = got[1] = true; }
+progress2();
+/* ================= 3.3 CMOS NAND and 3.4 CMOS NOR ================= */
+var GK = {
+  nand: { sec: "sec33", n: "3.3", name: "NAND", expr: "Y = NOT(A · B)", flag: "vlsiM3_s33",
+    pu: "PARALLEL", pd: "SERIES",
+    why: "<b>Pull-up (PMOS) in PARALLEL:</b> Y must be 1 when <i>either</i> input is 0, so either PMOS alone can pull Y up to V<sub>DD</sub>.<br><b>Pull-down (NMOS) in SERIES:</b> Y is 0 only when <i>both</i> inputs are 1, so both NMOS must conduct together.",
+    next: "Section 3.4 (CMOS NOR) comes next." },
+  nor: { sec: "sec34", n: "3.4", name: "NOR", expr: "Y = NOT(A + B)", flag: "vlsiM3_s34",
+    pu: "SERIES", pd: "PARALLEL",
+    why: "<b>Pull-up (PMOS) in SERIES:</b> Y is 1 only when <i>both</i> inputs are 0, so both PMOS must conduct together.<br><b>Pull-down (NMOS) in PARALLEL:</b> Y must be 0 when <i>either</i> input is 1, so either NMOS alone can pull Y down to GND.",
+    next: "The circuit-building sections (3.5 onwards) come next." }
+};
+var GS = {};
+["nand", "nor"].forEach(function (k) { GS[k] = { a: 0, b: 0, seen: {}, done: {}, pi: -1, shown: false }; });
+var COMBOS = [[0, 0], [0, 1], [1, 0], [1, 1]];
+
+function gst(kind, a, b) {
+  var r = { p1: a === 0, p2: b === 0, n1: a === 1, n2: b === 1 };
+  r.up = kind === "nand" ? (r.p1 || r.p2) : (r.p1 && r.p2);
+  r.down = kind === "nand" ? (r.n1 && r.n2) : (r.n1 || r.n2);
+  r.y = r.up ? 1 : 0;
+  return r;
+}
+function yn(v) { return v ? "ON" : "OFF"; }
+function fn(kind, a, b) { return gst(kind, a, b).y; }
+
+/* gate-level symbol */
+function gsym(kind) {
+  var st = 'stroke="#243b64" stroke-width="4" fill="none"';
+  var body = kind === "nand"
+    ? '<path d="M90,20 h50 a45,45 0 0 1 0,90 h-50 z" fill="#eef3fb" stroke="#243b64" stroke-width="4"/>'
+    : '<path d="M80,20 Q140,20 190,65 Q140,110 80,110 Q105,65 80,20 Z" fill="#eef3fb" stroke="#243b64" stroke-width="4"/>';
+  var bx = kind === "nand" ? 190 : 190;
+  return '<svg viewBox="0 0 310 130" style="width:100%;max-width:300px" role="img" aria-label="' + kind + ' gate"><g font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#c62828">' +
+    '<line x1="35" y1="42" x2="94" y2="42" ' + st + '/><line x1="35" y1="88" x2="94" y2="88" ' + st + '/>' + body +
+    '<circle cx="' + (bx + 7) + '" cy="65" r="7" fill="#fff" stroke="#243b64" stroke-width="4"/>' +
+    '<line x1="' + (bx + 14) + '" y1="65" x2="270" y2="65" ' + st + '/>' +
+    '<text x="10" y="48">A</text><text x="10" y="94">B</text><text x="278" y="71">Y</text></g></svg>';
+}
+
+/* transistor-level circuit. hide = true: neutral symbols and unknown output (prediction task) */
+function gd(kind, a, b, hide, marks) {
+  var s = gst(kind, a, b), P = M3.COL.pmos, M = M3.mos, T = M3.through;
+  var Wr = 'stroke="#243b64" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+  var o = function (v) { return hide ? undefined : (v ? "on" : "off"); };
+  var L = function (pts) { return '<polyline points="' + pts + '" ' + Wr + '/>'; };
+  var dot = function (x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="6" fill="#243b64"/>'; };
+  var F = function (pts) { return '<polyline class="flow" points="' + pts + '"/>'; };
+  var nand = kind === "nand", gy = nand ? 680 : 690, ay = nand ? 290 : 365, oy = nand ? 300 : 430;
+  var h = '<svg viewBox="0 0 820 720" role="img" aria-label="CMOS ' + kind + ' transistor circuit">';
+  h += '<line x1="150" y1="30" x2="650" y2="30" stroke="' + P + '" stroke-width="6"/>';
+  h += '<text x="140" y="37" text-anchor="end" font-size="18" font-weight="bold" fill="' + P + '">VDD (1)</text>';
+  h += '<line x1="150" y1="' + gy + '" x2="650" y2="' + gy + '" stroke="#243b64" stroke-width="6"/>';
+  h += '<text x="140" y="' + (gy + 7) + '" text-anchor="end" font-size="18" font-weight="bold" fill="#243b64">GND (0)</text>';
+  var lb = { badge: !hide, pins: false };
+  if (nand) {
+    h += L("370,30 370,80") + L("250,80 490,80") + L("250,80 250,110") + L("490,80 490,110");
+    h += L("250,230 250,260") + L("490,230 490,260") + L("250,260 490,260") + L("370,260 370,350") + L("370,470 370,510") + L("370,630 370,680");
+    h += dot(370, 80) + dot(370, 260) + dot(370, oy);
+    h += L("140,170 110,170") + L("110,170 110,410") + L("110,410 260,410") + L("600,170 720,170") + L("720,170 720,570") + L("720,570 480,570");
+    h += M("p", 210, 170, { state: o(s.p1), label: "P1 (A)", badge: !hide }) + M("p", 530, 170, { state: o(s.p2), label: "P2 (B)", badge: !hide, flip: true });
+    h += M("n", 330, 410, { state: o(s.n1), label: "N1 (A)", badge: !hide }) + M("n", 410, 570, { state: o(s.n2), label: "N2 (B)", badge: !hide, flip: true });
+    h += '<text x="370" y="60" text-anchor="middle" font-size="14" fill="' + P + '">PMOS in PARALLEL</text>';
+    h += '<text x="470" y="495" font-size="14" fill="#243b64">NMOS in SERIES</text>';
+  } else {
+    h += L("370,30 370,110") + L("370,230 370,270") + L("370,390 370,470");
+    h += L("250,470 490,470") + L("250,470 250,500") + L("490,470 490,500") + L("250,620 250,650") + L("490,620 490,650") + L("250,650 490,650") + L("370,650 370,690");
+    h += dot(370, 470) + dot(370, 650) + dot(370, oy);
+    h += L("260,170 110,170") + L("110,170 110,560") + L("110,560 140,560") + L("480,330 720,330") + L("720,330 720,560") + L("720,560 600,560");
+    h += M("p", 330, 170, { state: o(s.p1), label: "P1 (A)", badge: !hide }) + M("p", 410, 330, { state: o(s.p2), label: "P2 (B)", badge: !hide, flip: true });
+    h += M("n", 210, 560, { state: o(s.n1), label: "N1 (A)", badge: !hide }) + M("n", 530, 560, { state: o(s.n2), label: "N2 (B)", badge: !hide, flip: true });
+    h += '<text x="450" y="70" font-size="14" fill="' + P + '">PMOS in SERIES</text>';
+    h += '<text x="370" y="455" text-anchor="middle" font-size="14" fill="#243b64" dy="0"></text>';
+    h += '<text x="370" y="600" text-anchor="middle" font-size="14" fill="#243b64">NMOS in PARALLEL</text>';
+  }
+  /* inputs and output */
+  h += L("90," + ay + " 110," + ay) + dot(110, ay);
+  h += '<rect x="10" y="' + (ay - 22) + '" width="80" height="44" rx="22" fill="#243b64"/><text x="50" y="' + (ay + 7) + '" text-anchor="middle" font-size="20" font-weight="bold" fill="#fff">' + (hide === 2 ? "A" : "A = " + a) + '</text>';
+  h += L("720," + ay + " 735," + ay) + dot(720, ay);
+  h += '<rect x="735" y="' + (ay - 22) + '" width="80" height="44" rx="22" fill="#243b64"/><text x="775" y="' + (ay + 7) + '" text-anchor="middle" font-size="20" font-weight="bold" fill="#fff">' + (hide === 2 ? "B" : "B = " + b) + '</text>';
+  h += L("370," + oy + " 546," + oy);
+  h += '<circle cx="590" cy="' + oy + '" r="44" fill="' + (hide ? "#fff" : (s.y ? "#243b64" : "#fff")) + '" stroke="#243b64" stroke-width="4"/>';
+  h += '<text x="590" y="' + (oy + 9) + '" text-anchor="middle" font-size="24" font-weight="bold" fill="' + (hide ? "#243b64" : (s.y ? "#fff" : "#243b64")) + '">' + (hide === 2 ? "Y" : "Y = " + (hide ? "?" : s.y)) + '</text>';
+  if (marks) {
+    var MP = nand ? { p1: [176, 120], p2: [564, 120], n1: [296, 360], n2: [444, 520] } : { p1: [296, 120], p2: [444, 280], n1: [176, 510], n2: [564, 510] };
+    MP.y = [660, oy - 56];
+    Object.keys(MP).forEach(function (k) {
+      if (marks[k] === undefined) return;
+      h += '<circle cx="' + MP[k][0] + '" cy="' + MP[k][1] + '" r="16" fill="' + (marks[k] ? "#2e7d32" : "#c62828") + '"/><text x="' + MP[k][0] + '" y="' + (MP[k][1] + 6) + '" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">' + (marks[k] ? "✓" : "✗") + '</text>';
+    });
+  }
+  /* animated conduction paths */
+  if (!hide) {
+    if (nand) {
+      if (s.p1) h += F("370,30 370,80 250,80 " + T(210, 170, 1) + " 250,260 370,260 370," + oy);
+      if (s.p2) h += F("370,30 370,80 490,80 " + T(530, 170, 1, true) + " 490,260 370,260 370," + oy);
+      if (s.down) h += F("370," + oy + " 370,350 " + T(330, 410, 1) + " " + T(410, 570, 1, true) + " 370,680");
+    } else {
+      if (s.up) h += F("370,30 " + T(330, 170, 1) + " " + T(410, 330, 1, true) + " 370," + oy);
+      if (s.n1) h += F("370," + oy + " 370,470 250,470 " + T(210, 560, 1) + " 250,650 370,650 370,690");
+      if (s.n2) h += F("370," + oy + " 370,470 490,470 " + T(530, 560, 1, true) + " 490,650 370,650 370,690");
+    }
+  }
+  return h + '</svg>';
+}
+
+function mkSec(kind) {
+  var K = GK[kind], x = function (i) { return i + "_" + kind; }, k = "'" + kind + "'";
+  var gl = "";
+  COMBOS.forEach(function (c) { gl += "<tr><td>" + c[0] + "</td><td>" + c[1] + "</td><td>" + fn(kind, c[0], c[1]) + "</td></tr>"; });
+  var sel = function (id, lab, opts) { return lab + ' <select id="' + x(id) + '"><option value="">?</option>' + opts.map(function (o) { return "<option>" + o + "</option>"; }).join("") + '</select> <span id="' + x("m" + id) + '"></span> '; };
+  var onoff = ["ON", "OFF"];
+  return '<section class="card"><h3>' + K.n + ' CMOS ' + K.name + ' Gate</h3>' +
+    '<p class="lead">First the <b>gate-level</b> symbol, then the <b>transistor-level</b> circuit that builds it. <b>' + K.expr + '</b></p>' +
+    '<div class="two"><div class="sym">' + gsym(kind) + '</div><div class="sym"><table class="tt"><tr><th>A</th><th>B</th><th>Y</th></tr>' + gl + '</table></div></div>' +
+    '<h4>Transistor-level ' + K.name + ': change the inputs</h4>' +
+    '<div class="ctl"><button id="' + x("a0") + '" onclick="gSet(' + k + ',\'a\',0)">A = 0</button><button id="' + x("a1") + '" onclick="gSet(' + k + ',\'a\',1)">A = 1</button> &nbsp; ' +
+    '<button id="' + x("b0") + '" onclick="gSet(' + k + ',\'b\',0)">B = 0</button><button id="' + x("b1") + '" onclick="gSet(' + k + ',\'b\',1)">B = 1</button></div>' +
+    '<div class="diagram" id="' + x("dg") + '"></div><div class="chipsrow" id="' + x("chips") + '"></div>' +
+    '<div class="status" id="' + x("st") + '">Choose input values above.</div>' +
+    '<div style="overflow-x:auto"><table class="tt" id="' + x("tt") + '"></table></div>' +
+    '<div class="def">' + K.why + '</div></section>' +
+    '<section class="card"><h3>Predict the ' + K.name + ' circuit</h3><p class="lead">The inputs are fixed. Decide the state of every transistor and the output, then press CHECK.</p>' +
+    '<div class="diagram" id="' + x("dgp") + '"></div><p class="lead" style="text-align:center">Inputs: <b>A = <span id="' + x("pa") + '">0</span>, B = <span id="' + x("pb") + '">0</span></b></p>' +
+    '<div class="pg">' + sel("sp1", "P1", onoff) + sel("sp2", "P2", onoff) + sel("sn1", "N1", onoff) + sel("sn2", "N2", onoff) + sel("sy", "Y", ["0", "1"]) + '</div>' +
+    '<div class="btns" style="text-align:center"><button onclick="gCheck(' + k + ')">CHECK ANSWER</button><button class="alt" onclick="gHint(' + k + ')">GET HINT</button><button class="alt" onclick="gNew(' + k + ')">TRY AGAIN</button><button class="alt" onclick="gSol(' + k + ')">SHOW SOLUTION</button></div>' +
+    '<div class="fb" id="' + x("fb") + '"></div></section>' +
+    '<section class="card"><h3>Lesson ' + K.n + ' checklist</h3><ul class="check" style="padding-left:0"><li id="' + x("k0") + '"></li><li id="' + x("k1") + '"></li></ul>' +
+    '<div class="done" id="' + x("done") + '">✅ Lesson ' + K.n + ' completed. ' + K.next + '</div></section>';
+}
+
+function gSet(kind, w, v) {
+  var S = GS[kind]; S[w] = v; S.seen[S.a + "" + S.b] = true; gUpd(kind);
+}
+function gUpd(kind) {
+  var S = GS[kind], K = GK[kind], x = function (i) { return i + "_" + kind; }, a = S.a, b = S.b, s = gst(kind, a, b);
+  $(x("dg")).innerHTML = gd(kind, a, b, false);
+  ["a0", "a1", "b0", "b1"].forEach(function (id) {
+    var w = id[0], v = +id[1];
+    $(x(id)).className = (S[w] === v && S.seen[a + "" + b]) ? "on" : "";
+  });
+  var chip = function (t, on) { return '<span class="' + (on ? "on" : "") + '">' + t + '</span>'; };
+  $(x("chips")).innerHTML = chip("Pull-up (PMOS): " + (s.up ? "path to V<sub>DD</sub>" : "no path"), s.up) + chip("Pull-down (NMOS): " + (s.down ? "path to GND" : "no path"), s.down) + chip("Y = " + s.y, true);
+  $(x("st")).innerHTML = "<b>A = " + a + ", B = " + b + ":</b> P1 " + yn(s.p1) + ", P2 " + yn(s.p2) + ", N1 " + yn(s.n1) + ", N2 " + yn(s.n2) + ". " +
+    (s.up ? "There is a conducting path from V<sub>DD</sub> to the output" : "The output is connected to GND through the NMOS network") + ", so <b>Y = " + s.y + "</b>.";
+  var t = "<tr><th>A</th><th>B</th><th>P1</th><th>P2</th><th>N1</th><th>N2</th><th>Y</th></tr>";
+  COMBOS.forEach(function (c) {
+    var q = gst(kind, c[0], c[1]);
+    t += '<tr class="' + (c[0] === a && c[1] === b ? "cur" : "") + '"><td>' + c[0] + "</td><td>" + c[1] + "</td><td>" + yn(q.p1) + "</td><td>" + yn(q.p2) + "</td><td>" + yn(q.n1) + "</td><td>" + yn(q.n2) + "</td><td>" + q.y + "</td></tr>";
+  });
+  $(x("tt")).innerHTML = t;
+  gProg(kind);
+}
+
+/* prediction task: cycles through the four input combinations */
+function gNew(kind) {
+  var S = GS[kind], x = function (i) { return i + "_" + kind; };
+  S.pi = (S.pi + 1) % 4; S.shown = false;
+  var c = COMBOS[S.pi];
+  $(x("pa")).textContent = c[0]; $(x("pb")).textContent = c[1];
+  $(x("dgp")).innerHTML = gd(kind, c[0], c[1], true);
+  ["sp1", "sp2", "sn1", "sn2", "sy"].forEach(function (i) { $(x(i)).value = ""; $(x("m" + i)).textContent = ""; });
+  $(x("fb")).className = "fb"; $(x("fb")).innerHTML = "";
+}
+function gExp(kind) {
+  var c = COMBOS[GS[kind].pi], s = gst(kind, c[0], c[1]);
+  return { sp1: yn(s.p1), sp2: yn(s.p2), sn1: yn(s.n1), sn2: yn(s.n2), sy: "" + s.y };
+}
+function gCheck(kind) {
+  var S = GS[kind], x = function (i) { return i + "_" + kind; }, e = gExp(kind), f = $(x("fb")), all = true, bad = [];
+  var ids = ["sp1", "sp2", "sn1", "sn2", "sy"];
+  for (var i = 0; i < ids.length; i++) if (!$(x(ids[i])).value) { f.className = "fb hint"; f.textContent = "Answer all five parts first, then press CHECK ANSWER."; return; }
+  ids.forEach(function (id) {
+    var ok = $(x(id)).value === e[id]; if (!ok) all = false;
+    var m = $(x("m" + id)); m.textContent = ok ? "✓" : "✗"; m.style.color = ok ? "#2e7d32" : "#c62828";
+  });
+  var c = COMBOS[S.pi];
+  $(x("dgp")).innerHTML = gd(kind, c[0], c[1], false);
+  if (all) {
+    f.className = "fb ok"; f.innerHTML = "✓ <b>Correct.</b> Y = " + e.sy + " because " + (e.sy === "1" ? "a PMOS path to V<sub>DD</sub> conducts." : "the NMOS network connects the output to GND.");
+    if (!S.shown) { S.done[S.pi] = true; gProg(kind); }
+  } else {
+    f.className = "fb no"; f.innerHTML = "✗ <b>Incorrect.</b> The circuit above now shows the real states. Compare, then press TRY AGAIN for the next input combination.";
+  }
+}
+function gHint(kind) {
+  var x = function (i) { return i + "_" + kind; };
+  $(x("fb")).className = "fb hint";
+  $(x("fb")).innerHTML = "💡 <b>Hint:</b> PMOS is ON when its gate is 0 and NMOS is ON when its gate is 1. P1 and N1 use input A; P2 and N2 use input B. Then check whether the " + (kind === "nand" ? "parallel PMOS pair has a conducting branch, or whether both series NMOS are ON." : "series PMOS pair are both ON, or whether either parallel NMOS is ON.");
+}
+function gSol(kind) {
+  var S = GS[kind], x = function (i) { return i + "_" + kind; }, e = gExp(kind), c = COMBOS[S.pi];
+  Object.keys(e).forEach(function (id) { $(x(id)).value = e[id]; $(x("m" + id)).textContent = ""; });
+  $(x("dgp")).innerHTML = gd(kind, c[0], c[1], false);
+  S.shown = true;
+  $(x("fb")).className = "fb sol"; $(x("fb")).innerHTML = "<b>Solution shown.</b> Press TRY AGAIN and answer the next combination yourself to earn credit.";
+}
+function gProg(kind) {
+  var S = GS[kind], K = GK[kind], x = function (i) { return i + "_" + kind; };
+  var seen = Object.keys(S.seen).length, done = Object.keys(S.done).length;
+  $(x("k0")).textContent = (seen >= 4 ? "✅" : "⬜") + " Try all 4 input combinations in the circuit (" + Math.min(seen, 4) + " / 4)";
+  $(x("k1")).textContent = (done >= 3 ? "✅" : "⬜") + " Predict 3 input combinations correctly (" + Math.min(done, 3) + " / 3)";
+  if (seen >= 4 && done >= 3) M3.flag(K.flag, true);
+  $(x("done")).style.display = M3.flag(K.flag) ? "block" : "none";
+}
+["nand", "nor"].forEach(function (kind) {
+  $(GK[kind].sec).innerHTML = mkSec(kind);
+  $("dg_" + kind).innerHTML = gd(kind, 0, 0, false);
+  $("tt_" + kind).innerHTML = "";
+  gNew(kind);
+  if (M3.flag(GK[kind].flag)) { GS[kind].seen = { "00": 1, "01": 1, "10": 1, "11": 1 }; GS[kind].done = { 0: 1, 1: 1, 2: 1 }; }
+  gProg(kind);
+});
+/* ================= 3.5 / 3.6 circuit builder and checker ================= */
+function cbL(x) { return { k: "t", type: "", inp: x }; }
+function cbS() { return { k: "g", op: "S", kids: [].slice.call(arguments) }; }
+function cbP() { return { k: "g", op: "P", kids: [].slice.call(arguments) }; }
+function cbDual(n) { return n.k === "t" ? { k: "t", type: "", inp: n.inp } : { k: "g", op: n.op === "S" ? "P" : "S", kids: n.kids.map(cbDual) }; }
+function cbType(n, t) { return n.k === "t" ? { k: "t", type: t, inp: n.inp } : { k: "g", op: n.op, kids: n.kids.map(function (c) { return cbType(c, t); }) }; }
+function cbNorm(n) {
+  if (n.k === "t") return n;
+  var kids = [];
+  n.kids.forEach(function (c) { var m = cbNorm(c); if (!m) return; if (m.k === "g" && m.op === n.op) kids = kids.concat(m.kids); else kids.push(m); });
+  if (!kids.length) return null;
+  if (kids.length === 1) return kids[0];
+  return { k: "g", op: n.op, kids: kids };
+}
+function cbCanon(n, mode) {
+  n = cbNorm(n); if (!n) return "0";
+  if (n.k === "t") return mode === "shape" ? "x" : (n.inp || "?");
+  var ks = n.kids.map(function (c) { return cbCanon(c, mode); }); ks.sort();
+  return n.op + "(" + ks.join(",") + ")";
+}
+function cbLeaves(n, a) { a = a || []; if (n.k === "t") a.push(n); else n.kids.forEach(function (c) { cbLeaves(c, a); }); return a; }
+function cbEval(n, v) {
+  if (n.k === "t") { if (!n.inp) return false; return n.type === "N" ? v[n.inp] === 1 : (n.type === "P" ? v[n.inp] === 0 : false); }
+  if (!n.kids.length) return false;
+  return n.op === "S" ? n.kids.every(function (c) { return cbEval(c, v); }) : n.kids.some(function (c) { return cbEval(c, v); });
+}
+
+var CBS = [
+  { t: "NOT gate", expr: "Y = NOT(A)", ins: ["A"], pd: cbL("A"),
+    q: [["One NMOS driven by A", 1], ["Two NMOS in series", 0], ["Two NMOS in parallel", 0], ["One PMOS driven by A", 0]] },
+  { t: "NAND gate", expr: "Y = NOT(A · B)", ins: ["A", "B"], pd: cbS(cbL("A"), cbL("B")),
+    q: [["NMOS A and B in series", 1], ["NMOS A and B in parallel", 0], ["A single NMOS", 0], ["PMOS A and B in series", 0]] },
+  { t: "NOR gate", expr: "Y = NOT(A + B)", ins: ["A", "B"], pd: cbP(cbL("A"), cbL("B")),
+    q: [["NMOS A and B in parallel", 1], ["NMOS A and B in series", 0], ["A single NMOS", 0], ["PMOS A and B in parallel", 0]] },
+  { t: "Boolean function 1", expr: "Y = NOT(A · B)", ins: ["A", "B"], pd: cbS(cbL("A"), cbL("B")),
+    q: [["Series: Y = 0 only when A · B = 1, so both NMOS must conduct", 1], ["Parallel: Y = 0 when A or B is 1", 0], ["Only one NMOS is needed", 0], ["A PMOS network pulls Y down", 0]] },
+  { t: "Boolean function 2", expr: "Y = NOT(A + B)", ins: ["A", "B"], pd: cbP(cbL("A"), cbL("B")),
+    q: [["Parallel: Y = 0 when A or B is 1, so either NMOS can conduct", 1], ["Series: both NMOS must conduct", 0], ["Only one NMOS is needed", 0], ["A PMOS network pulls Y down", 0]] },
+  { t: "Compound function", expr: "Y = NOT((A · B) + C)", ins: ["A", "B", "C"], pd: cbP(cbS(cbL("A"), cbL("B")), cbL("C")),
+    q: [["(A and B in series) in parallel with C", 1], ["(A and B in parallel) in series with C", 0], ["A, B and C all in series", 0], ["A, B and C all in parallel", 0]] }
+];
+var CB = {};
+var CBA = CBS.concat([
+  { t: "3-input NAND", expr: "Y = NOT(A · B · C)", ins: ["A", "B", "C"], pd: cbS(cbL("A"), cbL("B"), cbL("C")) },
+  { t: "3-input NOR", expr: "Y = NOT(A + B + C)", ins: ["A", "B", "C"], pd: cbP(cbL("A"), cbL("B"), cbL("C")) },
+  { t: "OAI gate", expr: "Y = NOT((A + B) · C)", ins: ["A", "B", "C"], pd: cbS(cbP(cbL("A"), cbL("B")), cbL("C")) }
+]);
+
+function cbInit(pre, ci, tester) {
+  var b = CB[pre] || (CB[pre] = {});
+  b.ch = CBA[ci]; b.ci = ci; b.tester = !!tester; b.tv = {};
+  b.pu = { k: "g", op: "S", kids: [] }; b.pd = { k: "g", op: "S", kids: [] };
+  b.ends = { pu: ["", ""], pd: ["", ""] };
+  b.fails = 0; b.shown = false; b.res = "";
+  cbDraw(pre);
+}
+function cbGet(root, path) { var n = root; if (path) path.split(".").forEach(function (i) { n = n.kids[+i]; }); return n; }
+function cbAdd(pre, net, path, what) {
+  var b = CB[pre], g = cbGet(b[net], path);
+  g.kids.push(what === "t" ? { k: "t", type: net === "pu" ? "P" : "N", inp: "" } : { k: "g", op: what, kids: [] });
+  cbDraw(pre);
+}
+function cbDel(pre, net, path) {
+  var b = CB[pre], parts = path.split("."), idx = +parts.pop(), par = cbGet(b[net], parts.join("."));
+  par.kids.splice(idx, 1); cbDraw(pre);
+}
+function cbSet(pre, net, path, key, val) { cbGet(CB[pre][net], path)[key] = val; cbDraw(pre); }
+function cbEnd(pre, net, i, val) { CB[pre].ends[net][i] = val; cbDraw(pre); }
+function cbClear(pre) { var b = CB[pre]; b.pu = { k: "g", op: "S", kids: [] }; b.pd = { k: "g", op: "S", kids: [] }; b.ends = { pu: ["", ""], pd: ["", ""] }; b.shown = false; b.res = ""; cbDraw(pre); }
+function cbTry(pre) { CB[pre].res = ""; cbDraw(pre); }
+
+function cbOpts(list, sel, labels) { return list.map(function (o) { return '<option value="' + o + '"' + (sel === o ? " selected" : "") + ">" + ((labels && labels[o]) || o) + "</option>"; }).join(""); }
+function cbEd(pre, net, n, path, root) {
+  var b = CB[pre], q = function (f, x) { return f + "('" + pre + "','" + net + "','" + path + "'" + (x || "") + ")"; };
+  if (n.k === "t") {
+    return '<div class="lf"><svg viewBox="-80 -66 130 132" width="54">' + M3.mos(n.type === "N" ? "n" : "p", 0, 0, {}) + '</svg>' +
+      '<select onchange="' + q("cbSet", ",'type',this.value") + '">' + cbOpts(["P", "N"], n.type, { P: "PMOS", N: "NMOS" }) + '</select>' +
+      '<select onchange="' + q("cbSet", ",'inp',this.value") + '"><option value="">input?</option>' + cbOpts(b.ch.ins, n.inp) + '</select>' +
+      '<button class="x" onclick="' + q("cbDel") + '">✕</button></div>';
+  }
+  var kids = n.kids.map(function (c, i) { return cbEd(pre, net, c, path ? path + "." + i : "" + i, false); }).join("") || '<i style="color:#888">empty: add transistors or groups</i>';
+  return '<div class="gp ' + (n.op === "P" ? "par" : "") + '"><div class="gh"><select onchange="' + q("cbSet", ",'op',this.value") + '">' + cbOpts(["S", "P"], n.op, { S: "Series group", P: "Parallel group" }) + '</select>' +
+    '<button onclick="' + q("cbAdd", ",'t'") + '">+ Transistor</button><button onclick="' + q("cbAdd", ",'S'") + '">+ Series group</button><button onclick="' + q("cbAdd", ",'P'") + '">+ Parallel group</button>' +
+    (root ? "" : '<button class="x" onclick="' + q("cbDel") + '">✕</button>') + '</div><div class="kids ' + (n.op === "S" ? "col" : "row") + '">' + kids + '</div></div>';
+}
+
+/* live preview of the student's own circuit */
+function cbLay(n) {
+  n = cbNorm(n); if (!n) return null;
+  var W = function (p) { return '<polyline points="' + p + '" stroke="#243b64" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'; };
+  if (n.k === "t") return { w: 200, h: 140, px: 100, draw: function (bx, by) {
+    return M3.mos(n.type === "N" ? "n" : "p", bx + 60, by + 70, {}) + '<text x="' + (bx + 4) + '" y="' + (by + 60) + '" font-size="17" font-weight="bold" fill="#c62828">' + (n.inp || "?") + '</text>'; } };
+  var ls = n.kids.map(cbLay);
+  if (n.op === "S") {
+    var X = Math.max.apply(0, ls.map(function (l) { return l.px; }));
+    var w = Math.max.apply(0, ls.map(function (l) { return X - l.px + l.w; })), h = ls.reduce(function (t, l) { return t + l.h; }, 0);
+    return { w: w, h: h, px: X, draw: function (bx, by) {
+      var t = "", y = by;
+      ls.forEach(function (l, i) { t += l.draw(bx + X - l.px, y); if (i < ls.length - 1) t += W((bx + X) + "," + (y + l.h - 10) + " " + (bx + X) + "," + (y + l.h + 10)); y += l.h; });
+      return t; } };
+  }
+  var x = 0, ps = [];
+  ls.forEach(function (l) { ps.push(x + l.px); x += l.w; });
+  var H = Math.max.apply(0, ls.map(function (l) { return l.h; }));
+  return { w: x, h: H, px: (ps[0] + ps[ps.length - 1]) / 2, draw: function (bx, by) {
+    var t = "", xx = 0;
+    ls.forEach(function (l, i) { t += l.draw(bx + xx, by); if (l.h < H) t += W((bx + ps[i]) + "," + (by + l.h - 10) + " " + (bx + ps[i]) + "," + (by + H - 10)); xx += l.w; });
+    t += W((bx + ps[0]) + "," + (by + 10) + " " + (bx + ps[ps.length - 1]) + "," + (by + 10));
+    t += W((bx + ps[0]) + "," + (by + H - 10) + " " + (bx + ps[ps.length - 1]) + "," + (by + H - 10));
+    return t; } };
+}
+function cbPrev(b) {
+  var A = cbLay(b.pu), B = cbLay(b.pd), oy = 64, W2 = function (p) { return '<polyline points="' + p + '" stroke="#243b64" stroke-width="4" fill="none"/>'; };
+  var net = function (L, ox, title, ends, col) {
+    if (!L) return { w: 240, h: 60, svg: '<text x="' + (ox + 120) + '" y="' + (oy + 40) + '" text-anchor="middle" font-size="16" fill="#888">' + title + ': add transistors</text>' };
+    var s = '<text x="' + (ox + L.w / 2) + '" y="16" text-anchor="middle" font-size="16" font-weight="bold" fill="' + col + '">' + title + '</text>';
+    s += L.draw(ox, oy);
+    s += W2((ox + L.px) + "," + (oy + 10) + " " + (ox + L.px) + "," + (oy - 22)) + '<text x="' + (ox + L.px) + '" y="' + (oy - 28) + '" text-anchor="middle" font-size="17" font-weight="bold" fill="#243b64">' + (ends[0] || "?") + '</text>';
+    s += W2((ox + L.px) + "," + (oy + L.h - 10) + " " + (ox + L.px) + "," + (oy + L.h + 22)) + '<text x="' + (ox + L.px) + '" y="' + (oy + L.h + 42) + '" text-anchor="middle" font-size="17" font-weight="bold" fill="#243b64">' + (ends[1] || "?") + '</text>';
+    return { w: L.w, h: L.h, svg: s };
+  };
+  var n1 = net(A, 20, "Pull-up (PMOS)", b.ends.pu, "#b3261e"), n2 = net(B, 20 + n1.w + 80, "Pull-down (NMOS)", b.ends.pd, "#243b64");
+  var Wt = 20 + n1.w + 80 + n2.w + 20, Ht = oy + Math.max(n1.h, n2.h) + 60;
+  return '<svg viewBox="-10 0 ' + (Wt + 10) + ' ' + Ht + '" style="width:100%;max-height:520px" role="img" aria-label="Your circuit">' + n1.svg + n2.svg + '</svg>';
+}
+
+function cbDraw(pre) {
+  var b = CB[pre];
+  var es = function (net, i) { return '<select onchange="cbEnd(\'' + pre + '\',\'' + net + '\',' + i + ',this.value)"><option value="">?</option>' + cbOpts(["VDD", "GND", "Y"], b.ends[net][i]) + '</select>'; };
+  var bt = function (label, fn, alt, extra) { return '<button ' + (alt ? 'class="alt" ' : "") + (extra || "") + ' onclick="' + fn + '(\'' + pre + '\'' + (fn === "cbChk" ? ",'" + label[1] + "'" : "") + ')">' + (fn === "cbChk" ? label[0] : label) + '</button>'; };
+  var h = '<div class="cbw"><div class="cbnet"><h4 style="color:#b3261e;margin-top:0">Pull-up network</h4>' + cbEd(pre, "pu", b.pu, "", true) +
+    '<p>Top end → ' + es("pu", 0) + ' &nbsp; Bottom end → ' + es("pu", 1) + '</p></div>' +
+    '<div class="cbnet"><h4 style="color:#243b64;margin-top:0">Pull-down network</h4>' + cbEd(pre, "pd", b.pd, "", true) +
+    '<p>Top end → ' + es("pd", 0) + ' &nbsp; Bottom end → ' + es("pd", 1) + '</p></div></div>';
+  h += '<h4>Your circuit so far</h4><div class="diagram">' + cbPrev(b) + '</div>';
+  h += '<div class="cbbtn">' + bt(["CHECK PULL-UP", "pu"], "cbChk") + bt(["CHECK PULL-DOWN", "pd"], "cbChk") + bt(["CHECK CONNECTIONS", "cn"], "cbChk") + bt(["CHECK CIRCUIT", "all"], "cbChk") + '</div>';
+  h += '<div class="cbbtn">' + bt("GET HINT", "cbHintBtn", true) + bt("TRY AGAIN", "cbTry", true) + bt("CLEAR CIRCUIT", "cbClear", true) +
+       '<button class="alt" id="cbsol_' + pre + '" onclick="cbSol(\'' + pre + '\')" ' + (b.fails >= 2 ? "" : "disabled") + '>SHOW SOLUTION' + (b.fails >= 2 ? "" : " (after 2 tries)") + '</button></div>';
+  if (b.tester) {
+    h += '<h4>Test your circuit</h4><div class="ctl">' + b.ch.ins.map(function (x) { if (b.tv[x] === undefined) b.tv[x] = 0; return '<button onclick="cbTog(\'' + pre + '\',\'' + x + '\')">' + x + ' = ' + b.tv[x] + '</button>'; }).join(" ") + '</div><div class="status">' + cbSim(b) + '</div>';
+  }
+  h += '<div id="cbres_' + pre + '">' + b.res + '</div>';
+  $("cb_" + pre).innerHTML = h;
+}
+
+function cbTog(pre, x) { var b = CB[pre]; b.tv[x] = b.tv[x] ? 0 : 1; cbDraw(pre); }
+function cbSim(b) {
+  var e = b.ends, has = function (a, x) { return a.indexOf(x) > -1; };
+  if (!(has(e.pu, "VDD") && has(e.pu, "Y") && has(e.pd, "Y") && has(e.pd, "GND"))) return "Connect the pull-up between V<sub>DD</sub> and Y, and the pull-down between Y and GND, to test the circuit.";
+  var v = {}; b.ch.ins.forEach(function (x) { v[x] = b.tv[x] || 0; });
+  var up = cbEval(b.pu, v), dn = cbEval(b.pd, v);
+  var r = up && !dn ? "Y = 1 (the PMOS network connects Y to V<sub>DD</sub>)" : (!up && dn ? "Y = 0 (the NMOS network connects Y to GND)" : (up && dn ? "⚠ short circuit: both networks conduct" : "⚠ floating output: no network conducts"));
+  return "Pull-up: " + (up ? "conducts" : "OFF") + " · Pull-down: " + (dn ? "conducts" : "OFF") + " → <b>" + r + "</b>";
+}
+function cbReport(b) {
+  var a = cbAtoms(b), R = [["PMOS network", a.puCount && a.puShape, 15], ["NMOS network", a.pdCount && a.pdShape, 15], ["Series/parallel topology", a.puShape && a.pdShape, 10], ["Input connections", a.puInp && a.pdInp, 15], ["V<sub>DD</sub> connection", a.vdd, 10], ["GND connection", a.gnd, 10], ["Output connection", a.out, 10], ["Truth-table behaviour", a.beh, 15]];
+  var sc = 0, h = '<div class="rep">';
+  R.forEach(function (x) { if (x[1]) sc += x[2]; h += '<div class="rl"><span>' + x[0] + '</span><span class="dots"></span><b style="color:' + (x[1] ? "#2e7d32" : "#c62828") + '">' + (x[1] ? "✓" : "✗") + '</b></div>'; });
+  return { a: a, sc: sc, html: h + "</div>" };
+}
+function cbAtoms(b) {
+  var sp = b.ch, k = cbLeaves(sp.pd).length, ePD = cbType(sp.pd, "N"), ePU = cbType(cbDual(sp.pd), "P");
+  var lu = cbLeaves(b.pu), ld = cbLeaves(b.pd), cnt = function (l, t) { return l.filter(function (x) { return x.type === t; }).length; };
+  var has = function (arr, x) { return arr.indexOf(x) > -1; }, a = { k: k };
+  a.puCount = lu.length === k && cnt(lu, "P") === k;
+  a.pdCount = ld.length === k && cnt(ld, "N") === k;
+  a.puShape = cbCanon(b.pu, "shape") === cbCanon(ePU, "shape");
+  a.pdShape = cbCanon(b.pd, "shape") === cbCanon(ePD, "shape");
+  a.puInp = cbCanon(b.pu, "inp") === cbCanon(ePU, "inp");
+  a.pdInp = cbCanon(b.pd, "inp") === cbCanon(ePD, "inp");
+  a.vdd = has(b.ends.pu, "VDD") && !has(b.ends.pu, "GND");
+  a.gnd = has(b.ends.pd, "GND") && !has(b.ends.pd, "VDD");
+  a.out = has(b.ends.pu, "Y") && has(b.ends.pd, "Y");
+  var bad = [], ins = sp.ins, n = 1 << ins.length;
+  for (var m = 0; m < n; m++) {
+    var v = {}; ins.forEach(function (x, i) { v[x] = (m >> (ins.length - 1 - i)) & 1; });
+    var up = cbEval(b.pu, v), dn = cbEval(b.pd, v), ex = cbEval(ePD, v) ? "0" : "1";
+    var got = up && !dn ? "1" : (!up && dn ? "0" : (up && dn ? "short" : "float"));
+    if (got !== ex) bad.push(ins.map(function (x) { return x + "=" + v[x]; }).join(", ") + " gives " + (got === "short" ? "a short circuit (both networks conduct)" : (got === "float" ? "a floating output (no network conducts)" : "Y = " + got)) + ", but Y should be " + ex);
+  }
+  a.beh = bad.length === 0; a.bad = bad;
+  return a;
+}
+function cbShapeHint(name, st, ex) {
+  var s = cbNorm(st), e = cbNorm(ex);
+  if (!s) return "The " + name + " network is empty. Add transistors.";
+  var sl = cbLeaves(s).length, el = cbLeaves(e).length;
+  if (sl !== el) return "The " + name + " network needs " + el + " transistor" + (el > 1 ? "s" : "") + "; you have placed " + sl + ".";
+  var so = s.k === "g" ? s.op : "", eo = e.k === "g" ? e.op : "";
+  if (so !== eo) return "The top-level connection of the " + name + " network should be " + (eo === "S" ? "SERIES" : "PARALLEL") + ".";
+  return "The top level is right, but check the inner groups: decide which transistors share a series branch and which share a parallel branch.";
+}
+var CBORD = { pu: ["puCount", "puShape", "puInp"], pd: ["pdCount", "pdShape", "pdInp"], cn: ["vdd", "gnd", "out"], all: ["puCount", "pdCount", "puShape", "pdShape", "puInp", "pdInp", "vdd", "gnd", "out", "beh"] };
+function cbHintFor(b, a, mode) {
+  var ePD = cbType(b.ch.pd, "N"), ePU = cbType(cbDual(b.ch.pd), "P"), keys = CBORD[mode];
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i]; if (a[key]) continue;
+    switch (key) {
+      case "puCount": return "The pull-up network uses only PMOS transistors: " + a.k + " of them for this gate.";
+      case "pdCount": return "The pull-down network uses only NMOS transistors: " + a.k + " of them for this gate.";
+      case "puShape": return cbShapeHint("pull-up", b.pu, ePU);
+      case "pdShape": return cbShapeHint("pull-down", b.pd, ePD);
+      case "puInp": case "pdInp": return "Check the gate inputs. Every input must drive one PMOS in the pull-up and one NMOS in the pull-down, and every transistor needs an input selected.";
+      case "vdd": return "The pull-up network must connect V<sub>DD</sub> to the output Y.";
+      case "gnd": return "The pull-down network must connect the output Y to GND.";
+      case "out": return "Both networks must meet at the output Y. Set one end of each network to Y.";
+      case "beh": return "Look at this case: " + a.bad[0] + ".";
+    }
+  }
+  return "";
+}
+function cbChk(pre, mode) {
+  var b = CB[pre], a = cbAtoms(b), I = function (l, ok) { return { l: l, ok: ok }; }, items;
+  if (mode === "pu") items = [I("PMOS transistors: correct number and type", a.puCount), I("PMOS arrangement (series / parallel)", a.puShape), I("PMOS gate inputs", a.puInp)];
+  else if (mode === "pd") items = [I("NMOS transistors: correct number and type", a.pdCount), I("NMOS arrangement (series / parallel)", a.pdShape), I("NMOS gate inputs", a.pdInp)];
+  else if (mode === "cn") items = [I("VDD connection", a.vdd), I("GND connection", a.gnd), I("Output connection", a.out)];
+  else items = [I("Correct number of PMOS", a.puCount), I("Correct number of NMOS", a.pdCount), I("Correct PMOS arrangement", a.puShape), I("Correct NMOS arrangement", a.pdShape), I("Correct input connections", a.puInp && a.pdInp), I("Correct VDD connection", a.vdd), I("Correct GND connection", a.gnd), I("Correct output connection", a.out), I("Truth-table behaviour", a.beh)];
+  var ok = items.every(function (x) { return x.ok; }), r = "";
+  items.forEach(function (x) { r += '<div class="ck ' + (x.ok ? "ok" : "no") + '">' + (x.ok ? "✓ " : "✗ ") + x.l + "</div>"; });
+  if (ok && mode === "all") {
+    r += '<div class="fb ok">✓ <b>Circuit topology is correct!</b> ' + cbTT(b) + cbCredit(pre, b) + '</div>';
+  } else if (ok) {
+    r += '<div class="fb ok">✓ This part is correct. Continue with the rest of the circuit.</div>';
+  } else {
+    b.fails++;
+    r += '<div class="fb no">✗ <b>' + (mode === "all" ? "Circuit is not correct." : "This part is not correct.") + '</b><br>💡 Hint: ' + cbHintFor(b, a, mode) + '</div>';
+    if (b.fails >= 2) { var sb = $("cbsol_" + pre); if (sb) { sb.disabled = false; sb.textContent = "SHOW SOLUTION"; } }
+  }
+  b.res = r; $("cbres_" + pre).innerHTML = r;
+}
+function cbTT(b) {
+  var ins = b.ch.ins, t = '<table class="tt"><tr>' + ins.map(function (x) { return "<th>" + x + "</th>"; }).join("") + "<th>Y</th></tr>", n = 1 << ins.length, ePD = cbType(b.ch.pd, "N");
+  for (var m = 0; m < n; m++) { var v = {}; ins.forEach(function (x, i) { v[x] = (m >> (ins.length - 1 - i)) & 1; });
+    t += "<tr>" + ins.map(function (x) { return "<td>" + v[x] + "</td>"; }).join("") + "<td>" + (cbEval(ePD, v) ? 0 : 1) + "</td></tr>"; }
+  return "<div style='overflow-x:auto'>" + t + "</table></div>";
+}
+function cbHintBtn(pre) {
+  var b = CB[pre], a = cbAtoms(b), h = cbHintFor(b, a, "all");
+  var built = cbLeaves(b.pu).length + cbLeaves(b.pd).length;
+  var msg = built === 0 ? "Start with the pull-down network: the NMOS network that connects Y to GND. The pull-up is its dual: series becomes parallel and parallel becomes series." : h;
+  b.res = '<div class="fb hint">💡 <b>Hint:</b> ' + msg + "</div>"; $("cbres_" + pre).innerHTML = b.res;
+}
+function cbSol(pre) {
+  var b = CB[pre];
+  b.pd = cbType(cbNormKeep(b.ch.pd), "N"); b.pu = cbType(cbNormKeep(cbDual(b.ch.pd)), "P");
+  b.ends = { pu: ["VDD", "Y"], pd: ["Y", "GND"] }; b.shown = true;
+  b.res = '<div class="fb sol"><b>Solution shown.</b> Press CLEAR CIRCUIT and build it yourself to earn credit for this activity.</div>';
+  cbDraw(pre);
+}
+function cbNormKeep(n) { return n.k === "t" ? { k: "t", type: "", inp: n.inp } : { k: "g", op: n.op, kids: n.kids.map(cbNormKeep) }; }
+
+/* ---------- credit and progress ---------- */
+var L36 = []; try { L36 = JSON.parse(localStorage.getItem("vlsiM3_s36_list") || "[]"); } catch (e) {}
+var idDone = {}, cur6 = 0, idOrder = [];
+function cbCredit(pre, b) {
+  if (b.shown) return "<br>The solution was shown earlier, so no credit yet. Press CLEAR CIRCUIT and build it again yourself.";
+  if (pre === "b5") { M3.flag("vlsiM3_s35", true); prog5(); return "<br>Lesson 3.5 completed."; }
+  if (pre === "b12") {
+    if (L312.indexOf(c12) < 0) { L312.push(c12); sv("vlsiM3_s312_list", L312); }
+    prog12(); return "<br>Target " + (c12 + 1) + " completed.";
+  }
+  if (pre === "b13") {
+    var S3 = S13[c13]; S3.built = true; if (S3.st < 5) S3.st = 5; render13();
+    return "<br>Circuit built. Continue with Step 6 (truth table) below.";
+  }
+  if (pre === "b14") return "";
+  if (pre === "b9") {
+    if (S9[c9].sol) return "<br>You used SHOW SOLUTION in an earlier step, so no credit yet. Press RESTART THIS TABLE and complete it without solutions.";
+    if (L39.indexOf(c9) < 0) { L39.push(c9); sv("vlsiM3_s39_list", L39); }
+    prog9(); return "<br>Truth table " + (c9 + 1) + " completed.";
+  }
+  if (!idDone[b.ci]) return "<br>Answer the pull-down question above to earn credit for this challenge.";
+  if (L36.indexOf(b.ci) < 0) { L36.push(b.ci); localStorage.setItem("vlsiM3_s36_list", JSON.stringify(L36)); }
+  prog6(); return "<br>Challenge " + (b.ci + 1) + " completed.";
+}
+function prog5() {
+  $("k5").textContent = (M3.flag("vlsiM3_s35") ? "✅" : "⬜") + " Build the CMOS NAND circuit correctly (without SHOW SOLUTION)";
+  $("done5").style.display = M3.flag("vlsiM3_s35") ? "block" : "none";
+}
+function prog6() {
+  var t = "";
+  CBS.forEach(function (c, i) { t += "<li>" + (L36.indexOf(i) > -1 ? "✅" : "⬜") + " Challenge " + (i + 1) + ": " + c.t + " (" + c.expr + ")</li>"; });
+  $("k6").innerHTML = t;
+  [].forEach.call($("chips6").children, function (b, i) { b.className = i === cur6 ? "on" : ""; b.textContent = (L36.indexOf(i) > -1 ? "✅ " : "") + (i + 1); });
+  if (L36.length >= CBS.length) M3.flag("vlsiM3_s36", true);
+  $("done6").style.display = M3.flag("vlsiM3_s36") ? "block" : "none";
+}
+
+/* 3.5 page */
+$("sec35").innerHTML =
+  '<section class="card"><h3>3.5 Gate-Level → Transistor-Level</h3>' +
+  '<p class="lead">You are given a <b>gate-level</b> circuit. Build the <b>CMOS transistor-level</b> circuit that implements it.</p>' +
+  '<div class="two"><div class="sym">' + gsym("nand") + '<p><b>Y = NOT(A · B)</b></p></div>' +
+  '<div class="def"><b>How to use the builder</b><br>1. In the <b>pull-down</b> network add transistors (NMOS) and choose each input.<br>2. Decide: <b>series</b> or <b>parallel</b> group.<br>3. Build the <b>pull-up</b> network (PMOS).<br>4. Set where each network connects: V<sub>DD</sub>, GND or Y.<br>5. Press <b>CHECK CIRCUIT</b>. You can also check one part at a time.</div></div></section>' +
+  '<section class="card"><h3>Circuit builder: NAND gate</h3><div id="cb_b5"></div></section>' +
+  '<section class="card"><h3>Lesson 3.5 checklist</h3><ul class="check" style="padding-left:0"><li id="k5"></li></ul><div class="done" id="done5">✅ Lesson 3.5 completed. Challenges (3.6) come next.</div></section>';
+cbInit("b5", 1); prog5();
+
+/* 3.6 page */
+$("sec36").innerHTML =
+  '<section class="card"><h3>3.6 Gate-Level → Transistor-Level Challenges</h3><p class="lead">Six challenges, from easy to hard. Pick one.</p><div class="chips" id="chips6"></div></section>' +
+  '<section class="card"><h3 id="ch6t"></h3><p class="lead" id="ch6e"></p>' +
+  '<h4>Step 1: Identify the pull-down network</h4><div id="idq"></div>' +
+  '<h4>Step 2: Build and check the circuit</h4><div id="cb_b6"></div></section>' +
+  '<section class="card"><h3>Lesson 3.6 checklist</h3><ul class="check" style="padding-left:0" id="k6"></ul><div class="done" id="done6">✅ Lesson 3.6 completed. The analysis activities (3.7 onwards) come next.</div></section>';
+CBS.forEach(function (c, i) { var b = document.createElement("button"); b.textContent = i + 1; b.onclick = function () { pick6(i); }; $("chips6").appendChild(b); });
+function pick6(i) {
+  cur6 = i; var c = CBS[i];
+  $("ch6t").textContent = "Challenge " + (i + 1) + ": " + c.t;
+  $("ch6e").innerHTML = "Boolean expression: <b>" + c.expr + "</b>";
+  idOrder = c.q.map(function (x, j) { return j; }).sort(function () { return Math.random() - .5; });
+  renderId(); cbInit("b6", i); prog6();
+}
+function renderId() {
+  var c = CBS[cur6], done = idDone[cur6];
+  $("idq").innerHTML = "<p>Which pull-down (NMOS) network implements <b>" + c.expr + "</b>?</p>" +
+    idOrder.map(function (j) { return '<label class="opt2" id="io' + j + '"><input type="radio" name="idr" value="' + j + '"> ' + c.q[j][0] + "</label>"; }).join("") +
+    '<div class="btns"><button onclick="chkId()">CHECK</button> <button class="alt" onclick="hintId()">GET HINT</button></div><div class="fb" id="idfb"></div>' +
+    (done ? '<div class="fb ok" style="display:block">✓ Identified correctly.</div>' : "");
+}
+function chkId() {
+  var c = CBS[cur6], r = document.querySelector('input[name="idr"]:checked'), f = $("idfb");
+  if (!r) { f.className = "fb hint"; f.textContent = "Select an answer first."; return; }
+  var ok = c.q[+r.value][1] === 1;
+  f.className = "fb " + (ok ? "ok" : "no");
+  f.innerHTML = ok ? "✓ <b>Correct.</b> Now build the pull-up (its dual) and the pull-down below." : "✗ <b>Incorrect.</b> Think about when the output must be 0: which NMOS transistors must conduct together, and which alone?";
+  if (ok) idDone[cur6] = true;
+}
+function hintId() { $("idfb").className = "fb hint"; $("idfb").innerHTML = "💡 <b>Hint:</b> the output is pulled to 0 when the function inside NOT( ) is 1. AND terms need transistors in <b>series</b>; OR terms need transistors in <b>parallel</b>."; }
+pick6(0);
+if (M3.flag("vlsiM3_s36")) { L36 = [0, 1, 2, 3, 4, 5]; prog6(); }
+/* ================= 3.7 – 3.11 analysis activities ================= */
+function ld(k) { try { return JSON.parse(localStorage.getItem(k) || "[]"); } catch (e) { return []; } }
+function sv(k, l) { localStorage.setItem(k, JSON.stringify(l)); }
+function so(list) { return list.map(function (o) { return "<option>" + o + "</option>"; }).join(""); }
+function sl(id, list) { return '<select id="' + id + '"><option value="">?</option>' + so(list) + '</select>'; }
+function chipRef(id, cur, done, n) {
+  var c = $(id); if (!c.children.length) for (var i = 0; i < n; i++) (function (i) { var b = document.createElement("button"); c.appendChild(b); })(i);
+  [].forEach.call(c.children, function (b, i) { b.className = i === cur ? "on" : ""; b.textContent = (done.indexOf(i) > -1 ? "✅ " : "") + (i + 1); });
+}
+function fbx(id, cls, html) { var f = $(id); f.className = "fb " + cls; f.innerHTML = html; }
+function ckList(id, items, flagKey, doneId) {
+  $(id).innerHTML = items.map(function (x) { return "<li>" + (x[0] ? "✅" : "⬜") + " " + x[1] + "</li>"; }).join("");
+  if (items.every(function (x) { return x[0]; })) M3.flag(flagKey, true);
+  $(doneId).style.display = M3.flag(flagKey) ? "block" : "none";
+}
+function chipBtns(id, n, fn) { var c = $(id); c.className = "chips"; for (var i = 0; i < n; i++) (function (i) { var b = document.createElement("button"); b.onclick = function () { fn(i); }; c.appendChild(b); })(i); }
+var GATES = ["NOT", "NAND", "NOR", "AND", "OR"];
+function ttH(kind) {
+  var ins = kind === "not" ? ["A"] : ["A", "B"], n = 1 << ins.length;
+  var t = '<table class="tt"><tr>' + ins.map(function (x) { return "<th>" + x + "</th>"; }).join("") + "<th>Y</th></tr>";
+  for (var m = 0; m < n; m++) {
+    var a = ins.length === 1 ? m : (m >> 1) & 1, b = m & 1, y = kind === "not" ? (a ? 0 : 1) : (kind === "nand" ? (a && b ? 0 : 1) : (a || b ? 0 : 1));
+    t += "<tr>" + (ins.length === 1 ? "<td>" + a + "</td>" : "<td>" + a + "</td><td>" + b + "</td>") + "<td>" + y + "</td></tr>";
+  }
+  return "<div style='overflow-x:auto'>" + t + "</table></div>";
+}
+var BTN = function (a, b, c, d) { return '<div class="btns" style="text-align:center"><button onclick="' + a + '">CHECK ANSWER</button><button class="alt" onclick="' + b + '">GET HINT</button><button class="alt" onclick="' + c + '">TRY AGAIN</button><button class="alt" onclick="' + d + '">SHOW SOLUTION</button></div>'; };
+
+/* ---------- 3.7 Transistor-level -> gate-level ---------- */
+var P7 = [
+  { k: "not", gate: "NOT", expr: "Y = NOT(A)", why: "One PMOS and one NMOS share the same input: this is the CMOS inverter." },
+  { k: "nand", gate: "NAND", expr: "Y = NOT(A · B)", why: "PMOS in parallel and NMOS in series: Y is 0 only when both inputs are 1. This is a NAND gate." },
+  { k: "nor", gate: "NOR", expr: "Y = NOT(A + B)", why: "PMOS in series and NMOS in parallel: Y is 1 only when both inputs are 0. This is a NOR gate." }
+];
+var EXPRS = ["Y = NOT(A)", "Y = NOT(A · B)", "Y = NOT(A + B)", "Y = A · B", "Y = A + B"];
+var L37 = ld("vlsiM3_s37_list"), c7 = 0, sh7 = {};
+$("sec37").innerHTML =
+  '<section class="card"><h3>3.7 Transistor-Level → Gate-Level</h3><p class="lead">Now work in reverse. Look at the transistor circuit and decide which logic gate it implements.</p><div id="chips7"></div>' +
+  '<div class="diagram" id="dg7"></div>' +
+  '<div class="pg">Gate: ' + sl("g7", GATES) + ' <span id="mg7"></span> Boolean expression: ' + sl("e7", EXPRS) + ' <span id="me7"></span></div>' +
+  BTN("chk7()", "hint7()", "show7(c7)", "sol7()") + '<div class="fb" id="fb7"></div><div id="tt7"></div></section>' +
+  '<section class="card"><h3>Lesson 3.7 checklist</h3><ul class="check" style="padding-left:0" id="k7"></ul><div class="done" id="done7">✅ Lesson 3.7 completed.</div></section>';
+chipBtns("chips7", 3, function (i) { show7(i); });
+function show7(i) {
+  c7 = i; $("dg7").innerHTML = P7[i].k === "not" ? inv(0, 2) : gd(P7[i].k, 0, 0, 2);
+  $("g7").value = ""; $("e7").value = ""; $("mg7").textContent = ""; $("me7").textContent = "";
+  $("fb7").className = "fb"; $("fb7").innerHTML = ""; $("tt7").innerHTML = ""; chipRef("chips7", c7, L37, 3);
+}
+function chk7() {
+  var p = P7[c7], g = $("g7").value, e = $("e7").value;
+  if (!g || !e) return fbx("fb7", "hint", "Choose both the gate and the expression, then press CHECK ANSWER.");
+  mark("mg7", g === p.gate); mark("me7", e === p.expr);
+  if (g === p.gate && e === p.expr) {
+    fbx("fb7", "ok", "✓ <b>Correct.</b> " + p.why); $("tt7").innerHTML = "<p><b>Truth table:</b></p>" + ttH(p.k);
+    if (!sh7[c7] && L37.indexOf(c7) < 0) { L37.push(c7); sv("vlsiM3_s37_list", L37); }
+    prog7();
+  } else fbx("fb7", "no", "✗ <b>Incorrect.</b> Check the parts marked ✗. Use GET HINT if you are stuck.");
+  chipRef("chips7", c7, L37, 3);
+}
+function hint7() { fbx("fb7", "hint", "💡 <b>Hint:</b> look at the pull-down (NMOS) network. One NMOS = NOT. Two NMOS in series = NAND. Two NMOS in parallel = NOR. A single-stage CMOS gate always inverts, so it is never AND or OR."); }
+function sol7() { var p = P7[c7]; $("g7").value = p.gate; $("e7").value = p.expr; sh7[c7] = true; fbx("fb7", "sol", "<b>Solution:</b> " + p.why + " Press TRY AGAIN and answer it yourself for credit."); $("tt7").innerHTML = ttH(p.k); }
+function prog7() { ckList("k7", P7.map(function (p, i) { return [L37.indexOf(i) > -1, "Identify the " + p.gate + " circuit"]; }), "vlsiM3_s37", "done7"); chipRef("chips7", c7, L37, 3); }
+show7(0); prog7();
+
+/* ---------- 3.8 Transistor states ---------- */
+var C8 = [];
+["nand", "nor"].forEach(function (k) { COMBOS.forEach(function (c) { C8.push({ k: k, a: c[0], b: c[1], id: k + c[0] + c[1] }); }); });
+C8.sort(function () { return Math.random() - .5; });
+var i8 = 0, L38 = ld("vlsiM3_s38_list"), sh8 = false;
+$("sec38").innerHTML =
+  '<section class="card"><h3>3.8 Transistor States</h3><p class="lead">Inputs are given. Decide which transistors are ON, then the output. Wrong answers are marked directly on the circuit.</p>' +
+  '<p class="lead" id="ttl8" style="text-align:center"></p><div class="diagram" id="dg8"></div>' +
+  '<div class="pg">' + [["s8p1", "P1", ["ON", "OFF"]], ["s8p2", "P2", ["ON", "OFF"]], ["s8n1", "N1", ["ON", "OFF"]], ["s8n2", "N2", ["ON", "OFF"]], ["s8y", "Y", ["0", "1"]]].map(function (x) { return x[1] + " " + sl(x[0], x[2]) + ' <span id="m' + x[0] + '"></span>'; }).join(" ") + '</div>' +
+  BTN("chk8()", "hint8()", "i8++;new8()", "sol8()") + '<div class="fb" id="fb8"></div></section>' +
+  '<section class="card"><h3>Lesson 3.8 checklist</h3><ul class="check" style="padding-left:0"><li id="k8"></li></ul><div class="done" id="done8">✅ Lesson 3.8 completed.</div></section>';
+function new8() {
+  var p = C8[i8 % C8.length]; sh8 = false;
+  $("ttl8").innerHTML = "<b>" + p.k.toUpperCase() + " gate</b> with inputs <b>A = " + p.a + ", B = " + p.b + "</b>";
+  $("dg8").innerHTML = gd(p.k, p.a, p.b, 1);
+  ["s8p1", "s8p2", "s8n1", "s8n2", "s8y"].forEach(function (id) { $(id).value = ""; $("m" + id).textContent = ""; });
+  $("fb8").className = "fb"; $("fb8").innerHTML = "";
+}
+function exp8() { var p = C8[i8 % C8.length], t = gst(p.k, p.a, p.b); return { s8p1: yn(t.p1), s8p2: yn(t.p2), s8n1: yn(t.n1), s8n2: yn(t.n2), s8y: "" + t.y }; }
+function chk8() {
+  var p = C8[i8 % C8.length], e = exp8(), ids = Object.keys(e), all = true, mk = {};
+  for (var i = 0; i < ids.length; i++) if (!$(ids[i]).value) return fbx("fb8", "hint", "Answer all five parts first.");
+  ids.forEach(function (id) { var ok = $(id).value === e[id]; if (!ok) all = false; mark("m" + id, ok); mk[id.slice(2)] = ok; });
+  $("dg8").innerHTML = gd(p.k, p.a, p.b, false, mk);
+  if (all) {
+    fbx("fb8", "ok", "✓ <b>Correct.</b> Every state is right.");
+    if (!sh8 && L38.indexOf(p.id) < 0) { L38.push(p.id); sv("vlsiM3_s38_list", L38); }
+    prog8();
+  } else fbx("fb8", "no", "✗ <b>Incorrect.</b> The circuit now shows the real states, with ✗ on the parts you got wrong. Press TRY AGAIN for a new problem.");
+}
+function hint8() { fbx("fb8", "hint", "💡 <b>Hint:</b> PMOS is ON when its gate is 0; NMOS is ON when its gate is 1. P1 and N1 use A, P2 and N2 use B. Y = 1 if a PMOS path to V<sub>DD</sub> exists, otherwise Y = 0."); }
+function sol8() { var e = exp8(); Object.keys(e).forEach(function (id) { $(id).value = e[id]; $("m" + id).textContent = ""; }); sh8 = true; fbx("fb8", "sol", "<b>Solution shown.</b> Press TRY AGAIN for a new problem and answer it yourself for credit."); }
+function prog8() { ckList("k8", [[L38.length >= 4, "Answer 4 different problems correctly (" + Math.min(L38.length, 4) + " / 4)"]], "vlsiM3_s38", "done8"); }
+new8(); prog8();
+
+/* ---------- 3.9 Truth table -> transistor-level circuit ---------- */
+var T9 = [
+  { kind: "nand", ci: 1, fn: "Y = NOT(A · B)", gate: "NAND", pu: "Parallel", pd: "Series", h0: "Y is 0 in only one row: when A = 1 and B = 1.", hu: "Y must be 1 when A = 0 <i>or</i> B = 0, so either PMOS alone can conduct.", hd: "Y must be 0 only when A = 1 <i>and</i> B = 1, so both NMOS must conduct together." },
+  { kind: "nor", ci: 2, fn: "Y = NOT(A + B)", gate: "NOR", pu: "Series", pd: "Parallel", h0: "Y is 1 in only one row: when A = 0 and B = 0.", hu: "Y must be 1 only when A = 0 <i>and</i> B = 0, so both PMOS must conduct together.", hd: "Y must be 0 when A = 1 <i>or</i> B = 1, so either NMOS alone can conduct." }
+];
+var c9 = 0, L39 = ld("vlsiM3_s39_list"), S9 = [{ st: 0, ans: {}, fb: {}, sol: false }, { st: 0, ans: {}, fb: {}, sol: false }];
+$("sec39").innerHTML =
+  '<section class="card"><h3>3.9 Truth Table → Transistor-Level Circuit</h3><p class="lead">Start from a truth table and work step by step to the transistor circuit. Each step is checked before the next appears.</p><div id="chips9"></div>' +
+  '<div id="tt9" style="text-align:center"></div><div id="stg9"></div>' +
+  '<div id="cb9wrap" style="display:none"><h4>Step 5: Build the transistor-level circuit</h4><div id="cb_b9"></div></div>' +
+  '<div class="btns" style="text-align:center"><button class="alt" onclick="restart9()">RESTART THIS TABLE</button></div></section>' +
+  '<section class="card"><h3>Lesson 3.9 checklist</h3><ul class="check" style="padding-left:0" id="k9"></ul><div class="done" id="done9">✅ Lesson 3.9 completed.</div></section>';
+chipBtns("chips9", 2, function (i) { c9 = i; cbInit("b9", T9[i].ci); render9(); });
+function st9(t) {
+  return [{ q: "Step 1: Which logic function does the truth table describe?", o: ["Y = A · B", "Y = A + B", "Y = NOT(A · B)", "Y = NOT(A + B)"], ok: t.fn, h: t.h0 },
+    { q: "Step 2: Which gate is this?", o: GATES, ok: t.gate, h: "One 0 in the output column points to NAND; one 1 points to NOR." },
+    { q: "Step 3: How are the PMOS transistors of the pull-up network connected?", o: ["Series", "Parallel"], ok: t.pu, h: t.hu },
+    { q: "Step 4: How are the NMOS transistors of the pull-down network connected?", o: ["Series", "Parallel"], ok: t.pd, h: t.hd }];
+}
+function render9() {
+  var t = T9[c9], S = S9[c9], ss = st9(t);
+  $("tt9").innerHTML = '<table class="tt"><tr><th>A</th><th>B</th><th>Y</th></tr>' + COMBOS.map(function (c) { return "<tr><td>" + c[0] + "</td><td>" + c[1] + "</td><td>" + gst(t.kind, c[0], c[1]).y + "</td></tr>"; }).join("") + "</table>";
+  var h = "";
+  for (var i = 0; i < Math.min(S.st + 1, 4); i++) {
+    var f = S.fb[i];
+    h += '<div class="q"><p><b>' + ss[i].q + '</b></p>' + sl("a9_" + i, ss[i].o) + ' <button onclick="chk9(' + i + ')">CHECK</button> <button class="alt" onclick="hint9(' + i + ')">GET HINT</button> <button class="alt" onclick="sol9(' + i + ')">SHOW SOLUTION</button>' +
+      '<div class="fb ' + (f ? f[0] : "") + '" id="f9_' + i + '">' + (f ? f[1] : "") + '</div></div>';
+  }
+  $("stg9").innerHTML = h;
+  for (i = 0; i < Math.min(S.st + 1, 4); i++) if (S.ans[i]) $("a9_" + i).value = S.ans[i];
+  $("cb9wrap").style.display = S.st >= 4 ? "block" : "none";
+  chipRef("chips9", c9, L39, 2); prog9();
+}
+function chk9(i) {
+  var t = T9[c9], S = S9[c9], q = st9(t)[i], v = $("a9_" + i).value;
+  if (!v) { S.fb[i] = ["hint", "Choose an answer first."]; return render9(); }
+  S.ans[i] = v;
+  if (v === q.ok) { S.fb[i] = ["ok", "✓ <b>Correct.</b>"]; if (S.st === i) S.st = i + 1; }
+  else S.fb[i] = ["no", "✗ <b>Incorrect.</b> Use GET HINT if you are stuck."];
+  render9();
+}
+function hint9(i) { S9[c9].fb[i] = ["hint", "💡 <b>Hint:</b> " + st9(T9[c9])[i].h]; S9[c9].ans[i] = $("a9_" + i).value; render9(); }
+function sol9(i) { var S = S9[c9], q = st9(T9[c9])[i]; S.ans[i] = q.ok; S.sol = true; S.fb[i] = ["sol", "<b>Solution:</b> " + q.ok + ". Press CHECK to continue. Use RESTART THIS TABLE to earn credit without solutions."]; render9(); }
+function restart9() { S9[c9] = { st: 0, ans: {}, fb: {}, sol: false }; cbInit("b9", T9[c9].ci); render9(); }
+function prog9() { ckList("k9", T9.map(function (t, i) { return [L39.indexOf(i) > -1, "Complete the " + t.gate + " truth table (all 5 steps, no solutions)"]; }), "vlsiM3_s39", "done9"); }
+cbInit("b9", T9[0].ci); render9();
+
+/* ---------- 3.10 Circuit -> truth table ---------- */
+var P10 = [{ k: "nand", n: "NAND" }, { k: "nor", n: "NOR" }, { k: "comp", n: "compound" }];
+var c10 = 0, L310 = ld("vlsiM3_s310_list"), sh10 = false;
+function comp10() { var sp = CBS[5]; return { ch: sp, pu: cbType(cbDual(sp.pd), "P"), pd: cbType(sp.pd, "N"), ends: { pu: ["VDD", "Y"], pd: ["Y", "GND"] } }; }
+function rows10() {
+  var comp = P10[c10].k === "comp", ins = comp ? ["A", "B", "C"] : ["A", "B"], n = 1 << ins.length, r = [];
+  for (var m = 0; m < n; m++) { var v = {}; ins.forEach(function (x, i) { v[x] = (m >> (ins.length - 1 - i)) & 1; }); r.push(v); }
+  return { ins: ins, r: r };
+}
+function y10(v) { var p = P10[c10]; return p.k === "comp" ? (cbEval(comp10().pd, v) ? 0 : 1) : gst(p.k, v.A, v.B).y; }
+function ex10(v) {
+  var p = P10[c10];
+  if (p.k === "comp") { var b = comp10(), up = cbEval(b.pu, v), dn = cbEval(b.pd, v); return "the PMOS pull-up network " + (up ? "conducts" : "is OFF") + " and the NMOS pull-down network " + (dn ? "conducts" : "is OFF") + ", so Y = " + (up ? 1 : 0) + "."; }
+  var s = gst(p.k, v.A, v.B);
+  return "P1 " + yn(s.p1) + ", P2 " + yn(s.p2) + ", N1 " + yn(s.n1) + ", N2 " + yn(s.n2) + ". " + (s.up ? "A PMOS path connects Y to V<sub>DD</sub>" : "The NMOS network connects Y to GND") + ", so Y = " + s.y + ".";
+}
+$("sec310").innerHTML =
+  '<section class="card"><h3>3.10 Transistor-Level Circuit → Truth Table</h3><p class="lead">Study the circuit and complete its truth table. Then see which conduction path gives each output.</p><div id="chips10"></div>' +
+  '<div class="diagram" id="dg10"></div><div style="overflow-x:auto" id="tb10"></div>' +
+  BTN("chk10()", "hint10()", "show10(c10)", "sol10()") + '<div class="fb" id="fb10"></div><div id="ex10"></div></section>' +
+  '<section class="card"><h3>Lesson 3.10 checklist</h3><ul class="check" style="padding-left:0" id="k10"></ul><div class="done" id="done10">✅ Lesson 3.10 completed.</div></section>';
+chipBtns("chips10", 3, function (i) { show10(i); });
+function show10(i) {
+  c10 = i; sh10 = false; var p = P10[i], R = rows10();
+  $("dg10").innerHTML = p.k === "comp" ? cbPrev(comp10()) : gd(p.k, 0, 0, 2);
+  var t = '<table class="tt"><tr>' + R.ins.map(function (x) { return "<th>" + x + "</th>"; }).join("") + "<th>Y</th><th></th></tr>";
+  R.r.forEach(function (v, k) { t += '<tr id="r10_' + k + '">' + R.ins.map(function (x) { return "<td>" + v[x] + "</td>"; }).join("") + "<td>" + sl("y10_" + k, ["0", "1"]) + '</td><td id="m10_' + k + '"></td></tr>'; });
+  $("tb10").innerHTML = t + "</table>";
+  $("fb10").className = "fb"; $("fb10").innerHTML = ""; $("ex10").innerHTML = ""; chipRef("chips10", c10, L310, 3);
+}
+function chk10() {
+  var R = rows10(), good = 0, f = $("fb10");
+  for (var k = 0; k < R.r.length; k++) if (!$("y10_" + k).value) return fbx("fb10", "hint", "Fill in Y for every row first.");
+  R.r.forEach(function (v, k) {
+    var ok = +$("y10_" + k).value === y10(v); if (ok) good++;
+    $("r10_" + k).style.background = ok ? "#e8f5e9" : "#ffebee"; $("m10_" + k).textContent = ok ? "✓" : "✗"; $("m10_" + k).style.color = ok ? "#2e7d32" : "#c62828";
+  });
+  var all = good === R.r.length;
+  fbx("fb10", all ? "ok" : "no", all ? "✓ <b>Correct.</b> Score: " + good + " / " + R.r.length + "." : "✗ <b>Score: " + good + " / " + R.r.length + ".</b> Incorrect rows are highlighted. Read the explanations below, then press TRY AGAIN.");
+  $("ex10").innerHTML = "<h4>Why each output occurs</h4>" + R.r.map(function (v) { return "<div class='ck " + "ok" + "'><b>" + R.ins.map(function (x) { return x + "=" + v[x]; }).join(", ") + ":</b> " + ex10(v) + "</div>"; }).join("");
+  if (all && !sh10 && L310.indexOf(c10) < 0) { L310.push(c10); sv("vlsiM3_s310_list", L310); }
+  prog10();
+}
+function hint10() { fbx("fb10", "hint", "💡 <b>Hint:</b> for each row decide which transistors are ON (PMOS on 0, NMOS on 1). Y = 1 only if the PMOS network gives a path to V<sub>DD</sub>; Y = 0 if the NMOS network gives a path to GND."); }
+function sol10() { var R = rows10(); R.r.forEach(function (v, k) { $("y10_" + k).value = "" + y10(v); }); sh10 = true; fbx("fb10", "sol", "<b>Solution filled in.</b> Press TRY AGAIN and complete it yourself for credit."); }
+function prog10() { ckList("k10", P10.map(function (p, i) { return [L310.indexOf(i) > -1, "Complete the " + p.n + " circuit truth table with every row correct"]; }), "vlsiM3_s310", "done10"); chipRef("chips10", c10, L310, 3); }
+show10(0); prog10();
+
+/* ---------- 3.11 Debug the CMOS circuit ---------- */
+var ERR = ["Transistor types are swapped (PMOS / NMOS)", "Pull-up arrangement is wrong (series / parallel)", "Pull-down arrangement is wrong (series / parallel)", "V<sub>DD</sub> is not connected to the pull-up network", "GND is not connected to the pull-down network", "A gate input is connected wrongly", "The output is taken from the wrong node", "A transistor is missing or extra"];
+var OKE = { pu: ["VDD", "Y"], pd: ["Y", "GND"] }, A_ = cbL("A"), B_ = cbL("B"), C_ = cbL("C");
+function dbug(name, expr, puS, pdS, puT, pdT, ends, ans, why, hint) { return { name: name, expr: expr, pu: cbType(puS, puT), pd: cbType(pdS, pdT), ends: ends, ans: ans, why: why, hint: hint }; }
+var D11 = [
+  dbug("NAND", "Y = NOT(A · B)", cbP(A_, B_), cbP(A_, B_), "P", "N", OKE, 2, "A NAND gate needs its NMOS transistors in <b>series</b> so that Y = 0 only when A and B are both 1. Here they are in parallel.", "Compare the pull-down network with what a NAND needs."),
+  dbug("NOR", "Y = NOT(A + B)", cbP(A_, B_), cbP(A_, B_), "P", "N", OKE, 1, "A NOR gate needs its PMOS transistors in <b>series</b> so that Y = 1 only when A and B are both 0. Here they are in parallel.", "Look at the pull-up network. When must both PMOS conduct together?"),
+  dbug("NOT", "Y = NOT(A)", A_, A_, "N", "P", OKE, 0, "The pull-up network must use PMOS and the pull-down must use NMOS. Here the two types are swapped.", "Look at the transistor symbols: which has the bubble, and where should it be?"),
+  dbug("NAND", "Y = NOT(A · B)", cbP(A_, B_), cbS(A_, B_), "P", "N", { pu: ["GND", "Y"], pd: ["Y", "GND"] }, 3, "The pull-up network is connected to GND instead of V<sub>DD</sub>, so it can never pull Y up to 1.", "Read the label at each end of the pull-up network."),
+  dbug("NOR", "Y = NOT(A + B)", cbS(A_, B_), cbP(A_, B_), "P", "N", { pu: ["VDD", "Y"], pd: ["Y", "VDD"] }, 4, "The pull-down network ends at V<sub>DD</sub> instead of GND, so it cannot pull Y down to 0.", "Read the label at each end of the pull-down network."),
+  dbug("NAND", "Y = NOT(A · B)", cbP(A_, A_), cbS(A_, B_), "P", "N", OKE, 5, "Both PMOS transistors are driven by A. One of them should be driven by B.", "Check which input drives each transistor in the pull-up."),
+  dbug("compound", "Y = NOT((A · B) + C)", cbS(A_, B_, C_), cbP(cbS(A_, B_), C_), "P", "N", OKE, 1, "The pull-up is the dual of the pull-down: (A and B in parallel) in series with C. Here all three PMOS are in series.", "Take the dual of the pull-down: swap series and parallel."),
+  dbug("compound", "Y = NOT((A · B) + C)", cbS(cbP(A_, B_), C_), cbS(A_, B_), "P", "N", OKE, 7, "The pull-down network is missing the NMOS driven by C. It must have 3 transistors, like the pull-up.", "Count the transistors in each network. Are the counts equal?")
+];
+var c11 = 0, L311 = ld("vlsiM3_s311_list"), sh11 = {};
+$("sec311").innerHTML =
+  '<section class="card"><h3>3.11 Debug the CMOS Circuit</h3><p class="lead">Each circuit below has one deliberate error. Find it.</p><div id="chips11"></div>' +
+  '<p class="lead" id="ttl11"></p><div class="diagram" id="dg11"></div>' +
+  '<div id="er11"></div>' + BTN("chk11()", "hint11()", "show11(c11)", "sol11()") + '<div class="fb" id="fb11"></div></section>' +
+  '<section class="card"><h3>Lesson 3.11 checklist</h3><ul class="check" style="padding-left:0"><li id="k11"></li></ul><div class="done" id="done11">✅ Lesson 3.11 completed.</div></section>';
+chipBtns("chips11", 8, function (i) { show11(i); });
+function show11(i) {
+  c11 = i; var d = D11[i];
+  $("ttl11").innerHTML = "Problem " + (i + 1) + ": this circuit should implement a <b>" + d.name + "</b> function, <b>" + d.expr + "</b>. What is wrong?";
+  $("dg11").innerHTML = cbPrev({ pu: d.pu, pd: d.pd, ends: d.ends });
+  $("er11").innerHTML = ERR.map(function (e, j) { return '<label class="opt2" id="eo' + j + '"><input type="radio" name="er" value="' + j + '"> ' + e + "</label>"; }).join("");
+  $("fb11").className = "fb"; $("fb11").innerHTML = ""; chipRef("chips11", c11, L311, 8);
+}
+function chk11() {
+  var r = document.querySelector('input[name="er"]:checked'), d = D11[c11];
+  if (!r) return fbx("fb11", "hint", "Select the error first, then press CHECK ANSWER.");
+  if (+r.value === d.ans) {
+    fbx("fb11", "ok", "✓ <b>Correct.</b> " + d.why);
+    if (!sh11[c11] && L311.indexOf(c11) < 0) { L311.push(c11); sv("vlsiM3_s311_list", L311); }
+    prog11();
+  } else fbx("fb11", "no", "✗ <b>Incorrect.</b> That is not the error in this circuit. Use GET HINT, or TRY AGAIN.");
+}
+function hint11() { fbx("fb11", "hint", "💡 <b>Hint:</b> " + D11[c11].hint); }
+function sol11() { var d = D11[c11]; sh11[c11] = true; document.querySelector('input[value="' + d.ans + '"][name="er"]').checked = true; fbx("fb11", "sol", "<b>Solution:</b> " + ERR[d.ans] + ". " + d.why + " Press TRY AGAIN to practise; credit needs an answer without the solution."); }
+function prog11() { ckList("k11", [[L311.length >= D11.length, "Find the error in all 8 circuits (" + L311.length + " / 8)"]], "vlsiM3_s311", "done11"); chipRef("chips11", c11, L311, 8); }
+show11(0); prog11();
+/* ================= 3.12 – 3.16 ================= */
+function shufA(o) { var x = o.slice(); x.sort(function () { return Math.random() - .5; }); return x; }
+var YNQ = ["0", "1"];
+
+/* ---------- 3.12 Build the CMOS circuit ---------- */
+var T12 = [0, 1, 2, 6, 7, 5, 8], N12 = ["NOT", "NAND", "NOR", "3-input NAND", "3-input NOR", "NOT(AB + C)", "NOT((A+B)·C)"];
+var L312 = ld("vlsiM3_s312_list"), c12 = 0;
+$("sec312").innerHTML =
+  '<section class="card"><h3>3.12 Build the CMOS Circuit</h3><p class="lead">Your CMOS workbench. Choose a target, then build it from: <b>PMOS, NMOS, V<sub>DD</sub>, GND, inputs A, B, C and output Y</b>. The checker verifies the <b>topology</b> and simulates the truth table, so any valid arrangement is accepted. Use <b>Test your circuit</b> to try input combinations.</p>' +
+  '<div class="chips" id="chips12"></div><h4 id="ttl12"></h4><div id="cb_b12"></div></section>' +
+  '<section class="card"><h3>Lesson 3.12 checklist</h3><ul class="check" style="padding-left:0"><li id="k12"></li></ul><div class="done" id="done12">✅ Lesson 3.12 completed.</div></section>';
+N12.forEach(function (n, i) { var b = document.createElement("button"); b.onclick = function () { pick12(i); }; $("chips12").appendChild(b); });
+function ref12() { [].forEach.call($("chips12").children, function (b, i) { b.className = i === c12 ? "on" : ""; b.textContent = (L312.indexOf(i) > -1 ? "✅ " : "") + N12[i]; }); }
+function pick12(i) { c12 = i; var sp = CBA[T12[i]]; $("ttl12").innerHTML = "Target: " + sp.t + ": <b>" + sp.expr + "</b>"; cbInit("b12", T12[i], true); ref12(); }
+function prog12() { ckList("k12", [[L312.length >= 3, "Build 3 different circuits correctly, without SHOW SOLUTION (" + Math.min(L312.length, 3) + " / 3)"]], "vlsiM3_s312", "done12"); ref12(); }
+pick12(0); prog12();
+
+/* ---------- 3.13 Compound CMOS logic ---------- */
+function qs13(o, h) { return { o: shufA(o), ok: o[0], h: h }; }
+var F13 = [
+  { ci: 5, expr: "Y = NOT((A · B) + C)", s: [
+    Object.assign({ q: "Step 1: When does the pull-down (NMOS) network conduct?" }, qs13(["(A · B) + C = 1", "(A + B) · C = 1", "A · B · C = 1", "A + B + C = 1"], "Y = 0 exactly when the expression inside NOT( ) is 1. That tells you when the NMOS network must conduct.")),
+    Object.assign({ q: "Step 2: When does the pull-up (PMOS) network conduct?" }, qs13(["(A′ + B′) · C′ = 1", "A′ · B′ + C′ = 1", "A′ · B′ · C′ = 1", "A′ + B′ + C′ = 1"], "Y = 1 when the NMOS network is OFF. Apply De Morgan to NOT((A · B) + C).")),
+    Object.assign({ q: "Step 3: How are the PMOS transistors arranged?" }, qs13(["(A and B in parallel) in series with C", "(A and B in series) in parallel with C", "A, B and C all in series", "A, B and C all in parallel"], "The pull-up is the dual of the pull-down: swap series and parallel.")),
+    Object.assign({ q: "Step 4: How are the NMOS transistors arranged?" }, qs13(["(A and B in series) in parallel with C", "(A and B in parallel) in series with C", "A, B and C all in series", "A, B and C all in parallel"], "A · B needs series; the + C term needs a parallel branch."))] },
+  { ci: 8, expr: "Y = NOT((A + B) · C)", s: [
+    Object.assign({ q: "Step 1: When does the pull-down (NMOS) network conduct?" }, qs13(["(A + B) · C = 1", "(A · B) + C = 1", "A · B · C = 1", "A + B + C = 1"], "Y = 0 exactly when the expression inside NOT( ) is 1.")),
+    Object.assign({ q: "Step 2: When does the pull-up (PMOS) network conduct?" }, qs13(["A′ · B′ + C′ = 1", "(A′ + B′) · C′ = 1", "A′ · B′ · C′ = 1", "A′ + B′ + C′ = 1"], "Apply De Morgan to NOT((A + B) · C).")),
+    Object.assign({ q: "Step 3: How are the PMOS transistors arranged?" }, qs13(["(A and B in series) in parallel with C", "(A and B in parallel) in series with C", "A, B and C all in series", "A, B and C all in parallel"], "The pull-up is the dual of the pull-down.")),
+    Object.assign({ q: "Step 4: How are the NMOS transistors arranged?" }, qs13(["(A and B in parallel) in series with C", "(A and B in series) in parallel with C", "A, B and C all in series", "A, B and C all in parallel"], "A + B needs parallel; the · C term puts that group in series with C."))] }
+];
+var c13 = 0, L313 = ld("vlsiM3_s313_list"), S13 = [0, 1].map(function () { return { st: 0, ans: {}, fb: {}, sol: false, built: false, tt: null, ttfb: null }; });
+$("sec313").innerHTML =
+  '<section class="card"><h3>3.13 Compound CMOS Logic</h3><p class="lead">Design a compound gate step by step. Every step is checked before the next one appears.</p><div id="chips13"></div><p class="lead" id="ex13" style="text-align:center"></p><div id="stg13"></div>' +
+  '<div id="cb13wrap" style="display:none"><h4>Step 5: Build the complete transistor-level circuit</h4><div id="cb_b13"></div></div>' +
+  '<div id="tbl13"></div><div id="ver13"></div>' +
+  '<div class="btns" style="text-align:center"><button class="alt" onclick="restart13()">RESTART THIS FUNCTION</button></div></section>' +
+  '<section class="card"><h3>Lesson 3.13 checklist</h3><ul class="check" style="padding-left:0" id="k13"></ul><div class="done" id="done13">✅ Lesson 3.13 completed.</div></section>';
+chipBtns("chips13", 2, function (i) { c13 = i; cbInit("b13", F13[i].ci, true); render13(); });
+function render13() {
+  var f = F13[c13], S = S13[c13], h = "";
+  $("ex13").innerHTML = "Design: <b>" + f.expr + "</b>";
+  for (var i = 0; i < Math.min(S.st + 1, 4); i++) {
+    var fb = S.fb[i];
+    h += '<div class="q"><p><b>' + f.s[i].q + '</b></p>' + sl("a13_" + i, f.s[i].o) + ' <button onclick="chk13(' + i + ')">CHECK</button> <button class="alt" onclick="hint13(' + i + ')">GET HINT</button> <button class="alt" onclick="sol13(' + i + ')">SHOW SOLUTION</button>' +
+      '<div class="fb ' + (fb ? fb[0] : "") + '">' + (fb ? fb[1] : "") + '</div></div>';
+  }
+  $("stg13").innerHTML = h;
+  for (i = 0; i < Math.min(S.st + 1, 4); i++) if (S.ans[i]) $("a13_" + i).value = S.ans[i];
+  $("cb13wrap").style.display = S.st >= 4 ? "block" : "none";
+  /* Step 6: truth table */
+  var t = "";
+  if (S.st >= 5) {
+    var n = 8;
+    t = '<h4>Step 6: Complete the truth table</h4><div style="overflow-x:auto"><table class="tt"><tr><th>A</th><th>B</th><th>C</th><th>Y</th><th></th></tr>';
+    for (var m = 0; m < n; m++) t += '<tr id="r13_' + m + '"><td>' + ((m >> 2) & 1) + "</td><td>" + ((m >> 1) & 1) + "</td><td>" + (m & 1) + "</td><td>" + sl("y13_" + m, YNQ) + '</td><td id="m13_' + m + '"></td></tr>';
+    t += '</table></div><div class="btns"><button onclick="chkTT13()">CHECK TRUTH TABLE</button> <button class="alt" onclick="hintTT13()">GET HINT</button></div><div class="fb ' + (S.ttfb ? S.ttfb[0] : "") + '" id="fbtt13">' + (S.ttfb ? S.ttfb[1] : "") + "</div>";
+  }
+  $("tbl13").innerHTML = t;
+  if (S.st >= 5) for (m = 0; m < 8; m++) if (S.tt && S.tt[m] !== undefined) $("y13_" + m).value = S.tt[m];
+  $("ver13").innerHTML = S.st >= 6 ? '<h4>Step 7: Verify the circuit</h4><p>Your circuit and truth table are complete. Press VERIFY to run the final verification.</p><div class="btns"><button onclick="verify13()">VERIFY CIRCUIT</button></div><div id="vr13"></div>' : "";
+  chipRef("chips13", c13, L313, 2); prog13();
+}
+function chk13(i) {
+  var f = F13[c13], S = S13[c13], v = $("a13_" + i).value;
+  if (!v) { S.fb[i] = ["hint", "Choose an answer first."]; return render13(); }
+  S.ans[i] = v;
+  if (v === f.s[i].ok) { S.fb[i] = ["ok", "✓ <b>Correct.</b>"]; if (S.st === i) S.st = i + 1; }
+  else S.fb[i] = ["no", "✗ <b>Incorrect.</b> Use GET HINT if you are stuck."];
+  render13();
+}
+function hint13(i) { S13[c13].ans[i] = $("a13_" + i).value; S13[c13].fb[i] = ["hint", "💡 <b>Hint:</b> " + F13[c13].s[i].h]; render13(); }
+function sol13(i) { var S = S13[c13]; S.ans[i] = F13[c13].s[i].ok; S.sol = true; S.fb[i] = ["sol", "<b>Solution:</b> " + F13[c13].s[i].ok + ". Press CHECK to continue. Use RESTART THIS FUNCTION to earn credit without solutions."]; render13(); }
+function yTT13(m) { var v = { A: (m >> 2) & 1, B: (m >> 1) & 1, C: m & 1 }; return cbEval(cbType(CBA[F13[c13].ci].pd, "N"), v) ? 0 : 1; }
+function chkTT13() {
+  var S = S13[c13], good = 0; S.tt = {};
+  for (var m = 0; m < 8; m++) { var v = $("y13_" + m).value; if (v === "") { S.ttfb = ["hint", "Fill in every row first."]; return render13(); } S.tt[m] = v; }
+  for (m = 0; m < 8; m++) { var ok = +S.tt[m] === yTT13(m); if (ok) good++; }
+  if (good === 8) { S.ttfb = ["ok", "✓ <b>Correct.</b> All 8 rows are right."]; S.st = Math.max(S.st, 6); }
+  else S.ttfb = ["no", "✗ <b>" + good + " / 8 rows correct.</b> Rows marked ✗ are wrong."];
+  render13();
+  for (m = 0; m < 8; m++) { var ok2 = +S.tt[m] === yTT13(m); $("m13_" + m).textContent = ok2 ? "✓" : "✗"; $("m13_" + m).style.color = ok2 ? "#2e7d32" : "#c62828"; $("r13_" + m).style.background = ok2 ? "#e8f5e9" : "#ffebee"; }
+}
+function hintTT13() { S13[c13].ttfb = ["hint", "💡 <b>Hint:</b> Y = 0 whenever the NMOS network conducts. Evaluate the expression inside NOT( ) for each row."]; render13(); }
+function verify13() {
+  var S = S13[c13], b = CB.b13, rp = cbReport(b), f = "";
+  f = "<h4>Circuit Verification</h4>" + rp.html + "<p style='text-align:center'><b>Score: " + rp.sc + " / 100</b></p>";
+  if (rp.sc === 100 && S.built && S.st >= 6 && !S.sol && !b.shown) {
+    if (L313.indexOf(c13) < 0) { L313.push(c13); sv("vlsiM3_s313_list", L313); }
+    f += '<div class="fb ok">✓ <b>Verified.</b> Function ' + (c13 + 1) + " completed.</div>"; prog13();
+  } else if (rp.sc === 100) f += '<div class="fb hint">The circuit is correct, but no credit was given because a solution was shown. Press RESTART THIS FUNCTION and complete it without solutions.</div>';
+  else f += '<div class="fb no">✗ The circuit is not yet correct. Fix it in Step 5, then verify again.</div>';
+  $("vr13").innerHTML = f; chipRef("chips13", c13, L313, 2);
+}
+function restart13() { S13[c13] = { st: 0, ans: {}, fb: {}, sol: false, built: false, tt: null, ttfb: null }; cbInit("b13", F13[c13].ci, true); render13(); }
+function prog13() { ckList("k13", F13.map(function (f, i) { return [L313.indexOf(i) > -1, "Complete " + f.expr + " (all 7 steps, no solutions)"]; }), "vlsiM3_s313", "done13"); }
+cbInit("b13", F13[0].ci, true); render13();
+
+/* ---------- 3.14 CMOS design challenge ---------- */
+var P14 = [5, 8, 6, 7], FN14 = ["AND-OR-Invert (AOI) gate", "OR-AND-Invert (OAI) gate", "3-input NAND gate", "3-input NOR gate"], c14 = Math.floor(Math.random() * 4), fnOK14 = false;
+var L314 = ld("vlsiM3_s314_list");
+$("sec314").innerHTML =
+  '<section class="card"><h3>3.14 CMOS Design Challenge</h3><p class="lead">The final design task. Work on your own: no steps are given.</p><p class="lead" id="ex14" style="text-align:center"></p>' +
+  '<h4>Step 1: Identify the logic function</h4><div class="pg">' + sl("fn14", FN14) + ' <button onclick="chkFn14()">CHECK</button></div><div class="fb" id="fbf14"></div>' +
+  '<h4>Step 2: Build the circuit, connect inputs, V<sub>DD</sub>, GND and the output, and test it</h4><div id="cb_b14"></div>' +
+  '<h4>Step 3: Submit</h4><div class="btns" style="text-align:center"><button onclick="submit14()">SUBMIT FINAL CIRCUIT</button> <button class="alt" onclick="new14()">NEW CHALLENGE</button></div><div id="rep14"></div></section>' +
+  '<section class="card"><h3>Lesson 3.14 checklist</h3><ul class="check" style="padding-left:0"><li id="k14"></li></ul><div class="done" id="done14">✅ Lesson 3.14 completed. Best score: <span id="best14"></span> / 100.</div></section>';
+function new14(next) { if (next !== false) c14 = (c14 + 1) % 4; fnOK14 = false; var sp = CBA[P14[c14]]; $("ex14").innerHTML = "Boolean expression: <b>" + sp.expr + "</b>"; $("fn14").value = ""; $("fbf14").className = "fb"; $("fbf14").innerHTML = ""; $("rep14").innerHTML = ""; cbInit("b14", P14[c14], true); }
+function chkFn14() {
+  var v = $("fn14").value, ok = v === FN14[c14];
+  if (!v) return fbx("fbf14", "hint", "Choose a function first.");
+  fbx("fbf14", ok ? "ok" : "no", ok ? "✓ <b>Correct.</b> " + CBA[P14[c14]].expr + " is a " + FN14[c14] + "." : "✗ <b>Incorrect.</b> Look at the expression: which terms are ANDed and which are ORed before the NOT?");
+  fnOK14 = ok;
+}
+function submit14() {
+  var b = CB.b14, rp = cbReport(b), h = "<h4>Circuit Verification</h4>" + rp.html + "<p style='text-align:center'><b>Score: " + rp.sc + " / 100</b></p>";
+  var best = +(localStorage.getItem("vlsiM3_s314_best") || 0); if (rp.sc > best && !b.shown) localStorage.setItem("vlsiM3_s314_best", rp.sc);
+  if (rp.sc === 100) {
+    if (b.shown) h += '<div class="fb hint">The circuit is correct, but the solution was shown, so there is no credit. Press CLEAR CIRCUIT and build it yourself.</div>';
+    else if (!fnOK14) h += '<div class="fb hint">The circuit is correct. Identify the logic function in Step 1 to earn credit.</div>';
+    else { if (L314.indexOf(c14) < 0) { L314.push(c14); sv("vlsiM3_s314_list", L314); } h += '<div class="fb ok">✓ <b>Design verified. Full marks.</b></div>'; prog14(); }
+  } else {
+    b.fails++; h += '<div class="fb no">✗ <b>Not yet correct.</b> Use the check buttons and the test panel in Step 2, then submit again.</div>';
+    if (b.fails >= 2) { var sb = $("cbsol_b14"); if (sb) { sb.disabled = false; sb.textContent = "SHOW SOLUTION"; } }
+  }
+  $("rep14").innerHTML = h;
+}
+function prog14() { $("best14").textContent = localStorage.getItem("vlsiM3_s314_best") || "0"; ckList("k14", [[L314.length >= 1, "Submit a design with full marks and the function identified (no solution)"]], "vlsiM3_s314", "done14"); }
+new14(false); prog14();
+
+/* ---------- shared multiple-choice problems ---------- */
+function nw(pdS, puS, puT, pdT, ends) { return cbPrev({ pu: cbType(puS, puT || "P"), pd: cbType(pdS, pdT || "N"), ends: ends || OKE }); }
+function ttab(rows) { return '<table class="tt"><tr><th>A</th><th>B</th><th>Y</th></tr>' + rows.map(function (r) { return "<tr><td>" + r[0] + "</td><td>" + r[1] + "</td><td>" + r[2] + "</td></tr>"; }).join("") + "</table>"; }
+var AOI = function () { return nw(cbP(cbS(A_, B_), C_), cbS(cbP(A_, B_), C_)); };
+var P15 = [
+  { cat: "Gate → transistor", q: "Which pull-up (PMOS) arrangement builds this gate?", d: function () { return '<div class="sym">' + gsym("nor") + "</div>"; }, o: ["PMOS in series", "PMOS in parallel", "A single PMOS", "NMOS in series"], a: 0, w: "A NOR gives Y = 1 only when A = B = 0, so both PMOS must conduct together: series." },
+  { cat: "Transistor → gate", q: "Which gate does this circuit implement?", d: function () { return gd("nor", 0, 0, 2); }, o: GATES, a: 2, w: "PMOS in series with NMOS in parallel is a NOR gate." },
+  { cat: "Transistor → gate", q: "Which gate does this circuit implement?", d: function () { return gd("nand", 0, 0, 2); }, o: GATES, a: 1, w: "PMOS in parallel with NMOS in series is a NAND gate." },
+  { cat: "Boolean → circuit", q: "Y = NOT(A + B). How are the NMOS transistors connected?", d: function () { return ""; }, o: ["Series", "Parallel", "One NMOS only", "No NMOS needed"], a: 1, w: "Y = 0 when A or B is 1, so either NMOS alone must be able to pull Y down: parallel." },
+  { cat: "Boolean → circuit", q: "Y = NOT(A · B). Which pair of networks is correct?", d: function () { return ""; }, o: ["PMOS parallel, NMOS series", "PMOS series, NMOS parallel", "Both series", "Both parallel"], a: 0, w: "NAND: NMOS in series (both must be 1 for Y = 0), PMOS in parallel." },
+  { cat: "Truth table → circuit", q: "Which CMOS circuit implements this truth table?", d: function () { return ttab([[0, 0, 1], [0, 1, 0], [1, 0, 0], [1, 1, 0]]); }, o: ["PMOS series, NMOS parallel", "PMOS parallel, NMOS series", "One PMOS and one NMOS", "Both networks in series"], a: 0, w: "Y = 1 only for A = B = 0: a NOR gate." },
+  { cat: "Transistor states", q: "A = 1, B = 0. Which transistors are ON?", d: function () { return gd("nand", 1, 0, 1); }, o: ["P2 and N1", "P1 and N2", "P1 and P2", "N1 and N2"], a: 0, w: "P2 is ON because B = 0; N1 is ON because A = 1." },
+  { cat: "Transistor states", q: "A = 0, B = 1. Which transistors are ON?", d: function () { return gd("nor", 0, 1, 1); }, o: ["P1 and N2", "P2 and N1", "P1 and P2", "N1 and N2"], a: 0, w: "P1 is ON because A = 0; N2 is ON because B = 1." },
+  { cat: "Series / parallel", q: "How are the NMOS transistors connected here?", d: function () { return nw(cbS(A_, B_), cbP(A_, B_)); }, o: ["Series", "Parallel", "Series-parallel mix", "Not connected"], a: 0, w: "The two NMOS lie one above the other on the same path: series." },
+  { cat: "PMOS network", q: "How is the PMOS network connected?", d: function () { return nw(cbP(A_, B_), cbS(A_, B_)); }, o: ["Series", "Parallel", "Series-parallel mix", "Only one PMOS"], a: 0, w: "The PMOS transistors are stacked on one path: series." },
+  { cat: "NMOS network", q: "Describe the NMOS network.", d: AOI, o: ["(A series B) parallel C", "(A parallel B) series C", "All three in series", "All three in parallel"], a: 0, w: "A and B share a series branch, and C is a parallel branch beside it." },
+  { cat: "Debugging", q: "What is wrong with this circuit? (It should be a NAND.)", d: function () { return cbPrev(D11[0]); }, o: ERR, a: 2, w: "The NMOS transistors should be in series for a NAND." },
+  { cat: "Debugging", q: "What is wrong with this circuit? (It should be a NAND.)", d: function () { return cbPrev(D11[5]); }, o: ERR, a: 5, w: "Both PMOS use input A. One should use B." },
+  { cat: "Truth-table completion", q: "For a NAND gate with A = 1 and B = 1, what is Y?", d: function () { return gd("nand", 1, 1, 1); }, o: ["0", "1", "Floating", "Short circuit"], a: 0, w: "Both NMOS are ON in series, so Y is connected to GND." },
+  { cat: "Output prediction", q: "This circuit implements Y = NOT((A · B) + C). For A = 1, B = 1, C = 0, what is Y?", d: AOI, o: ["0", "1", "Floating", "Short circuit"], a: 0, w: "(A · B) + C = 1, so the NMOS network conducts and Y = 0." },
+  { cat: "Circuit verification", q: "Is this a correct NOR gate?", d: function () { return nw(cbP(A_, B_), cbP(A_, B_)); }, o: ["Yes", "No: the pull-up should be in series", "No: the pull-down should be in series", "No: NMOS and PMOS are swapped"], a: 1, w: "A NOR needs its PMOS in series. Here they are in parallel." }
+];
+var L315 = ld("vlsiM3_s315_list"), c15 = 0, sh15 = {}, ord15 = [];
+$("sec315").innerHTML =
+  '<section class="card"><h3>3.15 Interactive Practice Set</h3><p class="lead">16 circuit problems of different types. Complete at least 12 correctly.</p><div id="chips15"></div>' +
+  '<p class="lead"><b id="cat15"></b></p><p class="lead" id="q15"></p><div class="diagram" id="dg15"></div><div id="op15"></div>' +
+  BTN("chk15()", "hint15()", "pick15(c15)", "sol15()") + '<div class="fb" id="fb15"></div></section>' +
+  '<section class="card"><h3>Lesson 3.15 checklist</h3><ul class="check" style="padding-left:0"><li id="k15"></li></ul><div class="done" id="done15">✅ Lesson 3.15 completed.</div></section>';
+chipBtns("chips15", P15.length, function (i) { pick15(i); });
+function pick15(i) {
+  c15 = i; var p = P15[i]; ord15 = shufA(p.o.map(function (x, j) { return j; }));
+  $("cat15").textContent = "Problem " + (i + 1) + " · " + p.cat; $("q15").innerHTML = p.q;
+  var d = p.d(); $("dg15").innerHTML = d; $("dg15").style.display = d ? "block" : "none";
+  $("op15").innerHTML = ord15.map(function (j) { return '<label class="opt2"><input type="radio" name="o15" value="' + j + '"> ' + p.o[j] + "</label>"; }).join("");
+  $("fb15").className = "fb"; $("fb15").innerHTML = ""; chipRef("chips15", c15, L315, P15.length);
+}
+function chk15() {
+  var r = document.querySelector('input[name="o15"]:checked'), p = P15[c15];
+  if (!r) return fbx("fb15", "hint", "Select an answer first.");
+  if (+r.value === p.a) {
+    fbx("fb15", "ok", "✓ <b>Correct.</b> " + p.w);
+    if (!sh15[c15] && L315.indexOf(c15) < 0) { L315.push(c15); sv("vlsiM3_s315_list", L315); }
+    prog15();
+  } else fbx("fb15", "no", "✗ <b>Incorrect.</b> Use GET HINT, or press TRY AGAIN.");
+}
+function hint15() { fbx("fb15", "hint", "💡 <b>Hint:</b> PMOS is ON for 0 and NMOS is ON for 1. AND terms need series transistors, OR terms need parallel ones, and the PMOS network is the dual of the NMOS network."); }
+function sol15() { var p = P15[c15]; sh15[c15] = true; fbx("fb15", "sol", "<b>Solution:</b> " + p.o[p.a] + ". " + p.w + " This problem gives no credit now. Try the other problems."); }
+function prog15() { ckList("k15", [[L315.length >= 12, "Answer 12 of the 16 problems correctly (" + L315.length + " / 12)"]], "vlsiM3_s315", "done15"); chipRef("chips15", c15, L315, P15.length); }
+pick15(0); prog15();
+
+/* ---------- 3.16 Module quiz ---------- */
+var Q16 = [
+  { q: "In a CMOS inverter with A = 1, which transistor is ON?", d: function () { return inv(1, 1); }, o: ["NMOS", "PMOS", "Both", "Neither"], a: 0, w: "A = 1 turns the NMOS ON and the PMOS OFF, so Y = 0." },
+  { q: "The PMOS (pull-up) network connects the output to:", d: function () { return ""; }, o: ["V<sub>DD</sub>", "GND", "The input", "Another gate"], a: 0, w: "Pull-up means towards V<sub>DD</sub>." },
+  { q: "Which gate is this?", d: function () { return gd("nand", 0, 0, 2); }, o: GATES, a: 1, w: "PMOS parallel, NMOS series: NAND." },
+  { q: "Which gate is this?", d: function () { return gd("nor", 0, 0, 2); }, o: GATES, a: 2, w: "PMOS series, NMOS parallel: NOR." },
+  { q: "In a 2-input NAND the NMOS transistors are:", d: function () { return ""; }, o: ["In series", "In parallel", "Not used", "One only"], a: 0, w: "Y = 0 only when both inputs are 1: both NMOS in series." },
+  { q: "In a 2-input NOR the PMOS transistors are:", d: function () { return ""; }, o: ["In series", "In parallel", "Not used", "One only"], a: 0, w: "Y = 1 only when both inputs are 0: both PMOS in series." },
+  { q: "Y = NOT(A + B + C). How are the three PMOS transistors connected?", d: function () { return ""; }, o: ["All in series", "All in parallel", "Two series, one parallel", "Not needed"], a: 0, w: "Y = 1 only when A, B and C are all 0, so all three PMOS must conduct together." },
+  { q: "For this NAND gate, A = 1 and B = 1. What is Y?", d: function () { return gd("nand", 1, 1, 1); }, o: ["0", "1", "Floating", "Short circuit"], a: 0, w: "Both NMOS are ON in series, so Y connects to GND." },
+  { q: "For this NOR gate, A = 0 and B = 0. What is Y?", d: function () { return gd("nor", 0, 0, 1); }, o: ["1", "0", "Floating", "Short circuit"], a: 0, w: "Both PMOS are ON in series, so Y connects to V<sub>DD</sub>." },
+  { q: "Which gate does this truth table describe?", d: function () { return ttab([[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 0]]); }, o: GATES, a: 1, w: "Y = 0 only for A = B = 1: NAND." },
+  { q: "How many transistors does the CMOS gate for Y = NOT((A · B) + C) need?", d: AOI, o: ["6", "4", "5", "8"], a: 0, w: "3 PMOS and 3 NMOS." },
+  { q: "For Y = NOT((A · B) + C), the PMOS network is:", d: function () { return ""; }, o: ["(A parallel B) in series with C", "(A series B) in parallel with C", "All in series", "All in parallel"], a: 0, w: "It is the dual of the NMOS network." },
+  { q: "What is wrong with this circuit? (It should be a NOR.)", d: function () { return cbPrev(D11[1]); }, o: ERR, a: 1, w: "A NOR needs its PMOS in series." },
+  { q: "An NMOS transistor passes a strong:", d: function () { return ""; }, o: ["Logic 0", "Logic 1", "Both equally", "Neither"], a: 0, w: "NMOS pulls down well; PMOS pulls up well." },
+  { q: "NAND gate with A = 0 and B = 1. Which transistors are ON?", d: function () { return gd("nand", 0, 1, 1); }, o: ["P1 and N2", "P2 and N1", "P1 and P2", "N1 and N2"], a: 0, w: "P1 is ON (A = 0) and N2 is ON (B = 1)." },
+  { q: "Why is static power in CMOS very low?", d: function () { return ""; }, o: ["Only one network conducts at a time", "It uses no transistors", "Both networks are always ON", "It has no supply"], a: 0, w: "There is no steady path from V<sub>DD</sub> to GND." },
+  { q: "What is this circuit?", d: function () { return nw(cbS(A_, B_, C_), cbP(A_, B_, C_)); }, o: ["3-input NAND", "3-input NOR", "AOI gate", "Inverter"], a: 0, w: "PMOS in parallel and three NMOS in series: a 3-input NAND." },
+  { q: "For Y = NOT((A · B) + C), with A = 0, B = 1, C = 1, what is Y?", d: AOI, o: ["0", "1", "Floating", "Short circuit"], a: 0, w: "C = 1 makes the expression 1, so the NMOS network conducts and Y = 0." }
+];
+var QN = 13, qord16 = [], best16 = +(localStorage.getItem("vlsiM3_s316_best") || 0);
+$("sec316").innerHTML =
+  '<section class="card"><h3>3.16 Module 3 Quiz</h3><p class="lead">' + Q16.length + ' questions with circuit diagrams. You need <b>' + QN + '</b> correct to pass. Answers are shown only after you submit.</p><div id="qz16"></div>' +
+  '<div class="btns" style="text-align:center"><button onclick="grade16()">SUBMIT QUIZ</button> <button class="alt" onclick="build16()">TRY AGAIN</button></div><div id="qr16"></div></section>' +
+  '<section class="card"><h3>Lesson 3.16 checklist</h3><ul class="check" style="padding-left:0"><li id="k16"></li></ul><div class="done" id="done16">✅ Lesson 3.16 completed.</div></section>';
+function build16() {
+  qord16 = Q16.map(function (q) { return shufA(q.o.map(function (x, j) { return j; })); });
+  $("qz16").innerHTML = Q16.map(function (q, i) {
+    var d = q.d();
+    return '<div class="qcard" id="qc16_' + i + '"><p class="lead"><b>Q' + (i + 1) + '.</b> ' + q.q + "</p>" + (d ? '<div class="diagram">' + d + "</div>" : "") +
+      qord16[i].map(function (j) { return '<label class="opt2"><input type="radio" name="z' + i + '" value="' + j + '"> ' + q.o[j] + "</label>"; }).join("") + '<div id="qe16_' + i + '"></div></div>';
+  }).join("");
+  $("qr16").innerHTML = ""; window.scrollTo(0, 0);
+}
+function grade16() {
+  var sc = 0, un = 0;
+  Q16.forEach(function (q, i) { if (!document.querySelector('input[name="z' + i + '"]:checked')) un++; });
+  if (un) return ($("qr16").innerHTML = '<div class="fb hint">Please answer all questions. ' + un + " unanswered.</div>");
+  Q16.forEach(function (q, i) {
+    var r = document.querySelector('input[name="z' + i + '"]:checked'), ok = +r.value === q.a; if (ok) sc++;
+    $("qc16_" + i).className = "qcard " + (ok ? "good" : "bad");
+    $("qe16_" + i).innerHTML = '<div class="fb ' + (ok ? "ok" : "no") + '">' + (ok ? "✓ Correct. " : "✗ Incorrect. Correct answer: <b>" + q.o[q.a] + "</b>. ") + q.w + "</div>";
+  });
+  if (sc > best16) { best16 = sc; localStorage.setItem("vlsiM3_s316_best", sc); }
+  var pass = sc >= QN;
+  $("qr16").innerHTML = '<div class="fb ' + (pass ? "ok" : "no") + '"><b>Score: ' + sc + " / " + Q16.length + " (" + Math.round(sc / Q16.length * 100) + "%).</b> " + (pass ? "🎉 Passed!" : "You need " + QN + " to pass. Review the marked questions and press TRY AGAIN.") + "</div>";
+  if (pass) M3.flag("vlsiM3_s316", true);
+  prog16();
+}
+function prog16() { ckList("k16", [[M3.flag("vlsiM3_s316"), "Score at least " + QN + " / " + Q16.length + " (best so far: " + best16 + ")"]], "vlsiM3_s316", "done16"); }
+build16(); prog16();
+
+/* ---------- overall Module 3 progress ---------- */
+var MPG = [
+  ["Lessons", [["3.1", "vlsiM3_s31"], ["3.2", "vlsiM3_s32"], ["3.3", "vlsiM3_s33"], ["3.4", "vlsiM3_s34"]]],
+  ["Circuit-building", [["3.5", "vlsiM3_s35"], ["3.6", "vlsiM3_s36"], ["3.9", "vlsiM3_s39"], ["3.12", "vlsiM3_s312"], ["3.13", "vlsiM3_s313"], ["3.14", "vlsiM3_s314"]]],
+  ["Analysis activities", [["3.7", "vlsiM3_s37"], ["3.8", "vlsiM3_s38"], ["3.10", "vlsiM3_s310"], ["3.11", "vlsiM3_s311"]]],
+  ["Practice", [["3.15", "vlsiM3_s315"]]],
+  ["Quiz", [["3.16", "vlsiM3_s316"]]]
+];
+function modProg() {
+  var tot = 0, dn = 0, h = "";
+  MPG.forEach(function (g) {
+    h += '<div class="mgrp"><b>' + g[0] + ":</b> ";
+    g[1].forEach(function (x) { tot++; var d = M3.flag(x[1]); if (d) dn++; h += '<span class="' + (d ? "d" : "") + '">' + (d ? "✅ " : "") + x[0] + "</span>"; });
+    h += "</div>";
+  });
+  var all = dn === tot;
+  if (all && !M3.flag("vlsiL4M3Done")) M3.flag("vlsiL4M3Done", true);
+  var pct = Math.round(dn / tot * 100), qb = best16 ? " · Best quiz score: " + best16 + " / " + Q16.length : "";
+  $("mprog").innerHTML = "<h3 style='margin:0 0 6px'>Module 3 progress: " + dn + " / " + tot + " sections (" + pct + "%)</h3><div class='mbar'><div style='width:" + pct + "%'></div></div>" + h + "<div style='font-size:14px;color:#555'>" + qb.replace(" · ", "") + "</div>" +
+    (M3.flag("vlsiL4M3Done") ? "<div class='done' style='display:block'>🎉 Module 3 completed. Every section is done.</div>" : "");
+}
+M3.onSet = modProg; modProg();
+</script>
+</body>
+</html>

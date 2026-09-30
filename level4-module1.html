@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 Module 1 | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.w{max-width:1000px;margin:16px auto;padding:10px}
+.hero{background:#243b64;color:#fff;text-align:center;padding:18px;border-radius:12px;margin-bottom:14px}
+.hero h2{color:#fff;margin:0 0 5px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.tabs button{background:#e8eef8;color:#243b64;font-weight:bold}
+.tabs button.on{background:#243b64;color:#fff}
+.sec{display:none;background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:14px}
+.sec.on{display:block}
+.sec h3{color:#243b64;margin-top:0}
+.t{border-collapse:collapse;width:100%;margin:10px 0}
+.t th,.t td{border:1px solid #ccc;padding:9px;text-align:left}
+.t th{background:#243b64;color:#fff}
+.tip{background:#fff8e1;border-left:5px solid #c9a227;padding:10px 14px;border-radius:8px;margin:10px 0}
+.ph{display:none;border:2px dashed #999;padding:18px;text-align:center;color:#666;border-radius:8px;margin:10px 0}
+.pic{max-width:100%;border-radius:8px;display:block;margin:10px auto}
+.tl div{border-left:4px solid #4f6fad;padding:4px 0 10px 14px}
+.tl b{color:#243b64}
+.phase{border-radius:12px;padding:12px;margin:10px 0}
+.phase.fp{background:#eef3fb}.phase.bp{background:#e9f5f0}
+.pl{font-weight:bold;color:#243b64;margin-bottom:8px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;justify-content:center}
+.ar{color:#8a94a6;font-size:20px}
+.fs{width:132px;padding:10px 6px;border-radius:12px;text-align:center;cursor:pointer;color:#fff;border:3px solid transparent;transition:transform .2s,box-shadow .2s;font-size:13px}
+.fs.fe{background:linear-gradient(160deg,#4f6fad,#243b64)}
+.fs.be{background:linear-gradient(160deg,#3f9e82,#1f6b55)}
+.fs .ic{font-size:26px}.fs .n{font-size:11px;opacity:.85}
+.fs.past{opacity:.75}
+.fs.on{transform:translateY(-4px) scale(1.06);border-color:#c9a227;box-shadow:0 6px 16px rgba(0,0,0,.25);opacity:1}
+.fs:focus-visible{outline:3px solid #c9a227}
+.hand{text-align:center;color:#243b64;font-weight:bold;font-size:14px;margin:4px 0}
+.fbw{height:8px;background:#e0e0e0;border-radius:8px;overflow:hidden;margin:10px 0}
+#fbar{height:100%;width:0;background:#c9a227;transition:width .5s}
+#stepInfo{margin-top:10px;background:#fff;border:2px solid #d9dee7;border-left:6px solid #c9a227;padding:14px;border-radius:10px}
+#stepInfo h4{margin:0 0 6px;color:#243b64;font-size:18px}
+.io{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.io span{background:#eef3fb;padding:6px 12px;border-radius:20px;font-size:14px}
+.tl2{font-size:14px;color:#555}
+.fctl{text-align:center;margin:8px 0}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:10px 0}
+.ctl input{width:100%}
+.read{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-weight:bold;color:#243b64}
+.read span{background:#eef3fb;padding:8px 14px;border-radius:8px}
+svg text{font-family:Arial,sans-serif}
+.q{background:#f8fafc;padding:12px;border-radius:10px;margin:8px 0}
+.q label{display:block;margin:4px 0;cursor:pointer}
+#qr{margin-top:10px;font-weight:bold}
+.nav2{text-align:center;margin:18px 0}
+.nav2 a{display:inline-block;text-decoration:none;background:#162746;color:#fff;padding:9px 16px;border-radius:8px;margin:3px;font-weight:bold}
+@media (prefers-reduced-motion:reduce){.tabs button{transition:none}}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  if(localStorage.getItem("level4Unlocked")!=="true"){
+    alert("🔒 Level 4 is restricted. Faculty authorization is required.");
+    window.location.replace("index.html");
+  }
+})();
+</script>
+
+<header>
+  <h1>Digital Design Explorer</h1>
+  <p>Level 4 – VLSI Basics</p>
+</header>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="level4-dashboard.html">Level 4 Dashboard</a>
+  <a href="level3-dashboard.html">Level 3 Dashboard</a>
+  <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main class="w">
+<section class="hero">
+  <h2>🔬 Module 1 – VLSI Foundations &amp; the MOSFET</h2>
+  <p>Pick a topic below. Finish with the animated NMOSFET and the interactive class.</p>
+</section>
+
+<div class="tabs" id="tabs"></div>
+
+<!-- 1 Moore -->
+<section class="sec" id="s0">
+  <h3>1. Moore's Law</h3>
+  <p>In 1965 Gordon Moore observed that the number of transistors on a chip was doubling at a steady pace. Since about 1975 the pace is taken as <b>a doubling roughly every 2 years</b>.</p>
+  <div class="tip">Model: N = 2300 × 2<sup>(year − 1971) / 2</sup>, starting from the Intel 4004 (about 2,300 transistors, 1971).</div>
+  <label><b>Year: <span id="yr">1971</span></b></label>
+  <input type="range" id="yrS" min="1971" max="2025" value="1971" style="width:100%">
+  <div class="read"><span>Doublings: <b id="dbl">0</b></span><span>Model transistors: <b id="cnt">2,300</b></span></div>
+  <p>Real chips follow this trend only roughly, and it has slowed as transistors approach atomic dimensions.</p>
+</section>
+
+<!-- 2 History -->
+<section class="sec" id="s1">
+  <h3>2. History of IC Invention</h3>
+  <div class="tl">
+    <div><b>1947</b> – Bardeen, Brattain and Shockley demonstrate the transistor at Bell Labs.</div>
+    <div><b>1958</b> – Jack Kilby (Texas Instruments) builds the first working integrated circuit.</div>
+    <div><b>1959</b> – Robert Noyce (Fairchild) develops the planar silicon IC, which made mass production possible.</div>
+    <div><b>1960</b> – Kahng and Atalla build the first MOSFET at Bell Labs.</div>
+    <div><b>1963</b> – Frank Wanlass invents CMOS logic.</div>
+    <div><b>1971</b> – Intel 4004, the first commercial microprocessor.</div>
+  </div>
+  <img class="pic" src="images/ic-history.jpg" alt="Early integrated circuit" style="max-height:260px" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="ph">📷 Photo slot: save a free image (for example from Wikimedia Commons) as <b>images/ic-history.jpg</b> and it will appear here.</div>
+</section>
+
+<!-- 3 IC technology -->
+<section class="sec" id="s2">
+  <h3>3. IC Technology – Scales of Integration</h3>
+  <table class="t">
+    <tr><th>Scale</th><th>Name</th><th>Typical transistors per chip*</th></tr>
+    <tr><td>SSI</td><td>Small-Scale Integration</td><td>up to ~100</td></tr>
+    <tr><td>MSI</td><td>Medium-Scale Integration</td><td>~100 – 1,000</td></tr>
+    <tr><td>LSI</td><td>Large-Scale Integration</td><td>~1,000 – 100,000</td></tr>
+    <tr><td>VLSI</td><td>Very Large-Scale Integration</td><td>~100,000 – 10 million</td></tr>
+    <tr><td>ULSI</td><td>Ultra Large-Scale Integration</td><td>above ~10 million</td></tr>
+  </table>
+  <p style="font-size:14px">*Ranges differ between textbooks. Use your prescribed textbook's values in exams.</p>
+  <div class="tip">Two main technology families: <b>bipolar</b> (BJT based, fast but power hungry) and <b>MOS / CMOS</b> (low power, dense, used for almost all modern VLSI).</div>
+</section>
+
+<!-- 4 Flow -->
+<section class="sec" id="s3">
+  <h3>4. VLSI Design Flow</h3>
+  <p>Click a stage, or press play to walk through the whole flow.</p>
+  <div class="fctl"><button onclick="playFlow()">▶ Play walkthrough</button> <button onclick="resetFlow()" style="background:#eee;color:#555">↺ Reset</button></div>
+  <div class="fbw"><div id="fbar"></div></div>
+  <div class="phase fp"><div class="pl">🧠 Front-end: logic design (stages 1–5)</div><div class="row" id="rowF"></div></div>
+  <div class="hand">▼ Gate-level netlist handed to the physical design team ▼</div>
+  <div class="phase bp"><div class="pl">🏗 Back-end: physical design (stages 6–9)</div><div class="row" id="rowB"></div></div>
+  <div id="stepInfo">Select a stage to see what goes in, what comes out and which tools are used.</div>
+</section>
+
+<!-- 5 BJT vs MOSFET -->
+<section class="sec" id="s4">
+  <h3>5. BJT vs MOSFET</h3>
+  <table class="t">
+    <tr><th>Feature</th><th>BJT</th><th>MOSFET</th></tr>
+    <tr><td>Terminals</td><td>Base, Collector, Emitter</td><td>Gate, Drain, Source (+ Body)</td></tr>
+    <tr><td>Control</td><td>Current controlled (base current)</td><td>Voltage controlled (gate voltage)</td></tr>
+    <tr><td>Input resistance</td><td>Low to moderate</td><td>Very high (insulated gate)</td></tr>
+    <tr><td>Carriers</td><td>Both electrons and holes (bipolar)</td><td>One type (unipolar)</td></tr>
+    <tr><td>Static power</td><td>Higher</td><td>Very low in CMOS</td></tr>
+    <tr><td>Packing density</td><td>Lower</td><td>Higher, easy to scale</td></tr>
+    <tr><td>Typical use</td><td>Analog, high-speed, power stages</td><td>Digital VLSI, memory, processors</td></tr>
+  </table>
+</section>
+
+<!-- 6 FET types -->
+<section class="sec" id="s5">
+  <h3>6. Types of FET</h3>
+  <table class="t">
+    <tr><th>Type</th><th>Channel</th><th>Default state (V<sub>GS</sub> = 0)</th></tr>
+    <tr><td>JFET</td><td>n or p</td><td>ON (normally conducting)</td></tr>
+    <tr><td>MOSFET – enhancement</td><td>n or p</td><td>OFF, needs gate voltage to form a channel</td></tr>
+    <tr><td>MOSFET – depletion</td><td>n or p</td><td>ON, gate voltage can remove the channel</td></tr>
+  </table>
+  <div class="tip">VLSI mostly uses <b>enhancement-mode</b> n-channel and p-channel MOSFETs (NMOS and PMOS).</div>
+</section>
+
+<!-- 7 NMOS -->
+<section class="sec" id="s6">
+  <h3>7. Animated NMOSFET</h3>
+  <p>Move the sliders. Threshold voltage V<sub>t</sub> = 1 V.</p>
+  <svg id="svg" viewBox="0 0 600 300" style="width:100%;height:auto;background:#f8fafc;border-radius:10px">
+    <rect x="20" y="150" width="560" height="130" fill="#f4d8c8" stroke="#a0785f"/>
+    <text x="300" y="265" text-anchor="middle" font-size="13" fill="#7a5540">p-type substrate (Body)</text>
+    <rect x="80" y="150" width="110" height="50" fill="#9db7e8" stroke="#243b64"/>
+    <rect x="410" y="150" width="110" height="50" fill="#9db7e8" stroke="#243b64"/>
+    <text x="135" y="180" text-anchor="middle" font-size="14" fill="#162746">n+ Source</text>
+    <text x="465" y="180" text-anchor="middle" font-size="14" fill="#162746">n+ Drain</text>
+    <rect x="190" y="138" width="220" height="12" fill="#d9dee7" stroke="#888"/>
+    <text x="300" y="132" text-anchor="middle" font-size="11" fill="#555">SiO2 (insulator)</text>
+    <rect x="190" y="100" width="220" height="34" fill="#8b95a5" stroke="#333"/>
+    <text x="300" y="122" text-anchor="middle" font-size="14" fill="#fff">Gate</text>
+    <polygon id="ch" points="190,150 410,150 410,150 190,150" fill="#2b6be0" opacity="0.7"/>
+    <g id="dots"></g>
+    <text x="135" y="90" text-anchor="middle" font-size="13" fill="#162746">S</text>
+    <text x="465" y="90" text-anchor="middle" font-size="13" fill="#162746">D</text>
+    <text id="gtxt" x="300" y="80" text-anchor="middle" font-size="13" fill="#162746">G</text>
+    <text id="msg" x="300" y="222" text-anchor="middle" font-size="14" font-weight="bold" fill="#162746"></text>
+  </svg>
+  <div class="ctl">
+    <div><b>V<sub>GS</sub> = <span id="vgv">0.0</span> V</b><input type="range" id="vg" min="0" max="5" step="0.1" value="0"></div>
+    <div><b>V<sub>DS</sub> = <span id="vdv">0.0</span> V</b><input type="range" id="vd" min="0" max="5" step="0.1" value="0"></div>
+  </div>
+  <div class="read"><span>Region: <b id="reg">Cutoff</b></span><span>I<sub>D</sub> = <b id="idv">0.00</b> mA</span></div>
+  <div class="tip" id="why"></div>
+  <p><b>Rules:</b> V<sub>GS</sub> &lt; V<sub>t</sub> → cutoff. V<sub>GS</sub> ≥ V<sub>t</sub> and V<sub>DS</sub> &lt; V<sub>GS</sub> − V<sub>t</sub> → linear. Otherwise → saturation (channel pinches off near the drain).</p>
+  <p style="font-size:14px">Current values use a simple model with k = 1 mA/V², for teaching only.</p>
+</section>
+
+<!-- 8 Interactive class -->
+<section class="sec" id="s7">
+  <h3>8. Interactive Class</h3>
+  <p><b>Step 1.</b> Go to the NMOSFET tab and try: V<sub>GS</sub> = 3 V with V<sub>DS</sub> = 1 V, then with V<sub>DS</sub> = 4 V. Watch the channel and the electrons.</p>
+  <p><b>Step 2.</b> Answer the questions. You need 4 out of 5 to complete Module 1.</p>
+  <div id="quiz"></div>
+  <button onclick="grade()">Check answers</button>
+  <div id="qr"></div>
+</section>
+
+<div class="nav2">
+  <a href="level4-dashboard.html">← Level 4 Dashboard</a>
+  <a href="index.html">Home</a>
+</div>
+</main>
+
+<footer><p>Digital Design Explorer | ECE Department</p></footer>
+<footer class="site-footer">
+  <p>Developed by <strong>Mrs. Padma R</strong></p>
+  <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+  <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+/* Tabs */
+var names=["Moore's Law","IC History","IC Technology","Design Flow","BJT vs MOSFET","FET Types","NMOSFET Animation","Interactive Class"];
+var tabs=document.getElementById("tabs");
+names.forEach(function(n,i){
+  var b=document.createElement("button");
+  b.textContent=(i+1)+". "+n;
+  b.onclick=function(){show(i)};
+  tabs.appendChild(b);
+});
+function show(i){
+  for(var k=0;k<names.length;k++){
+    document.getElementById("s"+k).classList.toggle("on",k===i);
+    tabs.children[k].classList.toggle("on",k===i);
+  }
+}
+show(0);
+
+/* Moore's law */
+var yS=document.getElementById("yrS");
+function moore(){
+  var y=+yS.value,d=(y-1971)/2;
+  document.getElementById("yr").textContent=y;
+  document.getElementById("dbl").textContent=d.toFixed(1);
+  document.getElementById("cnt").textContent=Math.round(2300*Math.pow(2,d)).toLocaleString("en-IN");
+}
+yS.oninput=moore;moore();
+
+/* Design flow */
+var flow=[
+["📝","Specification","Decide what the chip must do: function, speed, power, area and cost.","Customer or market needs","Specification document","Documents, block diagrams","F"],
+["🧩","Architecture","Split the design into blocks and decide how they connect and communicate.","Specification","Block diagram and partitioning","C or MATLAB models","F"],
+["💻","RTL design","Describe each block in Verilog at register-transfer level.","Architecture","Verilog RTL code","Text editor, HDL","F"],
+["✅","Functional verification","Simulate with testbenches to confirm the RTL behaves as specified.","RTL and testbench","Pass/fail results, waveforms","Simulators such as ModelSim, Questa, Xcelium","F"],
+["⚙️","Logic synthesis","Tools convert RTL into a gate-level netlist using a standard-cell library and timing constraints.","RTL, constraints, cell library","Gate-level netlist","Design Compiler, Genus, Yosys","F"],
+["📐","Floorplan, place and route","Place cells on the die and connect them with metal wires.","Netlist","Placed and routed layout","Innovus, IC Compiler, OpenROAD","B"],
+["⏱️","Timing and power analysis","Check setup and hold timing and power against the targets.","Layout with wire parasitics","Timing and power reports","PrimeTime, Tempus","B"],
+["🔍","Physical verification","DRC checks the layout against fabrication rules; LVS checks the layout matches the netlist.","Final layout","DRC and LVS clean reports","Calibre, Pegasus","B"],
+["🏭","Tape-out and fabrication","The final layout file (GDSII) goes to the foundry, then the manufactured chips are tested.","GDSII layout","Fabricated chips","Foundry flow, test equipment","B"]
+];
+var fsEls=[],timer=null;
+var rowF=document.getElementById("rowF"),rowB=document.getElementById("rowB");
+flow.forEach(function(f,i){
+  var row=f[6]==="F"?rowF:rowB;
+  if(row.children.length){var a=document.createElement("span");a.className="ar";a.textContent="➜";row.appendChild(a);}
+  var d=document.createElement("div");
+  d.className="fs "+(f[6]==="F"?"fe":"be");
+  d.innerHTML='<div class="ic">'+f[0]+'</div><div class="n">Stage '+(i+1)+'</div><b>'+f[1]+'</b>';
+  d.tabIndex=0;
+  d.onclick=function(){stopFlow();pick(i);};
+  d.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();stopFlow();pick(i);}};
+  row.appendChild(d);fsEls.push(d);
+});
+function pick(i){
+  fsEls.forEach(function(e,k){e.classList.toggle("on",k===i);e.classList.toggle("past",k<i);});
+  var f=flow[i];
+  document.getElementById("stepInfo").innerHTML='<h4>'+f[0]+' Stage '+(i+1)+': '+f[1]+'</h4><p>'+f[2]+'</p><div class="io"><span>⬇ Input: '+f[3]+'</span><span>⬆ Output: '+f[4]+'</span></div><div class="tl2">🛠 Typical tools: '+f[5]+'</div>'+(i===3?'<div class="tip">If verification fails, the flow goes back to RTL design and the code is fixed.</div>':'');
+  document.getElementById("fbar").style.width=((i+1)/flow.length*100)+"%";
+}
+function stopFlow(){if(timer){clearInterval(timer);timer=null;}}
+function playFlow(){
+  stopFlow();var i=0;pick(0);
+  timer=setInterval(function(){i++;if(i>=flow.length){stopFlow();return;}pick(i);},1800);
+}
+function resetFlow(){
+  stopFlow();
+  fsEls.forEach(function(e){e.classList.remove("on","past");});
+  document.getElementById("fbar").style.width="0";
+  document.getElementById("stepInfo").textContent="Select a stage to see what goes in, what comes out and which tools are used.";
+}
+
+/* NMOSFET */
+var Vt=1,vg=document.getElementById("vg"),vd=document.getElementById("vd");
+var dots=document.getElementById("dots"),ch=document.getElementById("ch"),circles=[],N=14,pos=[],endX=410,speed=0;
+for(var i=0;i<N;i++){
+  var c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+  c.setAttribute("r","3.5");c.setAttribute("fill","#0b3d91");
+  dots.appendChild(c);circles.push(c);pos.push(190+i*(220/N));
+}
+var ts=0;
+function nmos(){
+  var g=+vg.value,d=+vd.value,ov=g-Vt,reg,id=0,why;
+  document.getElementById("vgv").textContent=g.toFixed(1);
+  document.getElementById("vdv").textContent=d.toFixed(1);
+  if(ov<=0){
+    reg="Cutoff";ts=0;endX=410;speed=0;
+    why="V<sub>GS</sub> is below V<sub>t</sub>, so the gate does not attract enough electrons. No channel forms and I<sub>D</sub> ≈ 0.";
+    ch.setAttribute("points","190,150 410,150 410,150 190,150");
+  }else{
+    ts=4+ov*6;
+    if(d<ov){
+      reg="Linear (Triode)";id=ov*d-d*d/2;endX=410;
+      var tD=ts*(1-d/ov);
+      why="The gate has formed an n-channel. V<sub>DS</sub> is small, so the channel is continuous and I<sub>D</sub> grows with V<sub>DS</sub> like a resistor.";
+      ch.setAttribute("points","190,150 410,150 410,"+(150+tD)+" 190,"+(150+ts));
+    }else{
+      reg="Saturation";id=0.5*ov*ov;
+      endX=Math.max(300,410-(d-ov)*15);
+      why="V<sub>DS</sub> ≥ V<sub>GS</sub> − V<sub>t</sub>, so the channel pinches off near the drain. Electrons are swept across the gap and I<sub>D</sub> stays almost constant.";
+      ch.setAttribute("points","190,150 "+endX+",150 190,"+(150+ts));
+    }
+    speed=Math.min(id,8)*0.6+0.4;
+  }
+  document.getElementById("reg").textContent=reg;
+  document.getElementById("idv").textContent=id.toFixed(2);
+  document.getElementById("why").innerHTML=why;
+  document.getElementById("msg").textContent=ov<=0?"No channel":"n-channel formed";
+  document.getElementById("gtxt").textContent="G (+"+g.toFixed(1)+" V)";
+}
+vg.oninput=nmos;vd.oninput=nmos;nmos();
+var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function tick(){
+  for(var i=0;i<N;i++){
+    if(speed>0){
+      if(!reduce)pos[i]+=speed;
+      if(pos[i]>endX)pos[i]=190;
+      circles[i].setAttribute("cx",pos[i]);
+      circles[i].setAttribute("cy",150+Math.max(2,ts*0.5*(1-(pos[i]-190)/Math.max(endX-190,1)*0.4))+((i%3)-1)*2);
+      circles[i].setAttribute("opacity","1");
+    }else circles[i].setAttribute("opacity","0");
+  }
+  requestAnimationFrame(tick);
+}
+tick();
+
+/* Quiz */
+var qs=[
+["Moore's law says transistor count on a chip roughly doubles every:",["2 years","2 months","20 years","Never changes"],0],
+["Who built the first working integrated circuit in 1958?",["Robert Noyce","Jack Kilby","Gordon Moore","Frank Wanlass"],1],
+["A MOSFET is controlled by:",["Base current","Gate voltage","Collector current","Emitter resistance"],1],
+["An NMOS with V<sub>GS</sub> = 0.5 V and V<sub>t</sub> = 1 V is in:",["Cutoff","Linear","Saturation","Breakdown"],0],
+["An NMOS with V<sub>GS</sub> = 3 V, V<sub>DS</sub> = 4 V, V<sub>t</sub> = 1 V is in:",["Cutoff","Linear","Saturation","Not enough data"],2]
+];
+var qz=document.getElementById("quiz");
+qs.forEach(function(q,i){
+  var d=document.createElement("div");d.className="q";
+  d.innerHTML="<p><b>Q"+(i+1)+".</b> "+q[0]+"</p>"+q[1].map(function(o,j){
+    return '<label><input type="radio" name="q'+i+'" value="'+j+'"> '+o+'</label>';
+  }).join("");
+  qz.appendChild(d);
+});
+function grade(){
+  var s=0;
+  qs.forEach(function(q,i){
+    var c=document.querySelector('input[name="q'+i+'"]:checked');
+    if(c&&+c.value===q[2])s++;
+  });
+  var r=document.getElementById("qr");
+  if(s>=4){
+    r.style.color="#2e7d32";
+    r.textContent="🎉 "+s+" / 5 – Module 1 completed!";
+    localStorage.setItem("vlsiL4M1Done","true");
+  }else{
+    r.style.color="#c62828";
+    r.textContent="Score: "+s+" / 5. You need 4 to complete. Revisit the topics and try again.";
+  }
+}
+function logout(){localStorage.removeItem("studentLoggedIn");window.location.href="login.html";}
+</script>
+</body>
+</html>

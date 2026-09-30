@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 Module 8 | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="l4-common.css">
+<script src="m3-engine.js"></script>
+<script src="l4-common.js"></script>
+</head>
+<body>
+<script>M3.guard();</script>
+<header><h1>Digital Design Explorer</h1><p>Level 4 – VLSI Basics</p></header>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="level4-dashboard.html">Level 4 Dashboard</a>
+  <a href="level4-module7.html">Module 7</a>
+  <a href="#" onclick="M3.logout()">Logout</a>
+</nav>
+<main class="w">
+<section class="hero"><h2>⚡ Module 8 – Advanced CMOS Logic Styles</h2><p>Pseudo-nMOS, dynamic, clocked CMOS, CVSL and pass-transistor logic.</p></section>
+<section class="card" id="mprog"></section>
+<div class="steps" id="tabs"></div>
+<div id="panels"></div>
+<div class="nav2"><a href="level4-dashboard.html">← Level 4 Dashboard</a><a href="level4-module7.html">← Module 7</a></div>
+</main>
+<footer><p>Digital Design Explorer | ECE Department</p></footer>
+<footer class="site-footer">
+  <p>Developed by <strong>Mrs. Padma R</strong></p>
+  <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+  <p>GSSSIETW, Mysuru</p>
+</footer>
+<script>
+
+L4.tabs(["8.1 Pseudo-nMOS", "8.2 Dynamic CMOS", "8.3 Clocked CMOS", "8.4 CVSL", "8.5 Pass-Transistor", "8.6 Practice", "8.7 Quiz"]);
+
+/* ---------- shared drawing helpers ---------- */
+var WS = 'stroke="#243b64" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+function W(p) { return '<polyline points="' + p + '" ' + WS + "/>"; }
+function DOT(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="6" fill="#243b64"/>'; }
+function FL(p) { return '<polyline class="flow" points="' + p + '"/>'; }
+function TX(x, y, t, c, sz, anc) { return '<text x="' + x + '" y="' + y + '" fill="' + (c || "#243b64") + '" font-size="' + (sz || 14) + '" font-weight="bold" text-anchor="' + (anc || "middle") + '">' + t + "</text>"; }
+function RC(x, y, w, h, f, st) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + f + '"' + (st ? ' stroke="' + st + '" stroke-width="2"' : "") + "/>"; }
+function SVGW(inner, vb) { return '<svg viewBox="' + vb + '" role="img" aria-label="Circuit diagram"><g font-family="Arial,sans-serif">' + inner + "</g></svg>"; }
+function RAIL(x1, x2, y, label, c) { return '<line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '" stroke="' + c + '" stroke-width="6"/>' + TX(x1 - 8, y + 6, label, c, 15, "end"); }
+function GNDSYM(x, y) { return '<g stroke="#243b64" stroke-width="3"><line x1="' + (x - 14) + '" y1="' + y + '" x2="' + (x + 14) + '" y2="' + y + '"/><line x1="' + (x - 9) + '" y1="' + (y + 6) + '" x2="' + (x + 9) + '" y2="' + (y + 6) + '"/><line x1="' + (x - 4) + '" y1="' + (y + 12) + '" x2="' + (x + 4) + '" y2="' + (y + 12) + '"/></g>'; }
+function CAP(x, y) { return '<g stroke="#243b64" stroke-width="3"><line x1="' + x + '" y1="' + y + '" x2="' + x + '" y2="' + (y + 20) + '"/><line x1="' + (x - 16) + '" y1="' + (y + 20) + '" x2="' + (x + 16) + '" y2="' + (y + 20) + '"/><line x1="' + (x - 16) + '" y1="' + (y + 30) + '" x2="' + (x + 16) + '" y2="' + (y + 30) + '"/><line x1="' + x + '" y1="' + (y + 30) + '" x2="' + x + '" y2="' + (y + 50) + '"/></g>' + GNDSYM(x, y + 50); }
+function chipsH(id, labels, fn) { return '<div class="chips" id="' + id + '">' + labels.map(function (l, i) { return '<button onclick="' + fn + "(" + i + ')">' + l + "</button>"; }).join("") + "</div>"; }
+function chipOn(id, i) { [].forEach.call($(id).children, function (b, k) { b.className = k === i ? "on" : ""; }); }
+function togB(id, name, v, fn) { return '<button id="' + id + '" onclick="' + fn + '">' + name + " = " + v + "</button>"; }
+var M = M3.mos, TH = M3.through, VDD = 5, VTN = 1, VTP = 1, LAM = 0.02;
+function InN(vg, vo, k) { var ov = vg - VTN; if (ov <= 0) return 0; var f = 1 + LAM * vo; return vo < ov ? k * (ov * vo - vo * vo / 2) * f : k / 2 * ov * ov * f; }
+function IpL(vo) { var ov = VDD - VTP, sd = VDD - vo, f = 1 + LAM * sd; return sd < ov ? (ov * sd - sd * sd / 2) * f : ov * ov / 2 * f; }
+function IpC(vin, vo) { var ov = VDD - vin - VTP, sd = VDD - vo; if (ov <= 0) return 0; var f = 1 + LAM * sd; return sd < ov ? (ov * sd - sd * sd / 2) * f : ov * ov / 2 * f; }
+function bis(f) { var lo = 0, hi = VDD; for (var i = 0; i < 50; i++) { var m = (lo + hi) / 2; if (f(m) < 0) lo = m; else hi = m; } return (lo + hi) / 2; }
+function pseudoV(vin, k) { return bis(function (v) { return InN(vin, v, k) - IpL(v); }); }
+function cmosV(vin, k) { return bis(function (v) { return InN(vin, v, k) - IpC(vin, v); }); }
+function chipTxt(s, on, bad) { return '<span class="' + (bad ? "bad" : (on ? "on" : "")) + '">' + s + "</span>"; }
+
+/* ================= 8.1 Pseudo-nMOS ================= */
+var pn = { kind: 0, A: 0, B: 0, k: 4, seen: {} }, PNN = ["Inverter", "2-input NAND", "2-input NOR"];
+function pnSVG(kd, a, b, S) {
+  var s = RAIL(200, 440, 25, "VDD", "#b3261e");
+  s += W("340,25 340,50") + M("p", 300, 110, { state: "on", label: "PMOS load", scale: 1 }) + W("230,110 190,110 190,140") + GNDSYM(190, 146) + TX(190, 180, "gate = 0 V: always ON", "#1b8a3a", 12) + W("340,170 340,200") + DOT(340, 200) + W("340,200 470,200") + TX(500, 206, "Y", "#c62828", 16);
+  var gy, flow = "";
+  if (kd === 0) {
+    s += W("340,200 340,240") + M("n", 300, 300, { state: a ? "on" : "off", label: "N1" }) + W("340,360 340,400") + W("230,300 150,300") + TX(120, 306, "A=" + a, "#c62828", 15); gy = 400;
+    if (S.low) flow = "340,200 340,240 " + TH(300, 300, 1) + " 340,400";
+  } else if (kd === 1) {
+    s += W("340,200 340,230") + M("n", 300, 290, { state: a ? "on" : "off", label: "N1" }) + M("n", 300, 410, { state: b ? "on" : "off", label: "N2" }) + W("340,470 340,470") + W("230,290 150,290") + W("230,410 150,410") + TX(120, 296, "A=" + a, "#c62828", 15) + TX(120, 416, "B=" + b, "#c62828", 15); gy = 470;
+    if (S.low) flow = "340,200 340,230 " + TH(300, 290, 1) + " " + TH(300, 410, 1) + " 340,470";
+  } else {
+    s += W("340,200 340,225") + W("210,225 410,225") + W("210,225 210,240") + W("410,225 410,240") + M("n", 170, 300, { state: a ? "on" : "off", label: "N1" }) + M("n", 450, 300, { state: b ? "on" : "off", label: "N2", flip: true }) + W("210,360 210,375") + W("410,360 410,375") + W("210,375 410,375") + W("310,375 310,400") + W("100,300 60,300") + W("520,300 540,300") + DOT(340, 225) + DOT(310, 375) + TX(40, 306, "A=" + a, "#c62828", 15, "middle") + TX(548, 306, "B=" + b, "#c62828", 15, "start"); gy = 400;
+    if (a) flow = "340,200 340,225 210,225 " + TH(170, 300, 1) + " 210,375 310,375 310,400";
+    if (b) flow += (flow ? "|" : "") + "340,200 340,225 410,225 " + TH(450, 300, 1, true) + " 410,375 310,375 310,400";
+  }
+  s += RAIL(200, 440, gy, "GND", "#243b64");
+  s += '<circle cx="500" cy="200" r="0" fill="none"/>' + TX(430, 190, S.low ? "Y = " + S.vol.toFixed(2) + " V (not 0!)" : "Y = " + VDD + " V (1)", S.low ? "#c62828" : "#243b64", 15, "middle");
+  if (S.low) flow.split("|").forEach(function (f) { if (f) s += FL("340,25 " + TH(300, 110, 1) + " 340,200") + FL(f); });
+  return SVGW(s, "0 0 580 " + (kd === 1 ? 500 : 430));
+}
+function pnUpd(t) {
+  if (t === "k") { pn.k = +$("pk").value; L4.hit("g81", 1); }
+  $("pk_v").textContent = pn.k.toFixed(0);
+  var kd = pn.kind, on1 = pn.A === 1, on2 = pn.B === 1, keff = 0;
+  if (kd === 0) keff = on1 ? pn.k : 0; else if (kd === 1) keff = (on1 && on2) ? pn.k / 2 : 0; else keff = (on1 && on2) ? 2 * pn.k : ((on1 || on2) ? pn.k : 0);
+  var low = keff > 0, vol = low ? pseudoV(VDD, keff) : VDD, I = low ? InN(VDD, vol, keff) : 0, S = { low: low, vol: vol };
+  $("pnd").innerHTML = pnSVG(kd, pn.A, pn.B, S); chipOn("pnc", kd);
+  $("pnA").textContent = "A = " + pn.A; $("pnB").textContent = "B = " + pn.B; $("pnB").style.display = kd === 0 ? "none" : "inline-block";
+  $("pnr").innerHTML = chipTxt("Pull-down network: " + (low ? "CONDUCTS" : "OFF"), low) + chipTxt("V<sub>OL</sub> = " + (low ? vol.toFixed(2) + " V" : "n/a"), false, low) + chipTxt("Static current = " + (I * 1000).toFixed(0) + " µA", false, low) + chipTxt("Static power = " + (VDD * I).toFixed(2) + " mW", false, low);
+  $("pnt").innerHTML = low ? "<b>Output low, but not fully:</b> the always-ON PMOS fights the NMOS network, so V<sub>OL</sub> is above 0 V and a <b>steady current</b> flows from V<sub>DD</sub> to ground. This is <b>ratioed logic</b>: a bigger NMOS (larger k<sub>n</sub>/k<sub>p</sub>) gives a lower V<sub>OL</sub>." : "<b>Output high:</b> no path to ground, so the PMOS pulls Y to V<sub>DD</sub> and no static current flows.";
+  var a = [], b = [], v; for (v = 0; v <= 5.001; v += 0.1) { a.push([v, pseudoV(v, pn.k)]); b.push([v, cmosV(v, pn.k)]); }
+  $("pnv").innerHTML = L4.chart({ x0: 0, x1: 5, y0: 0, y1: 5, xl: "Vin (V)", yl: "Vout (V)", series: [{ pts: b, c: "#2e7d32", label: "Static CMOS inverter" }, { pts: a, c: "#c62828", label: "Pseudo-nMOS inverter" }], aria: "VTC comparison" });
+  if (low) L4.hit("g81", 2);
+}
+function pnKind(i) { pn.kind = i; pn.A = 0; pn.B = 0; pn.seen[i] = true; if (Object.keys(pn.seen).length >= 3) L4.hit("g81", 0); pnUpd(); }
+function pnTog(w) { pn[w] = 1 - pn[w]; pnUpd(); }
+$("p1").innerHTML = '<section class="card"><h3>8.1 Pseudo-nMOS Logic</h3><p class="lead">In <b>pseudo-nMOS</b> the whole PMOS pull-up network of a CMOS gate is replaced by <b>one PMOS whose gate is tied to ground</b>, so it is <b>always ON</b> and acts like a resistor load. The NMOS network is unchanged. Choose a gate, set the inputs and watch.</p>' +
+  chipsH("pnc", PNN, "pnKind") + '<div class="chips">' + togB("pnA", "A", 0, "pnTog('A')") + togB("pnB", "B", 0, "pnTog('B')") + "</div>" + '<div class="diagram" id="pnd"></div><div class="chipsrow" id="pnr"></div><div class="status" id="pnt"></div>' +
+  L4.sld("pk", "NMOS to PMOS strength ratio k<sub>n</sub>/k<sub>p</sub>", 1, 20, 1, 4, "", "function(){}") .replace('oninput="function(){}(true)"', 'oninput="pnUpd(\'k\')"') +
+  '<div id="pnv"></div><div style="overflow-x:auto"><table class="t"><tr><th>Gate with N inputs</th><th>Static CMOS</th><th>Pseudo-nMOS</th></tr><tr><td>Transistors</td><td>2N</td><td><b>N + 1</b> (smaller, less input load)</td></tr><tr><td>Output-low level</td><td>0 V</td><td>V<sub>OL</sub> &gt; 0 (ratioed)</td></tr><tr><td>Static power</td><td>≈ 0</td><td><b>Large</b> when the output is low</td></tr><tr><td>Speed (rising output)</td><td>Pull-up network is series or parallel</td><td>Faster: one PMOS only</td></tr></table></div></section>' +
+  L4.goal("g81", "vlsiM8_s81", ["Try the inverter, NAND and NOR", "Move the strength-ratio slider", "See a case where the output is low and static current flows"]);
+
+/* ================= 8.2 Dynamic CMOS ================= */
+var dy = { kind: 0, A: 0, B: 0, clk: 0, dom: false, hist: [], t: 30, leak: 0.6 }, DYN = ["Dynamic NAND (A · B)", "Dynamic NOR (A + B)"];
+function dyF() { return dy.kind === 0 ? (dy.A && dy.B) : (dy.A || dy.B); }
+function dyX() { if (dy.clk === 0) return VDD; if (dyF()) return 0; return Math.max(0, VDD * (1 - dy.leak * dy.t / 100)); }
+function dySVG(X) {
+  var F = !!dyF(), ev = dy.clk === 1, pre = dy.clk === 0, s = RAIL(200, 460, 25, "VDD", "#b3261e");
+  s += W("340,25 340,50") + M("p", 300, 110, { state: pre ? "on" : "off", label: pre ? "precharge ON" : "precharge OFF" }) + W("230,110 150,110") + TX(120, 116, "clk=" + dy.clk, "#c62828", 15) + W("340,170 340,200") + DOT(340, 200) + W("340,200 340,225");
+  s += '<rect x="270" y="225" width="140" height="80" rx="10" fill="' + (F && ev ? "#c8e6c9" : "#eceff1") + '" stroke="' + (F && ev ? "#1b8a3a" : "#90a4af") + '" stroke-width="3"/>' + TX(340, 258, "pull-down network", "#243b64", 13) + TX(340, 282, dy.kind === 0 ? "A · B  (A=" + dy.A + ", B=" + dy.B + ")" : "A + B  (A=" + dy.A + ", B=" + dy.B + ")", F ? "#1b8a3a" : "#455a64", 13);
+  s += W("340,305 340,350") + M("n", 300, 410, { state: ev ? "on" : "off", label: ev ? "evaluate ON" : "evaluate OFF" }) + W("230,410 150,410") + TX(120, 416, "clk=" + dy.clk, "#c62828", 15) + RAIL(200, 460, 470, "GND", "#243b64");
+  s += W("340,200 470,200") + CAP(500, 210) + TX(500, 200, "", "#000") + TX(440, 190, "X = " + X.toFixed(2) + " V", X < VDD / 2 ? "#c62828" : "#243b64", 15);
+  if (dy.dom) s += W("470,200 470,160") + TX(520, 140, "domino inverter", "#243b64", 12, "start") + '<polygon points="470,110 470,150 500,130" fill="#eef3fb" stroke="#243b64" stroke-width="3"/><circle cx="504" cy="130" r="4" fill="#fff" stroke="#243b64" stroke-width="2"/>' + TX(548, 136, "Q=" + (X >= VDD / 2 ? 0 : 1), "#c62828", 15, "start");
+  if (pre) s += FL("340,25 " + TH(300, 110, 1) + " 340,200");
+  if (ev && F) s += FL("340,200 340,225 340,305 340,350 " + TH(300, 410, 1) + " 340,470");
+  return SVGW(s, "0 0 620 500");
+}
+function dyUpd(t) {
+  if (t === "s") { dy.t = +$("dt").value; dy.leak = +$("dl").value; }
+  $("dt_v").textContent = dy.t; $("dl_v").textContent = dy.leak.toFixed(2);
+  var X = dyX(); if (dy.hist.length) dy.hist[dy.hist.length - 1] = { clk: dy.clk, X: X }; else dy.hist.push({ clk: dy.clk, X: X });
+  $("dyd").innerHTML = dySVG(X); chipOn("dyc", dy.kind);
+  $("dA").textContent = "A = " + dy.A; $("dB").textContent = "B = " + dy.B; $("dCk").textContent = dy.clk ? "Clock = 1 (EVALUATE). Press for PRECHARGE" : "Clock = 0 (PRECHARGE). Press for EVALUATE"; $("dDom").checked = dy.dom;
+  var F = !!dyF(), bad = dy.clk === 1 && !F && X < VDD / 2;
+  $("dyt").innerHTML = dy.clk === 0 ? "<b>Precharge (clk = 0):</b> the PMOS turns ON and charges node X to V<sub>DD</sub>. The evaluate NMOS is OFF, so there is no path to ground: no static current." :
+    (F ? "<b>Evaluate (clk = 1), pull-down conducts:</b> node X discharges to 0 V through the network and the evaluate NMOS." : (bad ? "<b>⚠ Failure:</b> no path to ground, so X should keep its 1, but it floats and leakage has drained it to " + X.toFixed(2) + " V. It now reads 0. Dynamic nodes cannot hold charge for long." : "<b>Evaluate (clk = 1), pull-down OFF:</b> X floats and keeps its charge as a stored 1 (on the node capacitance)."));
+  $("dyr").innerHTML = chipTxt("X reads " + (X >= VDD / 2 ? "1" : "0"), X >= VDD / 2, bad) + chipTxt("Phase: " + (dy.clk ? "evaluate" : "precharge"), true) + (dy.dom ? chipTxt("Domino output Q = " + (X >= VDD / 2 ? 0 : 1), true) : "");
+  var h = dy.hist, cp = [], xp = [], i; h.forEach(function (s, k) { cp.push([k, s.clk * VDD], [k + 1, s.clk * VDD]); xp.push([k, s.X], [k + 1, s.X]); });
+  $("dyv").innerHTML = L4.chart({ x0: 0, x1: Math.max(6, h.length), y0: 0, y1: 5.5, nx: Math.max(6, h.length), xl: "Phase number", yl: "Voltage (V)", series: [{ pts: cp, c: "#7b1fa2", d: "6 4", label: "clk (scaled to 5 V)" }, { pts: xp, c: "#c62828", label: "Dynamic node X" }], aria: "Dynamic gate timing" });
+  if (dy.clk === 1 && F) L4.hit("g82", 0); if (bad) L4.hit("g82", 1);
+}
+function dyKind(i) { dy.kind = i; dyUpd(); }
+function dyTog(w) { dy[w] = 1 - dy[w]; dyUpd(); }
+function dyClk() { dy.clk = 1 - dy.clk; dy.hist.push({ clk: dy.clk, X: dyX() }); if (dy.hist.length > 10) dy.hist.shift(); dyUpd(); }
+function dyDom() { dy.dom = $("dDom").checked; if (dy.dom) L4.hit("g82", 2); dyUpd(); }
+function dyClr() { dy.hist = []; dy.clk = 0; dyUpd(); }
+$("p2").innerHTML = '<section class="card"><h3>8.2 Dynamic CMOS Logic</h3><p class="lead">A dynamic gate has <b>two phases</b>. <b>Precharge</b> (clk = 0): a PMOS charges the output node X to V<sub>DD</sub>. <b>Evaluate</b> (clk = 1): an NMOS connects the pull-down network to ground, so X either discharges or keeps its stored charge. It needs only <b>N + 2</b> transistors and no static power, but it depends on a clock and on charge that slowly leaks.</p>' +
+  chipsH("dyc", DYN, "dyKind") + '<div class="chips">' + togB("dA", "A", 0, "dyTog('A')") + togB("dB", "B", 0, "dyTog('B')") + '<button id="dCk" onclick="dyClk()">Clock = 0</button><button class="alt" onclick="dyClr()" style="background:#e8eef8;color:#243b64">CLEAR HISTORY</button></div>' +
+  '<div class="diagram" id="dyd"></div><div class="chipsrow" id="dyr"></div><div class="status" id="dyt"></div>' +
+  L4.sld("dt", "Time spent in evaluate with X floating", 0, 100, 5, 30, "ns", "function(){}").replace('oninput="function(){}(true)"', 'oninput="dyUpd(\'s\')"') + L4.sld("dl", "Leakage strength", 0, 1, 0.05, 0.6, "", "function(){}").replace('oninput="function(){}(true)"', 'oninput="dyUpd(\'s\')"') +
+  '<div id="dyv"></div><label class="opt2"><input type="checkbox" id="dDom" onchange="dyDom()"> Add a static inverter at the output (<b>domino logic</b>)</label>' +
+  '<div class="def"><b>Cascading problem:</b> the output of a dynamic gate falls during evaluate, but the next dynamic gate needs inputs that can only <i>rise</i>. Adding an inverter (domino) makes every output rise, so a chain evaluates like falling dominoes. Inputs must not change during evaluate.</div></section>' +
+  L4.goal("g82", "vlsiM8_s82", ["Precharge, then evaluate with the pull-down conducting (X discharges)", "Cause the failure: evaluate with no path, long hold time and high leakage so X droops below V<sub>DD</sub>/2", "Turn on the domino output inverter"]);
+
+/* ================= 8.3 Clocked CMOS (C2MOS) ================= */
+var cm = { A: 0, clk: 1, ymem: 1, hist: [], moved: false };
+function cmSVG() {
+  var A = cm.A, c = cm.clk, p1 = A === 0, p2 = c === 1, n1 = c === 1, n2 = A === 1, s = RAIL(200, 440, 30, "VDD", "#b3261e");
+  s += W("340,30 340,60") + M("p", 300, 120, { state: p1 ? "on" : "off", label: "P1 (A)" }) + M("p", 300, 240, { state: p2 ? "on" : "off", label: "P2 (clk̄)" }) + M("n", 300, 360, { state: n1 ? "on" : "off", label: "N1 (clk)" }) + M("n", 300, 480, { state: n2 ? "on" : "off", label: "N2 (A)" }) + W("340,540 340,570") + RAIL(200, 440, 570, "GND", "#243b64");
+  s += W("230,120 100,120") + W("230,240 130,240") + W("230,360 130,360") + W("230,480 100,480") + W("100,120 100,480") + DOT(100, 120) + DOT(100, 480);
+  s += TX(76, 126, "A=" + A, "#c62828", 15, "end") + TX(120, 246, "clk̄=" + (1 - c), "#c62828", 14, "end") + TX(120, 366, "clk=" + c, "#c62828", 14, "end");
+  s += DOT(340, 300) + W("340,300 470,300") + CAP(500, 310) + TX(440, 288, c ? "Y = " + (1 - A) : "Y = high-Z", c ? "#243b64" : "#e65100", 16) + (c ? "" : TX(440, 316, "(holds " + cm.ymem + ")", "#e65100", 13));
+  if (c === 1 && p1) s += FL("340,30 " + TH(300, 120, 1) + " " + TH(300, 240, 1) + " 340,300");
+  if (c === 1 && n2) s += FL("340,300 " + TH(300, 360, 1) + " " + TH(300, 480, 1) + " 340,570");
+  return SVGW(s, "0 0 600 610");
+}
+function cmUpd() {
+  $("cmd").innerHTML = cmSVG(); $("cA").textContent = "A = " + cm.A; $("cC").textContent = "clk = " + cm.clk;
+  $("cmt").innerHTML = cm.clk ? "<b>clk = 1:</b> both clocked transistors are ON, so the stack works as an ordinary inverter: <b>Y = NOT A = " + (1 - cm.A) + "</b>." : "<b>clk = 0:</b> the clocked PMOS and NMOS are both OFF. The output is <b>disconnected from both supplies (high impedance, Z)</b>. The load capacitance keeps its old value <b>" + cm.ymem + "</b>, whatever A does.";
+  $("cmh").innerHTML = '<table class="t"><tr><th>Event</th><th>clk</th><th>A</th><th>Y</th></tr>' + cm.hist.map(function (h, i) { return "<tr><td>" + (i + 1) + "</td><td>" + h[0] + "</td><td>" + h[1] + "</td><td>" + h[2] + "</td></tr>"; }).join("") + "</table>";
+}
+function cmPush() { if (cm.clk) cm.ymem = 1 - cm.A; cm.hist.push([cm.clk, cm.A, cm.clk ? (1 - cm.A) : "Z (holds " + cm.ymem + ")"]); if (cm.hist.length > 8) cm.hist.shift(); }
+function cmTog(w) {
+  cm[w] = 1 - cm[w]; if (w === "A" && cm.clk === 0) L4.hit("g83", 2); cmPush(); if (cm.clk === 1) L4.hit("g83", 0); else L4.hit("g83", 1); cmUpd();
+}
+$("p3").innerHTML = '<section class="card"><h3>8.3 Clocked CMOS (C²MOS) Logic</h3><p class="lead">In <b>clocked CMOS</b> the inverter is stacked with two extra transistors gated by the clock and its complement. Toggle the clock and the input and watch the output. This <b>tri-state</b> behaviour is the basis of C²MOS latches and registers.</p>' +
+  '<div class="chips">' + togB("cA", "A", 0, "cmTog('A')") + togB("cC", "clk", 1, "cmTog('clk')") + '</div><div class="diagram" id="cmd"></div><div class="status" id="cmt"></div><h4>Event log</h4><div id="cmh"></div>' +
+  '<div style="overflow-x:auto"><table class="t"><tr><th>clk</th><th>A</th><th>P1 (A)</th><th>P2 (clk̄)</th><th>N1 (clk)</th><th>N2 (A)</th><th>Y</th></tr><tr><td>1</td><td>0</td><td>ON</td><td>ON</td><td>ON</td><td>OFF</td><td>1</td></tr><tr><td>1</td><td>1</td><td>OFF</td><td>ON</td><td>ON</td><td>ON</td><td>0</td></tr><tr><td>0</td><td>0 or 1</td><td>–</td><td>OFF</td><td>OFF</td><td>–</td><td><b>high-Z (holds)</b></td></tr></table></div></section>' +
+  L4.goal("g83", "vlsiM8_s83", ["See Y = NOT A while clk = 1", "See the output go high-Z with clk = 0", "Change A while clk = 0 and confirm Y keeps its old value"]);
+cm.hist.push([1, 0, 1]);
+
+/* ================= 8.4 CVSL ================= */
+var cv = { fn: 0, A: 0, B: 0, seenF: {}, seenN: {} }, CVN = ["AND / NAND", "OR / NOR"];
+function cvSVG() {
+  var F = cv.fn === 0 ? (cv.A && cv.B) : (cv.A || cv.B), Q = F ? 1 : 0, Qb = 1 - Q, lc = !!F, rc = !F;
+  var lt = cv.fn === 0 ? "A · B" : "A + B", rt = cv.fn === 0 ? "Ā + B̄" : "Ā · B̄";
+  var s = RAIL(120, 520, 25, "VDD", "#b3261e") + W("170,25 170,50") + W("470,25 470,50");
+  s += M("p", 210, 110, { state: Q === 0 ? "on" : "off", flip: true }) + M("p", 430, 110, { state: Qb === 0 ? "on" : "off" });
+  s += '<path d="M470,200 C 400,270 340,150 280,110" fill="none" stroke="#7b1fa2" stroke-width="3" stroke-dasharray="6 4"/><path d="M170,200 C 240,270 300,150 360,110" fill="none" stroke="#7b1fa2" stroke-width="3" stroke-dasharray="6 4"/>' + TX(320, 92, "cross-coupled gates", "#7b1fa2", 12);
+  s += W("170,170 170,250") + W("470,170 470,250") + DOT(170, 200) + DOT(470, 200) + TX(170, 190, "Q̄ = " + Qb, "#c62828", 16, "end") + TX(478, 190, "Q = " + Q, "#c62828", 16, "start");
+  s += '<rect x="100" y="250" width="140" height="100" rx="10" fill="' + (lc ? "#c8e6c9" : "#eceff1") + '" stroke="' + (lc ? "#1b8a3a" : "#90a4af") + '" stroke-width="3"/>' + TX(170, 292, "NMOS network", "#243b64", 13) + TX(170, 322, lt, lc ? "#1b8a3a" : "#455a64", 18);
+  s += '<rect x="400" y="250" width="140" height="100" rx="10" fill="' + (rc ? "#c8e6c9" : "#eceff1") + '" stroke="' + (rc ? "#1b8a3a" : "#90a4af") + '" stroke-width="3"/>' + TX(470, 292, "NMOS network", "#243b64", 13) + TX(470, 322, rt, rc ? "#1b8a3a" : "#455a64", 18);
+  s += W("170,350 170,400") + W("470,350 470,400") + RAIL(120, 520, 400, "GND", "#243b64");
+  if (Qb === 0) s += FL("170,200 170,250 170,350 170,400") + FL("470,25 " + TH(430, 110, 1) + " 470,200");
+  else s += FL("470,200 470,250 470,350 470,400") + FL("170,25 " + TH(210, 110, 1, true) + " 170,200");
+  s += TX(320, 440, "inputs A, B and their complements Ā, B̄ are both needed", "#455a64", 13);
+  return SVGW(s, "0 0 640 460");
+}
+function cvUpd() {
+  var F = cv.fn === 0 ? (cv.A && cv.B) : (cv.A || cv.B), Q = F ? 1 : 0; chipOn("cvc", cv.fn);
+  $("cvd").innerHTML = cvSVG(); $("cvA").textContent = "A = " + cv.A; $("cvB").textContent = "B = " + cv.B;
+  $("cvt").innerHTML = F ? "<b>" + (cv.fn === 0 ? "A · B" : "A + B") + " is true:</b> the left network conducts and pulls Q̄ low. Q̄ = 0 turns ON the right PMOS, which pulls Q high. Result: <b>Q = " + Q + ", Q̄ = " + (1 - Q) + "</b>." : "<b>" + (cv.fn === 0 ? "A · B" : "A + B") + " is false:</b> the right network (the complement) conducts and pulls Q low. Q = 0 turns ON the left PMOS, which pulls Q̄ high. Result: <b>Q = 0, Q̄ = 1</b>.";
+  var rows = ""; [[0, 0], [0, 1], [1, 0], [1, 1]].forEach(function (r) { var f = cv.fn === 0 ? (r[0] && r[1]) : (r[0] || r[1]); rows += '<tr style="' + (r[0] === cv.A && r[1] === cv.B ? "background:#fff8e1;font-weight:bold" : "") + '"><td>' + r[0] + "</td><td>" + r[1] + "</td><td>" + (f ? 1 : 0) + "</td><td>" + (f ? 0 : 1) + "</td></tr>"; });
+  $("cvtb").innerHTML = '<table class="t"><tr><th>A</th><th>B</th><th>Q (' + (cv.fn === 0 ? "AND" : "OR") + ')</th><th>Q̄ (' + (cv.fn === 0 ? "NAND" : "NOR") + ")</th></tr>" + rows + "</table>";
+  cv.seenF[cv.fn] = true; if (Object.keys(cv.seenF).length >= 2) L4.hit("g84", 0); if (F) cv.seenN.l = 1; else cv.seenN.r = 1; if (cv.seenN.l && cv.seenN.r) L4.hit("g84", 1);
+}
+function cvFn(i) { cv.fn = i; cvUpd(); }
+function cvTog(w) { cv[w] = 1 - cv[w]; cvUpd(); }
+$("p4").innerHTML = '<section class="card"><h3>8.4 Cascode Voltage Switch Logic (CVSL)</h3><p class="lead"><b>CVSL</b> is a <b>differential</b> logic. Two NMOS networks, one for the function F and one for its complement F̄, are loaded by a pair of <b>cross-coupled PMOS</b> transistors. Both Q and Q̄ are produced, and no static current flows once the outputs settle. Choose a function and change the inputs.</p>' +
+  chipsH("cvc", CVN, "cvFn") + '<div class="chips">' + togB("cvA", "A", 0, "cvTog('A')") + togB("cvB", "B", 0, "cvTog('B')") + '</div><div class="diagram" id="cvd"></div><div class="status" id="cvt"></div><div id="cvtb"></div>' +
+  '<div class="def"><b>Why CVSL?</b> Complex functions need only NMOS trees (no big PMOS stacks), and both polarities appear at the output. <b>Cost:</b> twice the NMOS networks, complemented inputs, and some short-circuit current while the cross-coupled pair switches.</div></section>' +
+  L4.goal("g84", "vlsiM8_s84", ["Try both AND/NAND and OR/NOR", "Make the left network conduct once and the right network conduct once"]);
+
+/* ================= 8.5 Pass-transistor logic ================= */
+var ps = { dev: 0, vin: 5, body: false, rest: false, S: 0, I0: 0, I1: 1, tg: false, A: 0, B: 0, seen: {} }, PSN = ["NMOS pass (gate = VDD)", "PMOS pass (gate = 0 V)", "Transmission gate"];
+function vMaxN() { if (!ps.body) return VDD - VTN; var v = VDD - VTN; for (var i = 0; i < 30; i++) v = VDD - (VTN + 0.45 * (Math.sqrt(0.7 + v) - Math.sqrt(0.7))); return v; }
+function passOut(dev, vin) { if (dev === 0) { var o = Math.min(vin, vMaxN()); return ps.rest && o > VDD / 2 ? VDD : o; } if (dev === 1) return Math.max(vin, VTP); return vin; }
+function psUpd(t) {
+  if (t === "v") { ps.vin = +$("pv").value; L4.hit("g85", 3); }
+  $("pv_v").textContent = ps.vin.toFixed(1); chipOn("psc", ps.dev); ps.body = $("pbd").checked; ps.rest = $("prs").checked;
+  var out = passOut(ps.dev, ps.vin), weak = Math.abs(out - ps.vin) > 0.05;
+  var a = [[], [], []], v, d; for (v = 0; v <= 5.001; v += 0.1) for (d = 0; d < 3; d++) a[d].push([v, passOut(d, v)]);
+  var s = RC(30, 90, 90, 60, "#eef3fb", "#4f6fad") + TX(75, 126, "Vin = " + ps.vin.toFixed(1), "#243b64", 14) + W("120,120 200,120") + RC(200, 80, 180, 80, ps.dev === 2 ? "#fff8e1" : "#e8f5e9", "#1b8a3a") + TX(290, 108, PSN[ps.dev], "#14532d", 13) + TX(290, 132, ps.dev === 0 ? "gate = VDD" : (ps.dev === 1 ? "gate = 0 V" : "gates = VDD and 0 V"), "#455a64", 12) + W("380,120 460,120") + CAP(490, 128) + TX(430, 108, "Vout = " + out.toFixed(2), weak ? "#c62828" : "#1b8a3a", 15);
+  s += ps.rest && ps.dev === 0 ? RC(200, 178, 180, 26, "#e3f2fd", "#1565c0") + TX(290, 196, "level restorer (feedback PMOS) pulls Vout to VDD", "#0d47a1", 12) : "";
+  $("psd").innerHTML = SVGW(s, "0 0 580 220");
+  $("psg").innerHTML = L4.chart({ x0: 0, x1: 5, y0: 0, y1: 5, xl: "Vin (V)", yl: "Vout (V)", series: [{ pts: a[0], c: "#c62828", label: "NMOS pass" }, { pts: a[1], c: "#1565c0", label: "PMOS pass" }, { pts: a[2], c: "#2e7d32", label: "Transmission gate" }], marks: [{ x: ps.vin, y: out }], aria: "Pass transistor output" });
+  $("psr").innerHTML = chipTxt("Vout = " + out.toFixed(2) + " V", !weak, weak) + chipTxt(weak ? "Degraded: " + (ps.dev === 0 ? "weak 1 (V<sub>DD</sub> − V<sub>T</sub>)" : "weak 0 (|V<sub>T</sub>|)") : "Full level passed", !weak, weak);
+  ps.seen[ps.dev] = 1; if (Object.keys(ps.seen).length >= 3) L4.hit("g85", 0); if (ps.dev === 0 && ps.vin >= 4.9 && weak) L4.hit("g85", 1); if (ps.rest && ps.dev === 0 && ps.vin >= 4.9) L4.hit("g85", 2);
+  var sel = ps.S ? ps.I1 : ps.I0, ymux = sel ? (ps.tg ? VDD : VDD - VTN) : 0, xor = ps.A ^ ps.B;
+  $("pm").innerHTML = "<b>2:1 multiplexer.</b> Pass gate 0 conducts when S = 0, pass gate 1 when S = 1. Selected input = <b>" + sel + "</b>, so Y = <b>" + ymux.toFixed(1) + " V</b>" + (sel && !ps.tg ? " <span style='color:#c62828'>(weak 1 through an NMOS-only gate)</span>" : "") + ".";
+  $("px").innerHTML = "<b>Pass-transistor XOR.</b> If A = 0 a gate passes B; if A = 1 a gate passes B̄. With A = " + ps.A + ", B = " + ps.B + ": Y = <b>" + xor + "</b>.";
+  $("pS").textContent = "S = " + ps.S; $("pI0").textContent = "I0 = " + ps.I0; $("pI1").textContent = "I1 = " + ps.I1; $("pxA").textContent = "A = " + ps.A; $("pxB").textContent = "B = " + ps.B;
+  ps.muxSeen = ps.muxSeen || {}; ps.muxSeen[ps.S] = 1; if (Object.keys(ps.muxSeen).length >= 2) L4.hit("g85", 4);
+}
+function psDev(i) { ps.dev = i; psUpd(); }
+function psTog(w) { ps[w] = 1 - ps[w]; psUpd(); }
+$("p5").innerHTML = '<section class="card"><h3>8.5 Pass-Transistor Logic</h3><p class="lead">Here a transistor is used as a <b>switch in the signal path</b> instead of a pull-up or pull-down. That saves transistors, but the levels get <b>degraded</b>. Choose a device and sweep the input.</p>' +
+  chipsH("psc", PSN, "psDev") + L4.sld("pv", "Input voltage V<sub>in</sub>", 0, 5, 0.1, 5, "V", "function(){}").replace('oninput="function(){}(true)"', 'oninput="psUpd(\'v\')"') +
+  '<div class="diagram" id="psd"></div><div class="chipsrow" id="psr"></div><div id="psg"></div>' +
+  '<label class="opt2"><input type="checkbox" id="pbd" onchange="psUpd()"> Include the body effect (V<sub>T</sub> rises as the output rises)</label><label class="opt2"><input type="checkbox" id="prs" onchange="psUpd()"> Add a <b>level restorer</b> (feedback inverter with a PMOS pull-up) to the NMOS pass gate</label>' +
+  '<div class="def"><b>Rule:</b> an NMOS passes a strong 0 but a weak 1 (V<sub>DD</sub> − V<sub>T</sub>). A PMOS passes a strong 1 but a weak 0. A <b>transmission gate</b> (NMOS and PMOS in parallel) passes both, at the cost of two transistors and two control signals.</div></section>' +
+  '<section class="card"><h3>Pass-transistor circuits</h3><div class="chips">' + togB("pS", "S", 0, "psTog('S')") + togB("pI0", "I0", 0, "psTog('I0')") + togB("pI1", "I1", 1, "psTog('I1')") + '<label style="margin-left:10px"><input type="checkbox" onchange="ps.tg=this.checked;psUpd()"> use transmission gates</label></div><div class="status" id="pm"></div>' +
+  '<div class="chips">' + togB("pxA", "A", 0, "psTog('A')") + togB("pxB", "B", 0, "psTog('B')") + '</div><div class="status" id="px"></div></section>' +
+  L4.goal("g85", "vlsiM8_s85", ["Try the NMOS pass, PMOS pass and transmission gate", "See the NMOS pass a weak 1 at V<sub>in</sub> = 5 V", "Add the level restorer and see the output restored to V<sub>DD</sub>", "Move the input voltage slider", "Use the multiplexer with both select values"]);
+
+/* ================= 8.6 practice, 8.7 quiz ================= */
+var PQ = [
+  { cat: "Pseudo-nMOS", q: "The load PMOS of a pseudo-nMOS gate has its gate connected to:", o: ["Ground, so it is always ON", "V<sub>DD</sub>, so it is always OFF", "The clock", "The output"], a: 0, w: "It acts as a resistor-like pull-up." },
+  { cat: "Pseudo-nMOS", q: "The main drawback of pseudo-nMOS is:", o: ["Static power when the output is low, and V<sub>OL</sub> above 0 V", "It needs a clock", "It needs 2N transistors", "It cannot drive loads"], a: 0, w: "The always-ON PMOS fights the NMOS network." },
+  { cat: "Pseudo-nMOS", q: "How many transistors does an N-input pseudo-nMOS gate need?", o: ["N + 1", "2N", "N", "N + 2"], a: 0, w: "N NMOS plus one PMOS load." },
+  { cat: "Dynamic CMOS", q: "During <b>precharge</b> (clk = 0) the dynamic output node is:", o: ["Charged to V<sub>DD</sub>", "Discharged to 0 V", "Floating at a random value", "Connected to the input"], a: 0, w: "The precharge PMOS is ON." },
+  { cat: "Dynamic CMOS", q: "During <b>evaluate</b>, if the pull-down network does not conduct, node X:", o: ["Floats and keeps its stored charge", "Discharges to 0", "Rises above V<sub>DD</sub>", "Is driven by the PMOS"], a: 0, w: "It is a dynamic node: the charge is stored on capacitance." },
+  { cat: "Dynamic CMOS", q: "A dynamic gate needs how many transistors for N inputs?", o: ["N + 2", "2N", "N + 1", "N"], a: 0, w: "N in the network plus precharge and evaluate transistors." },
+  { cat: "Domino", q: "<b>Domino logic</b> adds what to a dynamic gate?", o: ["A static inverter at the output", "A second clock", "A pull-up resistor", "A pass transistor"], a: 0, w: "The inverter makes all outputs rise during evaluate, so gates can be cascaded." },
+  { cat: "Clocked CMOS", q: "In a C²MOS inverter with clk = 0, the output is:", o: ["High impedance: it holds its old value", "Equal to NOT A", "Always 1", "Always 0"], a: 0, w: "Both clocked transistors are OFF." },
+  { cat: "Clocked CMOS", q: "C²MOS logic is mainly used to build:", o: ["Latches, registers and tri-state gates", "Resistors", "Memory cells only", "Analog amplifiers"], a: 0, w: "Its tri-state behaviour suits storage and buses." },
+  { cat: "CVSL", q: "A CVSL gate produces:", o: ["Both Q and its complement Q̄", "Only Q", "Only Q̄", "A clock"], a: 0, w: "It is differential logic." },
+  { cat: "Pass-transistor", q: "An NMOS pass transistor passes:", o: ["A strong 0 and a weak 1 (V<sub>DD</sub> − V<sub>T</sub>)", "A strong 1 and a weak 0", "Both levels perfectly", "Neither level"], a: 0, w: "It stops conducting when V<sub>out</sub> reaches V<sub>DD</sub> − V<sub>T</sub>." },
+  { cat: "Pass-transistor", q: "A <b>transmission gate</b> is:", o: ["An NMOS and a PMOS in parallel passing both levels fully", "Two NMOS in series", "A PMOS load", "A clocked inverter"], a: 0, w: "The NMOS helps for 0 and the PMOS for 1." }
+];
+var QZ = [
+  { q: "Which style uses a clock to alternate precharge and evaluate?", o: ["Dynamic CMOS", "Pseudo-nMOS", "CVSL", "Pass-transistor logic"], a: 0, w: "Dynamic gates have two phases." },
+  { q: "Which style burns static power when the output is low?", o: ["Pseudo-nMOS", "Dynamic CMOS", "Static CMOS", "C²MOS"], a: 0, w: "The always-ON PMOS conducts against the NMOS network." },
+  { q: "Which style uses cross-coupled PMOS transistors?", o: ["CVSL", "Domino", "Pseudo-nMOS", "Pass-transistor logic"], a: 0, w: "The cross-coupled pair regenerates the differential outputs." },
+  { q: "An output in <b>high-Z</b> state that holds its value on a capacitance is typical of:", o: ["Clocked CMOS (C²MOS)", "Pseudo-nMOS", "Static CMOS inverter", "Resistor load logic"], a: 0, w: "With the clock off, no path to either supply exists." },
+  { q: "Why can't a plain dynamic gate drive another dynamic gate?", o: ["Its output can fall during evaluate and wrongly discharge the next node", "It has no output", "It is too slow", "It has no clock"], a: 0, w: "Domino logic (adding an inverter) fixes this." },
+  { q: "Charge leakage limits which style?", o: ["Dynamic logic (it stores charge on a floating node)", "Static CMOS", "CVSL", "Pseudo-nMOS"], a: 0, w: "Dynamic nodes must be refreshed by the clock." },
+  { q: "An NMOS pass gate with V<sub>DD</sub> = 5 V and V<sub>T</sub> = 1 V passes a logic 1 as about:", o: ["4 V", "5 V", "1 V", "0 V"], a: 0, w: "V<sub>out</sub> ≈ V<sub>DD</sub> − V<sub>T</sub>." },
+  { q: "A level restorer is used to:", o: ["Bring a degraded 1 back to V<sub>DD</sub>", "Discharge the node", "Generate the clock", "Add a second input"], a: 0, w: "A feedback PMOS pulls the weak 1 up fully." },
+  { q: "Which advantage do pass-transistor circuits have?", o: ["Fewer transistors for gates such as multiplexers and XOR", "Perfect logic levels always", "No need for control signals", "Zero delay"], a: 0, w: "A pass gate can implement a mux with just two switches." },
+  { q: "In CVSL the second NMOS network implements:", o: ["The complement of the first function", "The same function", "A clock generator", "A constant 1"], a: 0, w: "It produces F̄ so both polarities exist." },
+  { q: "For a dynamic gate the inputs must be stable during:", o: ["The evaluate phase", "The precharge phase only", "Neither phase", "Reset only"], a: 0, w: "A changing input could wrongly discharge the node." },
+  { q: "In pseudo-nMOS, increasing k<sub>n</sub>/k<sub>p</sub> makes V<sub>OL</sub>:", o: ["Lower", "Higher", "Unchanged", "Equal to V<sub>DD</sub>"], a: 0, w: "A stronger NMOS network wins the fight against the load more decisively." }
+];
+$("p6").innerHTML = L4.mcq("pr", { title: "8.6 Practice Set", intro: "12 problems on the five logic styles. Get 9 correct.", problems: PQ, need: 9, key: "vlsiM8_s86", flag: "vlsiM8_s86", hint: "Ask what each style trades off: transistor count, clock, static power, level quality." });
+$("p7").innerHTML = L4.quiz("qz", { title: "8.7 Module 8 Quiz", q: QZ, need: 9, key: "vlsiM8_s87", flag: "vlsiM8_s87" });
+L4.prog({ name: "Module 8", done: "vlsiL4M8Done", groups: [["Logic styles", [["8.1", "vlsiM8_s81"], ["8.2", "vlsiM8_s82"], ["8.3", "vlsiM8_s83"], ["8.4", "vlsiM8_s84"], ["8.5", "vlsiM8_s85"]]], ["Practice and quiz", [["8.6", "vlsiM8_s86"], ["8.7", "vlsiM8_s87"]]]] });
+L4.inits.push(function () { pnUpd(); dyUpd(); cmUpd(); cvUpd(); psUpd(); });
+L4.start();
+
+</script>
+</body>
+</html>

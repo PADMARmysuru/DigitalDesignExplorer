@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 Module 6 | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="l4-common.css">
+<script src="m3-engine.js"></script>
+<script src="l4-common.js"></script>
+</head>
+<body>
+<script>M3.guard();</script>
+<header><h1>Digital Design Explorer</h1><p>Level 4 – VLSI Basics</p></header>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="level4-dashboard.html">Level 4 Dashboard</a>
+  <a href="level4-module5.html">Module 5</a>
+  <a href="#" onclick="M3.logout()">Logout</a>
+</nav>
+<main class="w">
+<section class="hero"><h2>🏭 Module 6 – Fabrication</h2><p>How a wafer of sand becomes a working chip.</p></section>
+<section class="card" id="mprog"></section>
+<div class="steps" id="tabs"></div>
+<div id="panels"></div>
+<div class="nav2"><a href="level4-dashboard.html">← Level 4 Dashboard</a><a href="level4-module5.html">← Module 5</a></div>
+</main>
+<footer><p>Digital Design Explorer | ECE Department</p></footer>
+<footer class="site-footer">
+  <p>Developed by <strong>Mrs. Padma R</strong></p>
+  <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+  <p>GSSSIETW, Mysuru</p>
+</footer>
+<script>
+
+L4.tabs(["6.1 From Sand to Chip", "6.2 Crystal Growth", "6.3 Process Bench", "6.4 CMOS Process Flow", "6.5 Yield", "6.6 Practice", "6.7 Quiz"]);
+
+/* ---------- helpers for layered cross-sections ---------- */
+function E(s, e, dy, inner) { return '<g class="ly" data-s="' + s + '"' + (e !== null ? ' data-e="' + e + '"' : "") + (dy ? ' data-dy="' + dy + '"' : "") + ' style="opacity:0">' + inner + "</g>"; }
+function R(x, y, w, h, f, st) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + f + '"' + (st ? ' stroke="' + st + '"' : "") + "/>"; }
+function T(x, y, txt, c, sz, anc) { return '<text x="' + x + '" y="' + y + '" fill="' + (c || "#243b64") + '" font-size="' + (sz || 14) + '" font-weight="bold" text-anchor="' + (anc || "middle") + '">' + txt + "</text>"; }
+function SV(inner, vb) { return '<svg viewBox="' + (vb || "0 0 600 270") + '" role="img" aria-label="Process cross-section"><g font-family="Arial,sans-serif">' + inner + "</g></svg>"; }
+function AR(x, y1, y2, c) { return '<line x1="' + x + '" y1="' + y1 + '" x2="' + x + '" y2="' + y2 + '" stroke="' + c + '" stroke-width="4"/><polygon points="' + (x - 7) + "," + (y2 - 8) + " " + (x + 7) + "," + (y2 - 8) + " " + x + "," + (y2 + 4) + '" fill="' + c + '"/>'; }
+var SI = "#9fb3c8", OX = "#d5dde3", RS = "#ef9a4b";
+
+/* ---------- 6.1 overview ---------- */
+var OV = [["🏖️", "Sand", "Silica sand is purified into electronic-grade silicon, about 99.9999999% pure."], ["🧪", "Ingot", "Czochralski growth: a seed crystal is pulled slowly from molten silicon to make a single-crystal ingot."], ["💿", "Wafer", "The ingot is sliced into wafers less than 1 mm thick, then lapped and polished mirror-flat."], ["🔬", "Front end", "Transistors are built by repeating oxidation, lithography, etching, doping and deposition."], ["🧵", "Back end", "Layers of metal wiring and insulator join the transistors into circuits."], ["🧫", "Wafer test", "Probes test every die on the wafer. Bad dies are marked."], ["✂️", "Dice and package", "The wafer is cut into dies. Good dies are mounted and wire-bonded into packages."], ["📦", "Final test", "Packaged chips are tested at speed and temperature, then shipped."]];
+var ovSvg = (function () {
+  var s = "";
+  OV.forEach(function (o, i) {
+    var x = 20 + (i % 4) * 155, y = 12 + Math.floor(i / 4) * 140;
+    s += E(i, null, 0, R(x, y, 140, 120, "#eef3fb", "#4f6fad") + T(x + 70, y + 55, o[0], "#000", 40) + T(x + 70, y + 88, o[1], "#243b64", 15) + T(x + 12, y + 20, i + 1, "#c62828", 14, "start"));
+    if (i % 4 < 3 && i < 7) s += E(i + 1, null, 0, T(x + 148, y + 68, "→", "#243b64", 22));
+  });
+  return SV(s, "0 0 640 290");
+})();
+$("p1").innerHTML = '<section class="card"><h3>6.1 From Sand to Chip</h3><p class="lead">Step through the journey of a chip, from sand to the finished, tested package. Each press of NEXT adds the next stage.</p>' +
+  L4.layered("ov", { progs: [{ name: "Chip journey", svg: ovSvg, texts: OV.map(function (o) { return "<b>" + o[1] + ":</b> " + o[2]; }) }], onStep: function (p, s, last) { if (last) L4.hit("g61", 0); } }) + "</section>" +
+  L4.goal("g61", "vlsiM6_s61", ["Step through to the final test"]);
+
+/* ---------- 6.2 Czochralski ---------- */
+function cz(t) {
+  if (t) { }
+  var len = +$("czL").value, h = len * 2.1, top = 285 - h;
+  $("czL_v").textContent = len;
+  var stripes = ""; for (var i = -2; i < 12; i++) stripes += '<line x1="' + (250 + i * 20) + '" y1="' + top + '" x2="' + (250 + i * 20) + '" y2="285" stroke="#7a93ad" stroke-width="3"/>';
+  $("czsvg").innerHTML = SV(R(180, 285, 260, 60, "#8d6e63", "#4e342e") + R(190, 295, 240, 42, "#ff9800") + T(310, 322, "molten silicon (about 1420 °C)", "#5d2e00", 13) +
+    '<rect x="303" y="20" width="14" height="' + Math.max(0, top - 20) + '" fill="#607d8b"/><text x="325" y="40" font-size="13" font-weight="bold" fill="#243b64">seed / pull rod</text>' +
+    '<clipPath id="czc"><rect x="250" y="' + top + '" width="120" height="' + h + '"/></clipPath><rect x="250" y="' + top + '" width="120" height="' + h + '" fill="#b0c4d8" stroke="#4f6fad" stroke-width="2"/>' +
+    '<g clip-path="url(#czc)"><g class="slide">' + stripes + "</g></g>" +
+    '<text x="450" y="' + (top + h / 2) + '" font-size="14" font-weight="bold" fill="#243b64">single-crystal ingot</text><text x="450" y="' + (top + h / 2 + 18) + '" font-size="13" fill="#243b64">rotating slowly ↻</text>' +
+    '<line x1="120" y1="' + top + '" x2="120" y2="285" stroke="#c62828" stroke-width="2"/><text x="112" y="' + (top + h / 2) + '" font-size="13" font-weight="bold" fill="#c62828" text-anchor="end">' + len + " cm</text>", "0 0 640 360");
+  var mass = 2.33 * Math.PI * 15 * 15 * len / 1000;
+  $("czr").innerHTML = "Ingot length <b>" + len + " cm</b> · diameter <b>300 mm</b> · mass about <b>" + mass.toFixed(0) + " kg</b> · about <b>" + (len * 10) + " wafers</b> when sliced";
+  if (len >= 80) L4.hit("g62", 0);
+  if (t) L4.hit("g62", 1);
+}
+$("p2").innerHTML = '<section class="card"><h3>6.2 Crystal Growth and Wafer Preparation</h3><p class="lead">Chips need <b>single-crystal</b> silicon: every atom in a perfect repeating lattice. The <b>Czochralski (CZ) method</b> grows it: a small seed crystal touches molten silicon, then is <b>pulled up slowly while rotating</b>. The melt freezes onto the seed in the same crystal orientation. Boron or phosphorus is added to the melt to make p-type or n-type silicon.</p>' +
+  L4.sld("czL", "Pull length", 0, 100, 1, 10, "cm", "cz") + '<div class="diagram" id="czsvg"></div><div class="status" id="czr"></div>' +
+  '<div class="def"><b>Then:</b> the ingot ends are cut off, the ingot is ground to a standard diameter and sliced into wafers with a diamond saw. Each wafer is <b>lapped</b> (flattened), <b>etched</b> to remove damage and <b>polished</b> to a mirror finish. Only one face carries circuits.</div></section>' +
+  L4.goal("g62", "vlsiM6_s62", ["Grow an ingot of at least 80 cm with the slider", "Move the slider yourself (not just the default)"]);
+
+/* ---------- 6.3 process bench ---------- */
+var BASE = R(40, 150, 520, 100, SI, "#5d7a99") + T(300, 240, "silicon wafer", "#24405c", 13);
+var PROGS = [
+  { name: "Oxidation", svg: SV(E(0, 1, 0, R(40, 150, 520, 100, SI, "#5d7a99")) + E(1, null, 0, R(40, 158, 520, 92, SI, "#5d7a99") + R(40, 140, 520, 18, OX, "#90a4ae") + '<line x1="40" y1="150" x2="560" y2="150" stroke="#c62828" stroke-dasharray="6 4"/>' + T(560, 132, "SiO₂", "#455a64", 14, "end") + T(560, 170, "original surface", "#c62828", 12, "end")) + E(1, null, -30, AR(120, 40, 120, "#1976d2") + AR(300, 40, 120, "#1976d2") + AR(480, 40, 120, "#1976d2") + T(300, 30, "O₂ (dry) or H₂O steam (wet), about 1000 °C", "#1976d2", 14)) + T(300, 262, "", "#000")),
+    texts: ["Bare polished silicon wafer.", "Heated to about 1000 °C in oxygen (dry) or steam (wet), the surface turns into <b>SiO₂</b>. About 44% of the oxide thickness comes from consumed silicon. Wet oxide grows fast and is used for thick field oxide. Dry oxide is denser and is used for thin gate oxide."] },
+  { name: "Photolithography", svg: SV(E(0, null, 0, R(40, 150, 520, 100, SI, "#5d7a99") + R(40, 136, 520, 14, OX, "#90a4ae")) +
+      E(1, null, -40, R(40, 116, 140, 20, RS, "#a1541b") + R(260, 116, 120, 20, RS, "#a1541b") + R(460, 116, 100, 20, RS, "#a1541b")) + E(1, 3, -40, R(180, 116, 80, 20, RS, "#a1541b") + R(380, 116, 80, 20, RS, "#a1541b")) +
+      E(2, 3, 0, R(180, 116, 80, 20, "#ffe082", "#a1541b") + R(380, 116, 80, 20, "#ffe082", "#a1541b")) +
+      E(2, 3, -30, R(40, 56, 140, 12, "#263238") + R(260, 56, 120, 12, "#263238") + R(460, 56, 100, 12, "#263238") + R(40, 68, 520, 6, "#b3e5fc") + T(300, 50, "mask (chrome pattern on glass)", "#263238", 13)) +
+      E(2, 3, -30, AR(220, 4, 108, "#7b1fa2") + AR(420, 4, 108, "#7b1fa2") + T(320, 22, "UV light", "#7b1fa2", 14, "start")) + T(300, 262, "", "#000")),
+    texts: ["Wafer with an oxide layer on top.", "<b>Spin coat:</b> a thin layer of light-sensitive photoresist covers the oxide.", "<b>Align and expose:</b> UV light passes through the openings in the mask. The resist under the openings changes chemically.", "<b>Develop:</b> for positive resist, the exposed resist dissolves. The mask pattern is now in the resist.", "The resist now has <b>windows</b>. It acts as a stencil for etching or doping. Negative resist does the opposite: the exposed part stays."] },
+  { name: "Etching", svg: SV(E(0, null, 0, R(40, 150, 520, 100, SI, "#5d7a99")) + E(0, null, 0, R(40, 134, 140, 16, OX, "#90a4ae") + R(260, 134, 120, 16, OX, "#90a4ae") + R(460, 134, 100, 16, OX, "#90a4ae")) + E(0, 2, 0, R(180, 134, 80, 16, OX, "#90a4ae") + R(380, 134, 80, 16, OX, "#90a4ae")) + E(0, 3, 0, R(40, 114, 140, 20, RS, "#a1541b") + R(260, 114, 120, 20, RS, "#a1541b") + R(460, 114, 100, 20, RS, "#a1541b")) +
+      E(1, 2, -30, AR(220, 40, 120, "#c62828") + AR(420, 40, 120, "#c62828") + T(320, 32, "etchant / plasma ions", "#c62828", 14, "start")) + T(300, 262, "", "#000")),
+    texts: ["Oxide covered by the patterned resist. Two windows expose the oxide.", "The etchant attacks only the <b>exposed</b> oxide. <b>Dry (plasma) etching</b> is anisotropic: straight vertical walls. <b>Wet etching</b> is isotropic: it also undercuts the resist.", "The oxide is removed in the windows and the silicon is exposed.", "The resist is <b>stripped</b>. The pattern now exists in the oxide, which can act as a mask for doping."] },
+  { name: "Doping", svg: SV(E(0, null, 0, R(40, 150, 520, 100, SI, "#5d7a99") + R(40, 134, 140, 16, OX, "#90a4ae") + R(260, 134, 120, 16, OX, "#90a4ae") + R(460, 134, 100, 16, OX, "#90a4ae")) +
+      E(1, 2, -40, [200, 220, 240, 400, 420, 440].map(function (x) { return '<circle cx="' + x + '" cy="60" r="5" fill="#1565c0"/><circle cx="' + x + '" cy="90" r="5" fill="#1565c0"/>'; }).join("") + T(320, 30, "dopant ions (B⁺, P⁺, As⁺)", "#1565c0", 14, "start")) +
+      E(2, 3, 0, R(180, 150, 80, 12, "#2e7d32") + R(380, 150, 80, 12, "#2e7d32") + T(220, 182, "damaged lattice", "#c62828", 12) + T(420, 182, "damaged lattice", "#c62828", 12)) +
+      E(3, null, 0, R(174, 150, 92, 28, "#2e7d32") + R(374, 150, 92, 28, "#2e7d32") + T(220, 196, "junction depth", "#14532d", 12) + T(420, 196, "junction depth", "#14532d", 12)) + T(300, 262, "", "#000")),
+    texts: ["Oxide with windows over the silicon. The oxide will block the dopant elsewhere.", "<b>Ion implantation:</b> an ion beam fires dopant atoms into the silicon. Only the windows let them in. Dose and depth are precisely controlled.", "The ions sit just under the surface and have <b>damaged the crystal</b>. Most are not yet electrically active.", "<b>Anneal:</b> heating repairs the lattice, activates the dopants and spreads them slightly to their final junction depth. (Diffusion from a hot gas is the older alternative.)"] },
+  { name: "Deposition", svg: SV(E(0, null, 0, R(40, 150, 520, 100, SI, "#5d7a99") + R(250, 118, 100, 32, "#d32f2f", "#7f1d1d") + T(300, 138, "poly line", "#fff", 12)) +
+      E(1, null, -30, AR(150, 30, 100, "#00897b") + AR(300, 30, 90, "#00897b") + AR(450, 30, 100, "#00897b") + T(310, 24, "reactive gas (CVD)", "#00897b", 14, "start")) +
+      E(1, 2, 0, '<polyline points="40,146 246,146 246,114 354,114 354,146 560,146" fill="none" stroke="#7b1fa2" stroke-width="4"/>') + E(2, null, 0, '<polyline points="40,142 240,142 240,108 360,108 360,142 560,142" fill="none" stroke="#7b1fa2" stroke-width="14" stroke-linejoin="round"/>' + T(450, 120, "deposited film", "#7b1fa2", 13)) + T(300, 262, "", "#000")),
+    texts: ["A wafer with a raised polysilicon line.", "<b>Chemical vapour deposition (CVD):</b> gas molecules react on the hot wafer surface and leave a thin solid film. Sputtering does the same for metals using a physical process.", "The film grows evenly on top and sides, following the step: <b>conformal coverage</b>. Repeating deposition and patterning builds the oxide, poly and metal layers."] }
+];
+var SEEN63 = {};
+$("p3").innerHTML = '<section class="card"><h3>6.3 The Process Bench</h3><p class="lead">Five basic operations are repeated to build every chip layer. Pick an operation and step through it. The picture shows a cross-section of the wafer.</p>' +
+  L4.layered("pb", { progs: PROGS, onStep: function (p, s, last) { if (last) L4.hit("g63", p); } }) + "</section>" +
+  L4.goal("g63", "vlsiM6_s63", PROGS.map(function (p) { return "Step through " + p.name + " to the end"; }));
+
+/* ---------- 6.4 n-well CMOS process ---------- */
+var CF = [["Start with a p-type silicon substrate", "The wafer is the starting p-type material. All NMOS transistors will be built directly in it.", "—"], ["Form the n-well", "Phosphorus is implanted through a mask and driven in deeply. The n-well will hold the PMOS transistors.", "n-well mask"], ["Grow the field oxide (LOCOS)", "Thick oxide is grown between active areas to isolate neighbouring transistors.", "active-area mask"], ["Gate oxide and polysilicon gates", "A very thin gate oxide is grown, polysilicon is deposited and patterned to form the gates.", "poly mask"], ["n+ implant: NMOS source and drain", "Arsenic is implanted. The poly gate blocks the ions, so source and drain line up with the gate (<b>self-aligned</b>). The n-well contact also gets n+.", "n+ select mask"], ["p+ implant: PMOS source and drain", "Boron is implanted into the n-well for the PMOS, and into the substrate for its contact.", "p+ select mask"], ["Contacts and metal 1", "Oxide is deposited, contact holes are etched and metal fills them to wire the transistors.", "contact and metal masks"], ["Passivation", "A protective glass layer covers the chip. Openings are etched only at the bond pads.", "pad mask"]];
+var cfSvg = SV(
+  E(0, null, 0, R(20, 150, 600, 100, SI, "#5d7a99") + T(120, 240, "p-type substrate", "#24405c", 13)) +
+  E(1, null, 0, R(330, 150, 270, 60, "#b9c9f2", "#5c6bc0") + T(470, 232, "n-well", "#283593", 13)) +
+  E(2, null, 0, R(20, 140, 70, 18, OX, "#90a4ae") + R(280, 140, 60, 18, OX, "#90a4ae") + R(590, 140, 30, 18, OX, "#90a4ae") + T(310, 132, "field oxide", "#455a64", 12)) +
+  E(3, null, 0, R(90, 146, 190, 4, "#eceff1", "#90a4ae") + R(340, 146, 250, 4, "#eceff1", "#90a4ae") + R(170, 116, 30, 30, "#d32f2f", "#7f1d1d") + R(450, 116, 30, 30, "#d32f2f", "#7f1d1d")) +
+  E(4, null, 0, R(110, 150, 60, 22, "#2e7d32") + R(200, 150, 60, 22, "#2e7d32") + R(550, 150, 35, 22, "#2e7d32") + T(140, 190, "n+", "#14532d", 13) + T(230, 190, "n+", "#14532d", 13) + T(190, 226, "NMOS", "#243b64", 15)) +
+  E(5, null, 0, R(360, 150, 90, 22, "#f2b705") + R(480, 150, 60, 22, "#f2b705") + R(30, 150, 40, 22, "#f2b705") + T(405, 190, "p+", "#8a6a00", 13) + T(510, 190, "p+", "#8a6a00", 13) + T(460, 226, "PMOS", "#b3261e", 15)) +
+  E(6, null, 0, R(122, 116, 16, 34, "#212121") + R(222, 116, 16, 34, "#212121") + R(372, 116, 16, 34, "#212121") + R(492, 116, 16, 34, "#212121") + R(105, 100, 50, 16, "#1f5fbf") + R(215, 100, 300, 16, "#1f5fbf") + R(365, 100, 30, 16, "#1f5fbf") + T(360, 90, "metal 1 (output joins the two drains)", "#0d3a80", 12)) +
+  E(7, null, 0, R(20, 84, 600, 66, "#b0bec5") + T(120, 78, "passivation (glass)", "#37474f", 12)), "0 0 640 270");
+$("p4").innerHTML = '<section class="card"><h3>6.4 The n-well CMOS Process Flow</h3><p class="lead">Watch a CMOS inverter (one NMOS and one PMOS) being built, layer by layer, in the order used in the factory.</p>' +
+  L4.layered("cf", { progs: [{ name: "n-well CMOS", svg: cfSvg, texts: CF.map(function (c, i) { return "<b>" + (i + 1) + ". " + c[0] + ".</b> " + c[1] + "<br><small>Mask: " + c[2] + "</small>"; }) }], onStep: function (p, s, last) { if (last) L4.hit("g64", 0); } }) + "</section>" +
+  '<section class="card"><h3>Put the steps in order</h3><p class="lead">Number the eight steps from 1 (first) to 8 (last).</p><div id="ord"></div><div class="btns"><button onclick="ordChk()">CHECK ANSWER</button><button class="alt" onclick="ordHint()">GET HINT</button><button class="alt" onclick="ordNew()">TRY AGAIN</button><button class="alt" onclick="ordSol()">SHOW SOLUTION</button></div><div class="fb" id="ordf"></div></section>' +
+  L4.goal("g64", "vlsiM6_s64", ["Watch all 8 steps of the n-well CMOS process", "Put the process steps in the correct order (without SHOW SOLUTION)"]);
+var ordShown = false, ordPerm = [];
+function ordNew() {
+  ordPerm = L4.shuf(CF.map(function (c, i) { return i; })); ordShown = false;
+  var o = "<option value=''>?</option>" + CF.map(function (c, i) { return "<option>" + (i + 1) + "</option>"; }).join("");
+  $("ord").innerHTML = ordPerm.map(function (k, j) { return '<p><select id="os' + j + '">' + o + '</select> <span id="om' + j + '"></span> ' + CF[k][0] + "</p>"; }).join("");
+  $("ordf").className = "fb"; $("ordf").innerHTML = "";
+}
+function ordChk() {
+  var all = true; for (var j = 0; j < ordPerm.length; j++) if (!$("os" + j).value) return L4.fb("ordf", "hint", "Give every step a number first.");
+  ordPerm.forEach(function (k, j) { var ok = +$("os" + j).value === k + 1; if (!ok) all = false; $("om" + j).textContent = ok ? "✓" : "✗"; $("om" + j).style.color = ok ? "#2e7d32" : "#c62828"; });
+  if (all) { L4.fb("ordf", "ok", "✓ <b>Correct order.</b> Wells first, then isolation, then gates, then the self-aligned implants, then wiring and protection."); if (!ordShown) L4.hit("g64", 1); }
+  else L4.fb("ordf", "no", "✗ <b>Not yet.</b> Steps marked ✗ are in the wrong place. Use GET HINT.");
+}
+function ordHint() { L4.fb("ordf", "hint", "💡 <b>Hint:</b> the wells and isolation are made first, the poly gate must exist before the source/drain implants (so they self-align), and metal is added only after the transistors are complete."); }
+function ordSol() { ordPerm.forEach(function (k, j) { $("os" + j).value = k + 1; $("om" + j).textContent = ""; }); ordShown = true; L4.fb("ordf", "sol", "<b>Solution shown.</b> Press TRY AGAIN to earn credit."); }
+L4.inits.push(ordNew);
+
+/* ---------- 6.5 yield ---------- */
+function yld(t) {
+  if (t) L4.hit("g65", 0);
+  var A = +$("yA").value, D = +$("yD").value, d = +$("yW").value;
+  $("yA_v").textContent = A; $("yD_v").textContent = D.toFixed(2); $("yW_v").textContent = d;
+  var Y = Math.exp(-A / 100 * D), N = Math.PI * d * d / 4 / A - Math.PI * d / Math.sqrt(2 * A), good = Math.max(0, N) * Y, yc = [], gc = [];
+  for (var a = 10; a <= 400; a += 10) { var yy = Math.exp(-a / 100 * D), nn = Math.max(0, Math.PI * d * d / 4 / a - Math.PI * d / Math.sqrt(2 * a)); yc.push([a, yy * 100]); gc.push([a, nn * yy]); }
+  $("yc1").innerHTML = L4.chart({ x0: 0, x1: 400, y0: 0, y1: 100, xl: "Die area (mm²)", yl: "Yield (%)", series: [{ pts: yc, c: "#c62828", label: "Yield" }], marks: [{ x: A, y: Y * 100 }], aria: "Yield versus die area" });
+  $("yc2").innerHTML = L4.chart({ x0: 0, x1: 400, y0: 0, y1: Math.max(50, Math.ceil(gc.reduce(function (m, p) { return Math.max(m, p[1]); }, 0) / 100) * 100), xl: "Die area (mm²)", yl: "Good dies per wafer", series: [{ pts: gc, c: "#2e7d32", label: "Good dies" }], marks: [{ x: A, y: good }], aria: "Good dies per wafer" });
+  $("yr").innerHTML = "Yield <b>" + (Y * 100).toFixed(0) + "%</b> · gross dies per wafer <b>" + Math.max(0, Math.floor(N)) + "</b> · good dies <b>" + Math.floor(good) + "</b>";
+}
+L4.eqHit = function (id) { if (id === "yEq") L4.hit("g65", 1); };
+$("p5").innerHTML = '<section class="card"><h3>6.5 Yield: Why Big Chips Cost More</h3><p class="lead">A random dust particle can kill a die. Bigger dies are more likely to catch one, and fewer of them fit on a wafer. Change the sliders and watch the good dies fall.</p>' +
+  L4.sld("yA", "Die area", 10, 400, 10, 100, "mm²", "yld") + L4.sld("yD", "Defect density D₀", 0.05, 1, 0.05, 0.3, "per cm²", "yld") + L4.sld("yW", "Wafer diameter", 200, 300, 100, 300, "mm", "yld") +
+  '<div class="two"><div id="yc1"></div><div id="yc2"></div></div><div class="status" id="yr"></div>' + L4.eq("yEq", "Yield  Y = e<sup>−A·D₀</sup> &nbsp;(A in cm², D₀ per cm²)<br>Gross dies ≈ π(d/2)²/A − πd/√(2A)<br>Good dies = gross dies × Y") + "</section>" +
+  L4.goal("g65", "vlsiM6_s65", ["Move the sliders and watch yield change", "Reveal the equation after observing"]);
+L4.inits.push(function () { cz(false); yld(false); });
+
+/* ---------- 6.6 practice and 6.7 quiz ---------- */
+var PQ = [
+  { cat: "Materials", q: "Why is <b>single-crystal</b> silicon used for chips?", o: ["A perfect lattice gives predictable, uniform electrical behaviour", "It is cheaper than polysilicon", "It conducts better than metal", "It needs no doping"], a: 0, w: "Grain boundaries in polycrystalline material would scatter carriers unpredictably." },
+  { cat: "Crystal growth", q: "In the Czochralski method the crystal is:", o: ["Pulled slowly from molten silicon while rotating", "Sliced from sand", "Melted in a vacuum tube", "Grown by CVD"], a: 0, w: "A seed touches the melt and is pulled up and rotated." },
+  { cat: "Oxidation", q: "Heating silicon in oxygen or steam forms:", o: ["Silicon dioxide (SiO₂)", "Silicon nitride", "Polysilicon", "Aluminium oxide"], a: 0, w: "That is thermal oxidation." },
+  { cat: "Oxidation", q: "Which oxide is used for the thin, high-quality <b>gate oxide</b>?", o: ["Dry oxide", "Wet oxide", "Deposited metal oxide", "Field oxide"], a: 0, w: "Dry oxide grows slowly and is denser; wet oxide is used for thick field oxide." },
+  { cat: "Lithography", q: "Photolithography is used to:", o: ["Transfer the mask pattern into photoresist", "Add dopant atoms", "Grow oxide", "Cut the wafer into dies"], a: 0, w: "The resist becomes a stencil for the next step." },
+  { cat: "Lithography", q: "With <b>positive</b> photoresist, after exposure and development:", o: ["The exposed resist is removed", "The unexposed resist is removed", "All resist is removed", "No resist is removed"], a: 0, w: "Exposed positive resist becomes soluble." },
+  { cat: "Etching", q: "<b>Dry (plasma) etching</b> is preferred for small features because it is:", o: ["Anisotropic: vertical walls", "Isotropic: it undercuts", "Cheaper than wet etching", "Free of chemicals"], a: 0, w: "Straight walls preserve the feature size." },
+  { cat: "Doping", q: "Compared with diffusion, <b>ion implantation</b> offers:", o: ["Precise control of dose and depth", "Higher temperature operation", "No lattice damage", "No need for a mask"], a: 0, w: "The beam current and energy set the dose and depth." },
+  { cat: "Doping", q: "Why is the wafer <b>annealed</b> after implantation?", o: ["To repair lattice damage and activate the dopants", "To grow field oxide", "To harden the photoresist", "To remove the mask"], a: 0, w: "Implanted ions damage the crystal and sit in the wrong positions until annealed." },
+  { cat: "CMOS process", q: "The <b>field oxide</b> (LOCOS) is used to:", o: ["Isolate neighbouring transistors", "Form the gate insulator", "Act as the source", "Connect metal layers"], a: 0, w: "Thick oxide stops unwanted conduction between devices." },
+  { cat: "CMOS process", q: "In the n-well CMOS process the PMOS transistors are built in:", o: ["The n-well", "The p-substrate", "The metal layer", "The polysilicon"], a: 0, w: "The n-well provides the n-type body for PMOS." },
+  { cat: "CMOS process", q: "A <b>self-aligned gate</b> means:", o: ["The poly gate masks the source/drain implant, so they line up automatically", "The gate moves to fit the channel", "The gate is made of metal", "The gate is grown before the oxide"], a: 0, w: "The gate blocks the implant, so no extra alignment step is needed." }
+];
+var QZ = [
+  { q: "As die area increases (same defect density), yield:", o: ["Decreases", "Increases", "Stays the same", "Becomes 100%"], a: 0, w: "A bigger die is more likely to contain a defect." },
+  { q: "The Poisson yield model is:", o: ["Y = e<sup>−A·D₀</sup>", "Y = A·D₀", "Y = 1/(A·D₀)", "Y = e<sup>A·D₀</sup>"], a: 0, w: "Yield falls exponentially with area times defect density." },
+  { q: "Which step deposits a thin film from reacting gases?", o: ["Chemical vapour deposition (CVD)", "Oxidation", "Ion implantation", "Etching"], a: 0, w: "CVD builds films from gas reactions on the wafer." },
+  { q: "Which mask defines the transistor gates?", o: ["The polysilicon mask", "The n-well mask", "The metal mask", "The contact mask"], a: 0, w: "Poly forms the gates." },
+  { q: "Going from 200 mm to 300 mm wafers, the number of dies per wafer:", o: ["Increases a lot", "Decreases", "Stays the same", "Becomes zero"], a: 0, w: "Wafer area grows with the square of the diameter." },
+  { q: "To make p-type silicon, the melt is doped with:", o: ["Boron", "Phosphorus", "Arsenic", "Antimony"], a: 0, w: "Boron is a group III acceptor." },
+  { q: "After etching or implanting through it, the photoresist is:", o: ["Stripped off", "Left on permanently", "Turned into oxide", "Used as the gate"], a: 0, w: "Resist is only a temporary stencil." },
+  { q: "The passivation layer protects the chip from:", o: ["Moisture, contamination and scratches", "Heat only", "Its own supply voltage", "Ion implantation"], a: 0, w: "Glass covers the top surface." },
+  { q: "Wafer testing is done:", o: ["Before the wafer is diced", "After packaging only", "Before crystal growth", "Never"], a: 0, w: "Probes test dies on the intact wafer to save packaging cost." },
+  { q: "Growing SiO₂ by heating silicon in oxygen is called:", o: ["Thermal oxidation", "Sputtering", "Lithography", "Annealing"], a: 0, w: "The silicon surface reacts with oxygen." },
+  { q: "How many lithography (mask) steps does building an inverter in the n-well process use at least?", o: ["Several: well, active, poly, n+, p+, contact, metal", "Exactly one", "None", "Only two"], a: 0, w: "Each layer needs its own mask." },
+  { q: "The main purpose of <b>lapping and polishing</b> a sliced wafer is:", o: ["A flat, mirror-smooth surface for fine lithography", "To add dopants", "To grow oxide", "To increase its diameter"], a: 0, w: "Fine patterns need an extremely flat surface." }
+];
+$("p6").innerHTML = L4.mcq("pr", { title: "6.6 Practice Set", intro: "12 problems on the fabrication steps. Get 9 correct.", problems: PQ, need: 9, key: "vlsiM6_s66", flag: "vlsiM6_s66", hint: "Think about what each step does to the wafer: grow, pattern, remove or add." });
+$("p7").innerHTML = L4.quiz("qz", { title: "6.7 Module 6 Quiz", q: QZ, need: 9, key: "vlsiM6_s67", flag: "vlsiM6_s67" });
+
+L4.prog({ name: "Module 6", done: "vlsiL4M6Done", groups: [["Process story", [["6.1", "vlsiM6_s61"], ["6.2", "vlsiM6_s62"], ["6.3", "vlsiM6_s63"], ["6.4", "vlsiM6_s64"]]], ["Yield, practice and quiz", [["6.5", "vlsiM6_s65"], ["6.6", "vlsiM6_s66"], ["6.7", "vlsiM6_s67"]]]] });
+L4.start();
+
+</script>
+</body>
+</html>

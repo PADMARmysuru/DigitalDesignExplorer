@@ -229,7 +229,7 @@
                     <span class="path-status status-locked">🔒 LOCKED</span>
                     <h3>LEVEL 3 — Verilog for Beginners</h3>
                     <p>Verilog HDL fundamentals, modules, operators and beginner RTL coding.</p>
-                    <button class="path-button" onclick="requestFutureLevel(3)">🔒 Locked — Complete Previous Levels</button>
+                    <button class="path-button" onclick="openLevel(3,'level3-dashboard.html')">🔐 Faculty Access to Level 3</button>
                 </div>
             </div>
         
@@ -239,8 +239,8 @@
                 <div class="path-card">
                     <span class="path-status status-locked">🔒 LOCKED</span>
                     <h3>LEVEL 4 — VLSI Basics</h3>
-                    <p>Semiconductor concepts, CMOS basics and VLSI design foundations.</p>
-                    <button class="path-button" onclick="requestFutureLevel(4)">🔒 Locked — Complete Previous Levels</button>
+                    <p>MOSFET behaviour, CMOS logic, inverter analysis, layout and stick diagrams, fabrication, scaling and advanced CMOS logic styles.</p>
+                    <button class="path-button" onclick="openLevel(4,'level4-dashboard.html')">🔐 Faculty Access to Level 4</button>
                 </div>
             </div>
         
@@ -476,6 +476,29 @@
 
             }
 
+        }
+
+
+        function openLevel(level, page) {
+
+            const unlockKey = "level" + level + "Unlocked";
+
+            if (localStorage.getItem(unlockKey) === "true") {
+                window.location.href = page;
+                return;
+            }
+
+            const enteredPIN = prompt(
+                "🔐 Level " + level + " is restricted.\n\nEnter Faculty PIN to unlock Level " + level + ":"
+            );
+
+            if (enteredPIN === FACULTY_PIN) {
+                localStorage.setItem(unlockKey, "true");
+                alert("✅ Level " + level + " access granted.");
+                window.location.href = page;
+            } else if (enteredPIN !== null) {
+                alert("❌ Incorrect Faculty PIN.\n\nLevel " + level + " remains locked.");
+            }
         }
 
 

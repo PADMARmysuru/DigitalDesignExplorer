@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 Dashboard | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.wrap{max-width:1000px;margin:20px auto;padding:15px}
+.hd{background:#243b64;color:#fff;padding:26px;text-align:center;border-radius:14px;margin-bottom:18px}
+.hd h2{color:#fff;margin:0 0 8px}
+.box{background:#fff;border-radius:14px;box-shadow:0 3px 12px rgba(0,0,0,.08);padding:20px;margin-bottom:18px}
+.bar{height:22px;background:#e0e0e0;border-radius:20px;overflow:hidden;margin:10px 0}
+#pb{height:100%;width:0;background:#4f6fad;transition:width .4s}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.m{background:#fff;border-radius:14px;box-shadow:0 3px 12px rgba(0,0,0,.08);padding:20px;text-align:center;border-top:6px solid #999}
+.m.ok{border-top-color:#4f6fad}.m.done{border-top-color:#2e7d32}
+.m h3{color:#243b64}
+.tag{display:inline-block;padding:5px 11px;border-radius:20px;font-size:12px;font-weight:bold;background:#eee;color:#666}
+.m.ok .tag{background:#e8f5e9;color:#2e7d32}.m.done .tag{background:#dff2e1;color:#1f6d2a}
+.go{display:inline-block;text-decoration:none;background:#243b64;color:#fff;padding:10px 18px;border-radius:8px;font-weight:bold}
+.lockbtn{background:#eee;color:#666}
+.soon{opacity:.75}
+.cert{text-align:center;display:none}
+.cert a{background:#c9a227;color:#162746}
+.nav2{text-align:center;margin:25px 0}
+.nav2 a{display:inline-block;text-decoration:none;background:#162746;color:#fff;padding:10px 18px;border-radius:8px;margin:4px;font-weight:bold}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  if(localStorage.getItem("level4Unlocked")!=="true"){
+    alert("🔒 Level 4 is restricted. Faculty authorization is required.");
+    window.location.replace("index.html");
+  }
+})();
+</script>
+
+<header>
+  <h1>Digital Design Explorer</h1>
+  <p>Level 4 – VLSI Basics</p>
+</header>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="dashboard.html">Level 1 Dashboard</a>
+  <a href="level2-dashboard.html">Level 2 Dashboard</a>
+  <a href="level3-dashboard.html">Level 3 Dashboard</a>
+  <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main class="wrap">
+  <section class="hd">
+    <h2>🔬 LEVEL 4 – VLSI BASICS</h2>
+    <p>Semiconductor concepts, MOSFET behaviour, CMOS logic, layout, fabrication, scaling and advanced logic styles.</p>
+  </section>
+
+  <section class="box">
+    <h3 style="color:#243b64;margin-top:0">🏆 Level 4 Progress</h3>
+    <div class="bar"><div id="pb"></div></div>
+    <div id="pt" style="text-align:center;font-weight:bold;color:#243b64">0 / 8 Modules Completed</div>
+    <div id="cert" class="box cert" style="box-shadow:none;margin:14px 0 0">
+      <p style="color:#2e7d32;font-weight:bold;font-size:18px">🎉 Congratulations! Level 4 completed!</p>
+      <a class="go" href="level4-certificate.html">🎓 Generate Level 4 Certificate</a>
+    </div>
+  </section>
+
+  <section class="grid" id="grid"></section>
+
+  <div class="nav2">
+    <a href="index.html">← Home</a>
+    <a href="level3-dashboard.html">Level 3 Dashboard</a>
+  </div>
+</main>
+
+<footer><p>Digital Design Explorer | ECE Department</p></footer>
+<footer class="site-footer">
+  <p>Developed by <strong>Mrs. Padma R</strong></p>
+  <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+  <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+function flag(k){return localStorage.getItem(k)==="true";}
+function count(prefix,list){return list.filter(function(k){return flag(prefix+k);}).length;}
+var MODS=[
+ {t:"VLSI Foundations & the MOSFET",d:"Moore's law, IC history, IC technology, VLSI design flow, BJT vs MOSFET, FET types, animated NMOSFET and an interactive class.",f:"level4-module1.html"},
+ {t:"MOSFET Fundamentals",d:"NMOS and PMOS structure and operation, MOSFET as a switch, operating regions, practice, mini challenges and quiz.",f:"level4-module2.html"},
+ {t:"CMOS Logic & Transistor-Level Design",d:"CMOS inverter, NAND and NOR, circuit building and checking, debugging, compound logic, design challenge and quiz.",f:"level4-module3.html",sec:["vlsiM3_s",["31","32","33","34","35","36","37","38","39","310","311","312","313","314","315","316"]]},
+ {t:"MOSFET Characteristics & CMOS Inverter Analysis",d:"Second-order effects with animated NMOS structures, the inverter VTC, noise margins, an interactive simulator and challenges.",f:"level4-module4.html",sec:["vlsiM4_s",["41","42","43","44","45","46"]]},
+ {t:"Layout & Stick Diagrams",d:"Mask layers and colour code, stick-diagram rules, drawing inverter, NAND and NOR stick diagrams that are checked automatically, and λ design rules.",f:"level4-module5.html",sec:["vlsiM5_s",["51","52","53","54","55","56","57"]]},
+ {t:"Fabrication",d:"From sand to chip: crystal growth, oxidation, lithography, etching, doping, deposition, the n-well CMOS process flow with animated cross-sections, and yield.",f:"level4-module6.html",sec:["vlsiM6_s",["61","62","63","64","65","66","67"]]},
+ {t:"Scaling",d:"Constant-field and constant-voltage scaling, scaling-factor tables, and the limits of scaling: punch-through, gate leakage and interconnect delay.",f:"level4-module7.html",sec:["vlsiM7_s",["71","72","73","74","75","76","77"]]},
+ {t:"Advanced CMOS Logic Styles",d:"Pseudo-nMOS, dynamic CMOS and domino, clocked CMOS (C²MOS), cascode voltage switch logic (CVSL) and pass-transistor logic, each with an interactive circuit.",f:"level4-module8.html",sec:["vlsiM8_s",["81","82","83","84","85","86","87"]]}
+];
+function render(){
+  var h="";
+  MODS.forEach(function(m,i){
+    var n=i+1;
+    h+='<div class="m'+(m.f?"":" soon")+'" id="card'+n+'"><span class="tag" id="tag'+n+'"></span><h3>Module '+n+': '+m.t.replace(/&/g,"&amp;")+'</h3><p>'+m.d+(m.sec?' <b id="sn'+n+'"></b> sections completed.':"")+'</p><span id="btn'+n+'"></span></div>';
+  });
+  document.getElementById("grid").innerHTML=h;
+}
+function update(){
+  var d=MODS.map(function(m,i){return flag("vlsiL4M"+(i+1)+"Done");}),n=d.filter(Boolean).length;
+  document.getElementById("pb").style.width=(n/MODS.length*100)+"%";
+  document.getElementById("pt").textContent=n+" / "+MODS.length+" Modules Completed";
+  MODS.forEach(function(m,i){
+    var id=i+1,c=document.getElementById("card"+id),t=document.getElementById("tag"+id),b=document.getElementById("btn"+id);
+    var open=m.f&&(i===0||d[i-1]);
+    if(!m.f){c.className="m soon";t.textContent=id+" • COMING SOON";b.innerHTML='<span class="go lockbtn">⏳ Coming soon</span>';}
+    else{c.className="m "+(d[i]?"done":(open?"ok":""));t.textContent=id+" • "+(d[i]?"COMPLETED":(open?"READY":"LOCKED"));
+      b.innerHTML=open?'<a class="go" href="'+m.f+'">Open Module '+id+' →</a>':'<span class="go lockbtn">🔒 Complete Module '+(id-1)+'</span>';}
+    if(m.sec){var e=document.getElementById("sn"+id);if(e)e.textContent=count(m.sec[0],m.sec[1])+" / "+m.sec[1].length;}
+  });
+  document.getElementById("cert").style.display=(n===MODS.length)?"block":"none";
+}
+function logout(){localStorage.removeItem("studentLoggedIn");window.location.href="login.html";}
+render();update();
+window.addEventListener("pageshow",update);
+</script>
+</body>
+</html>

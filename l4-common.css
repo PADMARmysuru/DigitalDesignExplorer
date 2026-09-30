@@ -1,0 +1,45 @@
+/* Shared styles for Level 4 Modules 6-8 */
+.w{max-width:1000px;margin:16px auto;padding:10px}
+.hero{background:#243b64;color:#fff;text-align:center;padding:18px;border-radius:12px;margin-bottom:14px}
+.hero h2{color:#fff;margin:0 0 5px}
+.steps{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.steps button{background:#243b64;color:#fff;font-weight:bold}.steps button.cur{background:#c9a227;color:#162746}
+.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:14px;width:auto}
+.card h3{color:#243b64;margin-top:0;text-align:left}
+.lead{font-size:17px;line-height:1.55}
+.def{background:#eef3fb;border-left:5px solid #4f6fad;padding:12px 16px;border-radius:8px;margin:10px 0}
+.info{background:#f5f7fa;border-left:5px solid #4f6fad;padding:10px 14px;border-radius:8px;margin:10px 0;min-height:24px}
+.status{background:#fff8e1;border-left:5px solid #c9a227;padding:10px 14px;border-radius:8px;margin:8px 0}
+.diagram{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:6px}
+.diagram svg{width:100%;height:auto;display:block}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
+.t{border-collapse:collapse;width:100%;margin:10px 0}.t th,.t td{border:1px solid #ccc;padding:8px;text-align:left;font-size:15px}.t th{background:#243b64;color:#fff}
+.fb{margin-top:10px;padding:12px;border-radius:8px;display:none;line-height:1.5}
+.fb.ok{display:block;background:#e8f5e9;color:#14532d}.fb.no{display:block;background:#ffebee;color:#7f1d1d}
+.fb.hint{display:block;background:#fff8e1;color:#5f4500}.fb.sol{display:block;background:#eef3fb;color:#162746}
+.btns{text-align:center;margin:8px 0}.btns button{margin:3px;font-weight:bold}.btns .alt{background:#e8eef8;color:#243b64}
+.btns button[disabled]{background:#e3e7ee;color:#8a94a6;cursor:not-allowed}
+.opt2{display:block;margin:6px 0;padding:10px;border:2px solid #d5dce8;border-radius:10px;cursor:pointer;background:#fafcff}
+.chips{text-align:center}.chips button{background:#e8eef8;color:#243b64;margin:3px;font-weight:bold}.chips button.on{background:#4f6fad;color:#fff}
+.chipsrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.chipsrow span{padding:8px 14px;border-radius:20px;font-weight:bold;background:#eef3fb;color:#243b64}
+.chipsrow span.on{background:#c8e6c9;color:#14532d}.chipsrow span.bad{background:#ffcdd2;color:#7f1d1d}
+.qcard{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:12px;margin:12px 0}
+.qcard.good{border-color:#2e7d32;background:#f1fbf3}.qcard.bad{border-color:#c62828;background:#fff5f5}
+.check li{list-style:none;margin:6px 0;font-size:16px}
+.done{background:#e8f5e9;border:2px solid #2e7d32;color:#14532d;padding:12px;border-radius:10px;font-weight:bold;text-align:center;margin-top:10px;display:none}
+.mbar{height:18px;background:#e0e0e0;border-radius:12px;overflow:hidden;margin:8px 0}.mbar div{height:100%;background:#4f6fad;transition:width .4s}
+.mgrp span{display:inline-block;margin:2px 6px 2px 0;padding:3px 9px;border-radius:14px;background:#eef3fb;font-size:15px}.mgrp span.d{background:#c8e6c9;color:#14532d}
+.ctl{margin:8px 0}.ctl input[type=range]{width:100%}
+.eqb{background:#1e1e1e;color:#7CFC9A;padding:12px 16px;border-radius:8px;font-family:Consolas,monospace;font-size:16px;margin:8px 0}
+.ly{transition:opacity .7s ease,transform .7s ease}
+.flow{stroke:#1b8a3a;stroke-width:6;fill:none;stroke-dasharray:10 8;animation:fl .6s linear infinite}
+@keyframes fl{to{stroke-dashoffset:-18}}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-40px)}}
+.slide{animation:slide 1.2s linear infinite}
+@media (prefers-reduced-motion:reduce){.flow,.slide{animation:none}.ly{transition:none}}
+select{padding:6px;border-radius:6px;border:1px solid #aaa;font-size:15px}
+.nav2{text-align:center;margin:18px 0}
+.nav2 a{display:inline-block;text-decoration:none;background:#162746;color:#fff;padding:9px 16px;border-radius:8px;margin:3px;font-weight:bold}
+.bar2{display:inline-block;width:55%;height:12px;background:#e0e0e0;border-radius:8px;vertical-align:middle}
+.bar2 i{display:block;height:100%;border-radius:8px}

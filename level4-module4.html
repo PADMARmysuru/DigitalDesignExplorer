@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 Module 4 | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<script src="m3-engine.js"></script>
+<style>
+.w{max-width:1000px;margin:16px auto;padding:10px}
+.hero{background:#243b64;color:#fff;text-align:center;padding:18px;border-radius:12px;margin-bottom:14px}
+.hero h2{color:#fff;margin:0 0 5px}
+.steps{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.steps button{background:#243b64;color:#fff;font-weight:bold}
+.steps button.cur{background:#c9a227;color:#162746}
+.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:14px;width:auto}
+.card h3{color:#243b64;margin-top:0;text-align:left}
+.lead{font-size:17px;line-height:1.55}
+.ef{border:2px solid #d9dee7;border-radius:12px;padding:12px;margin:14px 0;background:#fcfdff}
+.ef h4{margin:0 0 6px;color:#243b64}
+.ctl{margin:8px 0}.ctl input[type=range]{width:100%}
+.status{background:#fff8e1;border-left:5px solid #c9a227;padding:10px 14px;border-radius:8px;margin:8px 0}
+.eqb{background:#1e1e1e;color:#7CFC9A;padding:12px 16px;border-radius:8px;font-family:Consolas,monospace;font-size:16px;margin:8px 0}
+.info{background:#f5f7fa;border-left:5px solid #4f6fad;padding:10px 14px;border-radius:8px;margin:10px 0;min-height:24px}
+.chips button{background:#e8eef8;color:#243b64;margin:3px;font-weight:bold}
+.chips button.on{background:#4f6fad;color:#fff}
+.chipsrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.chipsrow span{padding:8px 14px;border-radius:20px;font-weight:bold;background:#eef3fb;color:#243b64}
+.t{border-collapse:collapse;width:100%;margin:10px 0}
+.t th,.t td{border:1px solid #ccc;padding:8px;text-align:left;font-size:15px}
+.t th{background:#243b64;color:#fff}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
+.diagram{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:6px}
+.diagram svg{width:100%;height:auto;display:block}
+.ef .diagram{margin:8px 0}
+.fb{margin-top:10px;padding:12px;border-radius:8px;display:none;line-height:1.5}
+.fb.ok{display:block;background:#e8f5e9;color:#14532d}.fb.no{display:block;background:#ffebee;color:#7f1d1d}
+.fb.hint{display:block;background:#fff8e1;color:#5f4500}.fb.sol{display:block;background:#eef3fb;color:#162746}
+.btns{text-align:center}.btns button{margin:4px;font-weight:bold}.btns .alt{background:#e8eef8;color:#243b64}
+.opt2{display:block;margin:6px 0;padding:10px;border:2px solid #d5dce8;border-radius:10px;cursor:pointer;background:#fafcff}
+.qcard{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:12px;margin:12px 0}
+.qcard.good{border-color:#2e7d32;background:#f1fbf3}.qcard.bad{border-color:#c62828;background:#fff5f5}
+.check li{list-style:none;margin:6px 0;font-size:16px}
+.done{background:#e8f5e9;border:2px solid #2e7d32;color:#14532d;padding:12px;border-radius:10px;font-weight:bold;text-align:center;margin-top:10px;display:none}
+.mbar{height:18px;background:#e0e0e0;border-radius:12px;overflow:hidden;margin:8px 0}.mbar div{height:100%;background:#4f6fad;transition:width .4s}
+.mgrp span{display:inline-block;margin:2px 6px 2px 0;padding:3px 9px;border-radius:14px;background:#eef3fb;font-size:15px}
+.mgrp span.d{background:#c8e6c9;color:#14532d}
+.flow{stroke:#1b8a3a;stroke-width:6;fill:none;stroke-dasharray:10 8;animation:fl .6s linear infinite}
+@keyframes fl{to{stroke-dashoffset:-18}}
+@media (prefers-reduced-motion:reduce){.flow{animation:none}}
+.num{width:90px;padding:7px;font-size:16px;border:2px solid #aab6cc;border-radius:8px}
+.pgrid{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;margin:8px 0}
+select{padding:6px;border-radius:6px;border:1px solid #aaa;font-size:15px}
+.nav2{text-align:center;margin:18px 0}
+.nav2 a{display:inline-block;text-decoration:none;background:#162746;color:#fff;padding:9px 16px;border-radius:8px;margin:3px;font-weight:bold}
+</style>
+</head>
+<body>
+<script>M3.guard();</script>
+
+<header><h1>Digital Design Explorer</h1><p>Level 4 – VLSI Basics</p></header>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="level4-dashboard.html">Level 4 Dashboard</a>
+  <a href="level4-module3.html">Module 3</a>
+  <a href="#" onclick="M3.logout()">Logout</a>
+</nav>
+
+<main class="w">
+<section class="hero">
+  <h2>📈 Module 4 – MOSFET Characteristics &amp; CMOS Inverter Analysis</h2>
+  <p>See the physical effect first, then meet the equation.</p>
+</section>
+<section class="card" id="mprog"></section>
+<div class="steps">
+  <button id="b1" class="cur" onclick="show(1)">4.1 Second-Order Effects</button>
+  <button id="b2" onclick="show(2)">4.2 Inverter DC Characteristics</button>
+  <button id="b3" onclick="show(3)">4.3 Inverter Simulator</button>
+  <button id="b4" onclick="show(4)">4.4 VTC Challenge</button>
+  <button id="b5" onclick="show(5)">4.5 Effects Challenge</button>
+  <button id="b6" onclick="show(6)">4.6 Quiz</button>
+</div>
+<div id="p1"></div><div id="p2" style="display:none"></div><div id="p3" style="display:none"></div>
+<div id="p4" style="display:none"></div><div id="p5" style="display:none"></div><div id="p6" style="display:none"></div>
+<div class="nav2"><a href="level4-dashboard.html">← Level 4 Dashboard</a><a href="level4-module3.html">← Module 3</a></div>
+</main>
+
+<footer><p>Digital Design Explorer | ECE Department</p></footer>
+<footer class="site-footer">
+  <p>Developed by <strong>Mrs. Padma R</strong></p>
+  <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+  <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+var $ = function (i) { return document.getElementById(i); };
+function ld(k) { try { return JSON.parse(localStorage.getItem(k) || "[]"); } catch (e) { return []; } }
+function sv(k, l) { localStorage.setItem(k, JSON.stringify(l)); }
+function fbx(id, cls, html) { var f = $(id); f.className = "fb " + cls; f.innerHTML = html; }
+function shufA(o) { var x = o.slice(); x.sort(function () { return Math.random() - .5; }); return x; }
+function ckList(id, items, key, doneId) {
+  $(id).innerHTML = items.map(function (x) { return "<li>" + (x[0] ? "✅" : "⬜") + " " + x[1] + "</li>"; }).join("");
+  if (items.every(function (x) { return x[0]; })) M3.flag(key, true);
+  $(doneId).style.display = M3.flag(key) ? "block" : "none";
+}
+function show(n) {
+  for (var i = 1; i <= 6; i++) { $("p" + i).style.display = i === n ? "block" : "none"; $("b" + i).classList.toggle("cur", i === n); }
+  window.scrollTo(0, 0);
+}
+
+/* ---------------- line chart (SVG) ---------------- */
+function chart(o) {
+  var W = o.w || 600, H = o.h || 360, m = { l: 58, r: 18, t: 22, b: 50 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+  var X = function (x) { return m.l + (x - o.x0) / (o.x1 - o.x0) * pw; };
+  var Y = function (y) { y = Math.max(o.y0, Math.min(o.y1, y)); return m.t + ph - (y - o.y0) / (o.y1 - o.y0) * ph; };
+  var s = '<svg viewBox="0 0 ' + W + " " + H + '" style="width:100%;height:auto;background:#fff;border:1px solid #d9dee7;border-radius:10px" role="img" aria-label="' + (o.aria || "graph") + '"><g font-family="Arial,sans-serif" font-size="12" fill="#333">', i, v;
+  (o.bands || []).forEach(function (b) {
+    s += '<rect x="' + X(b.x0) + '" y="' + m.t + '" width="' + Math.max(0, X(b.x1) - X(b.x0)) + '" height="' + ph + '" fill="' + b.c + '" opacity=".7"/><text x="' + (X(b.x0) + X(b.x1)) / 2 + '" y="' + (m.t + 15) + '" text-anchor="middle" font-weight="bold" font-size="14" fill="#243b64">' + b.l + "</text>";
+  });
+  var nx = o.nx || 5, ny = o.ny || 5;
+  for (i = 0; i <= nx; i++) { v = o.x0 + (o.x1 - o.x0) * i / nx; s += '<line x1="' + X(v) + '" y1="' + m.t + '" x2="' + X(v) + '" y2="' + (m.t + ph) + '" stroke="#e5e9f0"/><text x="' + X(v) + '" y="' + (m.t + ph + 16) + '" text-anchor="middle">' + (+v.toFixed(2)) + "</text>"; }
+  for (i = 0; i <= ny; i++) { v = o.y0 + (o.y1 - o.y0) * i / ny; s += '<line x1="' + m.l + '" y1="' + Y(v) + '" x2="' + (m.l + pw) + '" y2="' + Y(v) + '" stroke="#e5e9f0"/><text x="' + (m.l - 6) + '" y="' + (Y(v) + 4) + '" text-anchor="end">' + (+v.toFixed(2)) + "</text>"; }
+  s += '<rect x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="#243b64" stroke-width="1.5"/>';
+  s += '<text x="' + (m.l + pw / 2) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="14" font-weight="bold">' + (o.xl || "") + '</text>';
+  s += '<text transform="translate(16,' + (m.t + ph / 2) + ') rotate(-90)" text-anchor="middle" font-size="14" font-weight="bold">' + (o.yl || "") + "</text>";
+  (o.lines || []).forEach(function (l) { s += '<line x1="' + X(l.x1) + '" y1="' + Y(l.y1) + '" x2="' + X(l.x2) + '" y2="' + Y(l.y2) + '" stroke="' + (l.c || "#888") + '" stroke-width="1.6" stroke-dasharray="6 4"/>'; });
+  (o.series || []).forEach(function (se) {
+    if (!se.pts.length) return;
+    s += '<polyline fill="none" stroke="' + se.c + '" stroke-width="' + (se.w || 3) + '"' + (se.d ? ' stroke-dasharray="' + se.d + '"' : "") + ' points="' + se.pts.map(function (p) { return X(p[0]).toFixed(1) + "," + Y(p[1]).toFixed(1); }).join(" ") + '"/>';
+    if (se.dots) se.pts.forEach(function (p) { s += '<circle cx="' + X(p[0]) + '" cy="' + Y(p[1]) + '" r="3.5" fill="' + se.c + '"/>'; });
+  });
+  (o.marks || []).forEach(function (mk) { s += '<circle cx="' + X(mk.x) + '" cy="' + Y(mk.y) + '" r="' + (mk.r || 6) + '" fill="' + (mk.c || "#c62828") + '" stroke="#fff" stroke-width="2"/>' + (mk.l ? '<text x="' + (X(mk.x) + (mk.dx === undefined ? 9 : mk.dx)) + '" y="' + (Y(mk.y) + (mk.dy === undefined ? -8 : mk.dy)) + '" font-weight="bold" font-size="13" fill="' + (mk.c || "#c62828") + '">' + mk.l + "</text>" : ""); });
+  var ly = m.t + 30; (o.series || []).forEach(function (se) { if (!se.label) return; s += '<line x1="' + (m.l + pw - 210) + '" y1="' + ly + '" x2="' + (m.l + pw - 185) + '" y2="' + ly + '" stroke="' + se.c + '" stroke-width="3"' + (se.d ? ' stroke-dasharray="5 3"' : "") + '/><text x="' + (m.l + pw - 180) + '" y="' + (ly + 4) + '">' + se.label + "</text>"; ly += 18; });
+  return s + "</g></svg>";
+}
+
+/* ---------------- CMOS inverter model (square-law with small channel-length modulation) ---------------- */
+function mkP(vdd, vtn, vtp, r) { return { vdd: vdd, vtn: vtn, vtp: vtp, kn: r, kp: 1, lam: 0.02 }; }
+function In_(P, vin, vo) { var ov = vin - P.vtn; if (ov <= 0) return 0; var f = 1 + P.lam * vo; return vo < ov ? P.kn * (ov * vo - vo * vo / 2) * f : P.kn / 2 * ov * ov * f; }
+function Ip_(P, vin, vo) { var ov = P.vdd - vin - P.vtp, sd = P.vdd - vo; if (ov <= 0) return 0; var f = 1 + P.lam * sd; return sd < ov ? P.kp * (ov * sd - sd * sd / 2) * f : P.kp / 2 * ov * ov * f; }
+function vout(P, vin) {
+  var lo = 0, hi = P.vdd;
+  for (var i = 0; i < 50; i++) { var mid = (lo + hi) / 2; if (In_(P, vin, mid) - Ip_(P, vin, mid) < 0) lo = mid; else hi = mid; }
+  return (lo + hi) / 2;
+}
+function nReg(P, vin, vo) { var ov = vin - P.vtn; return ov <= 0 ? "Cutoff" : (vo < ov ? "Linear" : "Saturation"); }
+function pReg(P, vin, vo) { var ov = P.vdd - vin - P.vtp; return ov <= 0 ? "Cutoff" : (P.vdd - vo < ov ? "Linear" : "Saturation"); }
+function regLetter(n, p) {
+  if (n === "Cutoff") return "A"; if (p === "Cutoff") return "E";
+  if (n === "Saturation" && p === "Linear") return "B"; if (n === "Saturation" && p === "Saturation") return "C"; return "D";
+}
+function vtcPts(P, n) { var a = []; for (var i = 0; i <= n; i++) { var x = P.vdd * i / n; a.push([x, vout(P, x)]); } return a; }
+function metrics(P) {
+  var N = 500, pts = vtcPts(P, N), h = P.vdd / N, VM = null, VIL = null, VIH = null, i;
+  for (i = 0; i < N; i++) {
+    var d0 = pts[i][1] - pts[i][0], d1 = pts[i + 1][1] - pts[i + 1][0];
+    if (VM === null && d0 > 0 && d1 <= 0) VM = pts[i][0] + h * d0 / (d0 - d1);
+    var sl = (pts[i + 1][1] - pts[i][1]) / h;
+    if (sl <= -1) { if (VIL === null) VIL = pts[i][0]; VIH = pts[i + 1][0]; }
+  }
+  var VOH = pts[0][1], VOL = pts[N][1];
+  return { VOH: VOH, VOL: VOL, VIL: VIL, VIH: VIH, VM: VM, NMH: VOH - VIH, NML: VIL - VOL, pts: pts };
+}
+var BANDC = ["#e3f2fd", "#e8f5e9", "#fff8e1", "#f3e5f5", "#fce4ec"];
+function bandsFor(P) {
+  var N = 250, out = [], cur = null;
+  for (var i = 0; i <= N; i++) {
+    var x = P.vdd * i / N, vo = vout(P, x), L = regLetter(nReg(P, x, vo), pReg(P, x, vo));
+    if (!cur || cur.l !== L) { if (cur) cur.x1 = x; cur = { l: L, x0: x, x1: P.vdd }; out.push(cur); }
+  }
+  return out.map(function (b) { b.c = BANDC["ABCDE".indexOf(b.l)]; return b; });
+}
+function vtcChart(P, o) {
+  o = o || {}; var M = metrics(P), pts = M.pts, sr = [], marks = [], lines = [], V = P.vdd;
+  if (o.hidden) { sr.push({ pts: pts, c: "#243b64" }); }
+  else {
+    if (o.trace) { if (o.full) sr.push({ pts: pts, c: "#c5cde0", w: 2 }); }
+    else sr.push({ pts: pts, c: "#243b64" });
+    lines.push({ x1: 0, y1: 0, x2: V, y2: V, c: "#999" });
+    if (o.marks) {
+      lines.push({ x1: M.VIL, y1: 0, x2: M.VIL, y2: V, c: "#2e7d32" }, { x1: M.VIH, y1: 0, x2: M.VIH, y2: V, c: "#2e7d32" }, { x1: 0, y1: M.VOH, x2: V, y2: M.VOH, c: "#b3261e" }, { x1: 0, y1: M.VOL, x2: V, y2: M.VOL, c: "#b3261e" });
+      marks.push({ x: M.VM, y: M.VM, l: "VM", c: "#c62828" }, { x: M.VIL, y: vout(P, M.VIL), l: "VIL", c: "#2e7d32", dx: 8, dy: -8 }, { x: M.VIH, y: vout(P, M.VIH), l: "VIH", c: "#2e7d32", dx: 8, dy: -8 });
+    }
+  }
+  if (o.extraLines) lines = lines.concat(o.extraLines);
+  if (o.solution) {
+    lines.push({ x1: M.VIL, y1: 0, x2: M.VIL, y2: V, c: "#2e7d32" }, { x1: M.VIH, y1: 0, x2: M.VIH, y2: V, c: "#2e7d32" });
+    marks.push({ x: M.VM, y: M.VM, l: "VM = " + M.VM.toFixed(2), c: "#c62828" }, { x: M.VIL, y: vout(P, M.VIL), l: "VIL = " + M.VIL.toFixed(2), c: "#2e7d32" }, { x: M.VIH, y: vout(P, M.VIH), l: "VIH = " + M.VIH.toFixed(2), c: "#2e7d32" });
+  }
+  if (o.traceSet) { var tp = Object.keys(o.traceSet).map(Number).sort(function (a, b) { return a - b; }).map(function (x) { return [x, vout(P, x)]; }); sr.push({ pts: tp, c: "#243b64", w: 3, dots: true }); }
+  if (o.dot) marks.push({ x: o.dot[0], y: o.dot[1], c: "#e08a00", r: 8 });
+  return chart({ x0: 0, x1: V, y0: 0, y1: V, nx: o.hidden ? V * 2 : 5, ny: o.hidden ? V * 2 : 5, xl: "Vin (V)", yl: "Vout (V)", series: sr, marks: marks, lines: lines, bands: o.bands ? bandsFor(P) : null, aria: "Voltage transfer characteristic" });
+}
+function fmt(x) { return x === null || x === undefined ? "–" : x.toFixed(2); }
+
+/* ================= 4.1 Second-order effects: animated NMOS structure ================= */
+var TOUCH = {}, EQ = {}, ANI = {}, TT = 0;
+var REDUCE = !!(typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+function sld(id, label, min, max, step, val, unit, fn) {
+  return '<div class="ctl"><b>' + label + ' = <span id="' + id + '_v">' + val + "</span> " + unit + '</b><input type="range" id="' + id + '" min="' + min + '" max="' + max + '" step="' + step + '" value="' + val + '" oninput="' + fn + '(true)"></div>';
+}
+function ecard(n, title, look, ctl, eq, saw) {
+  return '<div class="ef"><h4>' + n + ". " + title + '</h4><p style="font-size:15px;margin:4px 0"><b>Watch the NMOS:</b> ' + look + "</p>" + ctl +
+    '<div class="diagram" id="e' + n + 'a"></div><div id="e' + n + 'c"></div><div class="status" id="e' + n + 'r"></div>' +
+    '<div class="fb sol" id="e' + n + 'w" style="display:none">' + saw + "</div>" +
+    '<div class="btns"><button class="alt" onclick="showEq(' + n + ')">SHOW THE EQUATION</button></div><div class="eqb" id="e' + n + 'q" style="display:none">' + eq + "</div></div>";
+}
+function showEq(n) { $("e" + n + "q").style.display = "block"; EQ[n] = true; prog41(); }
+function touch(n) { TOUCH[n] = true; $("e" + n + "w").style.display = "block"; prog41(); }
+function vtB(vsb) { return 1 + 0.45 * (Math.sqrt(0.7 + vsb) - Math.sqrt(0.7)); }
+var ID_ = function (vov) { return vov > 0 ? 0.5 * vov * vov : 0; };
+
+/* --- electron animation --- */
+function dotsHTML(n, cnt, fn, prog) {
+  var h = "";
+  for (var i = 0; i < cnt; i++) { var p = fn(prog[i], i, TT); h += '<circle id="a' + n + "_" + i + '" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4.5" fill="#0b3d91" stroke="#fff" stroke-width="1"/>'; }
+  return h;
+}
+function setAni(n, cnt, fn, sp) {
+  var old = ANI[n], prog = [];
+  for (var i = 0; i < cnt; i++) prog.push(old && old.prog[i] !== undefined ? old.prog[i] : i / cnt);
+  ANI[n] = { cnt: cnt, prog: prog, fn: fn, sp: REDUCE ? 0 : sp };
+  return dotsHTML(n, cnt, fn, prog);
+}
+function aniStep() {
+  TT++;
+  if ($("p1").style.display === "none") return;
+  Object.keys(ANI).forEach(function (n) {
+    var a = ANI[n];
+    for (var i = 0; i < a.cnt; i++) {
+      a.prog[i] = (a.prog[i] + a.sp) % 1;
+      var c = $("a" + n + "_" + i); if (!c) continue;
+      var q = a.fn(a.prog[i], i, TT); c.setAttribute("cx", q[0].toFixed(1)); c.setAttribute("cy", q[1].toFixed(1));
+    }
+  });
+}
+function aniLoop() { aniStep(); requestAnimationFrame(aniLoop); }
+if (typeof requestAnimationFrame === "function") aniLoop();
+function straight(G, ct, jit) { return function (u, i, T) { return [G.x0 - 40 + (G.x1 - G.x0 + 80) * u, 170 + ct / 2 + jit * Math.sin(T * 0.35 + i * 1.9)]; }; }
+
+/* --- NMOS cross-section --- */
+function geo(L) { var gl = 100 + 220 * (L - 0.1) / 1.9, x0 = 320 - gl / 2; return { x0: x0, x1: x0 + gl, gl: gl }; }
+function dim(a, b, y, label, c) {
+  c = c || "#243b64";
+  return '<g stroke="' + c + '" stroke-width="2"><line x1="' + a + '" y1="' + y + '" x2="' + b + '" y2="' + y + '"/><line x1="' + a + '" y1="' + (y - 6) + '" x2="' + a + '" y2="' + (y + 6) + '"/><line x1="' + b + '" y1="' + (y - 6) + '" x2="' + b + '" y2="' + (y + 6) + '"/></g><text x="' + (a + b) / 2 + '" y="' + (y - 8) + '" text-anchor="middle" font-weight="bold" fill="' + c + '">' + label + "</text>";
+}
+function nmosSVG(g) {
+  var G = geo(g.L), x0 = G.x0, x1 = G.x1, ct = g.ct, dd = g.dd === undefined ? 24 : g.dd, xe = g.xe === undefined ? x1 : g.xe, cd = g.cd === undefined ? ct : g.cd, i;
+  var s = '<svg viewBox="0 0 640 340" role="img" aria-label="NMOS cross-section animation"><g font-family="Arial,sans-serif" font-size="13">';
+  s += '<text x="320" y="22" text-anchor="middle" font-weight="bold" font-size="15" fill="#243b64">' + (g.top || "") + "</text>";
+  s += '<rect x="20" y="170" width="600" height="140" fill="#f4d8c8" stroke="#a0785f"/><text x="320" y="302" text-anchor="middle" fill="#7a5540">p-type substrate (body)</text>';
+  for (i = 0; i < (g.ions || 0); i++) { var ix = 45 + (i * 97) % 550, iy = 262 + (i * 53) % 26; s += '<circle cx="' + ix + '" cy="' + iy + '" r="6" fill="#fff" stroke="#7a5a9e"/><text x="' + ix + '" y="' + (iy + 4) + '" text-anchor="middle" fill="#7a5a9e" font-weight="bold">−</text>'; }
+  s += '<rect x="' + x0 + '" y="' + (170 + ct) + '" width="' + G.gl + '" height="' + dd + '" fill="#d6c7ef" opacity=".85"/>';
+  s += '<text x="' + (x0 + x1) / 2 + '" y="' + (170 + ct + dd + 15) + '" text-anchor="middle" fill="#5b3f8c">depletion region</text>';
+  s += '<rect x="60" y="170" width="' + (x0 - 60) + '" height="48" fill="#9db7e8" stroke="#333"/><rect x="' + x1 + '" y="170" width="' + (580 - x1) + '" height="48" fill="#9db7e8" stroke="#333"/>';
+  s += '<text x="' + (60 + x0) / 2 + '" y="200" text-anchor="middle" fill="#162746">n+ source</text><text x="' + (x1 + 580) / 2 + '" y="200" text-anchor="middle" fill="#162746">n+ drain</text>';
+  s += '<rect x="' + x0 + '" y="156" width="' + G.gl + '" height="14" fill="#d9dee7" stroke="#888"/><rect x="' + x0 + '" y="118" width="' + G.gl + '" height="38" fill="#8b95a5" stroke="#333"/><text x="' + (x0 + x1) / 2 + '" y="142" text-anchor="middle" fill="#fff" font-weight="bold">Gate</text>';
+  if (ct > 0.5) s += '<polygon points="' + x0 + ",170 " + xe + ",170 " + xe + "," + (170 + cd) + " " + x0 + "," + (170 + ct) + '" fill="#2b6be0" opacity=".55"/>';
+  if (g.lat > 0) {
+    s += '<polygon points="' + x0 + ",170 " + (x0 + g.lat) + ",170 " + x0 + "," + (170 + g.lat * 0.9) + '" fill="#b79ce6" opacity=".9"/><polygon points="' + x1 + ",170 " + (x1 - g.lat) + ",170 " + x1 + "," + (170 + g.lat * 0.9) + '" fill="#b79ce6" opacity=".9"/>';
+  }
+  if (g.gap) s += '<rect x="' + g.gap[0] + '" y="170" width="' + (g.gap[1] - g.gap[0]) + '" height="26" fill="#f6b8b8" opacity=".8"/>';
+  s += (g.dots || "");
+  if (g.arrows) {
+    var na = g.arrows.n, al = g.arrows.len;
+    for (i = 0; i < na; i++) { var ax = x0 + (i + 0.5) * G.gl / na; s += '<line x1="' + ax + '" y1="158" x2="' + ax + '" y2="' + (158 + al) + '" stroke="#c62828" stroke-width="3"/><polygon points="' + (ax - 5) + "," + (158 + al - 2) + " " + (ax + 5) + "," + (158 + al - 2) + " " + ax + "," + (158 + al + 8) + '" fill="#c62828"/>'; }
+    s += '<text x="' + (x1 + 8) + '" y="150" fill="#c62828" font-weight="bold">vertical field</text>';
+  }
+  var W = 'stroke="#243b64" stroke-width="3"';
+  s += '<line x1="' + (60 + x0) / 2 + '" y1="170" x2="' + (60 + x0) / 2 + '" y2="92" ' + W + '/><line x1="' + (x1 + 580) / 2 + '" y1="170" x2="' + (x1 + 580) / 2 + '" y2="92" ' + W + '/><line x1="' + (x0 + x1) / 2 + '" y1="118" x2="' + (x0 + x1) / 2 + '" y2="92" ' + W + '/>';
+  s += '<g font-weight="bold" font-size="15" fill="#c62828" text-anchor="middle"><text x="' + (60 + x0) / 2 + '" y="86">S' + (g.vsb ? " (+" + g.vsb.toFixed(1) + " V)" : "") + '</text><text x="' + (x1 + 580) / 2 + '" y="86">D</text><text x="' + (x0 + x1) / 2 + '" y="86">G</text></g>';
+  s += '<line x1="320" y1="310" x2="320" y2="326" ' + W + '/><text x="320" y="338" text-anchor="middle" font-weight="bold" font-size="15" fill="#c62828">B (0 V)</text>';
+  (g.dims || []).forEach(function (d) { s += dim(d.a, d.b, 62, d.l, d.c); });
+  s += '<circle cx="34" cy="326" r="5" fill="#0b3d91"/><text x="44" y="330" fill="#333">electron</text>';
+  return s + "</g></svg>";
+}
+var BAR = function (label, pct, txt, c) { return "<div style='margin:4px 0'>" + label + ' <div style="display:inline-block;width:55%;height:12px;background:#e0e0e0;border-radius:8px;vertical-align:middle"><i style="display:block;height:100%;width:' + Math.min(100, pct).toFixed(0) + "%;background:" + c + ';border-radius:8px"></i></div> ' + txt + "</div>"; };
+
+function e1(t) {
+  if (t) touch(1);
+  var L = +$("e1L").value, V = +$("e1V").value, lam = 0.06 / L, vov = 2, a = [], b = [], G = geo(L);
+  var phi = V > vov ? Math.min(0.85, lam * (V - vov)) : 0, sat = V > vov, ct = 14, xp = G.x0 + (G.x1 - G.x0) * (1 - phi), xend = sat ? xp : G.x1;
+  var idi = V < vov ? (vov * V - V * V / 2) : vov * vov / 2, idp = idi * (1 + lam * V);
+  var fn = function (u) { var xs = G.x0 - 40, xg = G.x1 + 40, y = 170 + ct / 2; if (u < 0.7) return [xs + (xend - xs) * (u / 0.7), y]; var v = (u - 0.7) / 0.3; return [xend + (xg - xend) * (sat ? v * v : v), y + v * 22]; };
+  var dots = setAni(1, 14, fn, 0.004 + idp * 0.0022);
+  $("e1a").innerHTML = nmosSVG({ L: L, ct: ct, dd: 24, xe: xend, cd: sat ? 0 : ct * (1 - V / vov), gap: sat ? [xp, G.x1] : null, dots: dots, top: "V\u0047S = 3 V   V\u0044S = " + V.toFixed(1) + " V   (pinch-off at 2 V)",
+    dims: sat ? [{ a: G.x0, b: xp, l: "Leff = " + (L * (1 - phi)).toFixed(2) + " µm" }, { a: xp, b: G.x1, l: "ΔL", c: "#c62828" }] : [{ a: G.x0, b: G.x1, l: "L = " + L.toFixed(2) + " µm" }] });
+  for (var v = 0; v <= 5.0001; v += 0.1) { var id = v < vov ? (vov * v - v * v / 2) : vov * vov / 2; a.push([v, id]); b.push([v, id * (1 + lam * v)]); }
+  $("e1L_v").textContent = L.toFixed(2); $("e1V_v").textContent = V.toFixed(1);
+  $("e1c").innerHTML = chart({ x0: 0, x1: 5, y0: 0, y1: 6, xl: "VDS (V)", yl: "ID (mA)", series: [{ pts: a, c: "#777", d: "6 4", label: "Ideal (λ = 0)" }, { pts: b, c: "#c62828", label: "Practical" }], marks: [{ x: V, y: idp, c: "#e08a00", r: 8 }], aria: "ID versus VDS" });
+  $("e1r").innerHTML = sat ? "Pinch-off has moved toward the source: ΔL = <b>" + (L * phi).toFixed(2) + " µm</b>, effective length <b>" + (L * (1 - phi)).toFixed(2) + " µm</b> · I<sub>D</sub> = <b>" + idp.toFixed(2) + " mA</b> · λ = <b>" + lam.toFixed(2) + "</b> · r<sub>o</sub> = " + (1 / (lam * 0.002) / 1000).toFixed(1) + " kΩ" : "V<sub>DS</sub> is below 2 V: the channel is not pinched off yet (triode). Raise V<sub>DS</sub> above 2 V.";
+}
+function e2(t) {
+  if (t) touch(2);
+  var vsb = +$("e2s").value, vt = vtB(vsb), a = [], b = [], G = geo(1), ct = Math.max(0, 8 * (3 - vt)), dd = 18 + 26 * (Math.sqrt(0.7 + vsb) - Math.sqrt(0.7));
+  var dots = setAni(2, Math.round(4 + ct * 1.1), straight(G, ct, 0.6), 0.006);
+  $("e2a").innerHTML = nmosSVG({ L: 1, ct: ct, dd: dd, vsb: vsb, dots: dots, top: "V\u0047S = 3 V fixed   V\u0053B = " + vsb.toFixed(1) + " V   V\u0054 = " + vt.toFixed(2) + " V" });
+  for (var g = 0; g <= 4.0001; g += 0.05) { a.push([g, ID_(g - 1)]); b.push([g, ID_(g - vt)]); }
+  $("e2s_v").textContent = vsb.toFixed(1);
+  $("e2c").innerHTML = chart({ x0: 0, x1: 4, y0: 0, y1: 4.5, xl: "VGS (V)", yl: "ID (mA, saturation)", series: [{ pts: a, c: "#777", d: "6 4", label: "VSB = 0" }, { pts: b, c: "#c62828", label: "With body bias" }], marks: [{ x: 3, y: ID_(3 - vt), c: "#e08a00", r: 8 }], aria: "ID versus VGS with body effect" });
+  var i0 = ID_(2), i1 = ID_(3 - vt);
+  $("e2r").innerHTML = "Depletion region depth grows to <b>" + dd.toFixed(0) + " px</b>, the inversion channel gets thinner (fewer electrons) · V<sub>T</sub> = <b>" + vt.toFixed(2) + " V</b> (was 1.00 V) · I<sub>D</sub> = <b>" + i1.toFixed(2) + " mA</b> (was " + i0.toFixed(2) + " mA, " + ((i1 / i0 - 1) * 100).toFixed(0) + "%)";
+}
+function e3(t) {
+  if (t) touch(3);
+  var L = +$("e3L").value, V = +$("e3V").value, ecl = 5 * L, a = [], b = [], G = geo(L), E = V / L, ideal = E / 5, f = ideal / (1 + ideal), ct = 12;
+  var dots = setAni(3, 12, straight(G, ct, 0.4), 0.002 + 0.02 * f);
+  $("e3a").innerHTML = nmosSVG({ L: L, ct: ct, dd: 24, dots: dots, top: "L = " + L.toFixed(2) + " µm   V\u0044S = " + V.toFixed(1) + " V   lateral field E = " + E.toFixed(1) + " V/µm", dims: [{ a: G.x0, b: G.x1, l: "L = " + L.toFixed(2) + " µm" }] });
+  for (var ov = 0; ov <= 4.0001; ov += 0.05) { a.push([ov, ID_(ov)]); b.push([ov, ID_(ov) / (1 + ov / ecl)]); }
+  $("e3L_v").textContent = L.toFixed(2); $("e3V_v").textContent = V.toFixed(1);
+  $("e3c").innerHTML = chart({ x0: 0, x1: 4, y0: 0, y1: 8, xl: "Gate overdrive VGS − VT (V)", yl: "ID (mA)", series: [{ pts: a, c: "#777", d: "6 4", label: "Ideal (square law)" }, { pts: b, c: "#c62828", label: "Velocity-saturated" }], aria: "ID versus overdrive" });
+  $("e3r").innerHTML = "Carrier speed as a fraction of the saturation velocity v<sub>sat</sub>:" + BAR("Ideal (speed ∝ field)", ideal * 100, ideal.toFixed(2) + " × v<sub>sat</sub>" + (ideal > 1 ? " (impossible!)" : ""), "#999") + BAR("Real (speed saturates)", f * 100, f.toFixed(2) + " × v<sub>sat</sub>", "#c62828") + "At 3 V overdrive the current is only <b>" + (100 / (1 + 3 / ecl)).toFixed(0) + "%</b> of the ideal value (E<sub>c</sub>L = " + ecl.toFixed(1) + " V).";
+}
+function e4(t) {
+  if (t) touch(4);
+  var th = +$("e4t").value, VG = +$("e4G").value, G = geo(1), ratio = 1 / (1 + th * (VG - 1)), ct = Math.max(4, 20 - 3.2 * (VG - 1)), a = [];
+  var dots = setAni(4, 12, straight(G, ct, (1 - ratio) * 12 + 1), 0.002 + 0.012 * ratio);
+  $("e4a").innerHTML = nmosSVG({ L: 1, ct: ct, dd: 24, dots: dots, arrows: { n: Math.round(2 + VG), len: 5 + 6 * VG }, top: "V\u0047S = " + VG.toFixed(1) + " V   μeff / μ0 = " + ratio.toFixed(2) });
+  for (var g = 1; g <= 5.0001; g += 0.05) a.push([g, 1 / (1 + th * (g - 1))]);
+  $("e4t_v").textContent = th.toFixed(2); $("e4G_v").textContent = VG.toFixed(1);
+  $("e4c").innerHTML = chart({ x0: 1, x1: 5, y0: 0, y1: 1.1, xl: "VGS (V)", yl: "μeff / μ0", series: [{ pts: [[1, 1], [5, 1]], c: "#777", d: "6 4", label: "Ideal (constant μ)" }, { pts: a, c: "#c62828", label: "Practical" }], marks: [{ x: VG, y: ratio, c: "#e08a00", r: 8 }], aria: "Effective mobility versus VGS" });
+  $("e4r").innerHTML = "At V<sub>GS</sub> = " + VG.toFixed(1) + " V the electrons are squeezed against the oxide and scatter more: mobility is <b>" + (ratio * 100).toFixed(0) + "%</b> of its low-field value, so the current is <b>" + (100 - ratio * 100).toFixed(0) + "%</b> lower than the ideal equation predicts";
+}
+function e5(t) {
+  if (t) touch(5);
+  var T = +$("e5T").value, L = +$("e5L").value, vsb = +$("e5s").value, dv = +$("e5d").value, G = geo(L);
+  var vt = 1 + dv - 0.002 * (T - 27) + (vtB(vsb) - 1) - 0.25 * Math.exp(-L / 0.25), a = [], b = [];
+  var ct = Math.max(0, 12 * (1.8 - vt)), dd = 18 + 26 * (Math.sqrt(0.7 + vsb) - Math.sqrt(0.7)), lat = Math.min(G.gl / 2 - 4, 46 * Math.exp(-L / 0.35));
+  var dots = setAni(5, ct > 0.5 ? 10 : 0, straight(G, ct, 0.5 + (T + 40) / 165 * 4), 0.006);
+  $("e5a").innerHTML = nmosSVG({ L: L, ct: ct, dd: dd, dots: dots, lat: lat, ions: Math.round(14 + dv * 80), top: "V\u0047S = 1.8 V fixed   V\u0054 = " + vt.toFixed(2) + " V   " + (ct > 0.5 ? "channel formed" : "NO channel: V\u0047S < V\u0054") });
+  for (var g = 0; g <= 4.0001; g += 0.05) { a.push([g, ID_(g - 1)]); b.push([g, ID_(g - vt)]); }
+  $("e5T_v").textContent = T; $("e5L_v").textContent = L.toFixed(2); $("e5s_v").textContent = vsb.toFixed(1); $("e5d_v").textContent = dv.toFixed(2);
+  $("e5c").innerHTML = chart({ x0: 0, x1: 4, y0: 0, y1: 5, xl: "VGS (V)", yl: "ID (mA)", series: [{ pts: a, c: "#777", d: "6 4", label: "Nominal VT = 1.00 V" }, { pts: b, c: "#c62828", label: "Actual VT" }], marks: [{ x: 1.8, y: ID_(1.8 - vt), c: "#e08a00", r: 8 }], aria: "ID versus VGS with threshold variation" });
+  var i0 = ID_(1.8 - 1), i1 = ID_(1.8 - vt);
+  $("e5r").innerHTML = "Actual V<sub>T</sub> = <b>" + vt.toFixed(2) + " V</b> · I<sub>D</sub> at V<sub>GS</sub> = 1.8 V changes by <b>" + ((i1 / i0 - 1) * 100).toFixed(0) + "%</b>";
+}
+
+$("p1").innerHTML =
+  '<section class="card"><h3>4.1 MOSFET Second-Order Effects</h3><p class="lead">The ideal square-law MOSFET is a good first model, but real transistors behave differently. Each demo below shows an <b>NMOS cross-section that moves</b> as you change the sliders: watch the channel, the depletion region and the blue electrons first, then read what you saw, then press <b>SHOW THE EQUATION</b>. (Values are illustrative teaching numbers, with k = 1 mA/V² and V<sub>T</sub> = 1 V.)</p>' +
+  ecard(1, "Channel-length modulation", "raise V<sub>DS</sub> above 2 V. The channel ends before the drain (pinch-off). The gap ΔL grows and the effective channel gets shorter.", sld("e1L", "Channel length L", 0.2, 2, 0.05, 1, "µm", "e1") + sld("e1V", "Drain voltage V\u0044S", 0, 5, 0.1, 4, "V", "e1"),
+    "I<sub>D</sub> = ½ k (V<sub>GS</sub> − V<sub>T</sub>)² (1 + λ V<sub>DS</sub>) &nbsp;&nbsp; λ ∝ 1 / L &nbsp;&nbsp; r<sub>o</sub> = 1 / (λ I<sub>D</sub>)",
+    "<b>What you saw:</b> in saturation the channel does not reach the drain. Electrons cross the depleted gap ΔL quickly. As V<sub>DS</sub> grows, ΔL grows, the effective length L − ΔL falls and I<sub>D</sub> keeps rising. A shorter L makes ΔL a bigger fraction, so the slope is steeper.") +
+  ecard(2, "Body effect", "raise V<sub>SB</sub>. The depletion region under the gate grows, so the channel gets thinner and carries fewer electrons.", sld("e2s", "Source-to-body voltage V\u0053B", 0, 4, 0.1, 0, "V", "e2"), "V<sub>T</sub> = V<sub>T0</sub> + γ ( √(2φ<sub>F</sub> + V<sub>SB</sub>) − √(2φ<sub>F</sub>) )",
+    "<b>What you saw:</b> when the source is raised above the body, the reverse bias widens the depletion region. More fixed charge is uncovered, so part of the gate voltage is used up before any channel forms. The threshold voltage rises and the same V<sub>GS</sub> gives a thinner channel and less current.") +
+  ecard(3, "Velocity saturation", "shorten L or raise V<sub>DS</sub>. Electrons speed up with the lateral field, then stop speeding up (compare the two speed bars).", sld("e3L", "Channel length L", 0.1, 1, 0.05, 1, "µm", "e3") + sld("e3V", "Drain voltage V\u0044S", 0, 5, 0.1, 3, "V", "e3"), "I<sub>D</sub> ≈ ½ k V<sub>ov</sub>² / (1 + V<sub>ov</sub> / (E<sub>c</sub> L)) &nbsp;→&nbsp; W C<sub>ox</sub> v<sub>sat</sub> V<sub>ov</sub> for large V<sub>ov</sub>",
+    "<b>What you saw:</b> the lateral field is E = V<sub>DS</sub>/L. In a short channel it is very large. The ideal model says carriers keep speeding up, but real carriers hit a maximum speed v<sub>sat</sub>. More gate voltage then adds carriers but not speed, so I<sub>D</sub> becomes almost linear in V<sub>GS</sub>.") +
+  ecard(4, "Mobility degradation", "raise V<sub>GS</sub>. The vertical field (red arrows) presses the electrons against the oxide. They scatter, zig-zag and make less forward progress.", sld("e4G", "Gate voltage V\u0047S", 1, 5, 0.1, 3, "V", "e4") + sld("e4t", "Degradation factor θ", 0, 0.4, 0.02, 0.2, "1/V", "e4"), "μ<sub>eff</sub> = μ<sub>0</sub> / (1 + θ (V<sub>GS</sub> − V<sub>T</sub>))",
+    "<b>What you saw:</b> a high gate voltage creates a strong <i>vertical</i> field. The channel gets thinner and the electrons collide with the rough oxide interface, so their mobility falls as V<sub>GS</sub> rises. (Velocity saturation depends on the <i>lateral</i> field along the channel; mobility degradation depends on the <i>vertical</i> field across it.)") +
+  ecard(5, "Threshold-voltage variation", "change temperature, channel length, body bias or doping. Watch the channel appear or vanish at a fixed V<sub>GS</sub> = 1.8 V, the purple wedges creep in from the source and drain, and the − ions in the substrate.", sld("e5T", "Temperature", -40, 125, 1, 27, "°C", "e5") + sld("e5L", "Channel length L", 0.1, 2, 0.05, 2, "µm", "e5") + sld("e5s", "Source-to-body V\u0053B", 0, 3, 0.1, 0, "V", "e5") + sld("e5d", "Process (doping) shift", -0.1, 0.1, 0.02, 0, "V", "e5"),
+    "V<sub>T</sub> ≈ V<sub>T0</sub> − α (T − 27) + γ(…body…) − ΔV<sub>rolloff</sub>(L) + ΔV<sub>process</sub> &nbsp;&nbsp; α ≈ 2 mV/°C",
+    "<b>What you saw:</b> V<sub>T</sub> is not a constant. Heat makes electrons more energetic (V<sub>T</sub> falls about 2 mV/°C). Body bias raises it. In a very short channel the source and drain depletion regions (purple wedges) help the gate control the channel, so V<sub>T</sub> rolls off. More or fewer dopant ions change it from chip to chip. Small changes in V<sub>T</sub> change I<sub>D</sub> noticeably.") +
+  '<h4>Why the ideal equations differ from practical behaviour</h4><div style="overflow-x:auto"><table class="t"><tr><th>Effect</th><th>Cause</th><th>Result on I<sub>D</sub></th><th>Matters most when</th></tr>' +
+  "<tr><td>Channel-length modulation</td><td>Pinch-off point moves</td><td>I<sub>D</sub> rises with V<sub>DS</sub> in saturation</td><td>Short L, analog gain</td></tr>" +
+  "<tr><td>Body effect</td><td>Source above body</td><td>V<sub>T</sub> up, I<sub>D</sub> down</td><td>Stacked transistors (NAND/NOR)</td></tr>" +
+  "<tr><td>Velocity saturation</td><td>High lateral field</td><td>I<sub>D</sub> ≈ linear in V<sub>GS</sub></td><td>Short L, large V<sub>DS</sub></td></tr>" +
+  "<tr><td>Mobility degradation</td><td>High vertical field</td><td>I<sub>D</sub> lower at high V<sub>GS</sub></td><td>Large V<sub>GS</sub>, thin oxide</td></tr>" +
+  "<tr><td>V<sub>T</sub> variation</td><td>Temperature, L, doping, V<sub>SB</sub></td><td>I<sub>D</sub> shifts</td><td>Low V<sub>DD</sub>, large chips</td></tr></table></div></section>" +
+  '<section class="card"><h3>Lesson 4.1 checklist</h3><ul class="check" style="padding-left:0" id="k1"></ul><div class="done" id="d1">✅ Lesson 4.1 completed.</div></section>';
+function prog41() {
+  var n = ["Channel-length modulation", "Body effect", "Velocity saturation", "Mobility degradation", "Threshold-voltage variation"];
+  var items = n.map(function (x, i) { return [!!TOUCH[i + 1], "Try the " + x + " demo"]; });
+  items.push([Object.keys(EQ).length >= 2, "Reveal at least 2 equations after observing (" + Math.min(Object.keys(EQ).length, 2) + " / 2)"]);
+  ckList("k1", items, "vlsiM4_s41", "d1");
+}
+e1(); e2(); e3(); e4(); e5(); prog41();
+
+/* ================= 4.2 CMOS inverter DC characteristics ================= */
+function invSVG(P, vin, vo, live) {
+  var s = '<svg viewBox="0 0 430 430" role="img" aria-label="CMOS inverter">', M = M3.mos, W = 'stroke="#243b64" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+  var nr = live ? nReg(P, vin, vo) : null, pr = live ? pReg(P, vin, vo) : null;
+  var I = live ? In_(P, vin, vo) : 0, flow = live && I > 0.0005;
+  s += '<line x1="130" y1="22" x2="290" y2="22" stroke="#b3261e" stroke-width="6"/><text x="120" y="28" text-anchor="end" font-size="15" font-weight="bold" fill="#b3261e">V<tspan font-size="11" dy="4">DD</tspan></text>';
+  s += '<line x1="130" y1="398" x2="290" y2="398" stroke="#243b64" stroke-width="6"/><text x="120" y="404" text-anchor="end" font-size="15" font-weight="bold" fill="#243b64">GND</text>';
+  s += '<polyline points="210,22 210,50" ' + W + '/><polyline points="210,170 210,240" ' + W + '/><polyline points="210,360 210,398" ' + W + '/>';
+  s += '<polyline points="60,110 100,110" ' + W + '/><polyline points="60,110 60,300" ' + W + '/><polyline points="60,300 100,300" ' + W + '/><polyline points="20,205 60,205" ' + W + '/><circle cx="60" cy="205" r="6" fill="#243b64"/>';
+  s += M("p", 170, 110, { state: live ? (pr === "Cutoff" ? "off" : "on") : undefined, label: live ? "PMOS: " + pr : "PMOS" });
+  s += M("n", 170, 300, { state: live ? (nr === "Cutoff" ? "off" : "on") : undefined, label: live ? "NMOS: " + nr : "NMOS" });
+  s += '<polyline points="210,205 340,205" ' + W + '/><circle cx="210" cy="205" r="7" fill="#243b64"/>';
+  s += '<text x="6" y="192" font-size="15" font-weight="bold" fill="#c62828">V<tspan font-size="11" dy="4">in</tspan></text>';
+  s += '<text x="350" y="198" font-size="15" font-weight="bold" fill="#c62828">V<tspan font-size="11" dy="4">out</tspan></text>';
+  if (live) {
+    s += '<text x="6" y="225" font-size="15" font-weight="bold" fill="#243b64">' + vin.toFixed(2) + " V</text>";
+    s += '<text x="350" y="225" font-size="15" font-weight="bold" fill="#243b64">' + vo.toFixed(2) + " V</text>";
+    if (flow) {
+      var dur = Math.max(0.2, 1.2 / (1 + I * 4)).toFixed(2), st = ' style="animation-duration:' + dur + 's"';
+      s += '<polyline class="flow"' + st + ' points="210,22 ' + M3.through(170, 110, 1) + ' 210,205"/><polyline class="flow"' + st + ' points="210,205 ' + M3.through(170, 300, 1) + ' 210,398"/>';
+    }
+  }
+  return s + "</svg>";
+}
+var P42 = mkP(5, 1, 1, 1), touched42 = false, m42 = false, sol42 = false;
+var TERM42 = {
+  "VOH": "<b>V<sub>OH</sub>:</b> the output high level. For a CMOS inverter it equals V<sub>DD</sub> (full logic 1).",
+  "VOL": "<b>V<sub>OL</sub>:</b> the output low level. For a CMOS inverter it equals 0 V (full logic 0).",
+  "VIL": "<b>V<sub>IL</sub>:</b> the highest input voltage still read as logic 0. It is the point on the VTC where the slope is −1 (lower one).",
+  "VIH": "<b>V<sub>IH</sub>:</b> the lowest input voltage read as logic 1. It is the point where the slope is −1 (upper one).",
+  "VM": "<b>V<sub>M</sub>:</b> the switching threshold, where V<sub>out</sub> = V<sub>in</sub>. It sits in the steep part of the curve.",
+  "NMH": "<b>NM<sub>H</sub> = V<sub>OH</sub> − V<sub>IH</sub>:</b> the noise margin for a high signal.",
+  "NML": "<b>NM<sub>L</sub> = V<sub>IL</sub> − V<sub>OL</sub>:</b> the noise margin for a low signal."
+};
+var REG = [["A", "V<sub>in</sub> &lt; V<sub>Tn</sub>", "Cutoff", "Linear"], ["B", "V<sub>Tn</sub> &lt; V<sub>in</sub> &lt; V<sub>M</sub>", "Saturation", "Linear"], ["C", "V<sub>in</sub> ≈ V<sub>M</sub> (steepest part)", "Saturation", "Saturation"], ["D", "V<sub>M</sub> &lt; V<sub>in</sub> &lt; V<sub>DD</sub> − |V<sub>Tp</sub>|", "Linear", "Saturation"], ["E", "V<sub>in</sub> &gt; V<sub>DD</sub> − |V<sub>Tp</sub>|", "Linear", "Cutoff"]];
+$("p2").innerHTML =
+  '<section class="card"><h3>4.2 CMOS Inverter DC Characteristics</h3><p class="lead">Slowly raise the input of a CMOS inverter from 0 to V<sub>DD</sub> and the output falls from V<sub>DD</sub> to 0. Plotting V<sub>out</sub> against V<sub>in</sub> gives the <b>voltage transfer characteristic (VTC)</b>.</p>' +
+  '<div class="two"><div class="diagram">' + invSVG(P42, 0, 0, false) + '</div><div><p class="lead">The PMOS is the pull-up and the NMOS the pull-down, both driven by V<sub>in</sub>. V<sub>out</sub> is taken between them.</p><h4>Key terms (tap one)</h4><div class="chips" id="c42"></div><div class="info" id="i42">Tap a term.</div></div></div></section>' +
+  '<section class="card"><h3>Interactive VTC</h3><p class="lead">Change the strength ratio k<sub>n</sub>/k<sub>p</sub> (the relative width of the NMOS and PMOS). Watch the curve, the five regions and the marked points move.</p>' +
+  '<div class="ctl"><b>k<sub>n</sub>/k<sub>p</sub> = <span id="r42v">1.00</span></b><input type="range" id="r42" min="-2" max="2" step="0.25" value="0" oninput="upd42(true)"></div>' +
+  '<div class="diagram" id="g42"></div><div class="chipsrow" id="m42"></div>' +
+  '<div class="btns"><button class="alt" onclick="eqM()">SHOW THE EQUATION FOR V<sub>M</sub></button></div><div class="eqb" id="eqm" style="display:none"></div></section>' +
+  '<section class="card"><h3>The five regions</h3><p class="lead">For each region of the VTC, choose the operating region of each transistor.</p><div style="overflow-x:auto"><table class="t"><tr><th>Region</th><th>Input range</th><th>NMOS</th><th>PMOS</th></tr>' +
+  REG.map(function (r, i) { var o = '<option value="">?</option><option>Cutoff</option><option>Linear</option><option>Saturation</option>'; return "<tr><td><b>" + r[0] + '</b></td><td>' + r[1] + '</td><td><select id="rn' + i + '">' + o + '</select> <span id="rnm' + i + '"></span></td><td><select id="rp' + i + '">' + o + '</select> <span id="rpm' + i + '"></span></td></tr>'; }).join("") +
+  '</table></div><div class="btns"><button onclick="chk42()">CHECK ANSWER</button><button class="alt" onclick="hint42()">GET HINT</button><button class="alt" onclick="clr42()">TRY AGAIN</button><button class="alt" onclick="sol42f()">SHOW SOLUTION</button></div><div class="fb" id="f42"></div></section>' +
+  '<section class="card"><h3>Lesson 4.2 checklist</h3><ul class="check" style="padding-left:0" id="k2"></ul><div class="done" id="d2">✅ Lesson 4.2 completed.</div></section>';
+Object.keys(TERM42).forEach(function (k) { var b = document.createElement("button"); b.textContent = k; b.onclick = function () { $("i42").innerHTML = TERM42[k]; [].forEach.call($("c42").children, function (x) { x.classList.toggle("on", x === b); }); }; $("c42").appendChild(b); });
+$("c42").className = "chips";
+function upd42(t) {
+  if (t) touched42 = true;
+  var r = Math.pow(2, +$("r42").value); P42 = mkP(5, 1, 1, r); $("r42v").textContent = r.toFixed(2);
+  var M = metrics(P42); $("g42").innerHTML = vtcChart(P42, { marks: true, bands: true });
+  var c = function (l, v) { return "<span>" + l + " = " + fmt(v) + " V</span>"; };
+  $("m42").innerHTML = c("V<sub>OH</sub>", M.VOH) + c("V<sub>OL</sub>", M.VOL) + c("V<sub>IL</sub>", M.VIL) + c("V<sub>IH</sub>", M.VIH) + c("V<sub>M</sub>", M.VM) + c("NM<sub>H</sub>", M.NMH) + c("NM<sub>L</sub>", M.NML);
+  if ($("eqm").style.display === "block") eqM();
+  prog42();
+}
+function eqM() {
+  var q = Math.sqrt(P42.kp / P42.kn), f = (P42.vtn + q * (P42.vdd - P42.vtp)) / (1 + q);
+  $("eqm").style.display = "block";
+  $("eqm").innerHTML = "V<sub>M</sub> = ( V<sub>Tn</sub> + √(k<sub>p</sub>/k<sub>n</sub>) · (V<sub>DD</sub> − |V<sub>Tp</sub>|) ) / ( 1 + √(k<sub>p</sub>/k<sub>n</sub>) )<br>= " + f.toFixed(2) + " V &nbsp; (graph: " + fmt(metrics(P42).VM) + " V)";
+}
+function exp42(i) { return { n: REG[i][2], p: REG[i][3] }; }
+function chk42() {
+  var all = true, un = false;
+  REG.forEach(function (r, i) { if (!$("rn" + i).value || !$("rp" + i).value) un = true; });
+  if (un) return fbx("f42", "hint", "Choose both transistor regions in every row first.");
+  REG.forEach(function (r, i) {
+    var okn = $("rn" + i).value === r[2], okp = $("rp" + i).value === r[3]; if (!okn || !okp) all = false;
+    $("rnm" + i).textContent = okn ? "✓" : "✗"; $("rnm" + i).style.color = okn ? "#2e7d32" : "#c62828";
+    $("rpm" + i).textContent = okp ? "✓" : "✗"; $("rpm" + i).style.color = okp ? "#2e7d32" : "#c62828";
+  });
+  if (all) { fbx("f42", "ok", "✓ <b>Correct.</b> Only in region C are both transistors saturated: this is where the gain is largest and V<sub>M</sub> lies."); if (!sol42) m42 = true; }
+  else fbx("f42", "no", "✗ <b>Incorrect.</b> Rows marked ✗ are wrong. Use GET HINT, or TRY AGAIN.");
+  prog42();
+}
+function hint42() { fbx("f42", "hint", "💡 <b>Hint:</b> at the start (V<sub>in</sub> = 0) the NMOS is off and the PMOS is on with V<sub>DS</sub> ≈ 0, so it is in its linear region. Moving right, the transistor that turns on first is saturated while V<sub>out</sub> is still large. The regions mirror each other about V<sub>M</sub>."); }
+function clr42() {
+  REG.forEach(function (r, i) { $("rn" + i).value = ""; $("rp" + i).value = ""; $("rnm" + i).textContent = ""; $("rpm" + i).textContent = ""; });
+  $("f42").className = "fb"; $("f42").innerHTML = ""; sol42 = false;
+}
+function sol42f() { REG.forEach(function (r, i) { $("rn" + i).value = r[2]; $("rp" + i).value = r[3]; }); sol42 = true; fbx("f42", "sol", "<b>Solution shown.</b> Press TRY AGAIN and answer it yourself to earn credit."); }
+function prog42() { ckList("k2", [[touched42, "Move the kn/kp slider and watch the VTC change"], [m42, "Match the five regions correctly (without SHOW SOLUTION)"]], "vlsiM4_s42", "d2"); }
+upd42(); prog42();
+
+/* ================= 4.3 Interactive inverter simulator ================= */
+var P43 = mkP(5, 1, 1, 1), trace = {}, full43 = false, reg43 = {};
+$("p3").innerHTML =
+  '<section class="card"><h3>4.3 Interactive CMOS Inverter Simulator</h3><p class="lead">Drag V<sub>in</sub> from 0 to 5 V. Watch the transistors change state, the current flow and the output fall, while you <b>trace the VTC</b> point by point.</p>' +
+  '<div class="ctl"><b>V<sub>in</sub> = <span id="v43">0.00</span> V</b><input type="range" id="s43" min="0" max="5" step="0.05" value="0" oninput="sim43()"></div>' +
+  '<div class="two"><div class="diagram" id="d43"></div><div><div class="diagram" id="g43"></div><div class="btns"><button class="alt" onclick="full43=!full43;sim43()">SHOW / HIDE FULL CURVE</button><button class="alt" onclick="trace={};sim43()">CLEAR TRACE</button></div></div></div>' +
+  '<div class="chipsrow" id="r43"></div><div class="status" id="t43">Move the slider.</div></section>' +
+  '<section class="card"><h3>Lesson 4.3 checklist</h3><p>Visit all five regions with the slider:</p><ul class="check" style="padding-left:0" id="k3"></ul><div class="done" id="d3">✅ Lesson 4.3 completed.</div></section>';
+var RDESC = { A: "Region A: NMOS cutoff, PMOS linear. Vout = VDD. No DC current.", B: "Region B: NMOS saturated, PMOS linear. Vout starts to fall; supply current flows.", C: "Region C: both saturated. Steepest part of the VTC, largest gain and maximum supply current.", D: "Region D: NMOS linear, PMOS saturated. Vout keeps falling.", E: "Region E: NMOS linear, PMOS cutoff. Vout = 0. No DC current." };
+function sim43(init) {
+  var vin = +$("s43").value, vo = vout(P43, vin), nr = nReg(P43, vin, vo), pr = pReg(P43, vin, vo), L = regLetter(nr, pr), I = In_(P43, vin, vo);
+  $("v43").textContent = vin.toFixed(2);
+  if (!init) { trace[Math.round(vin * 20) / 20] = 1; reg43[L] = true; }
+  $("d43").innerHTML = invSVG(P43, vin, vo, true);
+  $("g43").innerHTML = vtcChart(P43, { trace: true, traceSet: trace, dot: [vin, vo], bands: full43, full: full43 });
+  $("r43").innerHTML = "<span>V<sub>out</sub> = " + vo.toFixed(2) + " V</span><span>PMOS: " + pr + "</span><span>NMOS: " + nr + "</span><span>Region " + L + "</span><span>I<sub>DD</sub> = " + (I < 0.0005 ? "0" : I.toFixed(2)) + " mA</span>";
+  $("t43").innerHTML = RDESC[L];
+  prog43();
+}
+function prog43() {
+  var R = ["A", "B", "C", "D", "E"];
+  ckList("k3", R.map(function (r) { return [!!reg43[r], "Region " + r + ": " + RDESC[r].split(":")[1].split(".")[0].trim()]; }), "vlsiM4_s43", "d3");
+}
+sim43(true); prog43();
+
+/* ================= 4.4 VTC analysis challenge ================= */
+var SETS44 = [mkP(5, 1, 1, 1), mkP(5, 1, 1, 4), mkP(3.3, 0.7, 0.7, 1), mkP(5, 0.8, 1.2, 0.5)];
+var L44 = ld("vlsiM4_s44_list"), c44 = 0, hint44 = 0, sh44 = false, F44 = ["VOH", "VOL", "VIL", "VIH", "VM", "NMH", "NML"], T44 = { VOH: 0.1, VOL: 0.1, VM: 0.2, VIL: 0.25, VIH: 0.25, NMH: 0.3, NML: 0.3 };
+$("p4").innerHTML =
+  '<section class="card"><h3>4.4 VTC Analysis Challenge</h3><p class="lead">Read the graph and find the seven quantities. Give each value in volts (within about ±0.25 V of the true value).</p><div class="chips" id="ch44"></div>' +
+  '<p class="lead" id="pm44"></p><div class="diagram" id="g44"></div>' +
+  '<div class="pgrid" id="in44"></div>' +
+  '<div class="btns"><button onclick="chk44()">CHECK ANSWER</button><button class="alt" onclick="hint44f()">GET HINT</button><button class="alt" onclick="pick44(c44)">TRY AGAIN</button><button class="alt" onclick="sol44f()">SHOW SOLUTION</button></div><div class="fb" id="f44"></div></section>' +
+  '<section class="card"><h3>Lesson 4.4 checklist</h3><ul class="check" style="padding-left:0"><li id="k4"></li></ul><div class="done" id="d4">✅ Lesson 4.4 completed.</div></section>';
+var LAB44 = { VOH: "V<sub>OH</sub>", VOL: "V<sub>OL</sub>", VIL: "V<sub>IL</sub>", VIH: "V<sub>IH</sub>", VM: "V<sub>M</sub>", NMH: "NM<sub>H</sub>", NML: "NM<sub>L</sub>" };
+$("in44").innerHTML = F44.map(function (k) { return "<b>" + LAB44[k] + '</b><input class="num" type="number" step="0.05" id="i44_' + k + '"><span id="m44_' + k + '"></span>'; }).join("");
+SETS44.forEach(function (p, i) { var b = document.createElement("button"); b.onclick = function () { pick44(i); }; $("ch44").appendChild(b); });
+$("ch44").className = "chips";
+function ref44() { [].forEach.call($("ch44").children, function (b, i) { b.className = i === c44 ? "on" : ""; b.textContent = (L44.indexOf(i) > -1 ? "✅ " : "") + "Curve " + (i + 1); }); }
+function pick44(i) {
+  c44 = i; hint44 = 0; sh44 = false; var P = SETS44[i];
+  $("pm44").innerHTML = "Inverter with V<sub>DD</sub> = " + P.vdd + " V. Gridlines are every " + (P.vdd / (P.vdd * 2)).toFixed(1) + " V.";
+  $("g44").innerHTML = vtcChart(P, { hidden: true });
+  F44.forEach(function (k) { $("i44_" + k).value = ""; $("m44_" + k).textContent = ""; });
+  $("f44").className = "fb"; $("f44").innerHTML = ""; ref44();
+}
+function chk44() {
+  var P = SETS44[c44], M = metrics(P), all = true, msg = [];
+  for (var i = 0; i < F44.length; i++) if ($("i44_" + F44[i]).value === "") return fbx("f44", "hint", "Fill in all seven values first.");
+  F44.forEach(function (k) {
+    var v = parseFloat($("i44_" + k).value), ok = Math.abs(v - M[k]) <= T44[k]; if (!ok) all = false;
+    $("m44_" + k).innerHTML = ok ? "✓" : "✗ <small>(about " + M[k].toFixed(2) + ")</small>"; $("m44_" + k).style.color = ok ? "#2e7d32" : "#c62828";
+  });
+  if (all) {
+    fbx("f44", "ok", "✓ <b>All correct.</b> V<sub>M</sub> is where the curve crosses V<sub>out</sub> = V<sub>in</sub>; V<sub>IL</sub> and V<sub>IH</sub> are where the slope is −1; NM<sub>H</sub> = V<sub>OH</sub> − V<sub>IH</sub> and NM<sub>L</sub> = V<sub>IL</sub> − V<sub>OL</sub>.");
+    $("g44").innerHTML = vtcChart(P, { solution: true });
+    if (!sh44 && L44.indexOf(c44) < 0) { L44.push(c44); sv("vlsiM4_s44_list", L44); }
+    prog44();
+  } else fbx("f44", "no", "✗ <b>Incorrect.</b> The values marked ✗ are outside the allowed range; the approximate correct value is shown. Use GET HINT, or TRY AGAIN.");
+}
+function hint44f() {
+  hint44++; var P = SETS44[c44];
+  if (hint44 === 1) fbx("f44", "hint", "💡 <b>Hint 1:</b> V<sub>OH</sub> and V<sub>OL</sub> are the flat ends of the curve. V<sub>IL</sub> and V<sub>IH</sub> are the two points where the slope of the curve is exactly −1: imagine a line tilted down at 45° touching the curve on each side of the steep part.");
+  else { $("g44").innerHTML = vtcChart(P, { hidden: true, extraLines: [{ x1: 0, y1: 0, x2: P.vdd, y2: P.vdd, c: "#c62828" }] }); fbx("f44", "hint", "💡 <b>Hint 2:</b> the dashed red line is V<sub>out</sub> = V<sub>in</sub>. Where the curve crosses it is V<sub>M</sub>."); }
+}
+function sol44f() {
+  var P = SETS44[c44], M = metrics(P); sh44 = true;
+  F44.forEach(function (k) { $("i44_" + k).value = M[k].toFixed(2); $("m44_" + k).textContent = ""; });
+  $("g44").innerHTML = vtcChart(P, { solution: true });
+  fbx("f44", "sol", "<b>Solution shown.</b> Press TRY AGAIN, or choose another curve, and answer it yourself to earn credit.");
+}
+function prog44() { ckList("k4", [[L44.length >= 2, "Analyse 2 different curves correctly, without SHOW SOLUTION (" + Math.min(L44.length, 2) + " / 2)"]], "vlsiM4_s44", "d4"); ref44(); }
+pick44(0); prog44();
+
+/* ================= 4.5 Second-order effects challenge ================= */
+function evCLM() { var a = [], b = []; for (var v = 0; v <= 5.0001; v += 0.1) { var id = v < 2 ? (2 * v - v * v / 2) : 2; a.push([v, id * (1 + 0.06 * v)]); b.push([v, id * (1 + 0.24 * v)]); } return chart({ x0: 0, x1: 5, y0: 0, y1: 6, xl: "VDS (V)", yl: "ID (mA)", series: [{ pts: a, c: "#2e7d32", label: "L = 1.00 µm" }, { pts: b, c: "#c62828", label: "L = 0.25 µm" }] }); }
+function evBody() { var a = [], b = []; for (var g = 0; g <= 4.0001; g += 0.05) { a.push([g, ID_(g - 1)]); b.push([g, ID_(g - vtB(3))]); } return chart({ x0: 0, x1: 4, y0: 0, y1: 4.5, xl: "VGS (V)", yl: "ID (mA)", series: [{ pts: a, c: "#2e7d32", label: "VSB = 0" }, { pts: b, c: "#c62828", label: "VSB = 3 V" }] }); }
+function evVel() { var a = [], b = []; for (var ov = 0; ov <= 4.0001; ov += 0.05) { a.push([ov, ID_(ov)]); b.push([ov, ID_(ov) / (1 + ov / 1)]); } return chart({ x0: 0, x1: 4, y0: 0, y1: 8, xl: "VGS − VT (V)", yl: "ID (mA)", series: [{ pts: a, c: "#777", d: "6 4", label: "Long channel" }, { pts: b, c: "#c62828", label: "Short channel (L = 0.2 µm)" }] }); }
+function evMob() { var a = []; for (var g = 1; g <= 5.0001; g += 0.05) a.push([g, 1 / (1 + 0.3 * (g - 1))]); return chart({ x0: 1, x1: 5, y0: 0, y1: 1.1, xl: "VGS (V)", yl: "μeff / μ0", series: [{ pts: a, c: "#c62828", label: "θ = 0.3 1/V" }] }); }
+function evTemp() { var a = []; for (var T = -40; T <= 125; T += 5) a.push([T, 1 - 0.002 * (T - 27)]); return chart({ x0: -40, x1: 125, y0: 0.6, y1: 1.3, xl: "Temperature (°C)", yl: "VT (V)", series: [{ pts: a, c: "#c62828", label: "VT versus T" }] }); }
+function evRoll() { var a = []; for (var L = 0.1; L <= 2.0001; L += 0.05) a.push([L, 1 - 0.25 * Math.exp(-L / 0.25)]); return chart({ x0: 0.1, x1: 2, y0: 0.6, y1: 1.1, xl: "Channel length L (µm)", yl: "VT (V)", series: [{ pts: a, c: "#c62828", label: "VT roll-off" }] }); }
+var Q45 = [
+  { q: "The channel length is reduced. What happens to the slope of I<sub>D</sub> in saturation (channel-length modulation)?", o: ["It becomes steeper: I<sub>D</sub> rises faster with V<sub>DS</sub>", "It becomes flatter", "I<sub>D</sub> becomes zero", "No change"], a: 0, w: "λ ∝ 1/L, so a shorter channel means a larger λ and a steeper rise.", ev: evCLM },
+  { q: "The source is raised above the body (V<sub>SB</sub> increases). What happens?", o: ["V<sub>T</sub> increases and I<sub>D</sub> decreases", "V<sub>T</sub> decreases and I<sub>D</sub> increases", "V<sub>T</sub> stays the same", "Only the channel length changes"], a: 0, w: "The body effect raises V<sub>T</sub>, so the same V<sub>GS</sub> gives less current.", ev: evBody },
+  { q: "A very short transistor has a large gate voltage. How does I<sub>D</sub> depend on V<sub>GS</sub>?", o: ["Almost linearly (velocity saturation)", "Quadratically, exactly as the ideal equation says", "It is independent of V<sub>GS</sub>", "It decreases"], a: 0, w: "Carriers reach their saturation velocity, so I<sub>D</sub> stops growing quadratically.", ev: evVel },
+  { q: "V<sub>GS</sub> is increased a lot. What happens to the carrier mobility?", o: ["It decreases (mobility degradation)", "It increases", "It stays exactly constant", "It becomes infinite"], a: 0, w: "A stronger vertical field pushes carriers against the oxide, causing more scattering.", ev: evMob },
+  { q: "The temperature of an NMOS transistor rises. What happens to V<sub>T</sub>?", o: ["It decreases, about 2 mV per °C", "It increases sharply", "It does not change", "It becomes negative immediately"], a: 0, w: "V<sub>T</sub> falls linearly with temperature.", ev: evTemp },
+  { q: "The channel length is made very short. What happens to V<sub>T</sub> (roll-off)?", o: ["V<sub>T</sub> decreases", "V<sub>T</sub> increases", "V<sub>T</sub> is unchanged", "V<sub>T</sub> equals V<sub>DD</sub>"], a: 0, w: "In short channels the source and drain help deplete the channel, lowering V<sub>T</sub>.", ev: evRoll },
+  { q: "Which effect explains why I<sub>D</sub> in saturation still increases slightly with V<sub>DS</sub>?", o: ["Channel-length modulation", "Body effect", "Mobility degradation", "Threshold roll-off"], a: 0, w: "The pinch-off point moves, shortening the effective channel.", ev: evCLM },
+  { q: "Which effect depends on the source-to-body voltage?", o: ["Body effect", "Velocity saturation", "Channel-length modulation", "Mobility degradation"], a: 0, w: "The body effect changes V<sub>T</sub> with V<sub>SB</sub>.", ev: evBody }
+];
+var L45 = ld("vlsiM4_s45_list"), c45 = 0, sh45 = {}, ord45 = [];
+$("p5").innerHTML =
+  '<section class="card"><h3>4.5 Second-Order Effects Challenge</h3><p class="lead">Predict the effect, then check. After you answer, the graph shows what really happens. Get 6 of 8 correct.</p><div class="chips" id="ch45"></div><p class="lead" id="q45"></p><div id="o45"></div>' +
+  '<div class="btns"><button onclick="chk45()">CHECK ANSWER</button><button class="alt" onclick="hint45()">GET HINT</button><button class="alt" onclick="pick45(c45)">TRY AGAIN</button><button class="alt" onclick="sol45()">SHOW SOLUTION</button></div><div class="fb" id="f45"></div><div class="diagram" id="e45" style="display:none"></div></section>' +
+  '<section class="card"><h3>Lesson 4.5 checklist</h3><ul class="check" style="padding-left:0"><li id="k5"></li></ul><div class="done" id="d5">✅ Lesson 4.5 completed.</div></section>';
+Q45.forEach(function (q, i) { var b = document.createElement("button"); b.onclick = function () { pick45(i); }; $("ch45").appendChild(b); });
+$("ch45").className = "chips";
+function ref45() { [].forEach.call($("ch45").children, function (b, i) { b.className = i === c45 ? "on" : ""; b.textContent = (L45.indexOf(i) > -1 ? "✅ " : "") + (i + 1); }); }
+function pick45(i) {
+  c45 = i; var q = Q45[i]; ord45 = shufA(q.o.map(function (x, j) { return j; }));
+  $("q45").innerHTML = "<b>Question " + (i + 1) + ".</b> " + q.q;
+  $("o45").innerHTML = ord45.map(function (j) { return '<label class="opt2"><input type="radio" name="o45" value="' + j + '"> ' + q.o[j] + "</label>"; }).join("");
+  $("f45").className = "fb"; $("f45").innerHTML = ""; $("e45").style.display = "none"; ref45();
+}
+function chk45() {
+  var r = document.querySelector('input[name="o45"]:checked'), q = Q45[c45];
+  if (!r) return fbx("f45", "hint", "Select an answer first.");
+  var ok = +r.value === q.a;
+  fbx("f45", ok ? "ok" : "no", (ok ? "✓ <b>Correct.</b> " : "✗ <b>Incorrect.</b> The graph below shows the real effect. ") + q.w);
+  $("e45").innerHTML = q.ev(); $("e45").style.display = "block";
+  if (ok && !sh45[c45] && L45.indexOf(c45) < 0) { L45.push(c45); sv("vlsiM4_s45_list", L45); prog45(); }
+}
+function hint45() { fbx("f45", "hint", "💡 <b>Hint:</b> think about the physical cause: the channel length, the source-to-body voltage, the electric field along or across the channel, or temperature."); }
+function sol45() { var q = Q45[c45]; sh45[c45] = true; fbx("f45", "sol", "<b>Solution:</b> " + q.o[q.a] + ". " + q.w + " This question gives no credit now."); $("e45").innerHTML = q.ev(); $("e45").style.display = "block"; }
+function prog45() { ckList("k5", [[L45.length >= 6, "Answer 6 of the 8 questions correctly (" + L45.length + " / 6)"]], "vlsiM4_s45", "d5"); ref45(); }
+pick45(0); prog45();
+
+/* ================= 4.6 Quiz ================= */
+var PQ = mkP(5, 1, 1, 1);
+var Q46 = [
+  { q: "For a CMOS inverter with V<sub>in</sub> = 0, what is V<sub>out</sub>?", d: function () { return ""; }, o: ["V<sub>DD</sub>", "0 V", "V<sub>DD</sub>/2", "Undefined"], a: 0, w: "The NMOS is off and the PMOS pulls the output to V<sub>DD</sub>." },
+  { q: "In region B (V<sub>Tn</sub> &lt; V<sub>in</sub> &lt; V<sub>M</sub>), the transistors are:", d: function () { return ""; }, o: ["NMOS saturation, PMOS linear", "NMOS linear, PMOS saturation", "Both cutoff", "Both linear"], a: 0, w: "The NMOS has just turned on while V<sub>out</sub> is still high." },
+  { q: "This VTC belongs to a symmetric inverter (V<sub>DD</sub> = 5 V, V<sub>T</sub> = 1 V). Approximately, V<sub>M</sub> =", d: function () { return vtcChart(PQ, { hidden: true }); }, o: ["2.5 V", "1.5 V", "3.5 V", "5 V"], a: 0, w: "For k<sub>n</sub> = k<sub>p</sub> and equal thresholds, V<sub>M</sub> = V<sub>DD</sub>/2." },
+  { q: "The noise margin NM<sub>H</sub> is defined as:", d: function () { return ""; }, o: ["V<sub>OH</sub> − V<sub>IH</sub>", "V<sub>IL</sub> − V<sub>OL</sub>", "V<sub>OH</sub> − V<sub>OL</sub>", "V<sub>IH</sub> − V<sub>IL</sub>"], a: 0, w: "NM<sub>H</sub> is the margin between the output-high level and the input-high threshold." },
+  { q: "The NMOS is made wider (k<sub>n</sub>/k<sub>p</sub> increases). The switching threshold V<sub>M</sub>:", d: function () { return ""; }, o: ["Decreases", "Increases", "Stays the same", "Becomes V<sub>DD</sub>"], a: 0, w: "A stronger NMOS pulls V<sub>out</sub> down earlier, so V<sub>M</sub> moves lower." },
+  { q: "Channel-length modulation makes I<sub>D</sub> in saturation:", d: function () { return ""; }, o: ["Increase slightly with V<sub>DS</sub>", "Decrease with V<sub>DS</sub>", "Stay perfectly constant", "Drop to zero"], a: 0, w: "I<sub>D</sub> = ½k(V<sub>ov</sub>)²(1 + λV<sub>DS</sub>)." },
+  { q: "When V<sub>SB</sub> increases (body effect), V<sub>T</sub>:", d: function () { return ""; }, o: ["Increases", "Decreases", "Is unchanged", "Becomes zero"], a: 0, w: "More body bias means a higher threshold voltage." },
+  { q: "Velocity saturation makes I<sub>D</sub> versus V<sub>GS</sub> in a short-channel device:", d: function () { return evVel(); }, o: ["Nearly linear", "Exactly quadratic", "Constant", "Decreasing"], a: 0, w: "The current grows almost linearly instead of quadratically." },
+  { q: "On the VTC, both transistors are saturated:", d: function () { return vtcChart(PQ, { bands: true, hidden: false, marks: false }); }, o: ["Around V<sub>M</sub> (region C)", "At V<sub>in</sub> = 0", "At V<sub>in</sub> = V<sub>DD</sub>", "In region A"], a: 0, w: "Region C is the steep part of the curve around V<sub>M</sub>." },
+  { q: "In the very short channels of modern devices, the threshold voltage tends to:", d: function () { return evRoll(); }, o: ["Decrease (roll-off)", "Increase", "Stay fixed", "Equal V<sub>DD</sub>"], a: 0, w: "Threshold-voltage roll-off lowers V<sub>T</sub> as L shrinks." }
+];
+var QN46 = 7, best46 = +(localStorage.getItem("vlsiM4_s46_best") || 0);
+$("p6").innerHTML =
+  '<section class="card"><h3>4.6 Module 4 Quiz</h3><p class="lead">' + Q46.length + " questions. You need <b>" + QN46 + '</b> correct to pass. Answers appear only after you submit.</p><div id="qz46"></div><div class="btns"><button onclick="grade46()">SUBMIT QUIZ</button><button class="alt" onclick="build46()">TRY AGAIN</button></div><div id="qr46"></div></section>' +
+  '<section class="card"><h3>Lesson 4.6 checklist</h3><ul class="check" style="padding-left:0"><li id="k6"></li></ul><div class="done" id="d6">✅ Lesson 4.6 completed.</div></section>';
+var ord46 = [];
+function build46() {
+  ord46 = Q46.map(function (q) { return shufA(q.o.map(function (x, j) { return j; })); });
+  $("qz46").innerHTML = Q46.map(function (q, i) {
+    var d = q.d();
+    return '<div class="qcard" id="qc46_' + i + '"><p class="lead"><b>Q' + (i + 1) + ".</b> " + q.q + "</p>" + (d ? '<div class="diagram">' + d + "</div>" : "") + ord46[i].map(function (j) { return '<label class="opt2"><input type="radio" name="z' + i + '" value="' + j + '"> ' + q.o[j] + "</label>"; }).join("") + '<div id="qe46_' + i + '"></div></div>';
+  }).join("");
+  $("qr46").innerHTML = ""; window.scrollTo(0, 0);
+}
+function grade46() {
+  var sc = 0, un = 0;
+  Q46.forEach(function (q, i) { if (!document.querySelector('input[name="z' + i + '"]:checked')) un++; });
+  if (un) return ($("qr46").innerHTML = '<div class="fb hint">Please answer all questions. ' + un + " unanswered.</div>");
+  Q46.forEach(function (q, i) {
+    var r = document.querySelector('input[name="z' + i + '"]:checked'), ok = +r.value === q.a; if (ok) sc++;
+    $("qc46_" + i).className = "qcard " + (ok ? "good" : "bad");
+    $("qe46_" + i).innerHTML = '<div class="fb ' + (ok ? "ok" : "no") + '">' + (ok ? "✓ Correct. " : "✗ Incorrect. Correct answer: <b>" + q.o[q.a] + "</b>. ") + q.w + "</div>";
+  });
+  if (sc > best46) { best46 = sc; localStorage.setItem("vlsiM4_s46_best", sc); }
+  var pass = sc >= QN46;
+  $("qr46").innerHTML = '<div class="fb ' + (pass ? "ok" : "no") + '"><b>Score: ' + sc + " / " + Q46.length + ".</b> " + (pass ? "🎉 Passed!" : "You need " + QN46 + " to pass. Review the marked questions and press TRY AGAIN.") + "</div>";
+  if (pass) M3.flag("vlsiM4_s46", true);
+  prog46();
+}
+function prog46() { ckList("k6", [[M3.flag("vlsiM4_s46"), "Score at least " + QN46 + " / " + Q46.length + " (best so far: " + best46 + ")"]], "vlsiM4_s46", "d6"); }
+build46(); prog46();
+
+/* ================= overall Module 4 progress ================= */
+var MPG = [["Second-order effects", [["4.1", "vlsiM4_s41"]]], ["Inverter DC analysis", [["4.2", "vlsiM4_s42"], ["4.3", "vlsiM4_s43"], ["4.4", "vlsiM4_s44"]]], ["Challenges and quiz", [["4.5", "vlsiM4_s45"], ["4.6", "vlsiM4_s46"]]]];
+function modProg() {
+  var tot = 0, dn = 0, h = "";
+  MPG.forEach(function (g) { h += '<div class="mgrp"><b>' + g[0] + ":</b> "; g[1].forEach(function (x) { tot++; var d = M3.flag(x[1]); if (d) dn++; h += '<span class="' + (d ? "d" : "") + '">' + (d ? "✅ " : "") + x[0] + "</span>"; }); h += "</div>"; });
+  if (dn === tot && !M3.flag("vlsiL4M4Done")) M3.flag("vlsiL4M4Done", true);
+  var pct = Math.round(dn / tot * 100);
+  $("mprog").innerHTML = "<h3 style='margin:0 0 6px'>Module 4 progress: " + dn + " / " + tot + " sections (" + pct + "%)</h3><div class='mbar'><div style='width:" + pct + "%'></div></div>" + h +
+    (M3.flag("vlsiL4M4Done") ? "<div class='done' style='display:block'>🎉 Module 4 completed. Go to the Level 4 dashboard to see your certificate.</div>" : "");
+}
+M3.onSet = modProg; modProg();
+</script>
+</body>
+</html>

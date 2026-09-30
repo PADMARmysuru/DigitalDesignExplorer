@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 Module 2 | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.w{max-width:1000px;margin:16px auto;padding:10px}
+.hero{background:#243b64;color:#fff;text-align:center;padding:18px;border-radius:12px;margin-bottom:14px}
+.hero h2{color:#fff;margin:0 0 5px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.tabs button{background:#e8eef8;color:#243b64;font-weight:bold}
+.tabs button.on{background:#243b64;color:#fff}
+.sec{display:none;background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:14px}
+.sec.on{display:block}
+.sec h3{color:#243b64;margin-top:0}
+.t{border-collapse:collapse;width:100%;margin:10px 0}
+.t th,.t td{border:1px solid #ccc;padding:9px;text-align:left}
+.t th{background:#243b64;color:#fff}
+.tip{background:#fff8e1;border-left:5px solid #c9a227;padding:10px 14px;border-radius:8px;margin:10px 0}
+.info{background:#f5f7fa;border-left:5px solid #4f6fad;padding:10px 14px;border-radius:8px;margin:10px 0;min-height:24px}
+.read{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-weight:bold;color:#243b64;margin:8px 0}
+.read span{background:#eef3fb;padding:8px 14px;border-radius:8px}
+.ctl{margin:10px 0}.ctl input[type=range]{width:100%}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.box{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:12px;text-align:center}
+.st{display:inline-block;padding:8px 18px;border-radius:20px;font-weight:bold;background:#e0e0e0;color:#555;margin:6px}
+.st.on{background:#a5d6a7;color:#14532d}
+.chips button{background:#e8eef8;color:#243b64;margin:3px}
+.chips button.on{background:#4f6fad;color:#fff}
+svg [data-p]{cursor:pointer}
+svg text{font-family:Arial,sans-serif}
+.q{background:#f8fafc;padding:12px;border-radius:10px;margin:8px 0}
+.q label{display:block;margin:4px 0;cursor:pointer}
+.fb{margin-top:8px;font-weight:bold}
+select{padding:6px;border-radius:6px;border:1px solid #aaa;font-size:15px}
+.lamp{font-size:44px;filter:grayscale(1);opacity:.5}.lamp.on{filter:none;opacity:1}
+.nav2{text-align:center;margin:18px 0}
+.nav2 a{display:inline-block;text-decoration:none;background:#162746;color:#fff;padding:9px 16px;border-radius:8px;margin:3px;font-weight:bold}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  if(localStorage.getItem("level4Unlocked")!=="true"){
+    alert("🔒 Level 4 is restricted. Faculty authorization is required.");
+    window.location.replace("index.html");
+  }
+})();
+</script>
+
+<header><h1>Digital Design Explorer</h1><p>Level 4 – VLSI Basics</p></header>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="level4-dashboard.html">Level 4 Dashboard</a>
+  <a href="level4-module1.html">Module 1</a>
+  <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<main class="w">
+<section class="hero">
+  <h2>⚡ Module 2 – MOSFET Fundamentals</h2>
+  <p>Structure, operation and switching behaviour of NMOS and PMOS, with practice and a quiz.</p>
+</section>
+<div class="tabs" id="tabs"></div>
+
+<!-- 1 -->
+<section class="sec" id="s0">
+  <h3>1. What is a MOSFET?</h3>
+  <p><b>MOSFET</b> = <b>M</b>etal–<b>O</b>xide–<b>S</b>emiconductor <b>F</b>ield-<b>E</b>ffect <b>T</b>ransistor. A voltage on the gate controls the current between drain and source. It is the building block of digital VLSI.</p>
+  <div class="two">
+    <div class="box"><b>NMOS</b><div id="symN"></div>Conducts with a <b>high</b> gate voltage. Carriers: electrons.</div>
+    <div class="box"><b>PMOS</b><div id="symP"></div>Conducts with a <b>low</b> gate voltage. Carriers: holes.</div>
+  </div>
+  <h4>The four terminals (tap one)</h4>
+  <div class="chips" id="termChips"></div>
+  <div class="info" id="termInfo">Tap a terminal.</div>
+</section>
+
+<!-- 2 -->
+<section class="sec" id="s1">
+  <h3>2. NMOS Structure</h3>
+  <p>Tap any part of the diagram to learn what it does. Then drag the slider to watch the channel form.</p>
+  <div id="f1"></div>
+  <div class="info" id="f1Info">Tap Source, Drain, Gate, Oxide, Substrate or the channel.</div>
+  <div class="ctl"><b>V<sub>GS</sub> = <span id="v1">0.0</span> V</b> (V<sub>TH</sub> = 1 V)<input type="range" id="r1" min="0" max="5" step="0.1" value="0"></div>
+  <div class="read"><span id="c1">No channel</span></div>
+  <div class="tip">The gate voltage attracts electrons to the surface under the oxide. Once there are enough, they form an n-type channel that joins source and drain.</div>
+</section>
+
+<!-- 3 -->
+<section class="sec" id="s2">
+  <h3>3. How NMOS Works</h3>
+  <div id="f2"></div>
+  <div class="ctl">
+    <button onclick="setN(0)">V<sub>GS</sub> = 0 V (OFF)</button>
+    <button onclick="setN(5)">V<sub>GS</sub> = 5 V (ON)</button>
+    <b style="margin-left:8px">V<sub>GS</sub> = <span id="v2">0.0</span> V</b>
+    <input type="range" id="r2" min="0" max="5" step="0.1" value="0">
+  </div>
+  <div class="read"><span id="s2st">OFF</span><span class="lamp" id="lamp2">💡</span></div>
+  <div class="info" id="s2msg"></div>
+  <table class="t"><tr><th>Condition</th><th>NMOS state</th></tr>
+  <tr><td>V<sub>GS</sub> = 0</td><td>OFF – no channel</td></tr>
+  <tr><td>V<sub>GS</sub> &gt; V<sub>TH</sub></td><td>ON – channel formed, current flows</td></tr></table>
+</section>
+
+<!-- 4 -->
+<section class="sec" id="s3">
+  <h3>4. PMOS Structure &amp; Operation</h3>
+  <p>PMOS is the mirror image: p+ source and drain in an n-type well. Its source is tied to <b>V<sub>DD</sub> (5 V)</b>. Tap the diagram parts, then move the gate.</p>
+  <div id="f3"></div>
+  <div class="info" id="f3Info">Tap a part of the PMOS diagram.</div>
+  <div class="ctl"><b>Gate voltage V<sub>G</sub> = <span id="v3">0.0</span> V</b> (source = 5 V, |V<sub>TH</sub>| = 1 V)<input type="range" id="r3" min="0" max="5" step="0.1" value="0"></div>
+  <div class="read"><span id="s3st">ON</span><span id="s3v">V<sub>SG</sub> = 5.0 V</span></div>
+  <table class="t"><tr><th></th><th>NMOS</th><th>PMOS</th></tr>
+  <tr><td>ON when</td><td>Gate is HIGH (V<sub>GS</sub> &gt; V<sub>TH</sub>)</td><td>Gate is LOW (V<sub>SG</sub> &gt; |V<sub>TH</sub>|)</td></tr>
+  <tr><td>OFF when</td><td>Gate is LOW</td><td>Gate is HIGH</td></tr></table>
+  <div class="tip">NMOS and PMOS work in opposite ways. That is why they are called <b>complementary</b>, and why CMOS uses them together.</div>
+</section>
+
+<!-- 5 -->
+<section class="sec" id="s4">
+  <h3>5. MOSFET as a Switch</h3>
+  <p>In digital circuits, logic <b>1</b> = V<sub>DD</sub> (high voltage) and logic <b>0</b> = 0 V (ground). The transistor acts as a switch controlled by the gate input <b>A</b>.</p>
+  <div class="ctl">Input A: <button onclick="setA(0)">A = 0</button> <button onclick="setA(1)">A = 1</button> <b id="aTxt">A = 0</b></div>
+  <div class="two">
+    <div class="box"><b>NMOS switch</b> (connects Y to GND)<div id="swN"></div><span class="st" id="stN">OPEN</span></div>
+    <div class="box"><b>PMOS switch</b> (connects Y to V<sub>DD</sub>)<div id="swP"></div><span class="st" id="stP">CLOSED</span></div>
+  </div>
+  <div class="tip">NMOS passes a good <b>0</b>. PMOS passes a good <b>1</b>. This is why CMOS uses NMOS at the bottom (to ground) and PMOS at the top (to V<sub>DD</sub>).</div>
+</section>
+
+<!-- 6 -->
+<section class="sec" id="s5">
+  <h3>6. NMOS vs PMOS</h3>
+  <p>Set the gate input and compare both transistors (each source at its normal supply).</p>
+  <div class="ctl">Gate: <button onclick="setG(0)">Gate = 0</button> <button onclick="setG(1)">Gate = 1</button></div>
+  <div class="two">
+    <div class="box"><b>NMOS</b><br><span class="st" id="cN">OFF</span></div>
+    <div class="box"><b>PMOS</b><br><span class="st" id="cP">ON</span></div>
+  </div>
+  <table class="t"><tr><th>Feature</th><th>NMOS</th><th>PMOS</th></tr>
+  <tr><td>Substrate / body</td><td>p-type, tied to GND</td><td>n-type well, tied to V<sub>DD</sub></td></tr>
+  <tr><td>Source / drain</td><td>n+</td><td>p+</td></tr>
+  <tr><td>Charge carriers</td><td>Electrons</td><td>Holes</td></tr>
+  <tr><td>Turns ON with</td><td>Logic 1 at gate</td><td>Logic 0 at gate</td></tr>
+  <tr><td>Good at passing</td><td>Logic 0</td><td>Logic 1</td></tr>
+  <tr><td>Speed</td><td>Faster (electrons move more easily)</td><td>Slower for the same size</td></tr></table>
+</section>
+
+<!-- 7 -->
+<section class="sec" id="s6">
+  <h3>7. Three Operating Regions – Basic Introduction</h3>
+  <p>For an NMOS with V<sub>TH</sub> = 1 V. Move both sliders and see which region you are in.</p>
+  <div class="ctl"><b>V<sub>GS</sub> = <span id="v6a">0.0</span> V</b><input type="range" id="r6a" min="0" max="5" step="0.1" value="0"></div>
+  <div class="ctl"><b>V<sub>DS</sub> = <span id="v6b">0.0</span> V</b><input type="range" id="r6b" min="0" max="5" step="0.1" value="0"></div>
+  <div class="two" id="regCards">
+    <div class="box" id="rg0"><b>Cutoff</b><br>V<sub>GS</sub> &lt; V<sub>TH</sub><br>No channel. Switch OFF.</div>
+    <div class="box" id="rg1"><b>Linear (Triode)</b><br>V<sub>GS</sub> &gt; V<sub>TH</sub> and V<sub>DS</sub> &lt; V<sub>GS</sub> − V<sub>TH</sub><br>Channel complete. Acts like a resistor. Digital ON state.</div>
+    <div class="box" id="rg2"><b>Saturation</b><br>V<sub>GS</sub> &gt; V<sub>TH</sub> and V<sub>DS</sub> ≥ V<sub>GS</sub> − V<sub>TH</sub><br>Channel pinches off near the drain. Current stays almost constant. Used in amplifiers.</div>
+  </div>
+  <div class="tip">Module 1 has the animated version. Here, only remember the three conditions.</div>
+</section>
+
+<!-- 8 -->
+<section class="sec" id="s7">
+  <h3>8. Interactive Practice</h3>
+  <h4>A. Is the transistor ON or OFF?</h4>
+  <div class="box" id="pa"></div>
+  <div class="read"><span id="paScore">Correct: 0 / 0</span></div>
+  <h4>B. Identify the terminals</h4>
+  <div class="box"><div id="pbSym"></div>
+    1 = <select id="pb1"></select> 2 = <select id="pb2"></select> 3 = <select id="pb3"></select>
+    <button onclick="checkB()">Check</button><div class="fb" id="pbFb"></div></div>
+  <h4>C. Determine the output</h4>
+  <div class="box" id="pc"></div>
+</section>
+
+<!-- 9 -->
+<section class="sec" id="s8">
+  <h3>9. Mini Challenges</h3>
+  <p>Pick a challenge. Predict the result for every input, reveal the answer, then try the circuit yourself.</p>
+  <div class="chips" id="chChips"></div>
+  <div class="read"><span id="chProg">Completed: 0 / 6</span></div>
+  <div class="box" id="chBox"></div>
+</section>
+
+<!-- 10 -->
+<section class="sec" id="s9">
+  <h3>10. Module Quiz</h3>
+  <p>13 questions. You need 10 correct to complete Module 2.</p>
+  <div id="quiz"></div>
+  <button onclick="grade()">Check answers</button>
+  <div class="fb" id="qr"></div>
+</section>
+
+<div class="nav2"><a href="level4-dashboard.html">← Level 4 Dashboard</a><a href="level4-module1.html">← Module 1</a><a href="index.html">Home</a></div>
+</main>
+
+<footer><p>Digital Design Explorer | ECE Department</p></footer>
+<footer class="site-footer">
+  <p>Developed by <strong>Mrs. Padma R</strong></p>
+  <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+  <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+var names=["What is a MOSFET","NMOS Structure","How NMOS Works","PMOS","MOSFET as Switch","NMOS vs PMOS","Operating Regions","Practice","Mini Challenges","Quiz"];
+var tabs=$("tabs");
+names.forEach(function(n,i){var b=document.createElement("button");b.textContent=(i+1)+". "+n;b.onclick=function(){show(i)};tabs.appendChild(b);});
+function show(i){names.forEach(function(n,k){$("s"+k).classList.toggle("on",k===i);tabs.children[k].classList.toggle("on",k===i);});}
+show(0);
+function clamp(x){return Math.max(0,Math.min(1,x));}
+
+/* transistor symbol: d=top, g=left, s=bottom labels */
+function sym(type,d,g,s){
+  var p=type==="p";
+  return '<svg viewBox="0 0 170 130" width="150" style="background:#f8fafc;border-radius:8px"><g stroke="#243b64" stroke-width="3" fill="none"><line x1="15" y1="65" x2="'+(p?45:55)+'" y2="65"/>'+(p?'<circle cx="50" cy="65" r="5" fill="#fff" stroke-width="2"/>':'')+'<line x1="55" y1="40" x2="55" y2="90"/><line x1="65" y1="35" x2="65" y2="95"/><polyline points="65,40 115,40 115,15"/><polyline points="65,90 115,90 115,115"/></g><g font-size="14" fill="#c62828" font-weight="bold"><text x="122" y="24">'+d+'</text><text x="5" y="55">'+g+'</text><text x="122" y="122">'+s+'</text></g></svg>';
+}
+$("symN").innerHTML=sym("n","Drain","Gate","Source");
+$("symP").innerHTML=sym("p","Source","Gate","Drain");
+var terms={Gate:"<b>Gate:</b> the control terminal. It sits on a thin insulating oxide, so no DC current flows into it.",Drain:"<b>Drain:</b> the terminal where charge carriers leave the channel.",Source:"<b>Source:</b> the terminal that supplies charge carriers to the channel.",Body:"<b>Body (substrate):</b> the silicon base. NMOS body is tied to ground; PMOS body is tied to V<sub>DD</sub>."};
+Object.keys(terms).forEach(function(k){var b=document.createElement("button");b.textContent=k;b.onclick=function(){$("termInfo").innerHTML=terms[k];[].forEach.call($("termChips").children,function(x){x.classList.toggle("on",x===b)});};$("termChips").appendChild(b);});
+$("termChips").className="chips";
+
+/* cross-section FET */
+var NS="http://www.w3.org/2000/svg",reg=[],reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var INFO={
+n:{sub:"<b>p-type substrate (Body):</b> the base silicon, normally tied to ground.",s:"<b>n+ Source:</b> heavily doped n-type region that supplies electrons.",d:"<b>n+ Drain:</b> heavily doped n-type region that collects the electrons.",g:"<b>Gate:</b> conductor whose voltage controls the channel.",ox:"<b>Oxide (SiO₂):</b> a thin insulator between gate and silicon. No DC gate current.",ch:"<b>Channel:</b> an n-type layer of electrons that forms under the oxide when V<sub>GS</sub> is above V<sub>TH</sub>."},
+p:{sub:"<b>n-type well (Body):</b> the base for PMOS, tied to V<sub>DD</sub>.",s:"<b>p+ Source:</b> heavily doped p-type region that supplies holes. Tied to V<sub>DD</sub>.",d:"<b>p+ Drain:</b> heavily doped p-type region that collects the holes.",g:"<b>Gate:</b> a LOW gate voltage (below the source) turns PMOS ON.",ox:"<b>Oxide (SiO₂):</b> thin insulator under the gate.",ch:"<b>Channel:</b> a p-type layer of holes that forms under the oxide when the gate is low enough."}};
+function FET(id,type){
+  var n=type==="n",host=$(id),col=n?"#0b3d91":"#b3261e";
+  host.innerHTML='<svg viewBox="0 0 600 250" style="width:100%;height:auto;background:#f8fafc;border-radius:10px">'+
+  '<rect data-p="sub" x="20" y="140" width="560" height="95" fill="'+(n?"#f4d8c8":"#d3e6d3")+'" stroke="#888"/>'+
+  '<text x="300" y="224" text-anchor="middle" font-size="13" fill="#555">'+(n?"p-type substrate (Body)":"n-type well (Body)")+'</text>'+
+  '<rect data-p="s" x="80" y="140" width="110" height="45" fill="'+(n?"#9db7e8":"#f2b0b0")+'" stroke="#333"/>'+
+  '<rect data-p="d" x="410" y="140" width="110" height="45" fill="'+(n?"#9db7e8":"#f2b0b0")+'" stroke="#333"/>'+
+  '<text x="135" y="168" text-anchor="middle" font-size="14">'+(n?"n+":"p+")+' Source</text><text x="465" y="168" text-anchor="middle" font-size="14">'+(n?"n+":"p+")+' Drain</text>'+
+  '<rect data-p="ox" x="190" y="128" width="220" height="12" fill="#d9dee7" stroke="#888"/>'+
+  '<rect data-p="g" x="190" y="92" width="220" height="34" fill="#8b95a5" stroke="#333"/><text x="300" y="114" text-anchor="middle" font-size="14" fill="#fff">Gate</text>'+
+  '<polygon data-p="ch" points="190,140 410,140 410,140 190,140" fill="'+col+'" opacity=".55" stroke="#333" stroke-width="0"/><g></g>'+
+  '<text x="135" y="82" text-anchor="middle" font-size="13">S</text><text x="465" y="82" text-anchor="middle" font-size="13">D</text>'+
+  '<text x="300" y="82" text-anchor="middle" font-size="13">'+(n?"Carriers: electrons":"Carriers: holes")+'</text></svg>';
+  var svg=host.firstChild,g=svg.querySelector("g"),cs=[],pos=[];
+  for(var i=0;i<12;i++){var c=document.createElementNS(NS,"circle");c.setAttribute("r","4");c.setAttribute("fill",n?col:"#fff");c.setAttribute("stroke",col);c.setAttribute("stroke-width",n?0:2);g.appendChild(c);cs.push(c);pos.push(190+i*220/12);}
+  var o={level:0,flow:false};
+  o.set=function(level,flow){o.level=level;o.flow=flow;var ts=level*24;svg.querySelector("[data-p=ch]").setAttribute("points","190,140 410,140 410,"+(140+ts)+" 190,"+(140+ts));};
+  o.tick=function(){for(var i=0;i<12;i++){if(o.flow&&o.level>0){if(!reduce)pos[i]+=1+o.level*2;if(pos[i]>410)pos[i]=190;cs[i].setAttribute("cx",pos[i]);cs[i].setAttribute("cy",140+o.level*12+((i%3)-1)*3);cs[i].setAttribute("opacity",1);}else cs[i].setAttribute("opacity",0);}};
+  svg.addEventListener("click",function(e){var t=e.target,p=t.getAttribute&&t.getAttribute("data-p");if(p&&INFO[type][p]){$(id+"Info").innerHTML=INFO[type][p];[].forEach.call(svg.querySelectorAll("[data-p]"),function(x){x.setAttribute("stroke-width",x===t?4:(x.getAttribute("data-p")==="ch"?0:1));});}});
+  reg.push(o);return o;
+}
+(function loop(){reg.forEach(function(o){o.tick()});requestAnimationFrame(loop);})();
+
+var F1=FET("f1","n"),F2=FET("f2","n"),F3=FET("f3","p");
+$("r1").oninput=function(){var v=+this.value;$("v1").textContent=v.toFixed(1);var l=clamp((v-1)/3);F1.set(l,false);$("c1").textContent=v>1?"Channel formed":"No channel";};
+function n2(v){$("r2").value=v;$("v2").textContent=(+v).toFixed(1);var on=v>1;F2.set(clamp((v-1)/3),on);$("s2st").textContent=on?"ON":"OFF";$("lamp2").className="lamp"+(on?" on":"");
+  $("s2msg").innerHTML=on?"V<sub>GS</sub> is above V<sub>TH</sub>: a channel of electrons forms and current flows from drain to source.":(v==0?"V<sub>GS</sub> = 0: no channel, so the transistor is OFF.":"V<sub>GS</sub> is still below V<sub>TH</sub> (1 V): not enough to form a channel. OFF.");}
+function setN(v){n2(v)}
+$("r2").oninput=function(){n2(+this.value)};n2(0);
+function p3(v){$("v3").textContent=v.toFixed(1);var sg=5-v,on=sg>1;F3.set(clamp((sg-1)/3),on);$("s3st").textContent=on?"ON":"OFF";$("s3v").innerHTML="V<sub>SG</sub> = "+sg.toFixed(1)+" V";}
+$("r3").oninput=function(){p3(+this.value)};p3(0);
+
+/* switch */
+function sw(closed,label){return '<svg viewBox="0 0 220 70" width="220"><g stroke="#243b64" stroke-width="3"><line x1="20" y1="45" x2="'+(closed?200:180)+'" y2="'+(closed?45:15)+'" stroke="'+(closed?"#2e7d32":"#c62828")+'"/></g><circle cx="20" cy="45" r="5" fill="#243b64"/><circle cx="200" cy="45" r="5" fill="#243b64"/><text x="20" y="66" font-size="12" text-anchor="middle">Y</text><text x="200" y="66" font-size="12" text-anchor="middle">'+label+'</text></svg>';}
+function setA(a){$("aTxt").textContent="A = "+a;$("swN").innerHTML=sw(a===1,"GND (0)");$("swP").innerHTML=sw(a===0,"VDD (1)");
+  $("stN").textContent=a===1?"CLOSED (ON)":"OPEN (OFF)";$("stN").className="st"+(a===1?" on":"");
+  $("stP").textContent=a===0?"CLOSED (ON)":"OPEN (OFF)";$("stP").className="st"+(a===0?" on":"");}
+setA(0);
+function setG(g){$("cN").textContent=g?"ON":"OFF";$("cN").className="st"+(g?" on":"");$("cP").textContent=g?"OFF":"ON";$("cP").className="st"+(g?"":" on");}
+setG(0);
+
+/* regions */
+function reg6(){var g=+$("r6a").value,d=+$("r6b").value;$("v6a").textContent=g.toFixed(1);$("v6b").textContent=d.toFixed(1);
+  var r=g<=1?0:(d<g-1?1:2);for(var i=0;i<3;i++)$("rg"+i).style.borderColor=i===r?"#c9a227":"#d9dee7";
+  for(i=0;i<3;i++)$("rg"+i).style.background=i===r?"#fff8e1":"#f8fafc";}
+$("r6a").oninput=reg6;$("r6b").oninput=reg6;reg6();
+
+/* circuit diagram */
+function cir(kind,a){var pt=kind==="pr",lamp=kind==="nl",on=pt?a===0:a===1,tf=on?"#a5d6a7":"#e0e0e0",gy=pt?55:135;
+  return '<svg viewBox="0 0 260 200" width="240" style="background:#f8fafc;border-radius:8px"><line x1="130" y1="20" x2="130" y2="180" stroke="#243b64" stroke-width="2.5"/>'+
+  '<rect x="100" y="35" width="60" height="40" rx="6" fill="'+(pt?tf:(lamp&&on?"#ffe066":"#fff"))+'" stroke="#243b64" stroke-width="2"/><rect x="100" y="115" width="60" height="40" rx="6" fill="'+(pt?"#fff":tf)+'" stroke="#243b64" stroke-width="2"/>'+
+  '<g font-size="12" text-anchor="middle" fill="#162746"><text x="130" y="59">'+(pt?"PMOS":(lamp?"Lamp":"Resistor"))+'</text><text x="130" y="139">'+(pt?"Resistor":"NMOS")+'</text><text x="130" y="14" font-weight="bold">VDD (1)</text><text x="130" y="196" font-weight="bold">GND (0)</text></g>'+
+  (lamp?'':'<line x1="130" y1="95" x2="200" y2="95" stroke="#243b64" stroke-width="2.5"/><text x="205" y="99" font-size="14" font-weight="bold" fill="#c62828">Y</text>')+
+  '<line x1="30" y1="'+gy+'" x2="100" y2="'+gy+'" stroke="#c62828" stroke-width="2.5"/><text x="8" y="'+(gy+4)+'" font-size="14" font-weight="bold" fill="#c62828">A</text></svg>';}
+
+/* practice A */
+var pas=0,pat=0,cur;
+function newA(){var t=Math.random()<.5?"NMOS":"PMOS",g=Math.random()<.5?0:5;cur={on:t==="NMOS"?g===5:g===0};
+  var s=t==="NMOS"?"0 V (ground)":"5 V (V<sub>DD</sub>)";
+  $("pa").innerHTML="<p><b>"+t+"</b>: source = "+s+", gate = <b>"+g+" V</b>, V<sub>TH</sub> magnitude = 1 V.</p><button onclick=\"ansA(true)\">ON</button> <button onclick=\"ansA(false)\">OFF</button><div class=\"fb\" id=\"paFb\"></div>";}
+function ansA(v){pat++;var ok=v===cur.on;if(ok)pas++;$("paScore").textContent="Correct: "+pas+" / "+pat;
+  $("pa").innerHTML+="";$("paFb").style.color=ok?"#2e7d32":"#c62828";$("paFb").innerHTML=(ok?"✅ Correct. ":"❌ Not quite. ")+"NMOS is ON with a high gate; PMOS is ON with a low gate. <button onclick='newA()'>Next</button>";}
+newA();
+/* practice B */
+$("pbSym").innerHTML=sym("n","1","2","3");
+["pb1","pb2","pb3"].forEach(function(id){$(id).innerHTML="<option value=''>?</option><option>Gate</option><option>Drain</option><option>Source</option>";});
+function checkB(){var ok=$("pb1").value==="Drain"&&$("pb2").value==="Gate"&&$("pb3").value==="Source";$("pbFb").style.color=ok?"#2e7d32":"#c62828";
+  $("pbFb").textContent=ok?"✅ Correct! In this NMOS symbol the gate is on the left, drain at the top and source at the bottom.":"❌ Try again. The gate is the control input on the left side.";}
+/* practice C */
+function newC(){var k=Math.random()<.5?"nr":"pr",a=Math.random()<.5?0:1,y=k==="nr"?(a===1?0:1):(a===0?1:0);
+  $("pc").innerHTML=cir(k,a)+"<p>Input <b>A = "+a+"</b>. What is Y?</p><button onclick='ansC("+y+",0)'>Y = 0</button> <button onclick='ansC("+y+",1)'>Y = 1</button><div class='fb' id='pcFb'></div>";}
+function ansC(y,c){var ok=y===c;$("pcFb").style.color=ok?"#2e7d32":"#c62828";$("pcFb").innerHTML=(ok?"✅ Correct. ":"❌ Not quite. ")+"Y = "+y+": when the transistor is ON it connects Y to its supply (GND for NMOS, V<sub>DD</sub> for PMOS); when OFF, the resistor sets Y. <button onclick='newC()'>Next</button>";}
+newC();
+
+/* mini challenges */
+function stack(items,tap){
+  var h=items.length*60+40,y0=30;
+  var svg='<svg viewBox="0 0 280 '+h+'" width="260" style="background:#f8fafc;border-radius:8px"><line x1="140" y1="16" x2="140" y2="'+(h-16)+'" stroke="#243b64" stroke-width="2.5"/>';
+  var tx='<g font-size="12" text-anchor="middle" fill="#162746"><text x="140" y="12" font-weight="bold">VDD (1)</text><text x="140" y="'+(h-2)+'" font-weight="bold">GND (0)</text>';
+  items.forEach(function(it,i){
+    var y=y0+i*60,fill=it.k==="lamp"?(it.on?"#ffe066":"#fff"):(it.k==="t"?(it.on?"#a5d6a7":"#e0e0e0"):"#fff");
+    svg+='<rect x="110" y="'+y+'" width="60" height="40" rx="6" fill="'+fill+'" stroke="#243b64" stroke-width="2"/>';
+    tx+='<text x="140" y="'+(y+24)+'">'+it.l+'</text>';
+    if(it.g)svg+='<line x1="40" y1="'+(y+20)+'" x2="110" y2="'+(y+20)+'" stroke="#c62828" stroke-width="2.5"/><text x="22" y="'+(y+25)+'" font-size="14" font-weight="bold" fill="#c62828">'+it.g+'</text>';
+  });
+  if(tap!==undefined){var ty=y0+tap*60+50;svg+='<line x1="140" y1="'+ty+'" x2="220" y2="'+ty+'" stroke="#243b64" stroke-width="2.5"/><text x="226" y="'+(ty+5)+'" font-size="15" font-weight="bold" fill="#c62828">Y</text>';}
+  return svg+tx+'</g></svg>';
+}
+function par(a,b){
+  var L='stroke="#243b64" stroke-width="2.5"',f=function(o){return o?"#a5d6a7":"#e0e0e0"};
+  return '<svg viewBox="0 0 300 230" width="280" style="background:#f8fafc;border-radius:8px"><g '+L+' fill="none"><line x1="150" y1="16" x2="150" y2="50"/><line x1="150" y1="86" x2="150" y2="106"/><polyline points="80,130 80,106 220,106 220,130"/><polyline points="80,170 80,194 220,194 220,170"/><line x1="150" y1="194" x2="150" y2="214"/></g>'+
+  '<rect x="120" y="50" width="60" height="36" rx="6" fill="'+((a||b)?"#ffe066":"#fff")+'" stroke="#243b64" stroke-width="2"/><rect x="50" y="130" width="60" height="40" rx="6" fill="'+f(a)+'" stroke="#243b64" stroke-width="2"/><rect x="190" y="130" width="60" height="40" rx="6" fill="'+f(b)+'" stroke="#243b64" stroke-width="2"/>'+
+  '<g stroke="#c62828" stroke-width="2.5"><line x1="20" y1="150" x2="50" y2="150"/><line x1="250" y1="150" x2="280" y2="150"/></g><g font-size="12" text-anchor="middle" fill="#162746"><text x="150" y="72">Lamp</text><text x="80" y="154">NMOS</text><text x="220" y="154">NMOS</text><text x="150" y="12" font-weight="bold">VDD (1)</text><text x="150" y="228" font-weight="bold">GND (0)</text></g><g font-size="14" font-weight="bold" fill="#c62828"><text x="6" y="155">A</text><text x="284" y="155">B</text></g></svg>';
+}
+var CH=[
+{t:"Challenge 1: NMOS switch",d:"An NMOS transistor is in series with a lamp between V<sub>DD</sub> and ground. The gate input is A.",in:["A"],q:"the lamp is",o:["ON","OFF"],f:function(a){return a?"ON":"OFF"},draw:function(a){return stack([{k:"lamp",l:"Lamp",on:!!a},{k:"t",l:"NMOS",g:"A",on:!!a}]);},x:"NMOS turns ON when A = 1, so current flows through the lamp to ground."},
+{t:"Challenge 2: PMOS switch",d:"Now a PMOS transistor connects V<sub>DD</sub> to the lamp. The gate input is A.",in:["A"],q:"the lamp is",o:["ON","OFF"],f:function(a){return a?"OFF":"ON"},draw:function(a){return stack([{k:"t",l:"PMOS",g:"A",on:!a},{k:"lamp",l:"Lamp",on:!a}]);},x:"PMOS turns ON when A = 0. With A = 1 it is OFF, so the lamp is OFF. This is the opposite of NMOS."},
+{t:"Challenge 3: Two NMOS in series",d:"Two NMOS transistors are in series with a lamp. Inputs A and B are their gates.",in:["A","B"],q:"the lamp is",o:["ON","OFF"],f:function(a,b){return a&&b?"ON":"OFF"},draw:function(a,b){return stack([{k:"lamp",l:"Lamp",on:!!(a&&b)},{k:"t",l:"NMOS",g:"A",on:!!a},{k:"t",l:"NMOS",g:"B",on:!!b}]);},x:"A path to ground exists only if both transistors are ON. Series NMOS behaves like an AND."},
+{t:"Challenge 4: Two NMOS in parallel",d:"Two NMOS transistors are side by side, in series with the lamp.",in:["A","B"],q:"the lamp is",o:["ON","OFF"],f:function(a,b){return a||b?"ON":"OFF"},draw:function(a,b){return par(!!a,!!b);},x:"Either transistor alone can complete the path to ground. Parallel NMOS behaves like an OR."},
+{t:"Challenge 5: Build an inverter",d:"A PMOS (top) and an NMOS (bottom) share the same gate input A. Output Y is taken between them.",in:["A"],q:"Y =",o:["0","1"],f:function(a){return a?"0":"1"},draw:function(a){return stack([{k:"t",l:"PMOS",g:"A",on:!a},{k:"t",l:"NMOS",g:"A",on:!!a}],0);},x:"A = 0: PMOS is ON and pulls Y up to V<sub>DD</sub> (1). A = 1: NMOS is ON and pulls Y down to ground (0). This is the CMOS inverter."},
+{t:"Challenge 6: Series NMOS with a pull-up resistor",d:"A resistor connects Y to V<sub>DD</sub>. Two NMOS transistors in series connect Y to ground.",in:["A","B"],q:"Y =",o:["0","1"],f:function(a,b){return a&&b?"0":"1"},draw:function(a,b){return stack([{k:"r",l:"Resistor"},{k:"t",l:"NMOS",g:"A",on:!!a},{k:"t",l:"NMOS",g:"B",on:!!b}],0);},x:"Y is pulled to 0 only when both NMOS are ON. Otherwise the resistor pulls Y up to 1. This is NAND behaviour, which you will use in CMOS logic gates."}
+];
+var chDone=[];try{chDone=JSON.parse(localStorage.getItem("vlsiL4M2Challenges")||"[]");}catch(e){}
+var chI=0,chV=[0,0];
+CH.forEach(function(c,i){var b=document.createElement("button");b.textContent=i+1;b.onclick=function(){loadCh(i)};$("chChips").appendChild(b);});
+function chMark(){$("chProg").textContent="Completed: "+chDone.length+" / "+CH.length;
+  [].forEach.call($("chChips").children,function(b,k){b.classList.toggle("on",k===chI);b.textContent=(chDone.indexOf(k)>-1?"✅ ":"")+(k+1);});}
+function loadCh(i){
+  chI=i;chV=[0,0];var c=CH[i],combos=c.in.length===1?[[0],[1]]:[[0,0],[0,1],[1,0],[1,1]];
+  var opts="<option value=''>choose</option>"+c.o.map(function(x){return "<option>"+x+"</option>";}).join("");
+  $("chBox").innerHTML="<h4>"+c.t+"</h4><p>"+c.d+"</p><div id='chSvg'>"+c.draw(0,0)+"</div><p><b>Predict first:</b></p>"+
+   combos.map(function(v,k){return "<p>"+c.in.map(function(n,j){return n+" = "+v[j];}).join(", ")+" → "+c.q+" <select id='cp"+k+"'>"+opts+"</select> <span id='cr"+k+"'></span></p>";}).join("")+
+   "<button onclick='revealCh()'>Reveal answer</button><div class='fb' id='chOut'></div><div class='ctl' id='chTry' style='display:none'><b>Try it:</b> "+
+   c.in.map(function(n,j){return "<button id='tb"+j+"' onclick='chTog("+j+")'>"+n+" = 0</button> ";}).join("")+"<b id='chRes'></b></div>";
+  chMark();
+}
+function chTog(j){var c=CH[chI];chV[j]=chV[j]?0:1;$("tb"+j).textContent=c.in[j]+" = "+chV[j];$("chSvg").innerHTML=c.draw(chV[0],chV[1]);$("chRes").textContent=c.q+" "+c.f(chV[0],chV[1]);}
+function revealCh(){
+  var c=CH[chI],combos=c.in.length===1?[[0],[1]]:[[0,0],[0,1],[1,0],[1,1]],ok=true,miss=false;
+  combos.forEach(function(v,k){var sel=$("cp"+k).value,ans=c.f(v[0],v[1]);
+    if(!sel){miss=true;return;}
+    var good=sel===ans;if(!good)ok=false;
+    $("cr"+k).textContent=good?"✅":"❌ correct: "+ans;$("cr"+k).style.color=good?"#2e7d32":"#c62828";});
+  var o=$("chOut");
+  if(miss){o.style.color="#c62828";o.textContent="Choose a prediction for every input first.";return;}
+  o.style.color=ok?"#2e7d32":"#c62828";
+  o.innerHTML=(ok?"✅ All predictions correct. ":"❌ Some predictions were wrong. ")+c.x;
+  if(ok&&chDone.indexOf(chI)<0){chDone.push(chI);try{localStorage.setItem("vlsiL4M2Challenges",JSON.stringify(chDone));}catch(e){}}
+  $("chTry").style.display="block";$("chRes").textContent="";chMark();
+}
+loadCh(0);
+
+/* quiz */
+var qs=[
+["MOSFET stands for:",["Metal-Oxide-Semiconductor Field-Effect Transistor","Multi-Output Semiconductor Field Transistor","Metal-Oxide-Silicon Fast Electronic Transistor","Modulated Oxide Semiconductor FET"],0],
+["Which terminal controls the channel?",["Gate","Drain","Source","Body"],0],
+[sym("n","1","2","3")+"<br>In this NMOS symbol, terminal 3 is the:",["Source","Drain","Gate","Body"],0],
+["An NMOS has V<sub>GS</sub> = 0 V. It is:",["OFF","ON","Saturated","Damaged"],0],
+["NMOS with V<sub>TH</sub> = 1 V, V<sub>GS</sub> = 3 V (small V<sub>DS</sub>) is:",["ON","OFF","Cannot say","Reverse biased"],0],
+["PMOS with source at 5 V and gate at 0 V is:",["ON","OFF","Cannot say","Saturated only"],0],
+["PMOS with source at 5 V and gate at 5 V is:",["OFF","ON","Half ON","Broken"],0],
+["Which transistor passes a strong logic 1 from V<sub>DD</sub>?",["PMOS","NMOS","Both equally poorly","Neither"],0],
+[cir("nr",1)+"<br>Resistor pull-up and NMOS. When A = 1, Y =",["0","1","Floating","Cannot say"],0],
+[cir("pr",0)+"<br>PMOS with a pull-down resistor. When A = 0, Y =",["1","0","Floating","Cannot say"],0],
+["NMOS: V<sub>TH</sub> = 1 V, V<sub>GS</sub> = 3 V, V<sub>DS</sub> = 1 V. Region?",["Linear","Cutoff","Saturation","Breakdown"],0],
+["NMOS: V<sub>TH</sub> = 1 V, V<sub>GS</sub> = 3 V, V<sub>DS</sub> = 4 V. Region?",["Saturation","Linear","Cutoff","Reverse"],0],
+["In cutoff, the drain current is approximately:",["Zero","Maximum","Equal to gate current","Negative"],0]
+];
+var order=qs.map(function(q){var idx=[0,1,2,3].sort(function(){return Math.random()-.5});return idx;});
+var qz=$("quiz");
+qs.forEach(function(q,i){var d=document.createElement("div");d.className="q";
+  d.innerHTML="<p><b>Q"+(i+1)+".</b> "+q[0]+"</p>"+order[i].map(function(j){return '<label><input type="radio" name="q'+i+'" value="'+j+'"> '+q[1][j]+'</label>';}).join("");qz.appendChild(d);});
+function grade(){var s=0;qs.forEach(function(q,i){var c=document.querySelector('input[name="q'+i+'"]:checked');if(c&&+c.value===q[2])s++;});
+  var r=$("qr");
+  if(s>=10){r.style.color="#2e7d32";r.textContent="🎉 "+s+" / 13 – Module 2 completed!";localStorage.setItem("vlsiL4M2Done","true");}
+  else{r.style.color="#c62828";r.textContent="Score: "+s+" / 13. You need 10 to complete. Revisit the topics and try again.";}}
+function logout(){localStorage.removeItem("studentLoggedIn");window.location.href="login.html";}
+</script>
+</body>
+</html>

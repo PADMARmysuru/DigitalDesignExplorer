@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 Module 7 | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="l4-common.css">
+<script src="m3-engine.js"></script>
+<script src="l4-common.js"></script>
+</head>
+<body>
+<script>M3.guard();</script>
+<header><h1>Digital Design Explorer</h1><p>Level 4 – VLSI Basics</p></header>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="level4-dashboard.html">Level 4 Dashboard</a>
+  <a href="level4-module6.html">Module 6</a>
+  <a href="#" onclick="M3.logout()">Logout</a>
+</nav>
+<main class="w">
+<section class="hero"><h2>📐 Module 7 – Scaling</h2><p>Why transistors shrink, what it buys, and where it stops.</p></section>
+<section class="card" id="mprog"></section>
+<div class="steps" id="tabs"></div>
+<div id="panels"></div>
+<div class="nav2"><a href="level4-dashboard.html">← Level 4 Dashboard</a><a href="level4-module6.html">← Module 6</a></div>
+</main>
+<footer><p>Digital Design Explorer | ECE Department</p></footer>
+<footer class="site-footer">
+  <p>Developed by <strong>Mrs. Padma R</strong></p>
+  <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+  <p>GSSSIETW, Mysuru</p>
+</footer>
+<script>
+
+L4.tabs(["7.1 Why Scale?", "7.2 Constant-Field", "7.3 Constant-Voltage", "7.4 Scaling Table", "7.5 Limits", "7.6 Practice", "7.7 Quiz"]);
+function SVG(inner, vb) { return '<svg viewBox="' + (vb || "0 0 600 260") + '" role="img" aria-label="Scaling diagram"><g font-family="Arial,sans-serif">' + inner + "</g></svg>"; }
+function Rt(x, y, w, h, f, st) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + f + '"' + (st ? ' stroke="' + st + '"' : "") + "/>"; }
+function Tx(x, y, t, c, sz, anc) { return '<text x="' + x + '" y="' + y + '" fill="' + (c || "#243b64") + '" font-size="' + (sz || 14) + '" font-weight="bold" text-anchor="' + (anc || "middle") + '">' + t + "</text>"; }
+function sci(x) { var e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e); return m.toFixed(1) + " × 10<sup>" + e + "</sup>"; }
+function tblRows(rows, S) {
+  return '<div style="overflow-x:auto"><table class="t"><tr><th>Parameter</th><th>Scales by</th><th>Original</th><th>After scaling (S = ' + S.toFixed(2) + ")</th></tr>" +
+    rows.map(function (r) { return "<tr><td>" + r[0] + "</td><td><b>" + r[1] + "</b></td><td>" + r[2] + "</td><td>" + r[3](S) + "</td></tr>"; }).join("") + "</table></div>";
+}
+var CFR = [
+  ["Channel length L", "1/S", "1.00 µm", function (S) { return (1 / S).toFixed(2) + " µm"; }],
+  ["Channel width W", "1/S", "2.00 µm", function (S) { return (2 / S).toFixed(2) + " µm"; }],
+  ["Oxide thickness t<sub>ox</sub>", "1/S", "20 nm", function (S) { return (20 / S).toFixed(1) + " nm"; }],
+  ["Junction depth x<sub>j</sub>", "1/S", "0.20 µm", function (S) { return (0.2 / S).toFixed(3) + " µm"; }],
+  ["Supply voltage V<sub>DD</sub>", "1/S", "5.0 V", function (S) { return (5 / S).toFixed(2) + " V"; }],
+  ["Threshold voltage V<sub>T</sub>", "1/S", "1.0 V", function (S) { return (1 / S).toFixed(2) + " V"; }],
+  ["Substrate doping N<sub>A</sub>", "S", "1 × 10<sup>16</sup> cm⁻³", function (S) { return sci(1e16 * S) + " cm⁻³"; }],
+  ["Gate area", "1/S²", "2.0 µm²", function (S) { return (2 / (S * S)).toFixed(2) + " µm²"; }],
+  ["Gate capacitance C", "1/S", "3.5 fF", function (S) { return (3.5 / S).toFixed(2) + " fF"; }],
+  ["Drain current I<sub>D</sub>", "1/S", "200 µA", function (S) { return (200 / S).toFixed(0) + " µA"; }],
+  ["Gate delay", "1/S", "50 ps", function (S) { return (50 / S).toFixed(1) + " ps"; }],
+  ["Power per gate", "1/S²", "100 µW", function (S) { return (100 / (S * S)).toFixed(1) + " µW"; }],
+  ["Power density", "1 (constant)", "1.0 (relative)", function (S) { return "1.0 (relative)"; }],
+  ["Electric field in the channel", "1 (constant)", "1.0 (relative)", function (S) { return "1.0 (relative)"; }]
+];
+var CVR = [
+  ["Channel length L", "1/S", "1.00 µm", function (S) { return (1 / S).toFixed(2) + " µm"; }],
+  ["Channel width W", "1/S", "2.00 µm", function (S) { return (2 / S).toFixed(2) + " µm"; }],
+  ["Oxide thickness t<sub>ox</sub>", "1/S", "20 nm", function (S) { return (20 / S).toFixed(1) + " nm"; }],
+  ["Supply voltage V<sub>DD</sub>", "1 (unchanged)", "5.0 V", function (S) { return "5.0 V"; }],
+  ["Threshold voltage V<sub>T</sub>", "1 (unchanged)", "1.0 V", function (S) { return "1.0 V"; }],
+  ["Substrate doping N<sub>A</sub>", "S²", "1 × 10<sup>16</sup> cm⁻³", function (S) { return sci(1e16 * S * S) + " cm⁻³"; }],
+  ["Gate capacitance C", "1/S", "3.5 fF", function (S) { return (3.5 / S).toFixed(2) + " fF"; }],
+  ["Drain current I<sub>D</sub>", "S", "200 µA", function (S) { return (200 * S).toFixed(0) + " µA"; }],
+  ["Gate delay", "1/S²", "50 ps", function (S) { return (50 / (S * S)).toFixed(1) + " ps"; }],
+  ["Power per gate", "S", "100 µW", function (S) { return (100 * S).toFixed(0) + " µW"; }],
+  ["Power density", "S³", "1.0 (relative)", function (S) { return (S * S * S).toFixed(1) + " × original"; }],
+  ["Electric field in the channel", "S", "1.0 (relative)", function (S) { return S.toFixed(2) + " × original"; }]
+];
+
+/* ---------- 7.1 ---------- */
+function sc1(t) {
+  var S = +$("s1").value; $("s1_v").textContent = S.toFixed(2);
+  var n = Math.max(8, Math.round(8 * S)), cell = 180 / n, g = "", a, b, m = Math.round(180 / S);
+  for (a = 0; a < n; a++) for (b = 0; b < n; b++) g += Rt(300 + a * cell + 0.6, 40 + b * cell + 0.6, Math.max(0.8, cell - 1.2), Math.max(0.8, cell - 1.2), "#4f6fad");
+  var svg = SVG(Rt(30, 40, 180, 180, "#eef3fb", "#243b64") + Tx(120, 30, "Original chip: 64 transistors", "#243b64", 13) + Rt(30, 40, m, m, "#2e7d32") + Tx(120, 238, "Same circuit after scaling: area ÷ " + (S * S).toFixed(1), "#2e7d32", 13) +
+    Rt(300, 40, 180, 180, "#fff", "#243b64") + g + Tx(390, 30, "Same area: " + Math.round(64 * S * S) + " transistors", "#243b64", 13) + Tx(390, 238, "density × " + (S * S).toFixed(1), "#243b64", 13), "0 0 520 250");
+  $("d1").innerHTML = svg;
+  $("r1").innerHTML = "Transistors per unit area: <b>× " + (S * S).toFixed(2) + "</b> · area needed for the same circuit: <b>" + (100 / (S * S)).toFixed(0) + "%</b> · gate delay: <b>÷ " + S.toFixed(2) + "</b> (clock can be about <b>× " + S.toFixed(2) + "</b> faster)";
+  if (t && S >= 2) L4.hit("g71", 0);
+}
+$("p1").innerHTML = '<section class="card"><h3>7.1 Why Scale Transistors Down?</h3><p class="lead"><b>Scaling</b> shrinks every dimension of a transistor by a factor <b>S</b> (S &gt; 1). Shrinking pays off twice: the same circuit takes less silicon, and it runs faster. Drag the slider and watch.</p>' +
+  L4.sld("s1", "Scaling factor S", 1, 4, 0.25, 1, "", "sc1") + '<div class="diagram" id="d1"></div><div class="status" id="r1"></div><div class="def"><b>Moore\'s law in one line:</b> each new technology generation scales dimensions by about S = 1.4, so transistor density roughly doubles (1.4² ≈ 2).</div></section>' +
+  L4.goal("g71", "vlsiM7_s71", ["Set the scaling factor S to 2 or more"]);
+
+/* ---------- 7.2 constant field ---------- */
+function sc2(t) {
+  var S = +$("s2").value; $("s2_v").textContent = S.toFixed(2);
+  $("t2").innerHTML = tblRows(CFR, S);
+  var d = [], p = [], q = [], i;
+  for (i = 1; i <= 4.001; i += 0.25) { d.push([i, 1 / i]); p.push([i, 1 / (i * i)]); q.push([i, i * i]); }
+  $("c2").innerHTML = L4.chart({ x0: 1, x1: 4, y0: 0, y1: 16, xl: "Scaling factor S", yl: "Relative to original", series: [{ pts: q, c: "#4f6fad", label: "Transistors per area (S²)" }, { pts: d, c: "#c62828", label: "Gate delay (1/S)" }, { pts: p, c: "#2e7d32", label: "Power per gate (1/S²)" }], marks: [{ x: S, y: S * S }, { x: S, y: 1 / S, c: "#c62828" }, { x: S, y: 1 / (S * S), c: "#2e7d32" }], aria: "Constant-field scaling" });
+  if (t) L4.hit("g72", 0);
+}
+L4.eqHit = function (id) { if (id === "e2") L4.hit("g72", 1); if (id === "e3") L4.hit("g73", 1); };
+$("p2").innerHTML = '<section class="card"><h3>7.2 Constant-Field (Full) Scaling</h3><p class="lead">Scale every dimension <b>and</b> every voltage by 1/S, and raise the doping by S. The electric field inside the device then stays the same, so it behaves the same way, only smaller and faster.</p>' +
+  L4.sld("s2", "Scaling factor S", 1, 4, 0.25, 1, "", "sc2") + '<div id="t2"></div><div id="c2"></div>' + L4.eq("e2", "Gate delay ∝ C·V / I = (1/S)(1/S) / (1/S) = 1/S<br>Power per gate ∝ C·V²·f = (1/S)(1/S²)(S) = 1/S²<br>Power density = (1/S²) / (1/S²) = 1 (constant)") +
+  '<div class="def"><b>Why it is attractive:</b> speed improves, power per gate falls faster than area, so <b>power density stays constant</b> and the chip does not overheat.</div></section>' + L4.goal("g72", "vlsiM7_s72", ["Move the S slider and study the table and graph", "Reveal the equations after observing"]);
+
+/* ---------- 7.3 constant voltage ---------- */
+function sc3(t) {
+  var S = +$("s3").value; $("s3_v").textContent = S.toFixed(2);
+  $("t3").innerHTML = tblRows(CVR, S);
+  var a = [], b = [], c = [], d = [], i;
+  for (i = 1; i <= 4.001; i += 0.25) { a.push([i, i * i * i]); b.push([i, 1]); c.push([i, i]); d.push([i, 1]); }
+  $("c3a").innerHTML = L4.chart({ x0: 1, x1: 4, y0: 0, y1: 64, xl: "Scaling factor S", yl: "Power density (relative)", series: [{ pts: a, c: "#c62828", label: "Constant voltage (S³)" }, { pts: b, c: "#2e7d32", label: "Constant field (1)" }], marks: [{ x: S, y: S * S * S, c: "#c62828" }], aria: "Power density" });
+  $("c3b").innerHTML = L4.chart({ x0: 1, x1: 4, y0: 0, y1: 4.5, xl: "Scaling factor S", yl: "Electric field (relative)", series: [{ pts: c, c: "#c62828", label: "Constant voltage (S)" }, { pts: d, c: "#2e7d32", label: "Constant field (1)" }], marks: [{ x: S, y: S, c: "#c62828" }], aria: "Electric field" });
+  $("r3").innerHTML = "At S = " + S.toFixed(2) + ": power density is <b>× " + (S * S * S).toFixed(1) + "</b> and the channel electric field <b>× " + S.toFixed(2) + "</b>. The chip runs faster (delay ÷ " + (S * S).toFixed(1) + ") but gets hot and the oxide is stressed.";
+  if (t) L4.hit("g73", 0);
+}
+$("p3").innerHTML = '<section class="card"><h3>7.3 Constant-Voltage Scaling</h3><p class="lead">Early chips had to keep the standard 5 V supply, so designers shrank the dimensions but <b>left the voltages unchanged</b>. Compare it with constant-field scaling.</p>' +
+  L4.sld("s3", "Scaling factor S", 1, 4, 0.25, 1, "", "sc3") + '<div id="t3"></div><div class="two"><div id="c3a"></div><div id="c3b"></div></div><div class="status" id="r3"></div>' +
+  L4.eq("e3", "Drain current ∝ (1/t<sub>ox</sub>)·V² → S<br>Gate delay ∝ C·V / I = (1/S)(1) / S = 1/S²<br>Power per gate ∝ C·V²·f = (1/S)(1)(S²) = S<br>Power density = S / (1/S²) = S³<br>Electric field = V / L → S") +
+  '<div class="def"><b>The price:</b> power density grows as S³ (overheating), the field grows as S (hot carriers, oxide breakdown, punch-through). That is why chips moved to lower supply voltages.</div></section>' + L4.goal("g73", "vlsiM7_s73", ["Move the S slider and compare the two scaling styles", "Reveal the equations after observing"]);
+
+/* ---------- 7.4 scaling table challenge ---------- */
+var FACT = ["1/S", "1", "S", "1/S²", "S²", "S³"];
+var TR = [["Channel length L", "1/S", "1/S"], ["Supply voltage V<sub>DD</sub>", "1/S", "1"], ["Gate area", "1/S²", "1/S²"], ["Gate delay", "1/S", "1/S²"], ["Power per gate", "1/S²", "S"], ["Power density", "1", "S³"], ["Electric field", "1", "S"], ["Drain current I<sub>D</sub>", "1/S", "S"]];
+var sh74 = false;
+$("p4").innerHTML = '<section class="card"><h3>7.4 Scaling-Factor Challenge</h3><p class="lead">For each parameter, choose how it changes with S under <b>constant-field</b> and under <b>constant-voltage</b> scaling.</p><div style="overflow-x:auto"><table class="t"><tr><th>Parameter</th><th>Constant field</th><th>Constant voltage</th></tr>' +
+  TR.map(function (r, i) { var o = '<option value="">?</option>' + FACT.map(function (f) { return "<option>" + f + "</option>"; }).join(""); return "<tr><td>" + r[0] + '</td><td><select id="f' + i + '">' + o + '</select> <span id="fm' + i + '"></span></td><td><select id="v' + i + '">' + o + '</select> <span id="vm' + i + '"></span></td></tr>'; }).join("") + '</table></div>' +
+  '<div class="btns"><button onclick="chk74()">CHECK ANSWER</button><button class="alt" onclick="hint74()">GET HINT</button><button class="alt" onclick="clr74()">TRY AGAIN</button><button class="alt" onclick="sol74()">SHOW SOLUTION</button></div><div class="fb" id="f74"></div></section>' +
+  L4.goal("g74", "vlsiM7_s74", ["Fill the table correctly, without SHOW SOLUTION"]);
+function chk74() {
+  var all = true, un = false; TR.forEach(function (r, i) { if (!$("f" + i).value || !$("v" + i).value) un = true; });
+  if (un) return L4.fb("f74", "hint", "Choose a factor in every cell first.");
+  TR.forEach(function (r, i) { var a = $("f" + i).value === r[1], b = $("v" + i).value === r[2]; if (!a || !b) all = false; $("fm" + i).textContent = a ? "✓" : "✗"; $("fm" + i).style.color = a ? "#2e7d32" : "#c62828"; $("vm" + i).textContent = b ? "✓" : "✗"; $("vm" + i).style.color = b ? "#2e7d32" : "#c62828"; });
+  if (all) { L4.fb("f74", "ok", "✓ <b>All correct.</b> In constant-field scaling power density stays constant; in constant-voltage scaling it grows as S³."); if (!sh74) L4.hit("g74", 0); }
+  else L4.fb("f74", "no", "✗ <b>Incorrect.</b> Cells marked ✗ are wrong. Use GET HINT.");
+}
+function hint74() { L4.fb("f74", "hint", "💡 <b>Hint:</b> start from the sizes (all 1/S) and the voltage (1/S or 1). Then use delay ∝ C·V/I, power ∝ C·V²·f, density = power / area, and field = V / L."); }
+function clr74() { TR.forEach(function (r, i) { ["f", "v"].forEach(function (p) { $(p + i).value = ""; $(p + "m" + i).textContent = ""; }); }); $("f74").className = "fb"; $("f74").innerHTML = ""; sh74 = false; }
+function sol74() { TR.forEach(function (r, i) { $("f" + i).value = r[1]; $("v" + i).value = r[2]; }); sh74 = true; L4.fb("f74", "sol", "<b>Solution shown.</b> Press TRY AGAIN and answer it yourself to earn credit."); }
+
+/* ---------- 7.5 limits ---------- */
+function lim(which) {
+  var L = +$("lL").value, tox = +$("lT").value, S = +$("lS").value, xd = 0.12;
+  $("lL_v").textContent = L.toFixed(2); $("lT_v").textContent = tox.toFixed(1); $("lS_v").textContent = S.toFixed(2);
+  var gl = 60 + 240 * (L - 0.05) / 0.95, x0 = 300 - gl / 2, x1 = x0 + gl, dp = Math.min(gl / 2, xd * gl / L), punch = 2 * xd >= L;
+  var s1 = Rt(20, 130, 560, 90, "#f4d8c8", "#a0785f") + Rt(60, 130, x0 - 60, 34, "#9db7e8", "#333") + Rt(x1, 130, 540 - x1, 34, "#9db7e8", "#333") +
+    Rt(x0, 100, gl, 26, "#8b95a5", "#333") + Rt(x0, 126, gl, 4, "#d9dee7") +
+    '<rect x="' + x0 + '" y="130" width="' + dp + '" height="' + (34 + 0) + '" fill="#b79ce6" opacity=".85"/><rect x="' + (x1 - dp) + '" y="130" width="' + dp + '" height="34" fill="#b79ce6" opacity=".85"/>' +
+    Tx(300, 92, "L = " + L.toFixed(2) + " µm", "#243b64", 14) + Tx((60 + x0) / 2, 152, "source", "#162746", 12) + Tx((x1 + 540) / 2, 152, "drain", "#162746", 12) +
+    (punch ? Tx(300, 200, "⚠ PUNCH-THROUGH: source and drain depletion regions meet", "#c62828", 14) + '<rect x="' + x0 + '" y="130" width="' + gl + '" height="34" fill="#e53935" opacity=".35"/>' : Tx(300, 200, "purple = depletion regions (each about " + xd + " µm deep)", "#5b3f8c", 12));
+  $("ld1").innerHTML = SVG(s1, "0 0 600 240");
+  var th = Math.max(6, tox * 5), leak = tox >= 5 ? "negligible" : (tox >= 3 ? "low" : (tox >= 2 ? "significant" : "SEVERE (direct tunnelling)")), cnt = tox >= 5 ? 0 : Math.round((5 - tox) * 2), ar = "";
+  for (var i = 0; i < cnt; i++) ar += '<circle cx="' + (150 + i * 32) + '" cy="' + (100 + th + 20) + '" r="5" fill="#0b3d91"/><line x1="' + (150 + i * 32) + '" y1="' + (100 + th + 14) + '" x2="' + (150 + i * 32) + '" y2="' + (100 + 6) + '" stroke="#c62828" stroke-width="2" stroke-dasharray="4 3"/>';
+  var s2 = Rt(80, 40, 440, 60, "#8b95a5", "#333") + Tx(300, 76, "Gate", "#fff", 14) + Rt(80, 100, 440, th, "#e0e6ea", "#78909c") + Rt(80, 100 + th, 440, 60, "#9fb3c8", "#5d7a99") + Tx(300, 100 + th + 40, "silicon channel", "#24405c", 13) + ar +
+    Tx(300, 226, "Oxide " + tox.toFixed(1) + " nm · gate leakage: " + leak, tox < 3 ? "#c62828" : "#243b64", 14);
+  $("ld2").innerHTML = SVG(s2, "0 0 600 250");
+  var g = [], w = [], l = [], k; for (k = 1; k <= 4.001; k += 0.25) { g.push([k, 1 / k]); w.push([k, 1]); l.push([k, k * k]); }
+  $("ld3").innerHTML = L4.chart({ x0: 1, x1: 4, y0: 0, y1: 16, xl: "Scaling factor S", yl: "Delay (relative)", series: [{ pts: g, c: "#2e7d32", label: "Gate delay (1/S)" }, { pts: w, c: "#4f6fad", label: "Local wire delay (constant)" }, { pts: l, c: "#c62828", label: "Global wire delay (S²)" }], marks: [{ x: S, y: S * S, c: "#c62828" }], aria: "Interconnect delay" });
+  if (which === "L" && punch) L4.hit("g75", 0); if (which === "T" && tox < 2) L4.hit("g75", 1); if (which === "S" && S >= 3) L4.hit("g75", 2);
+}
+function limL(t) { lim(t ? "L" : ""); } function limT(t) { lim(t ? "T" : ""); } function limS(t) { lim(t ? "S" : ""); }
+$("p5").innerHTML = '<section class="card"><h3>7.5 Limits of Scaling</h3><p class="lead">Scaling cannot go on forever. Three walls appear. Push each slider to see the problem.</p>' +
+  "<h4>1. Short channels: punch-through</h4>" + L4.sld("lL", "Channel length L", 0.05, 1, 0.01, 1, "µm", "limL") + '<div class="diagram" id="ld1"></div>' +
+  "<h4>2. Thin oxide: gate leakage</h4>" + L4.sld("lT", "Oxide thickness t<sub>ox</sub>", 1, 20, 0.5, 20, "nm", "limT") + '<div class="diagram" id="ld2"></div>' +
+  "<h4>3. Wires: interconnect delay</h4>" + L4.sld("lS", "Scaling factor S", 1, 4, 0.25, 1, "", "limS") + '<div id="ld3"></div>' +
+  '<div class="def"><b>Other limits:</b> the supply voltage cannot fall below a few times kT/q without hurting noise margins; V<sub>T</sub> cannot shrink without raising off-state leakage; heat removal limits power density; fabrication variation grows as features approach atomic size.</div></section>' +
+  L4.goal("g75", "vlsiM7_s75", ["Shrink L until punch-through appears (below 0.24 µm)", "Thin the oxide below 2 nm to see severe leakage", "Raise S to 3 or more and watch global wire delay"]);
+
+/* ---------- 7.6 practice, 7.7 quiz ---------- */
+var PQ = [
+  { cat: "Concept", q: "<b>Constant-field scaling</b> keeps which quantity constant?", o: ["The electric field inside the device", "The supply voltage", "The channel length", "The power per gate"], a: 0, w: "Dimensions and voltages both scale by 1/S, so E = V/L is unchanged." },
+  { cat: "Calculation", q: "Constant-field scaling with S = 2: a 5 V supply becomes:", o: ["2.5 V", "10 V", "5 V", "1.25 V"], a: 0, w: "V<sub>DD</sub> scales by 1/S: 5 / 2 = 2.5 V." },
+  { cat: "Calculation", q: "Constant-field, S = 2. The gate delay becomes:", o: ["Half", "Double", "A quarter", "Unchanged"], a: 0, w: "Delay scales by 1/S." },
+  { cat: "Calculation", q: "Constant-field, S = 2. The power per gate becomes:", o: ["A quarter", "Half", "Double", "Unchanged"], a: 0, w: "Power per gate scales by 1/S² = 1/4." },
+  { cat: "Calculation", q: "Constant-field, S = 2. The power <b>density</b> becomes:", o: ["Unchanged", "Half", "Double", "Four times"], a: 0, w: "Power falls by 1/S² and area falls by 1/S², so density is constant." },
+  { cat: "Calculation", q: "Constant-field, S = 2. The substrate doping becomes:", o: ["Twice as large", "Half", "Four times", "Unchanged"], a: 0, w: "Doping scales by S." },
+  { cat: "Concept", q: "In <b>constant-voltage</b> scaling the electric field:", o: ["Grows by S", "Falls by 1/S", "Stays constant", "Becomes zero"], a: 0, w: "The voltage is fixed while L shrinks, so E = V/L grows by S." },
+  { cat: "Calculation", q: "Constant-voltage, S = 2. The power density becomes:", o: ["8 times", "2 times", "4 times", "Unchanged"], a: 0, w: "Power density scales by S³ = 8." },
+  { cat: "Concept", q: "Why did designers move away from constant-voltage scaling?", o: ["Power density and electric field rose too much", "Chips became slower", "Transistors grew larger", "It needed more masks"], a: 0, w: "Heat and reliability problems (hot carriers, oxide breakdown) grew rapidly." },
+  { cat: "Calculation", q: "One generation with S = 1.4. The transistor density changes by about:", o: ["2 times", "1.4 times", "4 times", "0.7 times"], a: 0, w: "Density scales by S² = 1.96 ≈ 2, the pace of Moore's law." },
+  { cat: "Limits", q: "The main risk of making the gate oxide extremely thin is:", o: ["Gate tunnelling leakage and breakdown", "Higher threshold voltage", "Larger channel length", "Lower capacitance"], a: 0, w: "Electrons can tunnel straight through the oxide." },
+  { cat: "Limits", q: "Punch-through happens when:", o: ["Source and drain depletion regions meet in a short channel", "The gate oxide melts", "The wire is too long", "V<sub>DD</sub> is zero"], a: 0, w: "The gate then loses control of the channel." }
+];
+var QZ = [
+  { q: "Under constant-field scaling the drain current scales by:", o: ["1/S", "S", "1", "S²"], a: 0, w: "Voltage and width/length ratio give I<sub>D</sub> ∝ 1/S." },
+  { q: "Under constant-field scaling the gate capacitance scales by:", o: ["1/S", "S", "1/S²", "1"], a: 0, w: "C = εA/t<sub>ox</sub>: (1/S²)/(1/S) = 1/S." },
+  { q: "Under constant-voltage scaling the gate delay scales by:", o: ["1/S²", "1/S", "S", "1"], a: 0, w: "Delay = CV/I = (1/S)(1)/S." },
+  { q: "The gate area scales by:", o: ["1/S²", "1/S", "S", "S²"], a: 0, w: "Both L and W scale by 1/S." },
+  { q: "Which scaling method keeps the power density constant?", o: ["Constant field", "Constant voltage", "Neither", "Both"], a: 0, w: "Power per gate and area both fall by 1/S²." },
+  { q: "Global wire delay (fixed length) under scaling:", o: ["Gets worse (about S²)", "Improves as 1/S", "Is unchanged", "Becomes zero"], a: 0, w: "Thinner wires have higher resistance while length stays the same." },
+  { q: "If a chip's dimensions shrink by S = 2, the same circuit needs how much area?", o: ["A quarter", "Half", "Double", "The same"], a: 0, w: "Area scales by 1/S²." },
+  { q: "Which is a limit to scaling?", o: ["Heat removal (power density)", "Too many transistors per wafer", "Chips are too fast", "Wafers are too small"], a: 0, w: "Removing heat limits how much power can be packed per unit area." },
+  { q: "The channel length is reduced and a source–drain leakage path opens under the gate. This is:", o: ["Punch-through", "Latch-up", "Electromigration", "Annealing"], a: 0, w: "The depletion regions of source and drain touch." },
+  { q: "Moore's law describes:", o: ["Transistor density roughly doubling every technology generation", "The speed of light", "Constant power", "Constant voltage"], a: 0, w: "A doubling every generation corresponds to S ≈ 1.4." }
+];
+$("p6").innerHTML = L4.mcq("pr", { title: "7.6 Practice Set", intro: "12 problems: calculations and concepts. Get 9 correct.", problems: PQ, need: 9, key: "vlsiM7_s76", flag: "vlsiM7_s76", hint: "Use the scaling factors: sizes 1/S; constant-field voltage 1/S; delay ∝ CV/I; power ∝ CV²f." });
+$("p7").innerHTML = L4.quiz("qz", { title: "7.7 Module 7 Quiz", q: QZ, need: 8, key: "vlsiM7_s77", flag: "vlsiM7_s77" });
+L4.prog({ name: "Module 7", done: "vlsiL4M7Done", groups: [["Scaling theory", [["7.1", "vlsiM7_s71"], ["7.2", "vlsiM7_s72"], ["7.3", "vlsiM7_s73"], ["7.4", "vlsiM7_s74"]]], ["Limits, practice and quiz", [["7.5", "vlsiM7_s75"], ["7.6", "vlsiM7_s76"], ["7.7", "vlsiM7_s77"]]]] });
+L4.inits.push(function () { sc1(false); sc2(false); sc3(false); lim(""); });
+L4.start();
+
+</script>
+</body>
+</html>

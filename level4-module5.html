@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 4 Module 5 | Digital Design Explorer</title>
+<link rel="stylesheet" href="style.css">
+<script src="m3-engine.js"></script>
+<style>
+.w{max-width:1000px;margin:16px auto;padding:10px}
+.hero{background:#243b64;color:#fff;text-align:center;padding:18px;border-radius:12px;margin-bottom:14px}
+.hero h2{color:#fff;margin:0 0 5px}
+.steps{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.steps button{background:#243b64;color:#fff;font-weight:bold}.steps button.cur{background:#c9a227;color:#162746}
+.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:14px;width:auto}
+.card h3{color:#243b64;margin-top:0;text-align:left}
+.lead{font-size:17px;line-height:1.55}
+.def{background:#eef3fb;border-left:5px solid #4f6fad;padding:12px 16px;border-radius:8px;margin:10px 0}
+.info{background:#f5f7fa;border-left:5px solid #4f6fad;padding:10px 14px;border-radius:8px;margin:10px 0;min-height:24px}
+.diagram{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:6px}
+.diagram svg{width:100%;height:auto;display:block}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
+.t{border-collapse:collapse;width:100%;margin:10px 0}.t th,.t td{border:1px solid #ccc;padding:8px;text-align:left;font-size:15px}.t th{background:#243b64;color:#fff}
+.fb{margin-top:10px;padding:12px;border-radius:8px;display:none;line-height:1.5}
+.fb.ok{display:block;background:#e8f5e9;color:#14532d}.fb.no{display:block;background:#ffebee;color:#7f1d1d}
+.fb.hint{display:block;background:#fff8e1;color:#5f4500}.fb.sol{display:block;background:#eef3fb;color:#162746}
+.btns{text-align:center;margin:8px 0}.btns button{margin:3px;font-weight:bold}.btns .alt{background:#e8eef8;color:#243b64}
+.btns button[disabled]{background:#e3e7ee;color:#8a94a6;cursor:not-allowed}
+.opt2{display:block;margin:6px 0;padding:10px;border:2px solid #d5dce8;border-radius:10px;cursor:pointer;background:#fafcff}
+.chips button{background:#e8eef8;color:#243b64;margin:3px;font-weight:bold}.chips button.on{background:#4f6fad;color:#fff}
+.tools{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}
+.tools button{border:3px solid transparent;font-weight:bold;color:#fff}.tools button.sel{border-color:#000;box-shadow:0 0 0 2px #fff inset}
+.ck2{padding:6px 10px;margin:3px 0;border-radius:6px;font-size:15px}.ck2.ok{background:#e8f5e9;color:#14532d}.ck2.no{background:#ffebee;color:#7f1d1d}
+.qcard{background:#f8fafc;border:2px solid #d9dee7;border-radius:12px;padding:12px;margin:12px 0}
+.qcard.good{border-color:#2e7d32;background:#f1fbf3}.qcard.bad{border-color:#c62828;background:#fff5f5}
+.check li{list-style:none;margin:6px 0;font-size:16px}
+.done{background:#e8f5e9;border:2px solid #2e7d32;color:#14532d;padding:12px;border-radius:10px;font-weight:bold;text-align:center;margin-top:10px;display:none}
+.mbar{height:18px;background:#e0e0e0;border-radius:12px;overflow:hidden;margin:8px 0}.mbar div{height:100%;background:#4f6fad;transition:width .4s}
+.mgrp span{display:inline-block;margin:2px 6px 2px 0;padding:3px 9px;border-radius:14px;background:#eef3fb;font-size:15px}.mgrp span.d{background:#c8e6c9;color:#14532d}
+select{padding:6px;border-radius:6px;border:1px solid #aaa;font-size:15px}
+.nav2{text-align:center;margin:18px 0}
+.nav2 a{display:inline-block;text-decoration:none;background:#162746;color:#fff;padding:9px 16px;border-radius:8px;margin:3px;font-weight:bold}
+</style>
+</head>
+<body>
+<script>M3.guard();</script>
+<header><h1>Digital Design Explorer</h1><p>Level 4 – VLSI Basics</p></header>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="level4-dashboard.html">Level 4 Dashboard</a>
+  <a href="level4-module4.html">Module 4</a>
+  <a href="#" onclick="M3.logout()">Logout</a>
+</nav>
+
+<main class="w">
+<section class="hero">
+  <h2>🧩 Module 5 – Layout &amp; Stick Diagrams</h2>
+  <p>From a transistor circuit to a drawing you could hand to a fabrication line.</p>
+</section>
+<section class="card" id="mprog"></section>
+<div class="steps">
+  <button id="b1" class="cur" onclick="show(1)">5.1 Layers &amp; Colours</button>
+  <button id="b2" onclick="show(2)">5.2 Stick Rules</button>
+  <button id="b3" onclick="show(3)">5.3 Inverter Walkthrough</button>
+  <button id="b4" onclick="show(4)">5.4 Draw the Inverter</button>
+  <button id="b5" onclick="show(5)">5.5 Draw NAND &amp; NOR</button>
+  <button id="b6" onclick="show(6)">5.6 Layout &amp; λ Rules</button>
+  <button id="b7" onclick="show(7)">5.7 Quiz</button>
+</div>
+<div id="p1"></div><div id="p2" style="display:none"></div><div id="p3" style="display:none"></div><div id="p4" style="display:none"></div>
+<div id="p5" style="display:none"></div><div id="p6" style="display:none"></div><div id="p7" style="display:none"></div>
+<div class="nav2"><a href="level4-dashboard.html">← Level 4 Dashboard</a><a href="level4-module4.html">← Module 4</a></div>
+</main>
+
+<footer><p>Digital Design Explorer | ECE Department</p></footer>
+<footer class="site-footer">
+  <p>Developed by <strong>Mrs. Padma R</strong></p>
+  <p>Assistant Professor | Department of Electronics and Communication Engineering</p>
+  <p>GSSSIETW, Mysuru</p>
+</footer>
+
+<script>
+var $ = function (i) { return document.getElementById(i); };
+function ld(k) { try { return JSON.parse(localStorage.getItem(k) || "[]"); } catch (e) { return []; } }
+function sv(k, l) { localStorage.setItem(k, JSON.stringify(l)); }
+function fbx(id, cls, html) { var f = $(id); f.className = "fb " + cls; f.innerHTML = html; }
+function shufA(o) { var x = o.slice(); x.sort(function () { return Math.random() - .5; }); return x; }
+function ckList(id, items, key, doneId) {
+  $(id).innerHTML = items.map(function (x) { return "<li>" + (x[0] ? "✅" : "⬜") + " " + x[1] + "</li>"; }).join("");
+  if (items.every(function (x) { return x[0]; })) M3.flag(key, true);
+  $(doneId).style.display = M3.flag(key) ? "block" : "none";
+}
+function show(n) { for (var i = 1; i <= 7; i++) { $("p" + i).style.display = i === n ? "block" : "none"; $("b" + i).classList.toggle("cur", i === n); } window.scrollTo(0, 0); }
+
+/* ============ colours and stick-diagram renderer ============ */
+var COL = { pd: "#f2b705", nd: "#2e9e5b", po: "#d32f2f", m: "#1f5fbf" }, CS = 40;
+function has(cells, r, c, l) { var x = cells[r + "," + c]; return !!(x && x[l]); }
+function lockedOf(P) {
+  var o = {}, c, k, p;
+  for (c = 0; c < P.cols; c++) { o["0," + c] = { m: true }; o[(P.rows - 1) + "," + c] = { m: true }; }
+  for (k in P.pins) { p = P.pins[k]; o[p[0] + "," + p[1]] = o[p[0] + "," + p[1]] || {}; o[p[0] + "," + p[1]].po = true; }
+  p = P.out; o[p[0] + "," + p[1]] = o[p[0] + "," + p[1]] || {}; o[p[0] + "," + p[1]].m = true;
+  return o;
+}
+function mergeCells(P, cells) {
+  var all = {}, k, l;
+  [lockedOf(P), cells].forEach(function (src) { for (k in src) { all[k] = all[k] || {}; for (l in src[k]) if (src[k][l]) all[k][l] = true; } });
+  return all;
+}
+function isCh(all, r, c) { return has(all, r, c, "po") && (has(all, r, c, "pd") || has(all, r, c, "nd")); }
+function gridSVG(P, cells, o) {
+  o = o || {};
+  var all = mergeCells(P, cells), R = P.rows, C = P.cols, W = C * CS, H = R * CS, s, r, c, k;
+  s = '<svg viewBox="-42 -6 ' + (W + 74) + " " + (H + 12) + '"' + (o.click ? ' onclick="' + o.click + '(event)"' : "") + ' role="img" aria-label="Stick diagram grid"><g font-family="Arial,sans-serif">';
+  s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fff" stroke="#c8d0dc"/>';
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) s += '<circle cx="' + (c * CS + 20) + '" cy="' + (r * CS + 20) + '" r="1.5" fill="#c8d0dc"/>';
+  function layer(l, w, op) {
+    var out = "", x, y;
+    for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+      if (!has(all, r, c, l)) continue; x = c * CS + 20; y = r * CS + 20;
+      out += '<rect x="' + (x - w / 2) + '" y="' + (y - w / 2) + '" width="' + w + '" height="' + w + '" fill="' + COL[l] + '" opacity="' + op + '"/>';
+      if (has(all, r, c + 1, l)) out += '<rect x="' + x + '" y="' + (y - w / 2) + '" width="' + CS + '" height="' + w + '" fill="' + COL[l] + '" opacity="' + op + '"/>';
+      if (has(all, r + 1, c, l)) out += '<rect x="' + (x - w / 2) + '" y="' + y + '" width="' + w + '" height="' + CS + '" fill="' + COL[l] + '" opacity="' + op + '"/>';
+    }
+    return out;
+  }
+  s += layer("pd", 18, 0.95) + layer("nd", 18, 0.95) + layer("po", 8, 1) + layer("m", 8, 0.75);
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+    var x0 = c * CS + 20, y0 = r * CS + 20;
+    if (has(all, r, c, "ct")) s += '<rect x="' + (x0 - 8) + '" y="' + (y0 - 8) + '" width="16" height="16" fill="#111"/><rect x="' + (x0 - 3) + '" y="' + (y0 - 3) + '" width="6" height="6" fill="#fff"/>';
+    if (o.marks && isCh(all, r, c)) s += '<circle cx="' + x0 + '" cy="' + y0 + '" r="15" fill="none" stroke="#111" stroke-width="2" stroke-dasharray="3 3"/><text x="' + (x0 + 16) + '" y="' + (y0 - 12) + '" font-size="13" font-weight="bold" fill="#111">' + (has(all, r, c, "pd") ? "P" : "N") + "</text>";
+  }
+  s += '<g font-weight="bold" font-size="15"><text x="-40" y="25" fill="#b3261e">VDD</text><text x="-40" y="' + ((R - 1) * CS + 25) + '" fill="#243b64">GND</text>';
+  for (k in P.pins) s += '<text x="-30" y="' + (P.pins[k][0] * CS + 12) + '" fill="#d32f2f">' + k + "</text>";
+  s += '<text x="' + (W + 6) + '" y="' + (P.out[0] * CS + 25) + '" fill="#1f5fbf">Y</text></g>';
+  if (o.start) s += '<rect x="' + (o.start[1] * CS + 3) + '" y="' + (o.start[0] * CS + 3) + '" width="' + (CS - 6) + '" height="' + (CS - 6) + '" fill="none" stroke="#e08a00" stroke-width="3" stroke-dasharray="5 3"/>';
+  if (o.click) for (r = 0; r < R; r++) for (c = 0; c < C; c++) s += '<rect data-r="' + r + '" data-c="' + c + '" x="' + (c * CS) + '" y="' + (r * CS) + '" width="' + CS + '" height="' + CS + '" fill="transparent" style="cursor:crosshair"/>';
+  return s + "</g></svg>";
+}
+
+/* ============ the three problems and their reference solutions ============ */
+var PR = {
+  inv: { name: "CMOS inverter", cols: 11, rows: 11, ins: ["A"], pins: { A: [5, 0] }, out: [5, 10], nP: 1, nN: 1, fn: function (v) { return v.A ? 0 : 1; },
+    sol: [["pd", 1, 5, 3, 5], ["nd", 7, 5, 9, 5], ["po", 5, 0, 5, 2], ["po", 2, 2, 8, 2], ["po", 2, 2, 2, 5], ["po", 8, 2, 8, 5], ["m", 1, 5, 1, 5], ["ct", 1, 5, 1, 5], ["m", 9, 5, 9, 5], ["ct", 9, 5, 9, 5], ["m", 3, 5, 7, 5], ["ct", 3, 5, 3, 5], ["ct", 7, 5, 7, 5], ["m", 5, 5, 5, 10]],
+    steps: [[], [["pd", 1, 5, 3, 5], ["nd", 7, 5, 9, 5]], [["po", 5, 0, 5, 2], ["po", 2, 2, 8, 2], ["po", 2, 2, 2, 5], ["po", 8, 2, 8, 5]], [["m", 1, 5, 1, 5], ["ct", 1, 5, 1, 5], ["m", 9, 5, 9, 5], ["ct", 9, 5, 9, 5]], [["m", 3, 5, 7, 5], ["ct", 3, 5, 3, 5], ["ct", 7, 5, 7, 5]], [["m", 5, 5, 5, 10]], []] },
+  nand: { name: "2-input NAND", cols: 11, rows: 11, ins: ["A", "B"], pins: { A: [5, 0], B: [9, 0] }, out: [5, 10], nP: 2, nN: 2, fn: function (v) { return (v.A && v.B) ? 0 : 1; },
+    sol: [["pd", 3, 2, 3, 8], ["nd", 7, 2, 7, 8], ["po", 2, 4, 7, 4], ["po", 5, 0, 5, 4], ["po", 2, 6, 9, 6], ["po", 9, 0, 9, 6], ["m", 1, 3, 3, 3], ["ct", 3, 3, 3, 3], ["m", 1, 7, 3, 7], ["ct", 3, 7, 3, 7], ["m", 3, 5, 5, 5], ["ct", 3, 5, 3, 5], ["m", 5, 3, 5, 10], ["m", 5, 3, 7, 3], ["ct", 7, 3, 7, 3], ["m", 7, 7, 9, 7], ["ct", 7, 7, 7, 7]] },
+  nor: { name: "2-input NOR", cols: 11, rows: 11, ins: ["A", "B"], pins: { A: [5, 0], B: [9, 0] }, out: [5, 10], nP: 2, nN: 2, fn: function (v) { return (v.A || v.B) ? 0 : 1; },
+    sol: [["pd", 3, 2, 3, 8], ["nd", 7, 2, 7, 8], ["po", 2, 4, 7, 4], ["po", 5, 0, 5, 4], ["po", 2, 6, 9, 6], ["po", 9, 0, 9, 6], ["m", 1, 3, 3, 3], ["ct", 3, 3, 3, 3], ["m", 3, 7, 5, 7], ["ct", 3, 7, 3, 7], ["m", 5, 5, 5, 10], ["m", 5, 5, 7, 5], ["ct", 7, 5, 7, 5], ["m", 7, 3, 9, 3], ["ct", 7, 3, 7, 3], ["m", 7, 7, 9, 7], ["ct", 7, 7, 7, 7]] }
+};
+function opsToCells(ops) {
+  var cells = {};
+  ops.forEach(function (op) {
+    var r1 = Math.min(op[1], op[3]), r2 = Math.max(op[1], op[3]), c1 = Math.min(op[2], op[4]), c2 = Math.max(op[2], op[4]);
+    for (var r = r1; r <= r2; r++) for (var c = c1; c <= c2; c++) { cells[r + "," + c] = cells[r + "," + c] || {}; cells[r + "," + c][op[0]] = true; }
+  });
+  return cells;
+}
+
+/* ============ netlist extraction ============ */
+function extract(P, cells) {
+  var all = mergeCells(P, cells), R = P.rows, C = P.cols, par = {}, r, c, errors = [];
+  function f(k) { if (par[k] === undefined) par[k] = k; while (par[k] !== k) { var p = par[k]; if (par[p] === undefined) par[p] = p; par[k] = par[p]; k = par[k]; } return k; }
+  function u(a, b) { a = f(a); b = f(b); if (a !== b) par[a] = b; }
+  var K = function (l, rr, cc) { return l + ":" + rr + ":" + cc; };
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+    ["pd", "nd", "po", "m"].forEach(function (l) {
+      if (!has(all, r, c, l)) return; f(K(l, r, c));
+      var diff = l === "pd" || l === "nd";
+      [[r, c + 1], [r + 1, c]].forEach(function (n) {
+        if (!has(all, n[0], n[1], l)) return;
+        if (diff && (isCh(all, r, c) || isCh(all, n[0], n[1]))) return;
+        u(K(l, r, c), K(l, n[0], n[1]));
+      });
+    });
+    if (has(all, r, c, "ct")) {
+      if (!has(all, r, c, "m")) errors.push("A contact at row " + r + ", column " + c + " has no metal on it.");
+      else if (isCh(all, r, c)) errors.push("A contact sits on a transistor gate.");
+      else ["po", "pd", "nd"].forEach(function (l) { if (has(all, r, c, l)) u(K("m", r, c), K(l, r, c)); });
+    }
+    if (has(all, r, c, "pd") && has(all, r, c, "nd")) errors.push("p-diffusion and n-diffusion overlap at row " + r + ", column " + c + ".");
+  }
+  var trans = [];
+  for (r = 0; r < R; r++) for (c = 0; c < C; c++) {
+    if (!isCh(all, r, c)) continue;
+    var dl = has(all, r, c, "pd") ? "pd" : "nd", terms = [];
+    [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]].forEach(function (n) {
+      if (has(all, n[0], n[1], dl) && !isCh(all, n[0], n[1])) terms.push(f(K(dl, n[0], n[1])));
+    });
+    trans.push({ type: dl === "pd" ? "P" : "N", gate: f(K("po", r, c)), terms: terms, ok: terms.length === 2, r: r, c: c });
+  }
+  var vdd = f(K("m", 0, 0)), gnd = f(K("m", R - 1, 0)), y = f(K("m", P.out[0], P.out[1])), ins = {}, k;
+  for (k in P.pins) ins[k] = f(K("po", P.pins[k][0], P.pins[k][1]));
+  return { trans: trans, vdd: vdd, gnd: gnd, y: y, ins: ins, errors: errors };
+}
+function evalLayout(P, cells) {
+  var X = extract(P, cells), a = {}, tp = X.trans.filter(function (t) { return t.type === "P"; }), tn = X.trans.filter(function (t) { return t.type === "N"; });
+  a.np = tp.length; a.nn = tn.length;
+  a.count = tp.length === P.nP && tn.length === P.nN && X.trans.every(function (t) { return t.ok; }) && X.errors.length === 0;
+  var inNames = Object.keys(X.ins);
+  a.gates = X.trans.length > 0 && X.trans.every(function (t) { return inNames.some(function (n) { return X.ins[n] === t.gate; }); }) &&
+    inNames.every(function (n) { return tp.filter(function (t) { return t.gate === X.ins[n]; }).length === 1 && tn.filter(function (t) { return t.gate === X.ins[n]; }).length === 1; });
+  var touch = function (list, net) { return list.some(function (t) { return t.terms.indexOf(net) > -1; }); };
+  a.vdd = touch(tp, X.vdd) && !touch(tn, X.vdd) && X.vdd !== X.gnd;
+  a.gnd = touch(tn, X.gnd) && !touch(tp, X.gnd) && X.vdd !== X.gnd;
+  a.out = touch(tp, X.y) && touch(tn, X.y);
+  a.short = X.vdd !== X.gnd && X.y !== X.vdd && X.y !== X.gnd;
+  var bad = [], n = 1 << inNames.length;
+  for (var m = 0; m < n; m++) {
+    var v = {}; inNames.forEach(function (nm, i) { v[nm] = (m >> (inNames.length - 1 - i)) & 1; });
+    var adj = {};
+    X.trans.forEach(function (t) {
+      if (!t.ok) return; var gv = null; inNames.forEach(function (nm) { if (X.ins[nm] === t.gate) gv = v[nm]; });
+      if (gv === null) return; var on = t.type === "P" ? gv === 0 : gv === 1; if (!on) return;
+      (adj[t.terms[0]] = adj[t.terms[0]] || []).push(t.terms[1]); (adj[t.terms[1]] = adj[t.terms[1]] || []).push(t.terms[0]);
+    });
+    var reach = function (s, e) { var seen = {}, st = [s]; seen[s] = 1; while (st.length) { var q = st.pop(); if (q === e) return true; (adj[q] || []).forEach(function (z) { if (!seen[z]) { seen[z] = 1; st.push(z); } }); } return false; };
+    var up = reach(X.vdd, X.y), dn = reach(X.y, X.gnd), got = up && !dn ? "1" : (!up && dn ? "0" : (up && dn ? "short" : "floating"));
+    if (got !== String(P.fn(v))) bad.push(inNames.map(function (nm) { return nm + "=" + v[nm]; }).join(", ") + " gives " + (got === "short" ? "a short circuit" : (got === "floating" ? "a floating output" : "Y = " + got)) + " but Y should be " + P.fn(v));
+  }
+  a.beh = bad.length === 0; a.bad = bad; a.errors = X.errors;
+  return a;
+}
+function layoutItems(P, a) {
+  return [["Correct number of transistors (" + P.nP + " PMOS + " + P.nN + " NMOS, each with diffusion on both sides)", a.count], ["Every gate connected to an input, one PMOS and one NMOS per input", a.gates], ["VDD connection (PMOS source to the VDD rail)", a.vdd], ["GND connection (NMOS source to the GND rail)", a.gnd], ["Output connection (PMOS drain and NMOS drain meet at Y)", a.out], ["No short circuit between VDD, GND and Y", a.short], ["Truth-table behaviour", a.beh]];
+}
+function layoutHint(P, a) {
+  if (!a.count) return "Poly crossing diffusion makes a transistor. You need " + P.nP + " PMOS (poly over yellow p-diffusion) and " + P.nN + " NMOS (poly over green n-diffusion), each with diffusion on <b>both</b> sides of the poly. Detected: " + a.np + " PMOS and " + a.nn + " NMOS." + (a.errors.length ? " " + a.errors[0] : "");
+  if (!a.gates) return "Connect every poly gate to an input pin with poly. Each input must reach exactly one PMOS gate and one NMOS gate.";
+  if (!a.short) return "Something is joined that should not be: VDD, GND and the output Y must be three separate nets. Check that no metal wire touches the wrong rail or wire.";
+  if (!a.vdd) return "Connect the PMOS source to the VDD rail: p-diffusion, then a contact with metal on it, then metal up to the rail.";
+  if (!a.gnd) return "Connect the NMOS source to the GND rail: n-diffusion, then a contact with metal on it, then metal down to the rail.";
+  if (!a.out) return "The PMOS drain and the NMOS drain must be joined by metal (with contacts) and carried to the output pin Y.";
+  if (!a.short) return "Something is joined that should not be: check that metal wires do not touch the wrong rail or each other.";
+  return "Look at this case: " + a.bad[0] + ".";
+}
+
+/* ============ interactive stick-diagram editor ============ */
+var ED = {}, TOOLS = [["pd", "p-diffusion", "#f2b705"], ["nd", "n-diffusion", "#2e9e5b"], ["po", "poly", "#d32f2f"], ["m", "metal", "#1f5fbf"], ["ct", "contact", "#111"], ["er", "eraser", "#777"]];
+function edInit(pre, key) { var e = ED[pre] || (ED[pre] = {}); e.P = PR[key]; e.key = key; e.cells = {}; e.tool = "pd"; e.start = null; e.hist = []; e.res = ""; e.fails = 0; e.shown = false; e.msg = ""; edDraw(pre); }
+function edSnap(e) { e.hist.push(JSON.stringify(e.cells)); if (e.hist.length > 40) e.hist.shift(); }
+function edPaintCell(e, r, c, l, on) {
+  var k = r + "," + c, lk = lockedOf(e.P)[k];
+  if (l === "er") { if (e.cells[k]) { delete e.cells[k]; } return; }
+  if (on) { e.cells[k] = e.cells[k] || {}; e.cells[k][l] = true; }
+}
+function edClickFor(pre) { return function (ev) {
+  var t = ev.target, e = ED[pre]; if (!t.getAttribute("data-r")) return;
+  var r = +t.getAttribute("data-r"), c = +t.getAttribute("data-c");
+  if (e.tool === "ct") { edSnap(e); var k = r + "," + c; e.cells[k] = e.cells[k] || {}; e.cells[k].ct = !e.cells[k].ct; if (!e.cells[k].ct) delete e.cells[k].ct; e.msg = ""; return edDraw(pre); }
+  if (!e.start) { e.start = [r, c]; e.msg = "Now tap the end of the line (same row or same column)."; return edDraw(pre); }
+  var s = e.start; e.start = null;
+  if (s[0] !== r && s[1] !== c) { e.msg = "Lines must be horizontal or vertical. Try again."; return edDraw(pre); }
+  edSnap(e); e.msg = "";
+  var r1 = Math.min(s[0], r), r2 = Math.max(s[0], r), c1 = Math.min(s[1], c), c2 = Math.max(s[1], c);
+  for (var i = r1; i <= r2; i++) for (var j = c1; j <= c2; j++) edPaintCell(e, i, j, e.tool, true);
+  edDraw(pre);
+}; }
+function edClick(pre, ev) { edClickFor(pre)(ev); }
+function edTool(pre, t) { ED[pre].tool = t; ED[pre].start = null; ED[pre].msg = t === "ct" ? "Tap a cell to place or remove a contact. A contact needs metal on the same cell." : (t === "er" ? "Tap two cells to erase a line, or the same cell twice to erase one." : ""); edDraw(pre); }
+function edUndo(pre) { var e = ED[pre]; if (e.hist.length) e.cells = JSON.parse(e.hist.pop()); e.start = null; edDraw(pre); }
+function edClear(pre) { var e = ED[pre]; edSnap(e); e.cells = {}; e.start = null; e.shown = false; e.res = ""; e.msg = ""; edDraw(pre); }
+function edTry(pre) { ED[pre].res = ""; edDraw(pre); }
+function edDraw(pre) {
+  var e = ED[pre], a = evalLayout(e.P, e.cells);
+  var h = '<div class="tools">' + TOOLS.map(function (t) { return '<button class="' + (e.tool === t[0] ? "sel" : "") + '" style="background:' + t[2] + '" onclick="edTool(\'' + pre + "','" + t[0] + '\')">' + t[1] + "</button>"; }).join("") + "</div>";
+  h += '<div class="info">' + (e.msg || "Pick a layer, tap the start of a line, then tap its end. Poly crossing diffusion makes a transistor (marked P or N).") + "</div>";
+  h += '<div class="diagram">' + gridSVG(e.P, e.cells, { click: "edClick_" + pre, start: e.start, marks: true }) + "</div>";
+  h += '<div class="info">Detected so far: <b>' + a.np + " PMOS</b> and <b>" + a.nn + " NMOS</b> transistors.</div>";
+  h += '<div class="btns"><button onclick="edChk(\'' + pre + '\')">CHECK LAYOUT</button><button class="alt" onclick="edHint(\'' + pre + '\')">GET HINT</button><button class="alt" onclick="edTry(\'' + pre + '\')">TRY AGAIN</button><button class="alt" onclick="edUndo(\'' + pre + '\')">UNDO</button><button class="alt" onclick="edClear(\'' + pre + '\')">CLEAR</button><button class="alt" ' + (e.fails >= 2 ? "" : "disabled") + ' onclick="edSol(\'' + pre + '\')">SHOW SOLUTION' + (e.fails >= 2 ? "" : " (after 2 tries)") + "</button></div>";
+  h += '<div id="edr_' + pre + '">' + e.res + "</div>";
+  $("ed_" + pre).innerHTML = h;
+  window["edClick_" + pre] = edClickFor(pre);
+}
+function edChk(pre) {
+  var e = ED[pre], a = evalLayout(e.P, e.cells), it = layoutItems(e.P, a), ok = it.every(function (x) { return x[1]; }), r = "";
+  it.forEach(function (x) { r += '<div class="ck2 ' + (x[1] ? "ok" : "no") + '">' + (x[1] ? "✓ " : "✗ ") + x[0] + "</div>"; });
+  if (ok) r += '<div class="fb ok">✓ <b>Layout is correct!</b> ' + edCredit(pre, e) + "</div>";
+  else { e.fails++; r += '<div class="fb no">✗ <b>The layout is not correct.</b><br>💡 Hint: ' + layoutHint(e.P, a) + "</div>"; }
+  e.res = r; edDraw(pre);
+}
+function edHint(pre) { var e = ED[pre], a = evalLayout(e.P, e.cells), none = Object.keys(e.cells).length === 0; e.res = '<div class="fb hint">💡 <b>Hint:</b> ' + (none ? "Start with the diffusions: yellow p-diffusion near the VDD rail and green n-diffusion near the GND rail. Then run poly across them for the gates." : layoutHint(e.P, a)) + "</div>"; edDraw(pre); }
+function edSol(pre) { var e = ED[pre]; edSnap(e); e.cells = opsToCells(e.P.sol); e.shown = true; e.res = '<div class="fb sol"><b>Solution shown.</b> Press CLEAR and draw it yourself to earn credit. Other valid layouts also pass the checker.</div>'; edDraw(pre); }
+var L55 = ld("vlsiM5_s55_list");
+function edCredit(pre, e) {
+  if (e.shown) return "The solution was shown, so no credit yet. Press CLEAR and draw it again yourself.";
+  if (pre === "e4") { M3.flag("vlsiM5_s54", true); prog54(); return "Lesson 5.4 completed."; }
+  if (L55.indexOf(e.key) < 0) { L55.push(e.key); sv("vlsiM5_s55_list", L55); } prog55(); return "Layout of the " + e.P.name + " completed.";
+}
+
+/* ============ 5.1 Layers and colour code ============ */
+var LAY = [["nw", "n-well", "A lightly doped n-type region in the p-substrate. PMOS transistors are built inside it.", "#e8dff5", "Dashed outline"], ["pd", "p+ diffusion", "Heavily doped p-type regions: PMOS source and drain.", "#f2b705", "Yellow"], ["nd", "n+ diffusion", "Heavily doped n-type regions: NMOS source and drain.", "#2e9e5b", "Green"], ["po", "Polysilicon", "The transistor gate. Where poly crosses diffusion, a transistor is formed.", "#d32f2f", "Red"], ["ct", "Contact cut", "A hole in the oxide that lets metal touch poly or diffusion.", "#111", "Black"], ["m", "Metal 1", "The wiring layer: supply rails and signal wires.", "#1f5fbf", "Blue"]];
+var layShown = { nw: true, pd: true, nd: true, po: true, ct: true, m: true }, layTouched = {}, m51 = false;
+function layoutMask() {
+  var s = '<svg viewBox="0 0 400 450" role="img" aria-label="Inverter layout masks"><g font-family="Arial,sans-serif" font-size="14" font-weight="bold">';
+  s += '<rect x="0" y="0" width="400" height="450" fill="#fafafa"/><text x="200" y="440" text-anchor="middle" fill="#7a5540" font-weight="normal">p-type substrate</text>';
+  if (layShown.nw) s += '<rect x="20" y="20" width="360" height="210" fill="#e8dff5" stroke="#7a5a9e" stroke-width="2" stroke-dasharray="8 5"/><text x="30" y="42" fill="#5b3f8c">n-well</text>';
+  if (layShown.pd) s += '<rect x="90" y="115" width="220" height="42" fill="#f2b705" opacity=".9"/><text x="98" y="108" fill="#8a6a00">p+ diffusion</text>';
+  if (layShown.nd) s += '<rect x="90" y="300" width="220" height="42" fill="#2e9e5b" opacity=".9"/><text x="98" y="366" fill="#14532d">n+ diffusion</text>';
+  if (layShown.po) s += '<rect x="190" y="70" width="22" height="320" fill="#d32f2f" opacity=".85"/><text x="218" y="88" fill="#b71c1c">poly (gate, input A)</text>';
+  if (layShown.m) s += '<rect x="20" y="26" width="360" height="30" fill="#1f5fbf" opacity=".5"/><text x="30" y="47" fill="#0d3a80">VDD  (metal 1)</text><rect x="20" y="395" width="360" height="30" fill="#1f5fbf" opacity=".5"/><text x="30" y="416" fill="#0d3a80">GND  (metal 1)</text><rect x="104" y="56" width="26" height="90" fill="#1f5fbf" opacity=".5"/><rect x="104" y="320" width="26" height="80" fill="#1f5fbf" opacity=".5"/><rect x="268" y="120" width="26" height="215" fill="#1f5fbf" opacity=".5"/><text x="300" y="240" fill="#0d3a80">Y</text>';
+  if (layShown.ct) s += '<rect x="109" y="127" width="16" height="16" fill="#111"/><rect x="273" y="127" width="16" height="16" fill="#111"/><rect x="109" y="312" width="16" height="16" fill="#111"/><rect x="273" y="312" width="16" height="16" fill="#111"/>';
+  return s + "</g></svg>";
+}
+$("p1").innerHTML =
+  '<section class="card"><h3>5.1 Layout Layers and the Stick-Diagram Colour Code</h3><p class="lead">A chip is built from stacked <b>mask layers</b>. A <b>layout</b> draws every layer to scale. A <b>stick diagram</b> is a quick sketch of the same circuit with coloured lines, showing only <b>what connects to what</b>, not the sizes.</p>' +
+  '<div class="two"><div class="diagram" id="lm"></div><div><h4>Tap a layer to show or hide it</h4><div class="chips" id="lt"></div><div class="info" id="li">Tap a layer name.</div></div></div></section>' +
+  '<section class="card"><h3>Match the colours</h3><p class="lead">In stick diagrams each layer has a fixed colour. Choose the colour for each layer.</p><table class="t"><tr><th>Layer</th><th>Colour in a stick diagram</th></tr>' +
+  LAY.map(function (l, i) { return "<tr><td>" + l[1] + '</td><td><select id="mc' + i + '"><option value="">?</option><option>Blue</option><option>Red</option><option>Green</option><option>Yellow</option><option>Black</option><option>Dashed outline</option></select> <span id="mm' + i + '"></span></td></tr>'; }).join("") +
+  '</table><div class="btns"><button onclick="chk51()">CHECK ANSWER</button><button class="alt" onclick="hint51()">GET HINT</button><button class="alt" onclick="clr51()">TRY AGAIN</button><button class="alt" onclick="sol51()">SHOW SOLUTION</button></div><div class="fb" id="f51"></div></section>' +
+  '<section class="card"><h3>Lesson 5.1 checklist</h3><ul class="check" style="padding-left:0" id="k1"></ul><div class="done" id="d1">✅ Lesson 5.1 completed.</div></section>';
+LAY.forEach(function (l) { var b = document.createElement("button"); b.textContent = l[1]; b.onclick = function () { layShown[l[0]] = !layShown[l[0]]; layTouched[l[0]] = true; $("li").innerHTML = "<b>" + l[1] + " (" + l[4] + "):</b> " + l[2]; b.classList.toggle("on", !layShown[l[0]]); $("lm").innerHTML = layoutMask(); prog51(); }; $("lt").appendChild(b); });
+$("lt").className = "chips"; $("lm").innerHTML = layoutMask();
+function chk51() {
+  var all = true, un = false; LAY.forEach(function (l, i) { if (!$("mc" + i).value) un = true; });
+  if (un) return fbx("f51", "hint", "Choose a colour for every layer first.");
+  LAY.forEach(function (l, i) { var ok = $("mc" + i).value === l[4]; if (!ok) all = false; $("mm" + i).textContent = ok ? "✓" : "✗"; $("mm" + i).style.color = ok ? "#2e7d32" : "#c62828"; });
+  if (all) { fbx("f51", "ok", "✓ <b>Correct.</b> Remember: poly is red, metal is blue, n-diffusion is green, p-diffusion is yellow, contacts are black squares."); if (!sh51) m51 = true; } else fbx("f51", "no", "✗ <b>Incorrect.</b> Rows marked ✗ are wrong.");
+  prog51();
+}
+var sh51 = false;
+function hint51() { fbx("f51", "hint", "💡 <b>Hint:</b> think of traffic lights: red for poly (the gate), blue for metal (wires). Green and yellow are the two diffusions: n = green, p = yellow."); }
+function clr51() { LAY.forEach(function (l, i) { $("mc" + i).value = ""; $("mm" + i).textContent = ""; }); $("f51").className = "fb"; $("f51").innerHTML = ""; sh51 = false; }
+function sol51() { LAY.forEach(function (l, i) { $("mc" + i).value = l[4]; $("mm" + i).textContent = ""; }); sh51 = true; fbx("f51", "sol", "<b>Solution shown.</b> Press TRY AGAIN and answer it yourself for credit."); }
+function prog51() { ckList("k1", [[Object.keys(layTouched).length >= 6, "Toggle all six layers in the layout (" + Object.keys(layTouched).length + " / 6)"], [m51, "Match all six colours (without SHOW SOLUTION)"]], "vlsiM5_s51", "d1"); }
+prog51();
+
+/* ============ 5.2 Stick-diagram rules ============ */
+function xsv(kind) {
+  var L = function (x1, y1, x2, y2, c, w) { return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + c + '" stroke-width="' + w + '"/>'; }, s = '<svg viewBox="0 0 160 130" width="200"><rect width="160" height="130" fill="#fff" stroke="#d9dee7"/>', ct = '<rect x="72" y="52" width="16" height="16" fill="#111"/><rect x="77" y="57" width="6" height="6" fill="#fff"/>';
+  switch (kind) {
+    case "po_nd": s += L(80, 10, 80, 120, COL.nd, 18) + L(20, 60, 140, 60, COL.po, 8); break;
+    case "po_pd": s += L(80, 10, 80, 120, COL.pd, 18) + L(20, 60, 140, 60, COL.po, 8); break;
+    case "m_po": s += L(80, 10, 80, 120, COL.po, 8) + L(20, 60, 140, 60, COL.m, 8); break;
+    case "m_nd_ct": s += L(80, 10, 80, 120, COL.nd, 18) + L(20, 60, 140, 60, COL.m, 8) + ct; break;
+    case "m_m": s += L(20, 60, 80, 60, COL.m, 8) + L(80, 60, 80, 120, COL.m, 8); break;
+    case "po_m_ct": s += L(80, 10, 80, 120, COL.po, 8) + L(20, 60, 140, 60, COL.m, 8) + ct; break;
+    case "pd_nd": s += L(55, 10, 55, 120, COL.pd, 18) + L(75, 10, 75, 120, COL.nd, 18); break;
+    case "m_pd": s += L(80, 10, 80, 120, COL.pd, 18) + L(20, 60, 140, 60, COL.m, 8); break;
+  }
+  return s + "</svg>";
+}
+var SC = [["po_nd", 0, "Red poly crosses green n-diffusion."], ["po_pd", 0, "Red poly crosses yellow p-diffusion."], ["m_po", 2, "Blue metal crosses red poly. There is no contact."], ["m_nd_ct", 1, "Blue metal crosses green n-diffusion and a contact is placed."], ["m_m", 1, "Two blue metal wires meet."], ["po_m_ct", 1, "Blue metal crosses red poly and a contact is placed."], ["pd_nd", 3, "Yellow p-diffusion touches green n-diffusion."], ["m_pd", 2, "Blue metal crosses yellow p-diffusion. There is no contact."]];
+var SCO = ["A transistor is formed", "Electrically connected", "No connection (they just cross)", "Not allowed (needs metal and contacts)"], L52 = ld("vlsiM5_s52_list"), c52 = 0, sh52 = {}, ord52 = [];
+$("p2").innerHTML =
+  '<section class="card"><h3>5.2 Stick-Diagram Rules</h3><p class="lead">Three rules explain every stick diagram:</p><div class="def"><b>1.</b> Poly crossing diffusion = a <b>transistor</b> (n-diffusion: NMOS, p-diffusion: PMOS).<br><b>2.</b> Lines of <b>different layers that cross do not connect</b>, unless a <b>contact</b> is placed there.<br><b>3.</b> Lines of the <b>same layer that touch are connected</b>.</div>' +
+  '<p class="lead">Decide what each picture means. Get 6 of 8 right.</p><div class="chips" id="c52"></div><p class="lead" id="q52"></p><div class="diagram" id="d52" style="text-align:center"></div><div id="o52"></div>' +
+  '<div class="btns"><button onclick="chk52()">CHECK ANSWER</button><button class="alt" onclick="hint52()">GET HINT</button><button class="alt" onclick="pick52(c52)">TRY AGAIN</button><button class="alt" onclick="sol52()">SHOW SOLUTION</button></div><div class="fb" id="f52"></div></section>' +
+  '<section class="card"><h3>Lesson 5.2 checklist</h3><ul class="check" style="padding-left:0"><li id="k2"></li></ul><div class="done" id="d2">✅ Lesson 5.2 completed.</div></section>';
+SC.forEach(function (x, i) { var b = document.createElement("button"); b.onclick = function () { pick52(i); }; $("c52").appendChild(b); }); $("c52").className = "chips";
+function ref52() { [].forEach.call($("c52").children, function (b, i) { b.className = i === c52 ? "on" : ""; b.textContent = (L52.indexOf(i) > -1 ? "✅ " : "") + (i + 1); }); }
+function pick52(i) {
+  c52 = i; ord52 = shufA([0, 1, 2, 3]); $("q52").innerHTML = "<b>Picture " + (i + 1) + ".</b> " + SC[i][2] + " What does this mean?"; $("d52").innerHTML = xsv(SC[i][0]);
+  $("o52").innerHTML = ord52.map(function (j) { return '<label class="opt2"><input type="radio" name="o52" value="' + j + '"> ' + SCO[j] + "</label>"; }).join(""); $("f52").className = "fb"; $("f52").innerHTML = ""; ref52();
+}
+function chk52() {
+  var r = document.querySelector('input[name="o52"]:checked'); if (!r) return fbx("f52", "hint", "Select an answer first.");
+  if (+r.value === SC[c52][1]) { fbx("f52", "ok", "✓ <b>Correct.</b>"); if (!sh52[c52] && L52.indexOf(c52) < 0) { L52.push(c52); sv("vlsiM5_s52_list", L52); prog52(); } } else fbx("f52", "no", "✗ <b>Incorrect.</b> Use GET HINT, or TRY AGAIN.");
+}
+function hint52() { fbx("f52", "hint", "💡 <b>Hint:</b> is poly involved with a diffusion? Then think transistor. Otherwise ask: are the two lines the same layer, or is there a black contact square?"); }
+function sol52() { sh52[c52] = true; fbx("f52", "sol", "<b>Solution:</b> " + SCO[SC[c52][1]] + ". This picture gives no credit now."); }
+function prog52() { ckList("k2", [[L52.length >= 6, "Answer 6 of the 8 pictures correctly (" + L52.length + " / 6)"]], "vlsiM5_s52", "d2"); ref52(); }
+pick52(0); prog52();
+
+/* ============ 5.3 Inverter walkthrough ============ */
+var TX3 = ["<b>Step 1: the frame.</b> Metal rails: VDD at the top and GND at the bottom. The input A arrives as poly on the left; the output Y leaves as metal on the right.", "<b>Step 2: diffusions.</b> A yellow p-diffusion strip near VDD (the PMOS) and a green n-diffusion strip near GND (the NMOS).", "<b>Step 3: the gate.</b> One red poly line from A branches over both diffusions. Each crossing is a transistor: the dashed rings mark P and N.", "<b>Step 4: sources.</b> The PMOS source goes to VDD and the NMOS source to GND, each through a contact and a short piece of metal.", "<b>Step 5: drains.</b> A contact on each drain, joined by one metal wire. This wire is the output node.", "<b>Step 6: output.</b> Carry the metal to the output pin Y.", "<b>Step 7: check.</b> Extracting the circuit gives 1 PMOS and 1 NMOS, both gates on A, sources on VDD and GND, drains joined at Y: Y = NOT A."], s3 = 0, reach3 = false;
+$("p3").innerHTML =
+  '<section class="card"><h3>5.3 Inverter Stick Diagram: Step by Step</h3><p class="lead">Watch the inverter stick diagram being built, one step at a time.</p><div class="diagram" id="g3"></div><div class="info" id="t3"></div><div class="btns"><button class="alt" onclick="go3(-1)">← BACK</button><button onclick="go3(1)">NEXT STEP →</button></div></section>' +
+  '<section class="card"><h3>Lesson 5.3 checklist</h3><ul class="check" style="padding-left:0"><li id="k3"></li></ul><div class="done" id="d3">✅ Lesson 5.3 completed.</div></section>';
+function go3(d) { s3 = Math.max(0, Math.min(6, s3 + d)); if (s3 === 6) reach3 = true; draw3(); prog53(); }
+function draw3() { var ops = []; for (var i = 0; i <= s3; i++) ops = ops.concat(PR.inv.steps[i]); $("g3").innerHTML = gridSVG(PR.inv, opsToCells(ops), { marks: s3 >= 2 }); $("t3").innerHTML = TX3[s3] + "<br><small>Step " + (s3 + 1) + " of 7</small>"; }
+function prog53() { ckList("k3", [[reach3, "Reach step 7 of the walkthrough"]], "vlsiM5_s53", "d3"); }
+draw3(); prog53();
+
+/* ============ 5.4 and 5.5 editors ============ */
+var GUIDE = { inv: "Build the CMOS inverter <b>Y = NOT A</b>: one PMOS (p-diffusion, near VDD) and one NMOS (n-diffusion, near GND), one poly gate line from A across both, and metal joining the two drains to the output Y.", nand: "Build a 2-input NAND: <b>2 PMOS in parallel</b> (both sources to VDD, drains to Y) and <b>2 NMOS in series</b> (Y to GND). Inputs A and B each drive one PMOS and one NMOS.", nor: "Build a 2-input NOR: <b>2 PMOS in series</b> (VDD to Y) and <b>2 NMOS in parallel</b> (both from Y to GND). Inputs A and B each drive one PMOS and one NMOS." };
+$("p4").innerHTML =
+  '<section class="card"><h3>5.4 Draw the CMOS Inverter</h3><p class="lead">' + GUIDE.inv + ' The rails and the pins A and Y are given. Everything else is yours to draw. The checker extracts the circuit from your drawing, so any correct arrangement passes.</p><div id="ed_e4"></div></section>' +
+  '<section class="card"><h3>Lesson 5.4 checklist</h3><ul class="check" style="padding-left:0"><li id="k4"></li></ul><div class="done" id="d4">✅ Lesson 5.4 completed.</div></section>';
+function prog54() { ckList("k4", [[M3.flag("vlsiM5_s54"), "Draw a correct inverter stick diagram, without SHOW SOLUTION"]], "vlsiM5_s54", "d4"); }
+edInit("e4", "inv"); prog54();
+var c55 = "nand";
+$("p5").innerHTML =
+  '<section class="card"><h3>5.5 Draw the NAND and NOR Gates</h3><p class="lead">Now two-input gates. Pins A (row 5) and B (row 9) are poly; Y is metal on the right. Choose a gate.</p><div class="chips" id="c55"></div><div class="def" id="g55"></div><div id="ed_e5"></div></section>' +
+  '<section class="card"><h3>Lesson 5.5 checklist</h3><ul class="check" style="padding-left:0" id="k5"></ul><div class="done" id="d5">✅ Lesson 5.5 completed.</div></section>';
+["nand", "nor"].forEach(function (k) { var b = document.createElement("button"); b.onclick = function () { c55 = k; pick55(); }; $("c55").appendChild(b); }); $("c55").className = "chips";
+function pick55() { $("g55").innerHTML = GUIDE[c55]; edInit("e5", c55); prog55(); }
+function prog55() { ckList("k5", [[L55.indexOf("nand") > -1, "Draw a correct NAND, without SHOW SOLUTION"], [L55.indexOf("nor") > -1, "Draw a correct NOR, without SHOW SOLUTION"]], "vlsiM5_s55", "d5"); [].forEach.call($("c55").children, function (b, i) { var k = ["nand", "nor"][i]; b.className = k === c55 ? "on" : ""; b.textContent = (L55.indexOf(k) > -1 ? "✅ " : "") + PR[k].name; }); }
+pick55();
+
+/* ============ 5.6 Layout and lambda rules ============ */
+function rectsSVG(rects, dims) {
+  var U = 18, s = '<svg viewBox="0 0 300 160" width="300"><rect width="300" height="160" fill="#fff" stroke="#d9dee7"/>', gi;
+  for (gi = 0; gi <= 16; gi++) s += '<line x1="' + (10 + gi * U) + '" y1="10" x2="' + (10 + gi * U) + '" y2="154" stroke="#eef1f6"/>';
+  for (gi = 0; gi <= 8; gi++) s += '<line x1="10" y1="' + (10 + gi * U) + '" x2="298" y2="' + (10 + gi * U) + '" stroke="#eef1f6"/>';
+  s += '<g font-family="Arial,sans-serif" font-size="13" font-weight="bold">';
+  rects.forEach(function (r) { s += '<rect x="' + (10 + r[0] * U) + '" y="' + (10 + r[1] * U) + '" width="' + (r[2] * U) + '" height="' + (r[3] * U) + '" fill="' + r[4] + '" opacity=".85" stroke="#333"/>'; });
+  (dims || []).forEach(function (d) { var x1 = 10 + d[0] * U, x2 = 10 + d[1] * U, y = 10 + d[2] * U; s += '<g stroke="#000" stroke-width="1.5"><line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '"/><line x1="' + x1 + '" y1="' + (y - 5) + '" x2="' + x1 + '" y2="' + (y + 5) + '"/><line x1="' + x2 + '" y1="' + (y - 5) + '" x2="' + x2 + '" y2="' + (y + 5) + '"/></g><text x="' + (x1 + x2) / 2 + '" y="' + (y - 7) + '" text-anchor="middle" fill="#000">' + d[3] + "</text>"; });
+  return s + "</g></svg>";
+}
+var RC = { po: COL.po, m: COL.m, nd: COL.nd, ct: "#333" };
+var RQ = [
+  { d: function () { return rectsSVG([[2, 2, 1, 6, RC.po]], [[2, 3, 1.2, "1λ"]]); }, q: "A poly line is drawn 1λ wide.", o: ["Violates the minimum poly width (2λ)", "Passes", "Violates the metal spacing rule", "Violates the contact rule"], a: 0, w: "Minimum poly width is 2λ." },
+  { d: function () { return rectsSVG([[1, 2, 3, 6, RC.m], [6, 2, 3, 6, RC.m]], [[4, 6, 1.2, "2λ"]]); }, q: "Two metal-1 lines are 2λ apart.", o: ["Violates the minimum metal spacing (3λ)", "Passes", "Violates the poly width rule", "Violates the contact rule"], a: 0, w: "Metal-1 lines must be at least 3λ apart." },
+  { d: function () { return rectsSVG([[2, 2, 1, 1, RC.ct]], [[2, 3, 1.2, "1λ"]]); }, q: "A contact cut is drawn 1λ × 1λ.", o: ["Violates the contact size rule (2λ × 2λ)", "Passes", "Violates the diffusion spacing rule", "Violates the poly spacing rule"], a: 0, w: "A contact cut is 2λ × 2λ." },
+  { d: function () { return rectsSVG([[2, 2, 2, 6, RC.po], [6, 2, 2, 6, RC.po]], [[4, 6, 1.2, "2λ"]]); }, q: "Two poly lines, each 2λ wide, are 2λ apart.", o: ["Passes (poly width 2λ, spacing 2λ)", "Violates the poly width rule", "Violates the poly spacing rule", "Violates the metal rule"], a: 0, w: "Poly needs width 2λ and spacing 2λ, so this passes." },
+  { d: function () { return rectsSVG([[1, 4, 8, 2, RC.nd], [4, 3, 2, 4, RC.po]], []); }, q: "The poly gate (red) extends only 1λ above and below the diffusion (green).", o: ["Violates the gate extension rule (2λ)", "Passes", "Violates the diffusion width rule", "Violates the metal spacing"], a: 0, w: "Poly must extend at least 2λ beyond the diffusion so the gate fully covers the channel." },
+  { d: function () { return rectsSVG([[1, 2, 3, 6, RC.nd], [6, 2, 3, 6, RC.nd]], [[4, 6, 1.2, "2λ"]]); }, q: "Two n-diffusion regions are 2λ apart.", o: ["Violates the diffusion spacing rule (3λ)", "Passes", "Violates the poly rule", "Violates the contact rule"], a: 0, w: "Diffusion regions must be at least 3λ apart." },
+  { d: function () { return rectsSVG([[1, 2, 3, 6, RC.m], [7, 2, 3, 6, RC.m]], [[4, 7, 1.2, "3λ"]]); }, q: "Two metal-1 lines are each 3λ wide and 3λ apart.", o: ["Passes", "Violates the metal width rule", "Violates the metal spacing rule", "Violates the poly rule"], a: 0, w: "Metal-1: width 3λ, spacing 3λ. This passes." },
+  { d: function () { return rectsSVG([[2, 2, 2, 6, RC.nd]], [[2, 4, 1.2, "2λ"]]); }, q: "An n-diffusion strip is 2λ wide.", o: ["Passes (minimum diffusion width is 2λ)", "Violates the diffusion width rule", "Violates the metal rule", "Violates the contact rule"], a: 0, w: "Minimum diffusion width is 2λ, so this passes." }
+];
+var L56 = ld("vlsiM5_s56_list"), c56 = 0, sh56 = {}, ord56 = [];
+$("p6").innerHTML =
+  '<section class="card"><h3>5.6 Layout and λ Design Rules</h3><p class="lead">A layout is drawn to scale. To keep drawings independent of the technology, sizes are given in <b>λ (lambda)</b>, about half the minimum feature size. Shrinking the process only changes the value of λ. Rules below are the commonly used Mead-Conway values (textbooks differ slightly: use your syllabus values in exams).</p>' +
+  '<div style="overflow-x:auto"><table class="t"><tr><th>Layer / feature</th><th>Minimum width</th><th>Minimum spacing</th></tr><tr><td>Diffusion (n+ or p+)</td><td>2λ</td><td>3λ</td></tr><tr><td>Polysilicon</td><td>2λ</td><td>2λ</td></tr><tr><td>Metal 1</td><td>3λ</td><td>3λ</td></tr><tr><td>Contact cut</td><td>2λ × 2λ</td><td>2λ</td></tr></table></div>' +
+  '<div class="def"><b>Other common rules:</b> poly extends <b>2λ</b> beyond diffusion (gate overhang); poly to unrelated diffusion spacing <b>1λ</b>; metal, poly or diffusion overlap a contact by <b>1λ</b>. A transistor has <b>L = 2λ</b> (the poly width) and <b>W</b> = the diffusion width under the gate. PMOS devices are usually drawn wider than NMOS to balance their weaker holes.</div></section>' +
+  '<section class="card"><h3>Find the rule violation</h3><p class="lead">Squares of 1λ are drawn to scale. Decide whether each drawing passes. Get 6 of 8 right.</p><div class="chips" id="c56"></div><p class="lead" id="q56"></p><div class="diagram" id="d56" style="text-align:center"></div><div id="o56"></div>' +
+  '<div class="btns"><button onclick="chk56()">CHECK ANSWER</button><button class="alt" onclick="hint56()">GET HINT</button><button class="alt" onclick="pick56(c56)">TRY AGAIN</button><button class="alt" onclick="sol56()">SHOW SOLUTION</button></div><div class="fb" id="f56"></div></section>' +
+  '<section class="card"><h3>Lesson 5.6 checklist</h3><ul class="check" style="padding-left:0"><li id="k6"></li></ul><div class="done" id="d6">✅ Lesson 5.6 completed.</div></section>';
+RQ.forEach(function (x, i) { var b = document.createElement("button"); b.onclick = function () { pick56(i); }; $("c56").appendChild(b); }); $("c56").className = "chips";
+function ref56() { [].forEach.call($("c56").children, function (b, i) { b.className = i === c56 ? "on" : ""; b.textContent = (L56.indexOf(i) > -1 ? "✅ " : "") + (i + 1); }); }
+function pick56(i) {
+  c56 = i; var q = RQ[i]; ord56 = shufA(q.o.map(function (x, j) { return j; })); $("q56").innerHTML = "<b>Drawing " + (i + 1) + ".</b> " + q.q; $("d56").innerHTML = q.d();
+  $("o56").innerHTML = ord56.map(function (j) { return '<label class="opt2"><input type="radio" name="o56" value="' + j + '"> ' + q.o[j] + "</label>"; }).join(""); $("f56").className = "fb"; $("f56").innerHTML = ""; ref56();
+}
+function chk56() {
+  var r = document.querySelector('input[name="o56"]:checked'); if (!r) return fbx("f56", "hint", "Select an answer first.");
+  if (+r.value === RQ[c56].a) { fbx("f56", "ok", "✓ <b>Correct.</b> " + RQ[c56].w); if (!sh56[c56] && L56.indexOf(c56) < 0) { L56.push(c56); sv("vlsiM5_s56_list", L56); prog56(); } } else fbx("f56", "no", "✗ <b>Incorrect.</b> Use GET HINT, or TRY AGAIN.");
+}
+function hint56() { fbx("f56", "hint", "💡 <b>Hint:</b> read the dimension in λ and compare it with the table: widths first, then spacings, then overhangs."); }
+function sol56() { var q = RQ[c56]; sh56[c56] = true; fbx("f56", "sol", "<b>Solution:</b> " + q.o[q.a] + ". " + q.w + " No credit for this drawing now."); }
+function prog56() { ckList("k6", [[L56.length >= 6, "Judge 6 of the 8 drawings correctly (" + L56.length + " / 6)"]], "vlsiM5_s56", "d6"); ref56(); }
+pick56(0); prog56();
+
+/* ============ 5.7 Quiz ============ */
+var Q7 = [
+  { q: "In a stick diagram, polysilicon is drawn in:", d: function () { return ""; }, o: ["Red", "Blue", "Green", "Yellow"], a: 0, w: "Poly is red." },
+  { q: "Poly crossing n-diffusion forms:", d: function () { return xsv("po_nd"); }, o: ["An NMOS transistor", "A PMOS transistor", "A contact", "A short circuit"], a: 0, w: "Poly over n-diffusion is an NMOS." },
+  { q: "What does this picture show?", d: function () { return xsv("m_po"); }, o: ["No connection (they just cross)", "A transistor", "A connection", "A PMOS"], a: 0, w: "Different layers crossing without a contact do not connect." },
+  { q: "To connect metal to diffusion you need:", d: function () { return ""; }, o: ["A contact cut", "A poly line", "A second metal layer", "Nothing"], a: 0, w: "A contact cut opens the oxide so the metal can touch the diffusion." },
+  { q: "PMOS transistors are built inside:", d: function () { return ""; }, o: ["An n-well", "A p-well", "The metal layer", "The poly layer"], a: 0, w: "The n-well provides the n-type body for PMOS." },
+  { q: "In the inverter stick diagram, the source of the PMOS connects to:", d: function () { return gridSVG(PR.inv, opsToCells(PR.inv.sol), { marks: true }); }, o: ["VDD", "GND", "The input A", "Nothing"], a: 0, w: "The PMOS source goes to the VDD rail through a contact." },
+  { q: "How many transistors are in a 2-input NAND stick diagram?", d: function () { return ""; }, o: ["4", "2", "3", "6"], a: 0, w: "2 PMOS + 2 NMOS." },
+  { q: "The minimum poly width in λ rules is:", d: function () { return ""; }, o: ["2λ", "1λ", "3λ", "4λ"], a: 0, w: "Poly width is 2λ." },
+  { q: "The minimum metal-1 spacing is:", d: function () { return ""; }, o: ["3λ", "2λ", "1λ", "5λ"], a: 0, w: "Metal-1 spacing is 3λ." },
+  { q: "Poly must extend beyond the diffusion edge by at least:", d: function () { return ""; }, o: ["2λ", "1λ", "3λ", "0λ"], a: 0, w: "The gate overhang is 2λ." },
+  { q: "λ is:", d: function () { return ""; }, o: ["About half the minimum feature size, a scalable unit", "The channel length only", "The supply voltage", "The wavelength of metal"], a: 0, w: "λ lets layouts scale to new technologies." },
+  { q: "Why draw a stick diagram before a layout?", d: function () { return ""; }, o: ["To plan connectivity and placement without worrying about sizes", "To fabricate the chip", "To measure power", "To choose the supply voltage"], a: 0, w: "A stick diagram shows topology first; sizes come later in the layout." }
+];
+var QN7 = 9, best7 = +(localStorage.getItem("vlsiM5_s57_best") || 0), ord7 = [];
+$("p7").innerHTML =
+  '<section class="card"><h3>5.7 Module 5 Quiz</h3><p class="lead">' + Q7.length + " questions. You need <b>" + QN7 + '</b> correct. Answers appear only after you submit.</p><div id="qz7"></div><div class="btns"><button onclick="grade7()">SUBMIT QUIZ</button><button class="alt" onclick="build7()">TRY AGAIN</button></div><div id="qr7"></div></section>' +
+  '<section class="card"><h3>Lesson 5.7 checklist</h3><ul class="check" style="padding-left:0"><li id="k7"></li></ul><div class="done" id="d7">✅ Lesson 5.7 completed.</div></section>';
+function build7() {
+  ord7 = Q7.map(function (q) { return shufA(q.o.map(function (x, j) { return j; })); });
+  $("qz7").innerHTML = Q7.map(function (q, i) { var d = q.d(); return '<div class="qcard" id="qc7_' + i + '"><p class="lead"><b>Q' + (i + 1) + ".</b> " + q.q + "</p>" + (d ? '<div class="diagram" style="text-align:center">' + d + "</div>" : "") + ord7[i].map(function (j) { return '<label class="opt2"><input type="radio" name="z' + i + '" value="' + j + '"> ' + q.o[j] + "</label>"; }).join("") + '<div id="qe7_' + i + '"></div></div>'; }).join("");
+  $("qr7").innerHTML = ""; window.scrollTo(0, 0);
+}
+function grade7() {
+  var sc = 0, un = 0; Q7.forEach(function (q, i) { if (!document.querySelector('input[name="z' + i + '"]:checked')) un++; });
+  if (un) return ($("qr7").innerHTML = '<div class="fb hint">Please answer all questions. ' + un + " unanswered.</div>");
+  Q7.forEach(function (q, i) { var r = document.querySelector('input[name="z' + i + '"]:checked'), ok = +r.value === q.a; if (ok) sc++; $("qc7_" + i).className = "qcard " + (ok ? "good" : "bad"); $("qe7_" + i).innerHTML = '<div class="fb ' + (ok ? "ok" : "no") + '">' + (ok ? "✓ Correct. " : "✗ Incorrect. Correct answer: <b>" + q.o[q.a] + "</b>. ") + q.w + "</div>"; });
+  if (sc > best7) { best7 = sc; localStorage.setItem("vlsiM5_s57_best", sc); }
+  var pass = sc >= QN7; $("qr7").innerHTML = '<div class="fb ' + (pass ? "ok" : "no") + '"><b>Score: ' + sc + " / " + Q7.length + ".</b> " + (pass ? "🎉 Passed!" : "You need " + QN7 + ". Review the marked questions and press TRY AGAIN.") + "</div>";
+  if (pass) M3.flag("vlsiM5_s57", true); prog57();
+}
+function prog57() { ckList("k7", [[M3.flag("vlsiM5_s57"), "Score at least " + QN7 + " / " + Q7.length + " (best so far: " + best7 + ")"]], "vlsiM5_s57", "d7"); }
+build7(); prog57();
+
+/* ============ overall progress ============ */
+var MPG = [["Concepts", [["5.1", "vlsiM5_s51"], ["5.2", "vlsiM5_s52"], ["5.3", "vlsiM5_s53"]]], ["Stick-diagram drawing", [["5.4", "vlsiM5_s54"], ["5.5", "vlsiM5_s55"]]], ["Layout rules and quiz", [["5.6", "vlsiM5_s56"], ["5.7", "vlsiM5_s57"]]]];
+function modProg() {
+  var tot = 0, dn = 0, h = "";
+  MPG.forEach(function (g) { h += '<div class="mgrp"><b>' + g[0] + ":</b> "; g[1].forEach(function (x) { tot++; var d = M3.flag(x[1]); if (d) dn++; h += '<span class="' + (d ? "d" : "") + '">' + (d ? "✅ " : "") + x[0] + "</span>"; }); h += "</div>"; });
+  if (dn === tot && !M3.flag("vlsiL4M5Done")) M3.flag("vlsiL4M5Done", true);
+  var pct = Math.round(dn / tot * 100);
+  $("mprog").innerHTML = "<h3 style='margin:0 0 6px'>Module 5 progress: " + dn + " / " + tot + " sections (" + pct + "%)</h3><div class='mbar'><div style='width:" + pct + "%'></div></div>" + h + (M3.flag("vlsiL4M5Done") ? "<div class='done' style='display:block'>🎉 Module 5 completed.</div>" : "");
+}
+M3.onSet = modProg; modProg();
+</script>
+</body>
+</html>
