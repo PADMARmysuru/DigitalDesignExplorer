@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 5: VLSI Testing dashboard | Digital Design Explorer</title>
+<meta name="description" content="Digital Design Explorer, Level 5 VLSI Testing: module progress, quiz scores and certificate.">
+<link rel="stylesheet" href="level5.css">
+<style>
+  .dash{max-width:1040px;margin:0 auto;padding:28px 20px 70px}
+  .dhero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;align-items:center}
+  @media (max-width:760px){.dhero{grid-template-columns:1fr}}
+  .meter{border:1px solid var(--line);border-radius:var(--r-m);padding:16px 18px;background:var(--panel-2)}
+  .meter .track{height:14px;border-radius:7px;background:#fff;border:1px solid var(--line);overflow:hidden;margin:8px 0}
+  .meter .fill{height:100%;background:var(--hi);width:0;transition:width .6s}
+  .mods{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+  .mod{display:grid;grid-template-columns:54px minmax(0,1fr) 190px;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m);padding:16px 18px}
+  .mod.done{border-left:5px solid var(--pass)}
+  .mod.prog{border-left:5px solid var(--hi)}
+  .mod .no{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font:600 1.1rem var(--mono);border:2px solid var(--line);color:var(--muted)}
+  .mod.done .no{background:var(--pass);border-color:var(--pass);color:#fff}
+  .mod.prog .no{border-color:var(--hi);color:var(--ink)}
+  .mod h3{margin:0 0 2px;font-size:1.12rem}
+  .mod p{margin:0;color:var(--muted);font-size:.93rem}
+  .mod .st{font-size:.88rem;margin-top:6px}
+  .mod .act{display:grid;gap:6px;justify-items:stretch;text-align:center}
+  .mod .act a{text-decoration:none}
+  .bars{display:flex;gap:3px;margin-top:8px}
+  .bars i{flex:1;height:6px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line)}
+  .bars i.on{background:var(--trace);border-color:var(--trace)}
+  @media (max-width:700px){.mod{grid-template-columns:46px minmax(0,1fr)}.mod .act{grid-column:1/-1}}
+  .cert{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;border-radius:var(--r-m);padding:22px 24px;margin-top:28px;border:2px dashed var(--line);background:var(--panel)}
+  .cert.open{border:2px solid var(--pass);background:var(--pass-bg)}
+  .cert ul{margin:8px 0 0;padding-left:1.2em;font-size:.95rem}
+  @media (max-width:640px){.cert{grid-template-columns:1fr}}
+  .ghostlink{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.9rem;padding:0}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="2" fill="none" stroke="#D98A00" stroke-width="2"/><path d="M9 1v4M13 1v4M17 1v4M9 21v4M13 21v4M17 21v4M1 9h4M1 13h4M1 17h4M21 9h4M21 13h4M21 17h4" stroke="#fff" stroke-width="1.6"/><path d="M9 15h3v-4h5" stroke="#D98A00" stroke-width="1.8" fill="none"/></svg><span>Digital Design Explorer</span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">Level 5: VLSI Testing / Dashboard</nav>
+    <div class="top-actions"><a href="index.html">Home</a></div>
+  </div>
+  <div class="pbar" id="pbar" aria-hidden="true"><span></span></div>
+</header>
+
+<div class="dash">
+  <header class="hero dhero">
+    <div>
+      <p class="kicker">Level 5 dashboard</p>
+      <h1>VLSI Testing</h1>
+      <p class="lead" id="greet">Six modules take you from why chips fail to how they test themselves. Pass each module quiz (6 of 10) to earn the Level 5 certificate.</p>
+      <div class="controls"><a class="btn" id="continueBtn" href="level5-module1.html">Start Module 1</a></div>
+    </div>
+    <div class="meter" aria-live="polite">
+      <strong id="meterTxt">0 of 6 modules completed</strong>
+      <div class="track"><div class="fill" id="meterFill"></div></div>
+      <span class="hint" id="meterSub">Average best quiz score: not yet available</span>
+    </div>
+  </header>
+
+  <h2 style="font-size:1.4rem;margin:8px 0 12px">Modules</h2>
+  <ol class="mods" id="mods"></ol>
+
+  <section class="cert" id="certBox" aria-live="polite"></section>
+
+  <div class="foot">
+    <span>Progress is saved in this browser.</span>
+    <button class="ghostlink" type="button" id="resetBtn">Reset my Level 5 progress</button>
+  </div>
+</div>
+
+<script src="level5.js"></script>
+<script>
+(function () {
+  var mods = document.getElementById('mods'), passed = 0, sum = 0, cnt = 0, next = null;
+  var st = L5.student();
+  if (st.name) document.getElementById('greet').textContent = 'Welcome back, ' + st.name + '. Six modules take you from why chips fail to how they test themselves. Pass each module quiz (6 of 10) to earn the Level 5 certificate.';
+
+  L5.MODULES.forEach(function (m) {
+    var p = L5.store.mod(m.n), seen = (p.seen || []).length, done = !!p.passed, started = seen > 0 || p.best !== null;
+    if (done) passed++;
+    if (p.best !== null) { sum += p.best / (p.total || 10); cnt++; }
+    if (!done && !next) next = m;
+    var bars = ''; for (var i = 0; i < m.sections; i++) bars += '<i class="' + (i < seen ? 'on' : '') + '"></i>';
+    var status = done ? '<span style="color:var(--pass);font-weight:600">Completed</span>, best quiz score ' + p.best + '/' + (p.total || 10)
+      : p.best !== null ? '<span style="color:var(--fail);font-weight:600">Quiz not passed yet</span>, best ' + p.best + '/' + (p.total || 10) + ' (need 6)'
+      : started ? '<span style="color:var(--hi);font-weight:600">In progress</span>, ' + seen + ' of ' + m.sections + ' sections viewed'
+      : 'Not started';
+    var li = document.createElement('li');
+    li.className = 'mod' + (done ? ' done' : started ? ' prog' : '');
+    li.innerHTML = '<span class="no">' + m.n + '</span><div><h3>' + m.title + '</h3><p>' + m.topics.join(', ') + '</p><div class="st">' + status + '</div><div class="bars" aria-hidden="true">' + bars + '</div></div>' +
+      '<div class="act"><a class="btn' + (done ? ' ghost' : '') + '" href="' + m.file + '">' + (done ? 'Review module' : started ? 'Continue' : 'Start module') + '</a>' +
+      (started ? '<a class="btn ghost small" href="' + m.file + '#quiz">' + (p.best !== null ? 'Retake the quiz' : 'Go to the quiz') + '</a>' : '') + '</div>';
+    mods.appendChild(li);
+  });
+
+  var pct = Math.round(100 * passed / 6);
+  document.getElementById('meterTxt').textContent = passed + ' of 6 modules completed';
+  document.getElementById('meterFill').style.width = pct + '%';
+  document.querySelector('#pbar span').style.width = pct + '%';
+  document.getElementById('meterSub').textContent = cnt ? 'Average best quiz score: ' + Math.round(100 * sum / cnt) + '% across ' + cnt + ' quiz' + (cnt > 1 ? 'zes' : '') : 'Average best quiz score: not yet available';
+  var cb = document.getElementById('continueBtn');
+  if (next) { cb.href = next.file; cb.textContent = (L5.store.mod(next.n).seen || []).length ? 'Continue Module ' + next.n : 'Start Module ' + next.n; }
+  else { cb.href = 'level5-certificate.html'; cb.textContent = 'View your certificate'; }
+
+  var box = document.getElementById('certBox');
+  if (passed === 6) {
+    box.className = 'cert open';
+    box.innerHTML = '<div><h2 style="margin:0;font-size:1.3rem">Your Level 5 certificate is ready</h2><p style="margin:6px 0 0">You passed all six module quizzes. Open the certificate to print it or save it as a PDF.</p></div><a class="btn" href="level5-certificate.html">Open certificate</a>';
+  } else {
+    var need = L5.MODULES.filter(function (m) { return !L5.store.mod(m.n).passed; }).map(function (m) { return '<li>Module ' + m.n + ': ' + m.title + '</li>'; }).join('');
+    box.innerHTML = '<div><h2 style="margin:0;font-size:1.3rem">Level 5 certificate</h2><p style="margin:6px 0 0">Pass the quiz in every module to unlock it. Still to complete:</p><ul>' + need + '</ul></div><span class="btn" aria-disabled="true" style="opacity:.45;cursor:not-allowed">Locked</span>';
+  }
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    if (!confirm('Reset all Level 5 progress and quiz scores in this browser? This cannot be undone.')) return;
+    try {
+      localStorage.removeItem('dde_level5_progress');
+      for (var i = 1; i <= 6; i++) localStorage.removeItem('level5_module' + i + '_completed');
+    } catch (e) {}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>

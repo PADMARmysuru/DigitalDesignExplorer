@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 5 Module 5: Design for Testability and Scan | Digital Design Explorer</title>
+<meta name="description" content="Digital Design Explorer, Level 5 VLSI Testing, Module 5: Design for Testability and Scan.">
+<link rel="stylesheet" href="level5.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="2" fill="none" stroke="#D98A00" stroke-width="2"/><path d="M9 1v4M13 1v4M17 1v4M9 21v4M13 21v4M17 21v4M1 9h4M1 13h4M1 17h4M21 9h4M21 13h4M21 17h4" stroke="#fff" stroke-width="1.6"/><path d="M9 15h3v-4h5" stroke="#D98A00" stroke-width="1.8" fill="none"/></svg><span>Digital Design Explorer</span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="level5-dashboard.html">Level 5: VLSI Testing</a> / Module 5</nav>
+    <div class="top-actions">
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="rail">Sections</button>
+      <a href="level5-dashboard.html">Level 5 dashboard</a>
+    </div>
+  </div>
+  <div class="pbar" id="pbar" aria-hidden="true"><span></span></div>
+</header>
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="Module sections"></nav>
+  <main id="main">
+    <header class="hero">
+      <p class="kicker">Level 5 / Module 5 of 6</p>
+      <h1>Design for Testability and Scan</h1>
+      <p class="lead">Some circuits are almost impossible to test from their pins. DFT adds small hardware so every flip-flop can be set and read directly.</p>
+      <div class="scope" id="scope"></div>
+    </header>
+
+    <section class="sec" id="objectives" data-title="Learning objectives">
+      <div class="sec-head"><span class="sec-no">1</span><h2>Learning objectives</h2></div>
+      <div class="prose"><p>By the end of this module you should be able to:</p></div>
+      <ul class="obj-list">
+        <li>Explain why sequential circuits are hard to test</li>
+        <li>Compute SCOAP controllability and observability</li>
+        <li>Use test points to improve testability</li>
+        <li>Describe how a scan flip-flop works</li>
+        <li>Operate a scan chain in shift and capture modes</li>
+        <li>Follow the scan test procedure</li>
+        <li>Estimate scan test time and compare full and partial scan</li>
+      </ul>
+    </section>
+
+    <section class="sec" id="why" data-title="Why DFT?">
+      <div class="sec-head"><span class="sec-no">2</span><h2>Why design for testability?</h2></div>
+      <div class="prose">
+        <p>ATPG works well on combinational logic. Real chips are <em>sequential</em>: their behaviour depends on values stored in flip-flops. To test a fault deep inside, the tester must first drive the flip-flops into a particular state, which may take many clock cycles, and then wait more cycles for the effect to reach an output.</p>
+        <p>Imagine testing bit 15 of a 16-bit counter: you must clock it more than 32,000 times just to set that bit. <span class="term">Design for testability (DFT)</span> adds a little extra hardware so every flip-flop can be set and read directly, turning a hard sequential problem into an easy combinational one.</p>
+      </div>
+      <div id="whyCheck"></div>
+    </section>
+
+    <section class="sec" id="scoap" data-title="SCOAP measures">
+      <div class="sec-head"><span class="sec-no">3</span><h2>Measuring testability: SCOAP</h2></div>
+      <div class="prose">
+        <p><span class="term">SCOAP</span> (Sandia Controllability/Observability Analysis Program) puts numbers on the ideas from Module 1. A bigger number means more effort.</p>
+        <ul>
+          <li><span class="term">CC0 / CC1</span>: effort to set a line to 0 / 1. Primary inputs have CC0 = CC1 = 1.</li>
+          <li><span class="term">CO</span>: effort to observe a line. Primary outputs have CO = 0.</li>
+        </ul>
+      </div>
+      <div class="tbl-wrap"><table class="tt">
+        <thead><tr><th>Gate</th><th>CC0 of output</th><th>CC1 of output</th><th>CO of an input</th></tr></thead>
+        <tbody>
+          <tr><td class="l">AND</td><td class="l">min(CC0 of inputs) + 1</td><td class="l">sum(CC1 of inputs) + 1</td><td class="l">CO(out) + sum(CC1 of other inputs) + 1</td></tr>
+          <tr><td class="l">OR</td><td class="l">sum(CC0 of inputs) + 1</td><td class="l">min(CC1 of inputs) + 1</td><td class="l">CO(out) + sum(CC0 of other inputs) + 1</td></tr>
+          <tr><td class="l">NOT</td><td class="l">CC1(in) + 1</td><td class="l">CC0(in) + 1</td><td class="l">CO(out) + 1</td></tr>
+        </tbody></table></div>
+      <div class="prose"><p>Click any wire in Y = (A·B·C·D) + E to see its SCOAP values, computed live from these rules.</p></div>
+      <div id="scoapLab"></div>
+      <div id="scoapCheck"></div>
+    </section>
+
+    <section class="sec" id="tp" data-title="Test points">
+      <div class="sec-head"><span class="sec-no">4</span><h2>Ad hoc DFT: test points</h2></div>
+      <div class="prose">
+        <p>The simplest fix is a <span class="term">test point</span>. An <span class="term">observation point</span> connects a hard-to-observe line to an extra output. A <span class="term">control point</span> adds a gate and a test input to force a hard-to-control line to 0 or 1. Compare the SCOAP numbers of n1 before and after adding an observation point.</p>
+      </div>
+      <div class="lab"><div class="lab-head"><h4>Adding an observation point at n1</h4><span class="tag">Toggle</span></div><div class="lab-body" id="tpToggle"></div></div>
+      <div class="note">Other ad hoc techniques: add a reset to every flip-flop, break long counters into smaller pieces for testing, and avoid logic that feeds back without passing through a flip-flop. Test points cost extra pins and area, so they are placed only where SCOAP says they help most.</div>
+    </section>
+
+    <section class="sec" id="sff" data-title="Scan flip-flop">
+      <div class="sec-head"><span class="sec-no">5</span><h2>The scan flip-flop</h2></div>
+      <div class="prose">
+        <p><span class="term">Scan design</span> is the structured DFT method used in almost every digital chip. Each flip-flop is replaced by a <span class="term">scan flip-flop</span>: a normal D flip-flop with a 2-to-1 multiplexer in front of it.</p>
+        <ul>
+          <li><span class="term">SE = 0</span> (normal / capture): the flip-flop loads D from the logic.</li>
+          <li><span class="term">SE = 1</span> (shift): the flip-flop loads SI, the scan input, from the previous flip-flop.</li>
+        </ul>
+      </div>
+      <div id="sffLab"></div>
+    </section>
+
+    <section class="sec" id="chain" data-title="Scan chain">
+      <div class="sec-head"><span class="sec-no">6</span><h2>Operating a scan chain</h2></div>
+      <div class="prose">
+        <p>Connecting every Q to the next SI forms a <span class="term">scan chain</span>, a long shift register. In shift mode the tester can load any state into every flip-flop, and read every flip-flop out through the single SO pin.</p>
+        <p>Below, four scan flip-flops surround a block of combinational logic. Choose a test pattern, shift it in, capture one clock, then shift the response out. Insert a fault in the logic and repeat.</p>
+      </div>
+      <div id="chainLab"></div>
+    </section>
+
+    <section class="sec" id="proc" data-title="Scan test procedure">
+      <div class="sec-head"><span class="sec-no">7</span><h2>The scan test procedure</h2></div>
+      <div id="procFlow"></div>
+    </section>
+
+    <section class="sec" id="time" data-title="Test time and overhead">
+      <div class="sec-head"><span class="sec-no">8</span><h2>Scan test time and overhead</h2></div>
+      <div class="prose">
+        <p>With one chain of length L and P patterns, each pattern needs L shift clocks plus 1 capture clock. Shifting out one response overlaps with shifting in the next pattern, so:</p>
+        <p class="formula">Test clocks ≈ (P + 1) × L + P</p>
+        <p>Splitting the flip-flops into k shorter chains, each with its own SI and SO pins, divides L by k.</p>
+      </div>
+      <div id="timeLab"></div>
+      <div class="tbl-wrap"><table class="tt">
+        <thead><tr><th></th><th>Full scan</th><th>Partial scan</th></tr></thead>
+        <tbody>
+          <tr><td class="l">Flip-flops converted</td><td class="l">All</td><td class="l">Selected (for example, those breaking feedback loops)</td></tr>
+          <tr><td class="l">ATPG problem</td><td class="l">Purely combinational, easy</td><td class="l">Still partly sequential</td></tr>
+          <tr><td class="l">Area and delay overhead</td><td class="l">Higher (a mux in every flip-flop, typically 5–10% area)</td><td class="l">Lower</td></tr>
+          <tr><td class="l">Fault coverage</td><td class="l">Very high</td><td class="l">Lower, depends on selection</td></tr>
+        </tbody></table></div>
+    </section>
+
+    <section class="sec" id="challenge" data-title="Problem challenge">
+      <div class="sec-head"><span class="sec-no">9</span><h2>Problem challenge</h2></div>
+      <div class="prose"><p>Five problems on SCOAP and scan. Answers appear after you submit.</p></div>
+      <div id="ch"></div>
+    </section>
+
+    <section class="sec" id="quiz" data-title="Mini quiz">
+      <div class="sec-head"><span class="sec-no">10</span><h2>Mini quiz</h2></div>
+      <div class="prose"><p>Ten questions. Your score appears after you submit all answers. You need 6 correct to complete the module.</p></div>
+      <div id="quizBox"></div>
+    </section>
+
+    <section class="sec" id="summary" data-title="What you learned">
+      <div class="sec-head"><span class="sec-no">11</span><h2>What you learned</h2></div>
+      <ul class="learned">
+        <li>Sequential circuits are hard to test because internal states must be reached and observed through many clock cycles.</li>
+        <li>SCOAP gives CC0, CC1 and CO numbers; larger means harder.</li>
+        <li>Observation and control points are simple ad hoc fixes for hard-to-test lines.</li>
+        <li>A scan flip-flop is a D flip-flop with a multiplexer controlled by scan enable (SE).</li>
+        <li>In shift mode the flip-flops form a shift register, so every state can be loaded and read.</li>
+        <li>A scan test is: shift in, capture one clock, shift out (overlapped with the next shift in).</li>
+        <li>Test time grows with chain length; multiple shorter chains reduce it.</li>
+        <li>Full scan makes ATPG combinational at a cost of area and a small delay penalty.</li>
+      </ul>
+      <a class="next-card" href="level5-module6.html">
+        <div><small>Next module</small><h3>Module 6: BIST and Boundary Scan</h3>
+          <ul><li>LFSR pattern generators</li><li>Signature analysis</li><li>BILBO</li><li>JTAG TAP controller</li></ul></div>
+        <span class="go">Next Module → BIST and JTAG</span>
+      </a>
+    </section>
+
+    <footer class="foot">
+      <span>Digital Design Explorer / Level 5 VLSI Testing</span>
+      <span><a href="level5-module4.html">Previous module</a> | <a href="level5-dashboard.html">Level 5 dashboard</a></span>
+    </footer>
+  </main>
+</div>
+<script src="level5.js"></script>
+<script>
+/* ===== Module 5 page script ===== */
+L5.page({ module: 5, trace: {"expected": [0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1], "measured": [0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1]} });
+function chainCirc(withTP) {
+  var d = { w: 730, h: 300,
+    inputs: [{ id: 'A', x: 50, y: 40 }, { id: 'B', x: 50, y: 90 }, { id: 'C', x: 50, y: 150 }, { id: 'D', x: 50, y: 210 }, { id: 'E', x: 50, y: 270 }],
+    gates: [{ id: 'G1', type: 'AND', x: 150, y: 65, in: ['A', 'B'], out: 'n1' },
+            { id: 'G2', type: 'AND', x: 280, y: 105, in: ['n1', 'C'], out: 'n2' },
+            { id: 'G3', type: 'AND', x: 410, y: 145, in: ['n2', 'D'], out: 'n3' },
+            { id: 'G4', type: 'OR', x: 540, y: 185, in: ['n3', 'E'], out: 'Y' }],
+    outputs: [{ id: 'Y', net: 'Y', x: 680, y: 185 }],
+    labels: { n1: [238, 78], n2: [368, 92], n3: [498, 132] } };
+  if (withTP) d.outputs.push({ id: 'TP', net: 'n1', x: 330, y: 22, mid: 250 });
+  return d;
+}
+
+L5.Check('whyCheck', {
+  prompt: 'Why is a fault inside a 16-bit counter hard to test without DFT?',
+  options: ['Counters have no outputs', 'Reaching the needed internal state may take tens of thousands of clock cycles', 'Counters cannot have stuck-at faults', 'Flip-flops cannot be simulated'],
+  answer: 1, explain: 'The state can only be reached by counting. Scan lets the tester load any state directly in a few clocks.'
+});
+
+/* ---------- 3. SCOAP ---------- */
+L5.NodeExplorer('scoapLab', chainCirc(false), { title: 'SCOAP values', tag: 'Click the wires', scoap: true, stack: true,
+  prompt: 'Click any wire (A–E, n1, n2, n3, Y) to see CC0, CC1 and CO.' });
+L5.Check('scoapCheck', {
+  prompt: 'Using the lab, which line has the largest CO (hardest to observe)?',
+  options: ['E', 'n3', 'n1', 'A'], answer: 3,
+  explain: 'A must pass through G1, G2, G3 and G4. Each gate adds the cost of setting its side input to the non-controlling value, so CO(A) = 8 is the largest (B is the same).'
+});
+
+/* ---------- 4. test point ---------- */
+L5.Toggle('tpToggle', [
+  { label: 'Original circuit', html: '<div id="tpA"></div>', after: function () { L5.NodeExplorer('tpA', chainCirc(false), { title: 'Without test point', tag: 'Click n1', scoap: true, stack: true, prompt: 'Click n1 and note its CO.' }); } },
+  { label: 'With observation point', html: '<div id="tpB"></div>', after: function () { L5.NodeExplorer('tpB', chainCirc(true), { title: 'n1 wired to an extra output TP', tag: 'Click n1', scoap: true, stack: true, prompt: 'Click n1 again. Its CO drops to 0, because n1 is now a primary output. Lines feeding n1 (A and B) also become easier to observe.' }); } }
+]);
+
+/* ---------- 5. scan flip-flop ---------- */
+(function () {
+  var body = L5.lab('sffLab', 'Scan flip-flop = multiplexer + D flip-flop', 'Clock it');
+  var D = 1, SI = 0, SE = 0, Q = 0, log = [];
+  var grid = L5.h('div', { class: 'lab-grid' }), left = L5.h('div'), right = L5.h('div', { 'aria-live': 'polite' });
+  grid.appendChild(left); grid.appendChild(right); body.appendChild(grid);
+  var fig = L5.h('div', { class: 'circuit-wrap' }); left.appendChild(fig);
+  var ctl = L5.h('div', { class: 'controls' }), bs = [];
+  [['D', function () { return D; }, function (v) { D = v; }], ['SI', function () { return SI; }, function (v) { SI = v; }], ['SE', function () { return SE; }, function (v) { SE = v; }]].forEach(function (x) {
+    var b = L5.bitButton(x[0], x[1], function (v) { x[2](v); draw(); }); bs.push(b); ctl.appendChild(b);
+  });
+  var clk = L5.h('button', { class: 'btn', type: 'button' }, 'Clock pulse');
+  clk.addEventListener('click', function () { var old = Q; Q = SE ? SI : D; log.unshift('<tr><td>' + SE + '</td><td>' + D + '</td><td>' + SI + '</td><td>' + old + ' → ' + Q + '</td><td class="l">' + (SE ? 'shift: loaded SI' : 'normal: loaded D') + '</td></tr>'); draw(true); });
+  ctl.appendChild(clk); left.appendChild(ctl);
+  function draw(pulsed) {
+    bs.forEach(function (b) { b.paint(); });
+    var col = function (v) { return v ? '#D98A00' : '#8FA0B5'; };
+    fig.innerHTML = '<svg viewBox="0 0 440 220" role="img" aria-label="Scan flip-flop">' +
+      '<path d="M40,70 H120" stroke="' + col(D) + '" stroke-width="3"/><path d="M40,130 H120" stroke="' + col(SI) + '" stroke-width="3"/>' +
+      '<path d="M140,190 V150" stroke="' + col(SE) + '" stroke-width="3"/>' +
+      '<path d="M120,40 L160,60 L160,140 L120,160 Z" fill="#fff" stroke="#15233B" stroke-width="2"/>' +
+      '<path d="M122,' + (SE ? 130 : 70) + ' L158,100" stroke="#D98A00" stroke-width="3"/>' +
+      '<text x="126" y="74" class="svgtxt" style="font-size:11px">0</text><text x="126" y="134" class="svgtxt" style="font-size:11px">1</text>' +
+      '<path d="M160,100 H220" stroke="' + col(SE ? SI : D) + '" stroke-width="3"/>' +
+      '<rect x="220" y="60" width="80" height="90" rx="4" fill="#fff" stroke="#15233B" stroke-width="2"/><text x="232" y="104" class="svgtxt">D</text><text x="280" y="104" class="svgtxt">Q</text>' +
+      '<path d="M220,128 L232,136 L220,144" fill="none" stroke="#15233B" stroke-width="2"/><path d="M190,136 H220" stroke="#15233B" stroke-width="2"/><text x="150" y="140" class="svgtxt" style="font-size:11px">CLK</text>' +
+      '<path d="M300,100 H380" stroke="' + col(Q) + '" stroke-width="3"/><circle cx="392" cy="100" r="13" fill="' + (Q ? '#FFF3DC' : '#EEF2F6') + '" stroke="#15233B" stroke-width="2"/><text x="392" y="105" text-anchor="middle" class="svgmono">' + Q + '</text><text x="410" y="105" class="svgtxt">Q</text>' +
+      '<text x="12" y="75" class="svgtxt">D=' + D + '</text><text x="8" y="135" class="svgtxt">SI=' + SI + '</text><text x="120" y="208" class="svgtxt">SE=' + SE + '</text>' +
+      (pulsed ? '<circle cx="232" cy="136" r="14" fill="none" stroke="#D98A00" stroke-width="2"><animate attributeName="r" from="6" to="22" dur=".5s"/><animate attributeName="opacity" from="1" to="0" dur=".5s" fill="freeze"/></circle>' : '') + '</svg>';
+    right.innerHTML = '<div class="verdict info">' + (SE ? 'Shift mode (SE = 1)' : 'Normal mode (SE = 0)') + '<small>On the next clock, Q will load ' + (SE ? 'SI = ' + SI : 'D = ' + D) + '.</small></div>' +
+      '<div class="tbl-wrap"><table class="tt"><thead><tr><th>SE</th><th>D</th><th>SI</th><th>Q</th><th>Action</th></tr></thead><tbody>' + (log.slice(0, 6).join('') || '<tr><td colspan="5" class="l">Press “Clock pulse”.</td></tr>') + '</tbody></table></div>';
+  }
+  draw();
+})();
+
+/* ---------- 6. scan chain ---------- */
+(function () {
+  var body = L5.lab('chainLab', 'A 4-bit scan chain around combinational logic', 'Shift, capture, shift');
+  var q = [0, 0, 0, 0], shift = true, si = 0, fault = false, pat = [1, 0, 1, 1], busy = false, outBits = [], stage = 'idle', appliedPat = null;
+  function comb(v) { var d2 = fault ? 0 : (v[0] ^ v[1]); return [v[1] & v[2], v[0] | v[3], d2, v[2] ? 0 : 1]; }
+  var fig = L5.h('div', { class: 'circuit-wrap' }); body.appendChild(fig);
+  var r1 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Test pattern Q0–Q3:</span>'), pbs = [];
+  [0, 1, 2, 3].forEach(function (i) { var b = L5.bitButton('Q' + i, function () { return pat[i]; }, function (v) { pat[i] = v; draw(); }); pbs.push(b); r1.appendChild(b); });
+  body.appendChild(r1);
+  var r2 = L5.h('div', { class: 'controls' });
+  var bIn = L5.h('button', { class: 'btn', type: 'button' }, '1. Shift pattern in (4 clocks)');
+  var bCap = L5.h('button', { class: 'btn', type: 'button' }, '2. Capture (1 clock)');
+  var bOut = L5.h('button', { class: 'btn', type: 'button' }, '3. Shift response out (4 clocks)');
+  r2.appendChild(bIn); r2.appendChild(bCap); r2.appendChild(bOut); body.appendChild(r2);
+  var r3 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Manual:</span>');
+  var modeSeg = L5.seg(['Shift (SE = 1)', 'Capture (SE = 0)'], 0, function (i) { shift = i === 0; draw(); });
+  r3.appendChild(modeSeg);
+  var siB = L5.bitButton('SI', function () { return si; }, function (v) { si = v; draw(); }); r3.appendChild(siB);
+  var bClk = L5.h('button', { class: 'btn ghost', type: 'button' }, 'One clock'); r3.appendChild(bClk);
+  body.appendChild(r3);
+  var r4 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Logic:</span>');
+  r4.appendChild(L5.seg(['Fault-free', 'D2 stuck-at-0'], 0, function (i) { fault = i === 1; draw(); }));
+  body.appendChild(r4);
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  function clock() {
+    if (shift) { var so = q[3]; q = [si, q[0], q[1], q[2]]; return so; }
+    q = comb(q); return null;
+  }
+  function draw(msg) {
+    pbs.forEach(function (b) { b.paint(); }); siB.paint(); modeSeg.set(shift ? 0 : 1);
+    var d = comb(q), A = '#D98A00', G = '#B8C4D3', s = '<svg viewBox="0 0 780 320" role="img" aria-label="Scan chain of four flip-flops">';
+    s += '<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#55657D"/></marker></defs>';
+    s += '<circle cx="40" cy="80" r="14" fill="#fff" stroke="#15233B" stroke-width="2"/><text x="40" y="85" text-anchor="middle" class="svgmono">' + si + '</text><text x="40" y="50" text-anchor="middle" class="svgtxt">SI</text>';
+    for (var i = 0; i < 4; i++) {
+      var x = 110 + i * 160;
+      s += '<path d="M' + (i ? x - 80 : 54) + ',80 H' + x + '" stroke="' + (shift ? A : G) + '" stroke-width="3" marker-end="url(#ah)"/>';
+      s += '<rect x="' + x + '" y="45" width="80" height="70" rx="6" fill="' + (q[i] ? '#FFF3DC' : '#fff') + '" stroke="#15233B" stroke-width="2"/><text x="' + (x + 40) + '" y="68" text-anchor="middle" class="svgtxt">SFF' + i + '</text><text x="' + (x + 40) + '" y="100" text-anchor="middle" class="svgmono" style="font-size:22px">' + q[i] + '</text>';
+      s += '<path d="M' + (x + 62) + ',115 V210" stroke="#8FA0B5" stroke-width="2"/><text x="' + (x + 66) + '" y="160" class="svgtxt" style="font-size:11px">Q' + i + '</text>';
+      var bad = fault && i === 2;
+      s += '<path d="M' + (x + 20) + ',210 V120" stroke="' + (!shift ? (bad ? '#C4302B' : A) : G) + '" stroke-width="3" marker-end="url(#ah)"/><text x="' + (x - 22) + '" y="175" class="svgmono" style="font-size:12px;fill:' + (bad ? '#C4302B' : '#15233B') + '">D' + i + '=' + d[i] + '</text>';
+      if (bad) s += '<g stroke="#C4302B" stroke-width="3"><line x1="' + (x + 14) + '" y1="184" x2="' + (x + 26) + '" y2="196"/><line x1="' + (x + 14) + '" y1="196" x2="' + (x + 26) + '" y2="184"/></g>';
+    }
+    s += '<path d="M670,80 H720" stroke="' + (shift ? A : G) + '" stroke-width="3" marker-end="url(#ah)"/><circle cx="740" cy="80" r="14" fill="#fff" stroke="#15233B" stroke-width="2"/><text x="740" y="50" text-anchor="middle" class="svgtxt">SO</text><text x="740" y="85" text-anchor="middle" class="svgmono">' + q[3] + '</text>';
+    s += '<rect x="110" y="210" width="560" height="70" rx="6" fill="#F6F8FB" stroke="#15233B" stroke-width="2"/><text x="390" y="238" text-anchor="middle" class="svgtxt">Combinational logic</text><text x="390" y="262" text-anchor="middle" class="svgmono" style="font-size:12px">D0 = Q1·Q2, D1 = Q0 + Q3, D2 = Q0 ⊕ Q1, D3 = NOT Q2</text>';
+    s += '<text x="390" y="306" text-anchor="middle" class="svgtxt" style="fill:' + (shift ? '#D98A00' : '#2B5FAE') + '">' + (shift ? 'Shift mode: flip-flops form a shift register (SI → SFF0 → … → SFF3 → SO)' : 'Capture mode: each flip-flop loads its D from the logic') + '</text></svg>';
+    fig.innerHTML = s;
+    var html = msg ? '<div class="verdict info">' + msg + '</div>' : '';
+    if (appliedPat) {
+      var exp = [appliedPat[1] & appliedPat[2], appliedPat[0] | appliedPat[3], appliedPat[0] ^ appliedPat[1], appliedPat[2] ? 0 : 1];
+      html += '<div class="given"><div><span>Pattern loaded (Q0–Q3)</span><strong>' + appliedPat.join('') + '</strong></div><div><span>Expected response (Q0–Q3)</span><strong>' + exp.join('') + '</strong></div><div><span>Bits seen at SO (first → last)</span><strong>' + (outBits.join('') || '—') + '</strong></div></div>';
+      if (outBits.length === 4) {
+        var got = outBits.slice().reverse(), ok = got.join('') === exp.join('');
+        html += '<div class="verdict ' + (ok ? 'good' : 'bad') + '">' + (ok ? '✓ PASS: response ' + got.join('') + ' matches' : '❌ FAIL: response ' + got.join('') + ', expected ' + exp.join('')) + '<small>The first bit out of SO comes from SFF3, so the bits are reversed to read Q0–Q3.' + (ok && fault ? ' The fault is present, but this pattern does not expose it: D2 = Q0 ⊕ Q1 was already 0. Try a pattern with Q0 ≠ Q1.' : '') + '</small></div>';
+      }
+    }
+    out.innerHTML = html || '<div class="verdict info">Start with step 1<small>The pattern ' + pat.join('') + ' will be shifted in bit by bit. Watch it move along the chain.</small></div>';
+  }
+  function lock(v) { [bIn, bCap, bOut, bClk].forEach(function (b) { b.disabled = v; }); busy = v; }
+  function run(n, fn, done) { var k = 0; lock(true); (function t() { if (k >= n) { lock(false); done(); return; } fn(k); k++; draw(); setTimeout(t, 480); })(); }
+  bIn.addEventListener('click', function () {
+    if (busy) return; shift = true; outBits = []; appliedPat = null;
+    var seq = [pat[3], pat[2], pat[1], pat[0]];
+    run(4, function (k) { si = seq[k]; clock(); }, function () { appliedPat = q.slice(); stage = 'loaded'; draw('Pattern ' + q.join('') + ' is now in SFF0–SFF3. Next: capture.'); });
+  });
+  bCap.addEventListener('click', function () {
+    if (busy) return; shift = false; clock(); draw('Captured. Each flip-flop now holds the logic output for the loaded pattern: ' + q.join('') + '. Next: shift it out.');
+  });
+  bOut.addEventListener('click', function () {
+    if (busy) return; shift = true; si = 0; outBits = [];
+    run(4, function () { outBits.push(clock()); }, function () { draw(); });
+  });
+  bClk.addEventListener('click', function () { if (busy) return; var so = clock(); draw(shift ? 'Shifted one bit. SO output was ' + so + '.' : 'Captured the logic outputs into the flip-flops.'); });
+  draw();
+})();
+
+/* ---------- 7. procedure ---------- */
+L5.Flow('procFlow', [
+  { t: 'Test the chain itself', d: 'First a flush test shifts a pattern such as 0011 0011… straight through the chain. If it does not come out unchanged, the chain itself is broken.', eg: 'This also checks the scan multiplexers and clock.' },
+  { t: 'Set SE = 1', d: 'Scan enable switches every scan flip-flop to take its input from SI.' },
+  { t: 'Shift in the pattern', d: 'Apply L clocks (L = chain length). The test pattern now sits in the flip-flops, which act like extra primary inputs.' },
+  { t: 'Set SE = 0 and apply inputs', d: 'Switch to normal mode and apply the values for the chip\'s real primary inputs.' },
+  { t: 'Capture clock', d: 'One functional clock loads the combinational logic outputs into the flip-flops. The flip-flops act like extra primary outputs.' },
+  { t: 'Shift out and compare', d: 'Set SE = 1 again and clock L times. The response appears at SO and is compared with the expected values. At the same time, the next pattern is shifted in.', eg: 'Overlapping shift-out with shift-in almost halves the test time.' },
+  { t: 'Repeat for every pattern', d: 'The cycle repeats for all ATPG patterns. Any mismatch marks the chip as failing.' }
+], { title: 'Scan test, one pattern at a time', playLabel: 'Play the procedure', speed: 2200 });
+
+/* ---------- 8. test time ---------- */
+(function () {
+  var body = L5.lab('timeLab', 'Scan test time calculator', 'Move the sliders');
+  var n = 20000, P = 2000, k = 1;
+  function range(label, min, max, st, val, on) {
+    var r = L5.h('div', { class: 'range' }), id = 't' + Math.random().toString(36).slice(2, 7);
+    r.innerHTML = '<label for="' + id + '">' + label + '</label><input id="' + id + '" type="range" min="' + min + '" max="' + max + '" step="' + st + '" value="' + val + '"><output>' + val.toLocaleString('en-IN') + '</output>';
+    var i = r.querySelector('input'), o = r.querySelector('output');
+    i.addEventListener('input', function () { o.textContent = (+i.value).toLocaleString('en-IN'); on(+i.value); });
+    body.appendChild(r);
+  }
+  range('Scan flip-flops', 1000, 100000, 1000, n, function (v) { n = v; draw(); });
+  range('Test patterns', 100, 10000, 100, P, function (v) { P = v; draw(); });
+  range('Number of chains', 1, 64, 1, k, function (v) { k = v; draw(); });
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  function draw() {
+    var L = Math.ceil(n / k), clocks = (P + 1) * L + P, t = clocks / 50e6;
+    out.innerHTML = '<div class="given"><div><span>Chain length L</span><strong>' + L.toLocaleString('en-IN') + '</strong></div><div><span>Test clocks</span><strong>' + clocks.toLocaleString('en-IN') + '</strong></div><div><span>Time at 50 MHz shift clock</span><strong>' + (t < 1 ? (t * 1000).toFixed(1) + ' ms' : t.toFixed(2) + ' s') + '</strong></div><div><span>Extra pins needed</span><strong>' + (2 * k + 1) + ' (SI, SO per chain + SE)</strong></div></div>' +
+      '<div class="verdict ' + (t < 0.5 ? 'good' : 'bad') + '">' + (t < 0.5 ? 'Reasonable test time' : 'Too slow for high-volume production') + '<small>Every second on a tester costs money for every chip. More chains cut the time but need more pins; industry also uses on-chip test compression.</small></div>';
+  }
+  draw();
+})();
+
+/* ---------- 9. challenge ---------- */
+L5.Challenge('ch', [
+  { title: 'SCOAP of an AND gate', fig: { circuit: L5.lib.gate2('AND') }, prompt: 'A and B are primary inputs. What is CC1 of Y?', options: ['1', '2', '3', '4'], answer: 2,
+    explain: 'CC1(Y) = CC1(A) + CC1(B) + 1 = 1 + 1 + 1 = 3. Both inputs must be set to 1.' },
+  { title: 'Observability of an input', fig: { circuit: L5.lib.gate2('AND') }, prompt: 'Y is a primary output. What is CO of A?', options: ['0', '1', '2', '3'], answer: 2,
+    explain: 'CO(A) = CO(Y) + CC1(B) + 1 = 0 + 1 + 1 = 2. B must be set to 1 so A can be seen.' },
+  { title: 'One shift clock', fig: '<div class="given"><div><span>SFF0–SFF3 now hold</span><strong>1010</strong></div><div><span>SI</span><strong>1</strong></div><div><span>SE</span><strong>1</strong></div></div>',
+    prompt: 'After one clock, what do SFF0–SFF3 hold, and what bit left through SO?', options: ['1101, SO gave 0', '0101, SO gave 1', '1010, SO gave 0', '0100, SO gave 1'], answer: 0,
+    explain: 'Every bit moves one place: SFF0 takes SI = 1 and SFF1–SFF3 take 1, 0, 1. The old SFF3 value (0) leaves through SO.' },
+  { title: 'Test time', fig: '<div class="given"><div><span>Flip-flops in one chain</span><strong>1,000</strong></div><div><span>Patterns</span><strong>500</strong></div></div>',
+    prompt: 'Using (P + 1) × L + P, how many test clocks are needed?', options: ['500,000', '501,500', '1,000,500', '1,500'], answer: 1,
+    explain: '(500 + 1) × 1000 + 500 = 501,000 + 500 = 501,500 clocks.' },
+  { title: 'Flush test fails', fig: '<div class="given"><div><span>Shifted into SI</span><strong>00110011…</strong></div><div><span>Seen at SO</span><strong style="color:var(--fail)">00000000…</strong></div></div>',
+    prompt: 'What is the most likely problem?', options: ['A fault in the combinational logic', 'A defect in the scan chain itself (for example, a broken SI–Q link)', 'The patterns from ATPG are wrong', 'Nothing, flush tests always give 0'], answer: 1,
+    explain: 'A flush test uses only shift mode, so the combinational logic is not involved. A constant 0 at SO points to a broken chain.' }
+], { title: 'Problems', tag: '5 problems' });
+
+/* ---------- 10. quiz ---------- */
+L5.Quiz('quizBox', [
+  { type: 'MCQ', prompt: 'What is the main goal of design for testability?', options: ['Make the chip faster', 'Make internal nodes easier to control and observe', 'Reduce the number of gates', 'Replace verification'], answer: 1, explain: 'DFT adds hardware that improves controllability and observability.' },
+  { type: 'MCQ', prompt: 'In SCOAP, a primary input has…', options: ['CC0 = CC1 = 0', 'CC0 = CC1 = 1', 'CO = 1', 'CC0 = 1, CC1 = 0'], answer: 1, explain: 'Setting a primary input takes one step, so CC0 = CC1 = 1. Primary outputs have CO = 0.' },
+  { type: 'Circuit analysis', prompt: 'For a 2-input OR gate with primary inputs, what is CC0 of the output?', options: ['1', '2', '3', '4'], answer: 2, explain: 'CC0 = CC0(A) + CC0(B) + 1 = 3, because both inputs must be 0.' },
+  { type: 'True / False', prompt: 'An observation point reduces the CO of the line it is connected to.', options: ['True', 'False'], answer: 0, explain: 'The line becomes a primary output, so its CO becomes 0.' },
+  { type: 'MCQ', prompt: 'A scan flip-flop is a D flip-flop plus…', options: ['an extra clock', 'a 2-to-1 multiplexer controlled by scan enable', 'a counter', 'an XOR gate'], answer: 1, explain: 'The mux selects between the functional D input and the scan input SI.' },
+  { type: 'Select the test response', prompt: 'With SE = 1, what does a scan flip-flop load on the clock edge?', options: ['D from the logic', 'SI from the previous flip-flop', 'Nothing', 'Its own Q'], answer: 1, explain: 'SE = 1 is shift mode.' },
+  { type: 'MCQ', prompt: 'How many clocks does it take to load a pattern into one chain of 100 flip-flops?', options: ['1', '10', '100', '200'], answer: 2, explain: 'One bit moves in per clock, so L = 100 clocks.' },
+  { type: 'True / False', prompt: 'With full scan, ATPG only needs to handle combinational logic.', options: ['True', 'False'], answer: 0, explain: 'Every flip-flop becomes a controllable input and observable output, so the remaining problem is combinational.' },
+  { type: 'MCQ', prompt: 'Why use several shorter scan chains instead of one long one?', options: ['To reduce shift time', 'To remove the need for SE', 'To make ATPG sequential', 'To avoid flip-flops'], answer: 0, explain: 'Test time is proportional to chain length. More chains means shorter chains, at the cost of more pins.' },
+  { type: 'Identify the fault', prompt: 'A flush test passes, but some ATPG patterns fail. Where is the defect most likely?', options: ['In the scan chain', 'In the combinational logic', 'In the tester', 'Nowhere'], answer: 1, explain: 'The chain works (flush passes), so the failing capture results point to the logic between flip-flops.' }
+], { module: 5 });
+
+</script>
+</body>
+</html>

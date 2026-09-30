@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 5 Module 3: Fault Simulation and Fault Coverage | Digital Design Explorer</title>
+<meta name="description" content="Digital Design Explorer, Level 5 VLSI Testing, Module 3: Fault Simulation and Fault Coverage.">
+<link rel="stylesheet" href="level5.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="2" fill="none" stroke="#D98A00" stroke-width="2"/><path d="M9 1v4M13 1v4M17 1v4M9 21v4M13 21v4M17 21v4M1 9h4M1 13h4M1 17h4M21 9h4M21 13h4M21 17h4" stroke="#fff" stroke-width="1.6"/><path d="M9 15h3v-4h5" stroke="#D98A00" stroke-width="1.8" fill="none"/></svg><span>Digital Design Explorer</span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="level5-dashboard.html">Level 5: VLSI Testing</a> / Module 3</nav>
+    <div class="top-actions">
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="rail">Sections</button>
+      <a href="level5-dashboard.html">Level 5 dashboard</a>
+    </div>
+  </div>
+  <div class="pbar" id="pbar" aria-hidden="true"><span></span></div>
+</header>
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="Module sections"></nav>
+  <main id="main">
+    <header class="hero">
+      <p class="kicker">Level 5 / Module 3 of 6</p>
+      <h1>Fault Simulation and Fault Coverage</h1>
+      <p class="lead">How good is a test set? Fault simulation answers that by counting which faults each pattern catches.</p>
+      <div class="scope" id="scope"></div>
+    </header>
+
+    <section class="sec" id="objectives" data-title="Learning objectives">
+      <div class="sec-head"><span class="sec-no">1</span><h2>Learning objectives</h2></div>
+      <div class="prose"><p>By the end of this module you should be able to:</p></div>
+      <ul class="obj-list">
+        <li>Explain what fault simulation is and why it is needed</li>
+        <li>Identify equivalent faults and dominant faults</li>
+        <li>Collapse a fault list and compute the collapse ratio</li>
+        <li>Describe serial fault simulation with fault dropping</li>
+        <li>Explain how parallel fault simulation uses bit-level parallelism</li>
+        <li>Calculate fault coverage for a test set</li>
+        <li>Relate fault coverage, yield and defect level</li>
+      </ul>
+    </section>
+
+    <section class="sec" id="what" data-title="What is fault simulation?">
+      <div class="sec-head"><span class="sec-no">2</span><h2>What is fault simulation?</h2></div>
+      <div class="prose">
+        <p>In Module 1 you checked, by hand, whether one pattern detects one fault. A real chip has millions of faults and thousands of patterns. <span class="term">Fault simulation</span> automates this: for a given test set, it finds which faults are detected and which are not.</p>
+        <p>The result is summarised as <span class="term">fault coverage</span>:</p>
+        <p class="formula">Fault coverage = detected faults ÷ total faults × 100%</p>
+        <p>Fault simulation is used to grade test sets, to decide whether more patterns are needed, and to build fault dictionaries for diagnosing failing chips.</p>
+      </div>
+      <div id="whatCheck"></div>
+    </section>
+
+    <section class="sec" id="equiv" data-title="Equivalence and dominance">
+      <div class="sec-head"><span class="sec-no">3</span><h2>Fault equivalence and dominance</h2></div>
+      <div class="prose">
+        <p>Every fault has a <span class="term">test set</span>: the input patterns that detect it.</p>
+        <ul>
+          <li>Two faults are <span class="term">equivalent</span> if they have exactly the same test set. We only need to keep one of them.</li>
+          <li>Fault f1 <span class="term">dominates</span> fault f2 if every test for f2 also detects f1. If we detect f2 we get f1 for free, so f1 can be dropped.</li>
+        </ul>
+        <p>Pick a gate type, then select any two faults to compare their test sets.</p>
+      </div>
+      <div id="pairLab"></div>
+      <div class="note">For an n-input AND gate: all input s-a-0 faults are equivalent to output s-a-0, and output s-a-1 dominates each input s-a-1. That leaves only n + 1 faults to target instead of 2(n + 1).</div>
+    </section>
+
+    <section class="sec" id="collapse" data-title="Fault collapsing">
+      <div class="sec-head"><span class="sec-no">4</span><h2>Fault collapsing</h2></div>
+      <div class="prose">
+        <p><span class="term">Fault collapsing</span> uses equivalence and dominance to shrink the fault list before simulation or test generation. The <span class="term">collapse ratio</span> is the collapsed list size divided by the original size.</p>
+        <p>Collapse the fault list of Y = A·B + C in two steps and watch the list shrink.</p>
+      </div>
+      <div id="collapseLab"></div>
+    </section>
+
+    <section class="sec" id="serial" data-title="Serial fault simulation">
+      <div class="sec-head"><span class="sec-no">5</span><h2>Serial fault simulation</h2></div>
+      <div class="prose">
+        <p>The simplest method: simulate the good circuit once, then simulate the circuit again for <em>each</em> fault, one at a time, and compare outputs.</p>
+        <p>A big saving comes from <span class="term">fault dropping</span>: as soon as a fault is detected by one pattern, it is removed and never simulated again. Step through the simulation and compare the work with and without dropping.</p>
+      </div>
+      <div id="serialLab"></div>
+    </section>
+
+    <section class="sec" id="parallel" data-title="Parallel fault simulation">
+      <div class="sec-head"><span class="sec-no">6</span><h2>Parallel fault simulation</h2></div>
+      <div class="prose">
+        <p>A computer processes a 32-bit or 64-bit word in one instruction. <span class="term">Parallel fault simulation</span> packs one circuit copy into each bit: bit 0 holds the good circuit and the other bits hold faulty circuits. One bitwise AND of two words simulates the same gate in every copy at once.</p>
+        <p>Here we use a 4-bit word: the good circuit plus three faulty copies. Change the inputs and compare each bit at the output with bit 0.</p>
+      </div>
+      <div id="parLab"></div>
+      <div class="note">Other methods exist too. <span class="term">Deductive</span> fault simulation propagates lists of faults through the gates, and <span class="term">concurrent</span> fault simulation only re-simulates the gates where a faulty circuit differs from the good one. Commercial tools use concurrent-style methods.</div>
+    </section>
+
+    <section class="sec" id="coverage" data-title="Fault coverage">
+      <div class="sec-head"><span class="sec-no">7</span><h2>Building a test set with full coverage</h2></div>
+      <div class="prose"><p>Select patterns for Y = A·B + C and watch the fault coverage change. All 10 uncollapsed faults are listed. Can you reach 100% with only 4 patterns instead of all 8?</p></div>
+      <div id="covLab"></div>
+    </section>
+
+    <section class="sec" id="dl" data-title="Yield and defect level">
+      <div class="sec-head"><span class="sec-no">8</span><h2>Yield, coverage and defect level</h2></div>
+      <div class="prose">
+        <p><span class="term">Yield (Y)</span> is the fraction of manufactured chips that are truly good. <span class="term">Defect level (DL)</span> is the fraction of chips that <em>passed</em> the test but are actually bad. Customers see the defect level, measured in parts per million (ppm).</p>
+        <p>The Williams–Brown model links them with the fault coverage T:</p>
+        <p class="formula">DL = 1 − Y<sup>(1 − T)</sup></p>
+      </div>
+      <div id="dlLab"></div>
+    </section>
+
+    <section class="sec" id="challenge" data-title="Problem challenge">
+      <div class="sec-head"><span class="sec-no">9</span><h2>Problem challenge</h2></div>
+      <div class="prose"><p>Five problems on equivalence, coverage and fault simulation. Answers appear after you submit.</p></div>
+      <div id="ch"></div>
+    </section>
+
+    <section class="sec" id="quiz" data-title="Mini quiz">
+      <div class="sec-head"><span class="sec-no">10</span><h2>Mini quiz</h2></div>
+      <div class="prose"><p>Ten questions. Your score appears after you submit all answers. You need 6 correct to complete the module.</p></div>
+      <div id="quizBox"></div>
+    </section>
+
+    <section class="sec" id="summary" data-title="What you learned">
+      <div class="sec-head"><span class="sec-no">11</span><h2>What you learned</h2></div>
+      <ul class="learned">
+        <li>Fault simulation finds which faults a test set detects; fault coverage summarises the result.</li>
+        <li>Equivalent faults have identical test sets, so only one per class is kept.</li>
+        <li>A dominating fault is detected by every test of the fault it dominates, so it can be dropped.</li>
+        <li>For an n-input AND gate, collapsing reduces 2(n + 1) faults to n + 1.</li>
+        <li>Serial fault simulation handles one fault at a time; fault dropping removes detected faults early.</li>
+        <li>Parallel fault simulation packs good and faulty circuits into the bits of one machine word.</li>
+        <li>Defect level falls quickly as fault coverage approaches 100%, which is why industry aims for very high coverage.</li>
+      </ul>
+      <a class="next-card" href="level5-module4.html">
+        <div><small>Next module</small><h3>Module 4: Test Pattern Generation (ATPG)</h3>
+          <ul><li>Boolean difference</li><li>Path sensitization</li><li>D-algorithm</li><li>PODEM</li></ul></div>
+        <span class="go">Next Module → ATPG</span>
+      </a>
+    </section>
+
+    <footer class="foot">
+      <span>Digital Design Explorer / Level 5 VLSI Testing</span>
+      <span><a href="level5-module2.html">Previous module</a> | <a href="level5-dashboard.html">Level 5 dashboard</a></span>
+    </footer>
+  </main>
+</div>
+<script src="level5.js"></script>
+<script>
+/* ===== Module 3 page script ===== */
+L5.page({ module: 3, trace: {"expected": [0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0], "measured": [0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0]} });
+var S = L5.sim, cutDef = L5.lib.twoLevel('AND', 'OR');
+function key(def, p) { return def.inputs.map(function (i) { return p[i.id] ? 1 : 0; }).join(''); }
+function testSet(def, f) { return S.allPatterns(def).filter(function (p) { return S.detects(def, p, f); }).map(function (p) { return key(def, p); }); }
+function chipsOf(set) { return set.length ? set.map(function (k) { return '<span class="chip" style="cursor:default">' + k + '</span>'; }).join(' ') : '<em>none (undetectable)</em>'; }
+function subset(a, b) { return a.every(function (x) { return b.indexOf(x) >= 0; }); }
+
+L5.Check('whatCheck', {
+  prompt: 'A test set detects 180 of the 200 faults in a fault list. What is the fault coverage?',
+  options: ['80%', '90%', '95%', '180%'], answer: 1,
+  explain: '180 ÷ 200 = 0.9, so the fault coverage is 90%. The 20 undetected faults tell us where extra patterns are needed.'
+});
+
+/* ---------- 3. pair comparison on a single gate ---------- */
+(function () {
+  var body = L5.lab('pairLab', 'Compare the test sets of two faults', 'Select two faults');
+  var type = 'AND', def, faults, sel = [];
+  var gc = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Gate:</span>');
+  gc.appendChild(L5.seg(['AND', 'OR', 'NAND', 'NOR'], 0, function (i) { type = ['AND', 'OR', 'NAND', 'NOR'][i]; build(); }));
+  body.appendChild(gc);
+  var grid = L5.h('div', { class: 'lab-grid' }), left = L5.h('div'), right = L5.h('div', { 'aria-live': 'polite' });
+  grid.appendChild(left); grid.appendChild(right); body.appendChild(grid);
+  var cw = L5.h('div', { class: 'circuit-wrap' }), fl = L5.h('div', { class: 'controls' });
+  left.appendChild(cw); left.appendChild(fl);
+  var all = L5.h('div'); body.appendChild(all);
+  function build() {
+    def = L5.lib.gate2(type); L5.drawCircuit(cw, def, {}); faults = S.allFaults(def); sel = [];
+    fl.innerHTML = '<span class="ctl-label">Faults:</span>';
+    faults.forEach(function (f, i) {
+      var b = L5.h('button', { class: 'chip', type: 'button', 'aria-pressed': 'false' }, S.faultName(f));
+      b.addEventListener('click', function () {
+        var k = sel.indexOf(i);
+        if (k >= 0) sel.splice(k, 1); else { sel.push(i); if (sel.length > 2) sel.shift(); }
+        fl.querySelectorAll('.chip').forEach(function (c, j) { c.setAttribute('aria-pressed', sel.indexOf(j) >= 0 ? 'true' : 'false'); });
+        show();
+      });
+      fl.appendChild(b);
+    });
+    all.innerHTML = '';
+    var btn = L5.h('button', { class: 'btn ghost small', type: 'button', style: 'margin-top:12px' }, 'Show every test set for this gate');
+    btn.addEventListener('click', function () {
+      all.innerHTML = '<div class="tbl-wrap"><table class="tt"><thead><tr><th>Fault</th><th>Test set (AB)</th></tr></thead><tbody>' +
+        faults.map(function (f) { return '<tr><td class="l">' + S.faultName(f) + '</td><td class="l">' + chipsOf(testSet(def, f)) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+    });
+    all.appendChild(btn);
+    show();
+  }
+  function show() {
+    if (sel.length < 2) { right.innerHTML = '<div class="verdict info">Select two faults<small>' + (sel.length ? S.faultName(faults[sel[0]]) + ' selected. Choose one more.' : 'Tap two fault buttons below the gate.') + '</small></div>'; return; }
+    var f1 = faults[sel[0]], f2 = faults[sel[1]], t1 = testSet(def, f1), t2 = testSet(def, f2), v;
+    if (subset(t1, t2) && subset(t2, t1)) v = '<div class="verdict good">Equivalent<small>Both faults are detected by exactly the same patterns. Keep only one of them.</small></div>';
+    else if (subset(t2, t1)) v = '<div class="verdict info">' + S.faultName(f1) + ' dominates ' + S.faultName(f2) + '<small>Every test for ' + S.faultName(f2) + ' also detects ' + S.faultName(f1) + ', so ' + S.faultName(f1) + ' can be dropped from the target list.</small></div>';
+    else if (subset(t1, t2)) v = '<div class="verdict info">' + S.faultName(f2) + ' dominates ' + S.faultName(f1) + '<small>Every test for ' + S.faultName(f1) + ' also detects ' + S.faultName(f2) + ', so ' + S.faultName(f2) + ' can be dropped from the target list.</small></div>';
+    else v = '<div class="verdict bad">Neither equivalent nor dominant<small>Each fault has a test the other one does not share, so both must stay in the list.</small></div>';
+    right.innerHTML = '<div class="rd-row" style="display:block"><span>' + S.faultName(f1) + ' is detected by</span><div style="margin-top:6px">' + chipsOf(t1) + '</div></div>' +
+      '<div class="rd-row" style="display:block;margin-top:8px"><span>' + S.faultName(f2) + ' is detected by</span><div style="margin-top:6px">' + chipsOf(t2) + '</div></div><div style="margin-top:10px">' + v + '</div>';
+  }
+  build();
+})();
+
+/* ---------- 4. collapse lab ---------- */
+(function () {
+  var body = L5.lab('collapseLab', 'Collapsing the fault list of Y = A·B + C', 'Two steps');
+  var faults = S.allFaults(cutDef).map(function (f) { return { f: f, t: testSet(cutDef, f) }; });
+  var cw = L5.h('div', { class: 'circuit-wrap', style: 'max-width:520px' }); body.appendChild(cw);
+  L5.drawCircuit(cw, cutDef, {});
+  var ctl = L5.h('div', { class: 'controls' });
+  var b1 = L5.h('button', { class: 'btn', type: 'button' }, 'Step 1: merge equivalent faults');
+  var b2 = L5.h('button', { class: 'btn', type: 'button', disabled: 'disabled' }, 'Step 2: drop dominating faults');
+  var b3 = L5.h('button', { class: 'btn ghost', type: 'button' }, 'Start again');
+  ctl.appendChild(b1); ctl.appendChild(b2); ctl.appendChild(b3); body.appendChild(ctl);
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  var classes = null, dropped = {};
+  function render(stage) {
+    var rows, count;
+    if (stage === 0) {
+      rows = faults.map(function (x) { return '<tr><td class="l">' + S.faultName(x.f) + '</td><td class="l">' + chipsOf(x.t) + '</td><td class="l">Kept</td></tr>'; }).join('');
+      count = faults.length;
+    } else {
+      count = 0;
+      rows = classes.map(function (c, i) {
+        var d = stage === 2 && dropped[i];
+        if (!d) count++;
+        return '<tr style="' + (d ? 'opacity:.55;text-decoration:line-through' : '') + '"><td class="l">' + c.m.map(function (x) { return S.faultName(x.f); }).join(' ≡ ') + '</td><td class="l">' + chipsOf(c.t) + '</td><td class="l" style="text-decoration:none">' + (d ? 'Dropped: dominates ' + dropped[i] : (c.m.length > 1 ? 'Kept (one of ' + c.m.length + ' equivalent faults)' : 'Kept')) + '</td></tr>';
+      }).join('');
+    }
+    var ratio = (count / faults.length).toFixed(2);
+    out.innerHTML = '<div class="given"><div><span>Original faults</span><strong>' + faults.length + '</strong></div><div><span>Faults to target now</span><strong>' + count + '</strong></div><div><span>Collapse ratio</span><strong>' + ratio + '</strong></div></div>' +
+      '<div class="tbl-wrap"><table class="tt"><thead><tr><th>Fault (or class)</th><th>Test set (ABC)</th><th>Status</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      (stage === 1 ? '<div class="verdict info">Equivalent faults merged<small>A s-a-0, B s-a-0 and n1 s-a-0 all need ABC = 110. The faults n1 s-a-1, C s-a-1 and Y s-a-1 also share one test set.</small></div>' : '') +
+      (stage === 2 ? '<div class="verdict good">Collapsed list ready<small>Four faults remain. Any test set that detects these four detects all ten original faults.</small></div>' : '');
+  }
+  b1.addEventListener('click', function () {
+    classes = [];
+    faults.forEach(function (x) {
+      var k = x.t.join(','), c = classes.filter(function (c) { return c.k === k; })[0];
+      if (c) c.m.push(x); else classes.push({ k: k, t: x.t, m: [x] });
+    });
+    b1.disabled = true; b2.disabled = false; render(1);
+  });
+  b2.addEventListener('click', function () {
+    dropped = {};
+    classes.forEach(function (c, i) {
+      classes.forEach(function (d, j) {
+        if (i !== j && !dropped[i] && d.t.length < c.t.length && subset(d.t, c.t)) dropped[i] = S.faultName(d.m[0].f);
+      });
+    });
+    b2.disabled = true; render(2);
+  });
+  b3.addEventListener('click', function () { b1.disabled = false; b2.disabled = true; render(0); });
+  render(0);
+})();
+
+/* ---------- 5. serial fault simulation ---------- */
+(function () {
+  var body = L5.lab('serialLab', 'Serial fault simulation of Y = A·B + C', 'Step through');
+  var pats = [{ A: 1, B: 1, C: 0 }, { A: 0, B: 0, C: 1 }, { A: 0, B: 1, C: 0 }, { A: 1, B: 0, C: 0 }];
+  var faults = S.allFaults(cutDef), dropOn = true, cells, queue, done, sims;
+  var ctl = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Fault dropping:</span>');
+  ctl.appendChild(L5.seg(['On', 'Off'], 0, function (i) { dropOn = i === 0; reset(); }));
+  var nx = L5.h('button', { class: 'btn', type: 'button' }, 'Simulate next fault'), all = L5.h('button', { class: 'btn ghost', type: 'button' }, 'Run to the end'), rs = L5.h('button', { class: 'btn ghost', type: 'button' }, 'Reset');
+  ctl.appendChild(nx); ctl.appendChild(all); ctl.appendChild(rs); body.appendChild(ctl);
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  function reset() {
+    cells = faults.map(function () { return pats.map(function () { return ''; }); });
+    queue = []; done = false; sims = 0;
+    pats.forEach(function (p, j) { faults.forEach(function (f, i) { queue.push([i, j]); }); });
+    nx.disabled = false; all.disabled = false; draw(null);
+  }
+  function detected(i) { return cells[i].indexOf('d') >= 0; }
+  function next() {
+    while (queue.length) {
+      var q = queue.shift(), i = q[0], j = q[1];
+      if (dropOn && detected(i)) { cells[i][j] = 'x'; continue; }
+      sims++; cells[i][j] = S.detects(cutDef, pats[j], faults[i]) ? 'd' : 'n';
+      draw(q); return;
+    }
+    done = true; nx.disabled = true; all.disabled = true; draw(null);
+  }
+  function draw(cur) {
+    var hd = pats.map(function (p, j) { return '<th>P' + (j + 1) + '<br><span style="font-family:var(--mono);font-weight:500">' + key(cutDef, p) + '</span></th>'; }).join('');
+    var rows = faults.map(function (f, i) {
+      return '<tr><td class="l">' + S.faultName(f) + '</td>' + cells[i].map(function (c, j) {
+        var hl = cur && cur[0] === i && cur[1] === j ? ' style="outline:3px solid var(--trace);outline-offset:-3px"' : '';
+        return c === 'd' ? '<td class="ok"' + hl + '>detected</td>' : c === 'n' ? '<td' + hl + '>not yet</td>' : c === 'x' ? '<td style="color:var(--muted)">dropped</td>' : '<td></td>';
+      }).join('') + '</tr>';
+    }).join('');
+    var det = faults.filter(function (f, i) { return detected(i); }).length;
+    out.innerHTML = '<div class="given"><div><span>Fault simulations run</span><strong>' + sims + '</strong></div><div><span>Without fault dropping</span><strong>' + (faults.length * pats.length) + '</strong></div><div><span>Faults detected</span><strong>' + det + ' / ' + faults.length + '</strong></div></div>' +
+      '<div class="tbl-wrap"><table class="tt"><thead><tr><th>Fault</th>' + hd + '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      (done ? '<div class="verdict good">Simulation finished<small>' + (dropOn ? 'Fault dropping needed only ' + sims + ' fault simulations instead of ' + (faults.length * pats.length) + '.' : 'Without dropping, every fault is simulated with every pattern: ' + sims + ' simulations. Switch dropping on and compare.') + '</small></div>' : '');
+  }
+  nx.addEventListener('click', next);
+  all.addEventListener('click', function () { while (!done) next(); });
+  rs.addEventListener('click', reset);
+  reset();
+})();
+
+/* ---------- 6. parallel fault simulation ---------- */
+(function () {
+  var body = L5.lab('parLab', 'Bit-parallel simulation with a 4-bit word', 'Change the inputs');
+  var fs = [null, { net: 'n1', type: 'sa0' }, { net: 'C', type: 'sa1' }, { net: 'A', type: 'sa1' }];
+  var inp = { A: 1, B: 1, C: 0 };
+  var ctl = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Inputs:</span>'), bits = [];
+  ['A', 'B', 'C'].forEach(function (id) { var b = L5.bitButton(id, function () { return inp[id]; }, function (v) { inp[id] = v; draw(); }); bits.push(b); ctl.appendChild(b); });
+  body.appendChild(ctl);
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  function draw() {
+    bits.forEach(function (b) { b.paint(); });
+    var v = fs.map(function (f) { return S.simulate(cutDef, inp, f); }), netsL = ['A', 'B', 'C', 'n1', 'Y'];
+    var hd = '<th>Line</th>' + fs.map(function (f, k) { return '<th>bit ' + k + '<br><span style="font-weight:500">' + (f ? S.faultName(f) : 'good') + '</span></th>'; }).join('') + '<th>Word (bit 3…0)</th>';
+    var rows = netsL.map(function (n) {
+      return '<tr' + (n === 'Y' ? ' class="hl"' : '') + '><td class="l">' + n + (n === 'n1' ? ' = A AND B' : n === 'Y' ? ' = n1 OR C' : '') + '</td>' +
+        fs.map(function (f, k) { var forced = f && f.net === n; return '<td style="' + (forced ? 'box-shadow:inset 0 0 0 2px var(--fail);color:var(--fail)' : '') + '">' + v[k][n] + '</td>'; }).join('') +
+        '<td>' + [3, 2, 1, 0].map(function (k) { return v[k][n]; }).join('') + '</td></tr>';
+    }).join('');
+    var det = [1, 2, 3].filter(function (k) { return v[k].Y !== v[0].Y; });
+    out.innerHTML = '<div class="tbl-wrap"><table class="tt"><thead><tr>' + hd + '</tr></thead><tbody>' + rows +
+      '<tr><td class="l">Detected?</td><td>—</td>' + [1, 2, 3].map(function (k) { return v[k].Y !== v[0].Y ? '<td class="det">yes</td>' : '<td>no</td>'; }).join('') + '<td></td></tr></tbody></table></div>' +
+      '<p class="hint">Red-outlined cells are where a fault forces its bit. The word for n1 is found with one bitwise AND of the words for A and B (after forcing), exactly as a computer would do it.</p>' +
+      '<div class="verdict ' + (det.length ? 'good' : 'info') + '">' + (det.length ? 'This pattern detects ' + det.map(function (k) { return S.faultName(fs[k]); }).join(' and ') : 'This pattern detects none of the three faults') + '<small>One pass of the circuit simulated four circuits at once.</small></div>';
+  }
+  draw();
+})();
+
+/* ---------- 7. coverage ---------- */
+L5.CoverageLab('covLab', cutDef, { title: 'Pick patterns, watch coverage', target: 4 });
+
+/* ---------- 8. defect level ---------- */
+(function () {
+  var body = L5.lab('dlLab', 'Defect level calculator', 'Move the sliders');
+  var Y = 0.7, T = 0.9;
+  function range(label, min, max, st, val, fmt, on) {
+    var r = L5.h('div', { class: 'range' }), id = 'd' + Math.random().toString(36).slice(2, 7);
+    r.innerHTML = '<label for="' + id + '">' + label + '</label><input id="' + id + '" type="range" min="' + min + '" max="' + max + '" step="' + st + '" value="' + val + '"><output>' + fmt(val) + '</output>';
+    var i = r.querySelector('input'), o = r.querySelector('output');
+    i.addEventListener('input', function () { o.textContent = fmt(+i.value); on(+i.value); });
+    body.appendChild(r);
+  }
+  var pct = function (v) { return (v * 100).toFixed(1) + '%'; };
+  range('Yield Y', 0.1, 0.99, 0.01, Y, pct, function (v) { Y = v; draw(); });
+  range('Fault coverage T', 0.5, 1, 0.005, T, pct, function (v) { T = v; draw(); });
+  var fig = L5.h('div', { class: 'circuit-wrap' }), out = L5.h('div', { 'aria-live': 'polite', style: 'margin-top:10px' });
+  body.appendChild(fig); body.appendChild(out);
+  function dl(t) { return 1 - Math.pow(Y, 1 - t); }
+  function draw() {
+    var max = dl(0.5), x0 = 70, x1 = 660, y0 = 200, y1 = 20, px = function (t) { return x0 + (t - 0.5) / 0.5 * (x1 - x0); }, py = function (d) { return y0 - d / max * (y0 - y1); };
+    var d = '', s = '<svg viewBox="0 0 700 240" role="img" aria-label="Defect level against fault coverage">';
+    for (var t = 0.5; t <= 1.0001; t += 0.1) s += '<line x1="' + px(t) + '" y1="' + y1 + '" x2="' + px(t) + '" y2="' + y0 + '" stroke="#E1E7EF"/><text x="' + px(t) + '" y="' + (y0 + 18) + '" text-anchor="middle" class="svgtxt" style="font-size:11px">' + Math.round(t * 100) + '%</text>';
+    for (t = 0.5; t <= 1.0001; t += 0.005) d += (d ? ' L' : 'M') + px(t).toFixed(1) + ',' + py(dl(t)).toFixed(1);
+    s += '<path d="' + d + '" fill="none" stroke="#2B5FAE" stroke-width="3"/><line x1="' + x0 + '" y1="' + y0 + '" x2="' + x1 + '" y2="' + y0 + '" stroke="#15233B"/>';
+    s += '<circle cx="' + px(T) + '" cy="' + py(dl(T)) + '" r="7" fill="#D98A00" stroke="#fff" stroke-width="2"/>';
+    s += '<text x="' + x0 + '" y="14" class="svgtxt" style="font-size:11px">defect level (max ' + (max * 100).toFixed(1) + '%)</text><text x="' + ((x0 + x1) / 2) + '" y="236" text-anchor="middle" class="svgtxt" style="font-size:11px">fault coverage T</text></svg>';
+    fig.innerHTML = s;
+    var ppm = dl(T) * 1e6, need = 1 - Math.log(1 - 500e-6) / Math.log(Y);
+    out.innerHTML = '<div class="given"><div><span>Defect level</span><strong>' + Math.round(ppm).toLocaleString('en-IN') + ' ppm (' + (ppm / 1e4).toFixed(3) + '%)</strong></div>' +
+      '<div><span>Bad chips shipped per 1 million passed</span><strong>' + Math.round(ppm).toLocaleString('en-IN') + '</strong></div>' +
+      '<div><span>Coverage needed for 500 ppm at this yield</span><strong>' + (need * 100).toFixed(2) + '%</strong></div></div>' +
+      '<div class="verdict ' + (ppm <= 500 ? 'good' : 'bad') + '">' + (ppm <= 500 ? 'Quality target of 500 ppm met' : 'Too many bad chips would reach customers') + '<small>The defect level is roughly proportional to the undetected fraction (1 − T). Going from 90% to 99% coverage cuts escaped defects about ten times, which is why industry pushes coverage well above 99%.</small></div>';
+  }
+  draw();
+})();
+
+/* ---------- 9. challenge ---------- */
+L5.Challenge('ch', [
+  { title: 'Equivalent fault in a NAND gate', fig: { circuit: L5.lib.gate2('NAND') }, prompt: 'Which fault is equivalent to A stuck-at-0 in a 2-input NAND gate?',
+    options: ['B stuck-at-1', 'Y stuck-at-1', 'Y stuck-at-0', 'A stuck-at-1'], answer: 1,
+    explain: 'A 0 on any NAND input forces the output to 1. So A s-a-0 and Y s-a-1 are both detected only by AB = 11. Equal test sets mean equivalent faults.' },
+  { title: 'Coverage of a real test set', fig: '<div class="given"><div><span>Collapsed faults</span><strong>400</strong></div><div><span>Detected by the test set</span><strong>372</strong></div></div>',
+    prompt: 'What is the fault coverage?', options: ['7%', '93%', '97.2%', '372%'], answer: 1, explain: '372 ÷ 400 = 0.93, which is 93%.' },
+  { title: 'Fault dropping', fig: '<div class="given"><div><span>Fault list</span><strong>f1, f2, f3, f4</strong></div><div><span>Pattern 1 detects</span><strong>f1, f3</strong></div></div>',
+    prompt: 'With fault dropping, which faults are simulated with pattern 2?', options: ['f1, f2, f3, f4', 'f2 and f4 only', 'f1 and f3 only', 'None'], answer: 1,
+    explain: 'f1 and f3 were detected by pattern 1 and are dropped. Only the still-undetected faults f2 and f4 are simulated.' },
+  { title: 'Defect level', fig: '<div class="given"><div><span>Yield</span><strong>80%</strong></div><div><span>Fault coverage</span><strong>95%</strong></div></div>',
+    prompt: 'Using DL = 1 − Y^(1 − T), what is the defect level (approximately)?', options: ['About 1,100 ppm', 'About 11,100 ppm', 'About 50,000 ppm', '0 ppm'], answer: 1,
+    explain: 'DL = 1 − 0.8^0.05 ≈ 1 − 0.9889 = 0.0111, which is about 11,100 ppm (1.1% of shipped chips are bad).' },
+  { title: 'Which fault escapes?', fig: { circuit: cutDef }, text: 'The test set for Y = A·B + C is {110, 001}.',
+    prompt: 'Which of these faults is NOT detected by this test set?', options: ['A stuck-at-0', 'C stuck-at-0', 'Y stuck-at-0', 'A stuck-at-1'], answer: 3,
+    explain: '110 detects A, B, n1 s-a-0 and Y s-a-0; 001 detects C s-a-0 and Y s-a-0. A s-a-1 needs A = 0, B = 1, C = 0 (pattern 010), which is missing.' }
+], { title: 'Problems', tag: '5 problems' });
+
+/* ---------- 10. quiz ---------- */
+L5.Quiz('quizBox', [
+  { type: 'MCQ', prompt: 'Fault coverage is defined as…', options: ['patterns applied ÷ total patterns', 'detected faults ÷ total faults', 'good chips ÷ total chips', 'faulty chips ÷ good chips'], answer: 1, explain: 'Coverage measures the fraction of the fault list the test set detects.' },
+  { type: 'Circuit analysis', prompt: 'A test set detects 950 out of 1000 faults. What is the fault coverage?', options: ['9.5%', '50%', '95%', '105%'], answer: 2, explain: '950 ÷ 1000 = 95%.' },
+  { type: 'True / False', prompt: 'Two faults are equivalent when they are detected by exactly the same set of patterns.', options: ['True', 'False'], answer: 0, explain: 'That is the definition of fault equivalence.' },
+  { type: 'MCQ', prompt: 'After equivalence and dominance collapsing, how many faults remain for a 3-input AND gate?', options: ['3', '4', '6', '8'], answer: 1, explain: 'n + 1 = 4: one class for all s-a-0 faults, plus the three input s-a-1 faults.' },
+  { type: 'MCQ', prompt: 'What does fault dropping do?', options: ['Removes faults that are undetectable from the report', 'Stops simulating a fault once a pattern has detected it', 'Drops patterns that detect no faults', 'Removes gates from the circuit'], answer: 1, explain: 'Detected faults need no further simulation, which saves a large amount of work.' },
+  { type: 'MCQ', prompt: 'In parallel fault simulation with a 32-bit word, how many faulty circuits are simulated in one pass?', options: ['1', '16', '31', '32'], answer: 2, explain: 'One bit is reserved for the good circuit, so 31 faulty circuits share the word.' },
+  { type: 'Identify the fault', prompt: 'In a 2-input OR gate, which fault is equivalent to input A stuck-at-1?', options: ['B stuck-at-0', 'Y stuck-at-1', 'Y stuck-at-0', 'A stuck-at-0'], answer: 1, explain: 'A 1 on any OR input forces the output to 1, so A s-a-1 and Y s-a-1 have the same test set {00}.' },
+  { type: 'True / False', prompt: '100% single stuck-at fault coverage guarantees that no defective chip passes the test.', options: ['True', 'False'], answer: 1, explain: 'Some defects behave like bridging, delay or stuck-open faults, which stuck-at tests may miss.' },
+  { type: 'MCQ', prompt: 'With yield Y = 50%, raising fault coverage from 90% to 99% changes the defect level approximately…', options: ['from 6.7% to 0.69%', 'from 50% to 49%', 'from 10% to 1% of all chips made', 'not at all'], answer: 0, explain: '1 − 0.5^0.1 ≈ 0.067 and 1 − 0.5^0.01 ≈ 0.0069. Nine more points of coverage cut the shipped defects about ten times.' },
+  { type: 'Identify the fault', prompt: 'In a 2-input AND gate, which fault dominates input A stuck-at-1?', options: ['A stuck-at-0', 'Y stuck-at-0', 'Y stuck-at-1', 'B stuck-at-0'], answer: 2, explain: 'A s-a-1 is detected only by AB = 01, and that pattern also detects Y s-a-1 (tests 00, 01, 10). So Y s-a-1 dominates A s-a-1.' }
+], { module: 3 });
+
+</script>
+</body>
+</html>

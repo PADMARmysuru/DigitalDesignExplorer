@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 5 Module 1: Introduction to VLSI Testing | Digital Design Explorer</title>
+<meta name="description" content="Digital Design Explorer, Level 5 VLSI Testing, Module 1: Introduction to VLSI Testing.">
+<link rel="stylesheet" href="level5.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="2" fill="none" stroke="#D98A00" stroke-width="2"/><path d="M9 1v4M13 1v4M17 1v4M9 21v4M13 21v4M17 21v4M1 9h4M1 13h4M1 17h4M21 9h4M21 13h4M21 17h4" stroke="#fff" stroke-width="1.6"/><path d="M9 15h3v-4h5" stroke="#D98A00" stroke-width="1.8" fill="none"/></svg><span>Digital Design Explorer</span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="level5-dashboard.html">Level 5: VLSI Testing</a> / Module 1</nav>
+    <div class="top-actions">
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="rail">Sections</button>
+      <a href="level5-dashboard.html">Level 5 dashboard</a>
+    </div>
+  </div>
+  <div class="pbar" id="pbar" aria-hidden="true"><span></span></div>
+</header>
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="Module sections"></nav>
+  <main id="main">
+    <header class="hero">
+      <p class="kicker">Level 5 / Module 1 of 6</p>
+      <h1>Introduction to VLSI Testing</h1>
+      <p class="lead">A correct design can still become a faulty chip. Learn why every IC is tested, how testing differs from verification, and how a tiny defect turns into a system failure.</p>
+      <div class="scope" id="scope"></div>
+    </header>
+
+    <section class="sec" id="objectives" data-title="Learning objectives">
+      <div class="sec-head"><span class="sec-no">1</span><h2>Learning objectives</h2></div>
+      <div class="prose"><p>By the end of this module you should be able to explain, in your own words:</p></div>
+      <ul class="obj-list">
+        <li>Why every manufactured IC must be tested</li>
+        <li>The difference between verification and testing</li>
+        <li>How a defect, a fault, an error and a failure are related</li>
+        <li>What kinds of manufacturing defects occur</li>
+        <li>What a test stimulus and a test response are</li>
+        <li>The basic flow from design to a tested chip</li>
+        <li>Why controllability and observability make a design testable</li>
+      </ul>
+      <p class="note">Work through the page in order. Each idea is short, and is followed by something you can click, change or answer.</p>
+    </section>
+
+    <section class="sec" id="why" data-title="Why do we test an IC?">
+      <div class="sec-head"><span class="sec-no">2</span><h2>Why do we test an IC?</h2></div>
+      <div class="prose">
+        <p>A chip is built layer by layer on a silicon wafer, with wires thousands of times thinner than a human hair. Even in a clean room, a speck of dust, a slightly thin metal line or a missing contact hole can damage one chip while its neighbour on the same wafer is perfect.</p>
+        <p>So the design can be <span class="term">100% correct</span> and the manufactured chip can still be <span class="term">wrong</span>. Testing is how we separate the good chips from the bad ones before they reach a customer.</p>
+      </div>
+      <div id="chipStory"></div>
+      <div id="whyCheck"></div>
+    </section>
+
+    <section class="sec" id="vvt" data-title="Verification vs testing">
+      <div class="sec-head"><span class="sec-no">3</span><h2>Verification vs testing</h2></div>
+      <div class="prose">
+        <p>Students often mix these two words up. Both look for problems, but they look at different things, at different times. Switch between them below.</p>
+      </div>
+      <div class="lab"><div class="lab-head"><h4>Two different questions</h4><span class="tag">Toggle</span></div><div class="lab-body" id="vvtToggle"></div></div>
+      <div id="vvtCheck"></div>
+    </section>
+
+    <section class="sec" id="chain" data-title="Defect, fault, error, failure">
+      <div class="sec-head"><span class="sec-no">4</span><h2>Defect → fault → error → failure</h2></div>
+      <div class="prose">
+        <p>These four words describe the same problem at four different levels. A <span class="term">defect</span> is physical, a <span class="term">fault</span> is its logical model, an <span class="term">error</span> is a wrong signal value, and a <span class="term">failure</span> is what the user notices.</p>
+        <p>Click each stage, or press play to follow one defect all the way to a system failure.</p>
+      </div>
+      <div id="chainFlow"></div>
+      <div class="note warn">Not every defect causes a failure. If a faulty node is never used with the input that exposes it, the system may keep working, which is exactly why hidden faults are dangerous and tests must be chosen carefully.</div>
+    </section>
+
+    <section class="sec" id="goodfaulty" data-title="Good vs faulty circuit">
+      <div class="sec-head"><span class="sec-no">5</span><h2>Good circuit vs faulty circuit</h2></div>
+      <div class="prose">
+        <p>The most common fault model is the <span class="term">stuck-at fault</span>: a wire behaves as if it is permanently tied to 0 (stuck-at-0, s-a-0) or to 1 (stuck-at-1, s-a-1), whatever the inputs say.</p>
+        <p>Here is a 2-input AND gate, <span class="formula" style="margin:0;padding:1px 8px">Y = A · B</span>. First set A and B and check the normal output. Then switch the fault to <em>Y stuck-at-0</em> and try all four input combinations. Which ones reveal the fault?</p>
+      </div>
+      <div id="andLab"></div>
+      <div id="andCheck"></div>
+    </section>
+
+    <section class="sec" id="stimulus" data-title="Test stimulus and response">
+      <div class="sec-head"><span class="sec-no">6</span><h2>Test stimulus and test response</h2></div>
+      <div class="prose">
+        <p>A tester (automatic test equipment, ATE) applies a <span class="term">test pattern</span>, also called the <span class="term">test stimulus</span>, to the chip's inputs. The chip, now called the <span class="term">circuit under test (CUT)</span>, produces an <span class="term">output response</span>. The tester compares it with the <span class="term">expected response</span> that was calculated by simulating the correct design.</p>
+        <p>Below, the CUT is <span class="formula" style="margin:0;padding:1px 8px">Y = A·B + C</span>. Test a good chip first, then put a defective chip on the tester and find a pattern that catches it.</p>
+      </div>
+      <div id="bench"></div>
+    </section>
+
+    <section class="sec" id="co" data-title="Controllability and observability">
+      <div class="sec-head"><span class="sec-no">7</span><h2>Controllability and observability</h2></div>
+      <div class="prose">
+        <p>To test a node inside a chip we must do two things through the pins only:</p>
+        <ul>
+          <li><span class="term">Control</span> it: drive the node to 0 or 1 using the primary inputs.</li>
+          <li><span class="term">Observe</span> it: make a change at that node show up at a primary output.</li>
+        </ul>
+        <p>Think of a room deep inside a building. It is hard to reach (control) and hard to see into from the street (observe). Nodes deep inside a circuit are the same.</p>
+      </div>
+      <div id="coLab"></div>
+      <div id="coCheck"></div>
+    </section>
+
+    <section class="sec" id="flow" data-title="IC testing flow">
+      <div class="sec-head"><span class="sec-no">8</span><h2>IC testing flow</h2></div>
+      <div class="prose">
+        <p>Testing is not one step at the end. It appears at several points between the idea and the shipped chip. Faults found early are much cheaper to handle: a common industry rule of thumb says the cost of catching a bad part grows roughly ten times at each level, from wafer to package to board to system.</p>
+      </div>
+      <div id="icFlow"></div>
+    </section>
+
+    <section class="sec" id="challenge" data-title="Find the fault challenge">
+      <div class="sec-head"><span class="sec-no">9</span><h2>Find the fault challenge</h2></div>
+      <div class="prose"><p>You are the test engineer. For each problem you get the inputs, the expected output and the output measured on the chip. Decide what is going on. The faulty node is revealed only after you submit.</p></div>
+      <div id="ch"></div>
+    </section>
+
+    <section class="sec" id="quiz" data-title="Mini quiz">
+      <div class="sec-head"><span class="sec-no">10</span><h2>Mini quiz</h2></div>
+      <div class="prose"><p>Ten questions on this module. Your score appears after you submit all answers. You need 6 correct to complete the module.</p></div>
+      <div id="quizBox"></div>
+    </section>
+
+    <section class="sec" id="summary" data-title="What you learned">
+      <div class="sec-head"><span class="sec-no">11</span><h2>What you learned</h2></div>
+      <ul class="learned">
+        <li>A correct design can still produce faulty chips, because fabrication introduces random physical defects.</li>
+        <li>Verification checks the design before fabrication; testing checks every manufactured chip after fabrication.</li>
+        <li>A physical defect is modelled as a logical fault; an activated fault causes an error; an error that reaches the user is a failure.</li>
+        <li>A stuck-at fault makes a line behave as permanently 0 or 1.</li>
+        <li>An input pattern detects a fault only when the good and faulty circuits give different outputs.</li>
+        <li>Testing means applying a stimulus, capturing the response and comparing it with the expected response: PASS or FAIL.</li>
+        <li>Controllability and observability describe how easily an internal node can be set and seen from the pins.</li>
+        <li>Chips are tested at wafer level and again after packaging, because catching faults early saves cost.</li>
+      </ul>
+      <a class="next-card" href="level5-module2.html">
+        <div><small>Next module</small><h3>Module 2: Fault Models</h3>
+          <ul><li>Stuck-at faults</li><li>Bridging faults</li><li>Open faults</li><li>Transition faults</li><li>Delay faults</li></ul></div>
+        <span class="go">Next Module → Fault Models</span>
+      </a>
+    </section>
+
+    <footer class="foot">
+      <span>Digital Design Explorer / Level 5 VLSI Testing</span>
+      <span><a href="level5-dashboard.html">Level 5 dashboard</a></span>
+    </footer>
+  </main>
+</div>
+<script src="level5.js"></script>
+<script>
+/* ===== Module 1 page script ===== */
+L5.page({ module: 1, trace: {"expected": [0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0], "measured": [0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0]} });
+/* ---------- circuits used in this module ---------- */
+var gate2 = L5.lib.gate2, twoLevel = L5.lib.twoLevel;
+var andDef = gate2('AND'), orDef = gate2('OR'), cutDef = twoLevel('AND', 'OR'), nnDef = twoLevel('NAND', 'NOR');
+var chainDef = { w: 730, h: 300,
+  inputs: [{ id: 'A', x: 50, y: 40 }, { id: 'B', x: 50, y: 90 }, { id: 'C', x: 50, y: 150 }, { id: 'D', x: 50, y: 210 }, { id: 'E', x: 50, y: 270 }],
+  gates: [{ id: 'G1', type: 'AND', x: 150, y: 65, in: ['A', 'B'], out: 'n1' },
+          { id: 'G2', type: 'AND', x: 280, y: 105, in: ['n1', 'C'], out: 'n2' },
+          { id: 'G3', type: 'AND', x: 410, y: 145, in: ['n2', 'D'], out: 'n3' },
+          { id: 'G4', type: 'OR', x: 540, y: 185, in: ['n3', 'E'], out: 'Y' }],
+  outputs: [{ id: 'Y', net: 'Y', x: 680, y: 185 }],
+  labels: { n1: [238, 52], n2: [368, 92], n3: [498, 132] } };
+
+/* ---------- 2. chip story ---------- */
+(function () {
+  var host = document.getElementById('chipStory');
+  var body = L5.lab(host, 'From design to a faulty chip', 'Animation');
+  function chip(ox, bad) {
+    var o = '';
+    o += '<rect x="' + ox + '" y="110" width="300" height="190" rx="8" fill="#22324F"/>';
+    for (var i = 0; i < 8; i++) {
+      var px = ox + 30 + i * 34;
+      o += '<rect x="' + px + '" y="100" width="12" height="10" fill="#9AA8BC"/><rect x="' + px + '" y="300" width="12" height="10" fill="#9AA8BC"/>';
+    }
+    o += '<rect x="' + (ox + 20) + '" y="128" width="260" height="154" rx="4" fill="#F7F9FC" stroke="#9AA8BC"/>';
+    o += '<g stroke="#8FA0B5" stroke-width="2.4" fill="none"><path d="M' + (ox + 57) + ',170 H' + (ox + 100) + ' V188 H' + (ox + 128) + '"/><path d="M' + (ox + 57) + ',230 H' + (ox + 100) + ' V212 H' + (ox + 128) + '"/>';
+    o += bad ? '<path d="M' + (ox + 186) + ',200 H' + (ox + 220) + '"/><path d="M' + (ox + 234) + ',200 H' + (ox + 255) + '"/>' : '<path d="M' + (ox + 186) + ',200 H' + (ox + 255) + '"/>';
+    o += '</g>';
+    o += '<g transform="translate(' + (ox + 120) + ',178)"><path d="M8,0 H32 A22,22 0 0 1 32,44 H8 Z" fill="#fff" stroke="#15233B" stroke-width="2"/><line x1="0" y1="10" x2="8" y2="10" stroke="#15233B" stroke-width="2"/><line x1="0" y1="34" x2="8" y2="34" stroke="#15233B" stroke-width="2"/><line x1="54" y1="22" x2="66" y2="22" stroke="#15233B" stroke-width="2"/></g>';
+    o += '<path class="sig" style="--len:90" id="s' + ox + 'a" d="M' + (ox + 57) + ',170 H' + (ox + 100) + ' V188 H' + (ox + 128) + '"/>';
+    o += '<path class="sig" style="--len:90" id="s' + ox + 'b" d="M' + (ox + 57) + ',230 H' + (ox + 100) + ' V212 H' + (ox + 128) + '"/>';
+    o += '<path class="sig" style="--len:80" id="s' + ox + 'y" d="M' + (ox + 186) + ',200 H' + (ox + (bad ? 220 : 255)) + '"/>';
+    if (bad) {
+      o += '<g class="fade" id="defect"><path d="M' + (ox + 221) + ',190 l5,6 -4,4 6,5 -3,5 5,6" fill="none" stroke="#C4302B" stroke-width="2"/><circle cx="' + (ox + 228) + '" cy="188" r="7" fill="#8A6A44"/>' +
+        '<text x="' + (ox + 196) + '" y="160" text-anchor="middle" class="svgtxt" style="fill:#C4302B">broken interconnect</text></g>';
+      o += '<g class="fade" id="spark"><circle cx="' + (ox + 222) + '" cy="200" r="11" fill="none" stroke="#C4302B" stroke-width="2.5"/></g>';
+    }
+    [['A', 50, 170], ['B', 50, 230]].forEach(function (p) {
+      o += '<rect x="' + (ox + p[1] - 7) + '" y="' + (p[2] - 7) + '" width="14" height="14" fill="#D6DEE8" stroke="#15233B"/><text x="' + (ox + p[1] - 12) + '" y="' + (p[2] + 5) + '" text-anchor="end" class="svgtxt">' + p[0] + '</text>' +
+        '<text class="svgmono fade pv" x="' + (ox + p[1]) + '" y="' + (p[2] - 12) + '" text-anchor="middle">1</text>';
+    });
+    o += '<rect x="' + (ox + 255) + '" y="193" width="14" height="14" fill="#D6DEE8" stroke="#15233B"/><text x="' + (ox + 262) + '" y="228" text-anchor="middle" class="svgtxt">Y</text>';
+    o += '<text class="svgmono fade" id="y' + ox + '" x="' + (ox + 262) + '" y="184" text-anchor="middle" style="font-size:18px;fill:' + (bad ? '#C4302B' : '#1D8752') + '">' + (bad ? '0' : '1') + '</text>';
+    o += '<text x="' + (ox + 150) + '" y="326" text-anchor="middle" class="svgtxt">' + (bad ? 'Chip 2 (defective)' : 'Chip 1 (good)') + '</text>';
+    return o;
+  }
+  var steps = ['Design', 'Fabrication', 'Defect occurs', 'Faulty IC'];
+  var pipe = steps.map(function (t, i) {
+    var x = 20 + i * 185;
+    return '<g class="pipe" id="p' + i + '"><rect x="' + x + '" y="16" width="165" height="50" rx="6"/><text x="' + (x + 82) + '" y="46">' + t + '</text></g>' +
+      (i < 3 ? '<path d="M' + (x + 167) + ',41 H' + (x + 183) + '" stroke="#8494A8" stroke-width="2" marker-end="url(#arr)"/>' : '');
+  }).join('');
+  var fig = L5.h('div', { class: 'circuit-wrap' });
+  fig.innerHTML = '<svg viewBox="0 0 760 340" role="img" aria-label="Design, fabrication, manufacturing defect and faulty IC, with a good chip and a defective chip"><defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8494A8"/></marker></defs>' +
+    pipe + chip(40, false) + chip(420, true) + '</svg>';
+  body.appendChild(fig);
+  var act = L5.h('div', { class: 'controls' });
+  var run = L5.h('button', { class: 'btn', type: 'button' }, 'Run fabrication and apply A = 1, B = 1');
+  act.appendChild(run); body.appendChild(act);
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  out.innerHTML = '<div class="verdict info">Both chips come from the same correct design (Y = A · B).<small>Press the button to fabricate them and apply A = 1, B = 1. The expected output is 1.</small></div>';
+  var q = function (sel) { return fig.querySelector(sel); }, busy = false;
+  function reset() {
+    fig.querySelectorAll('.sig,.fade').forEach(function (e) { e.classList.remove('on'); });
+    fig.querySelectorAll('.pipe').forEach(function (e) { e.classList.remove('lit', 'badlit'); });
+  }
+  run.addEventListener('click', function () {
+    if (busy) return; busy = true; run.disabled = true; reset();
+    var t = 0, at = function (ms, fn) { t += ms; setTimeout(fn, t); };
+    at(100, function () { q('#p0').classList.add('lit'); out.innerHTML = '<div class="verdict info">Design: the AND gate is designed and verified. It is correct.</div>'; });
+    at(800, function () { q('#p1').classList.add('lit'); out.innerHTML = '<div class="verdict info">Fabrication: both chips are built on the same wafer.</div>'; });
+    at(800, function () { q('#p2').classList.add('badlit'); q('#defect').classList.add('on'); out.innerHTML = '<div class="verdict bad">A dust particle breaks the output interconnect of chip 2 only.</div>'; });
+    at(900, function () { fig.querySelectorAll('.pv').forEach(function (e) { e.classList.add('on'); }); ['#s40a', '#s40b', '#s420a', '#s420b'].forEach(function (s) { q(s).classList.add('on'); }); });
+    at(900, function () { q('#s40y').classList.add('on'); q('#s420y').classList.add('on'); });
+    at(900, function () { q('#spark').classList.add('on'); q('#y40').classList.add('on'); q('#y420').classList.add('on'); q('#p3').classList.add('badlit'); });
+    at(300, function () {
+      out.innerHTML = '<div class="verdict bad">Chip 2 outputs Y = 0 instead of 1.<small>The logic 1 from the gate cannot cross the broken wire, so the output pad floats low and reads 0. Chip 1, built from the same design, correctly gives 1. The design was fine; the manufacturing was not.</small></div>';
+      busy = false; run.disabled = false; run.textContent = 'Replay the animation';
+    });
+  });
+})();
+
+L5.Check('whyCheck', {
+  prompt: 'If the circuit design is correct, why can the manufactured chip still fail?',
+  options: ['Because the simulation software always has bugs', 'Because fabrication can introduce physical defects such as dust particles, broken wires, shorts or missing contacts', 'Because logic gates stop working as soon as they are powered on', 'Because the truth table of a gate changes after fabrication'],
+  answer: 1,
+  explain: 'Verification proved the design is right, but each chip is a physical object. Random defects during fabrication change the real circuit, so each chip must be tested individually.'
+});
+
+/* ---------- 3. verification vs testing ---------- */
+function vvt(q, rows, ex) {
+  return '<p class="big-q">“' + q + '”</p><dl class="cmp">' + rows.map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>'; }).join('') + '</dl>' +
+    '<h4 style="margin:18px 0 6px">Practical examples</h4><ul style="margin:0;padding-left:1.2em">' + ex.map(function (e) { return '<li>' + e + '</li>'; }).join('') + '</ul>';
+}
+L5.Toggle('vvtToggle', [
+  { label: 'Verification', html: vvt('Did we design the circuit correctly?',
+    [['When', 'Before fabrication'], ['What is checked', 'The design model: RTL code, netlist, layout'], ['How', 'Simulation with testbenches, formal checks, timing analysis'], ['How often', 'Once per design'], ['What it finds', 'Design bugs: wrong logic, missed specification, timing violations']],
+    ['Simulating a 4-bit adder in ModelSim and seeing that 7 + 9 gives the wrong carry.', 'Static timing analysis shows a path is too slow for a 100 MHz clock.', 'Equivalence checking confirms the synthesized netlist matches the RTL.']) },
+  { label: 'Testing', html: vvt('Does the manufactured chip work correctly?',
+    [['When', 'After fabrication'], ['What is checked', 'Every physical chip'], ['How', 'Test equipment applies test patterns and compares responses'], ['How often', 'For every chip made, often millions'], ['What it finds', 'Manufacturing defects: opens, shorts, particles, weak transistors']],
+    ['Wafer probe test rejects a die whose output is stuck at 0.', 'A packaged chip fails final test because a bond wire is broken.', 'A current (IDDQ) test finds a chip drawing too much standby current because of a short.']) }
+]);
+L5.Check('vvtCheck', {
+  prompt: 'A student writes a Verilog testbench for a full adder and finds that the carry output is wrong for A = 1, B = 1, Cin = 0. Is this verification or testing?',
+  options: ['Verification: the design itself is being checked before any chip exists', 'Testing: the chip is being checked for manufacturing defects'],
+  answer: 0,
+  explain: 'No chip has been manufactured. The student is checking whether the design is correct, which is verification. The bug must be fixed in the code.'
+});
+
+/* ---------- 4. defect → failure chain ---------- */
+var gSym = '<path d="M8,0 H32 A22,22 0 0 1 32,44 H8 Z" fill="#fff" stroke="#15233B" stroke-width="2"/>';
+L5.Flow('chainFlow', [
+  { t: 'Physical defect', bad: true, d: 'Something is physically wrong on the silicon. Here, a dust particle landed on a metal interconnect during fabrication and broke it.',
+    eg: 'Common defects: dust particles, open (broken) wires, shorts between neighbouring wires, missing vias or contacts, thin oxide, crystal defects.',
+    svg: '<svg viewBox="0 0 300 80" width="300" role="img" aria-label="Broken metal line with a particle"><rect x="10" y="32" width="120" height="16" rx="2" fill="#9AA8BC"/><rect x="160" y="32" width="130" height="16" rx="2" fill="#9AA8BC"/><circle cx="145" cy="40" r="13" fill="#8A6A44"/><text x="150" y="74" text-anchor="middle" class="svgtxt">open metal line</text></svg>' },
+  { t: 'Logical fault', bad: true, d: 'We model the defect as a logic-level fault. The broken wire leaves the gate output unable to pass a 1, so we model it as <strong>output stuck-at-0</strong>.',
+    eg: 'Fault models let us reason about defects with 0s and 1s instead of physics.',
+    svg: '<svg viewBox="0 0 300 80" width="300" role="img" aria-label="AND gate with output stuck-at-0"><g transform="translate(90,14)">' + gSym + '<line x1="-30" y1="10" x2="8" y2="10" stroke="#15233B" stroke-width="2"/><line x1="-30" y1="34" x2="8" y2="34" stroke="#15233B" stroke-width="2"/><line x1="54" y1="22" x2="110" y2="22" stroke="#15233B" stroke-width="2"/></g><g stroke="#C4302B" stroke-width="3"><line x1="170" y1="30" x2="182" y2="42"/><line x1="170" y1="42" x2="182" y2="30"/></g><text x="176" y="22" text-anchor="middle" class="svgmono" style="fill:#C4302B;font-size:12px">s-a-0</text></svg>' },
+  { t: 'Incorrect circuit response (error)', bad: true, d: 'When an input sets the faulty node to the opposite value, the node carries a wrong value. That wrong value is an <strong>error</strong>.',
+    eg: 'Inputs A = 1, B = 1: expected Y = 1, actual Y = 0.',
+    svg: '<table class="tt" style="max-width:300px"><tr><th>A</th><th>B</th><th>Expected Y</th><th>Actual Y</th></tr><tr><td>1</td><td>1</td><td class="ok">1</td><td class="det">0</td></tr></table>' },
+  { t: 'System failure', bad: true, d: 'If the error reaches something the user depends on, the system does the wrong job. That is a <strong>failure</strong>.',
+    eg: 'The faulty gate drives bit 1 of an adder output. 7 + 8 should be 15 (1111) but bit 1 is stuck at 0, so the display shows 13 (1101).',
+    svg: '<svg viewBox="0 0 300 90" width="300" role="img" aria-label="Calculator display showing a wrong result"><rect x="20" y="8" width="260" height="60" rx="8" fill="#22324F"/><text x="260" y="50" text-anchor="end" style="font:600 26px var(--mono);fill:#FFB74A">7 + 8 = 13</text><text x="150" y="86" text-anchor="middle" class="svgtxt" style="fill:#C4302B">wrong result seen by the user</text></svg>' }
+], { title: 'One defect, four levels', playLabel: 'Play the chain' });
+
+/* ---------- 5. AND gate fault lab ---------- */
+L5.FaultLab('andLab', andDef, {
+  title: '2-input AND gate', tag: 'Fault injection',
+  faults: [{ label: 'No fault', f: null }, { label: 'Y stuck-at-0', f: { net: 'Y', type: 'sa0' } }],
+  inputs: { A: 1, B: 1 }, truthTable: true
+});
+L5.Check('andCheck', {
+  prompt: 'With output Y stuck-at-0, which input combination is the only one that detects the fault?',
+  options: ['A = 0, B = 0', 'A = 0, B = 1', 'A = 1, B = 0', 'A = 1, B = 1'],
+  answer: 3,
+  explain: 'Only A = 1, B = 1 makes the good output 1. For every other combination the good output is already 0, so a stuck-at-0 output looks exactly the same as a good one.'
+});
+
+/* ---------- 6. tester bench ---------- */
+L5.TesterBench('bench', cutDef, {
+  title: 'Tester applying patterns to Y = A·B + C', tag: 'Apply a pattern',
+  patterns: [{ A: 0, B: 0, C: 1 }, { A: 1, B: 1, C: 1 }, { A: 0, B: 1, C: 0 }, { A: 1, B: 1, C: 0 }, { A: 1, B: 0, C: 0 }],
+  fault: { net: 'n1', type: 'sa0' }
+});
+
+/* ---------- 7. controllability / observability ---------- */
+L5.NodeExplorer('coLab', chainDef, {
+  title: 'How reachable is each node?', tag: 'Click the wires', stack: true,
+  prompt: 'The circuit is Y = (A·B·C·D) + E. Click A, E, n1, n2, n3 or Y.',
+  info: {
+    A: { c: 'easy', o: 'hard', why: 'A is a primary input, so you set it directly. But a change on A only reaches Y if B = 1, C = 1, D = 1 and E = 0. Four other inputs must be fixed at once to see A.' },
+    E: { c: 'easy', o: 'easy', why: 'E is a primary input, and it feeds the last OR gate. Its effect reaches Y whenever n3 = 0, which happens if any one of A, B, C, D is 0.' },
+    n1: { c: 'moderate', o: 'hard', why: 'n1 = 0 is easy (A = 0 or B = 0), but n1 = 1 needs both A and B = 1. To observe n1 you also need C = 1, D = 1 and E = 0.' },
+    n2: { c: 'hard', o: 'moderate', why: 'Setting n2 = 1 needs A = B = C = 1. Observing it is easier: only D = 1 and E = 0 are needed.' },
+    n3: { c: 'hard', o: 'easy', why: 'n3 = 1 needs all four of A, B, C, D = 1, the hardest node to control. But it is right next to the output: with E = 0, Y simply follows n3.' },
+    Y: { c: 'easy', o: 'easy', why: 'Y is the primary output, so it is always observable. Y = 1 just needs E = 1, and Y = 0 needs E = 0 and any of A–D = 0.' }
+  }
+});
+L5.Check('coCheck', {
+  prompt: 'In this circuit, which node is the hardest to set to logic 1 from the inputs?',
+  options: ['n1', 'n2', 'n3', 'E'],
+  answer: 2,
+  explain: 'n3 is the output of a chain of AND gates, so it becomes 1 only when A, B, C and D are all 1. Deep AND/OR chains make nodes hard to control, which is why testable design tries to avoid them or adds test points.'
+});
+
+/* ---------- 8. IC flow ---------- */
+L5.Flow('icFlow', [
+  { t: 'Design specification', d: 'Engineers write down what the chip must do: functions, speed, power and pins.', eg: 'Example: “An 8-bit ALU that adds, subtracts and compares at 200 MHz.”' },
+  { t: 'RTL / logic design', d: 'The behaviour is written in a hardware description language such as Verilog, then synthesized into a gate-level netlist.', eg: 'This is where you would write the always blocks and assign statements you practised in earlier levels.' },
+  { t: 'Simulation and verification', d: 'The design is simulated with testbenches and checked for timing. Test patterns for manufacturing are also generated here, from the netlist.', eg: 'Verification asks “did we design it right?” No chip exists yet.' },
+  { t: 'Fabrication', d: 'The layout is turned into masks, and hundreds of dies are built on each silicon wafer. This is where random defects enter.', eg: 'A single 300 mm wafer can hold several hundred dies.' },
+  { t: 'Wafer testing', d: 'A probe card touches the pads of each die on the wafer and applies test patterns. Failing dies are marked and will not be packaged.', eg: 'Catching a bad die here avoids paying to package it.' },
+  { t: 'Packaging', d: 'Good dies are cut from the wafer, mounted in packages and connected to the pins with bond wires.', eg: 'Packaging can itself add defects, such as a broken bond wire.' },
+  { t: 'Final testing', d: 'Each packaged chip is tested again, often at different temperatures and speeds, including tests for speed (timing) and current.', eg: 'Chips may also be sorted into speed grades here.' },
+  { t: 'Pass / fail', d: 'Chips that pass every test are shipped. Failing chips are rejected, and failure data is sent back to improve the fabrication process (yield learning).', eg: 'The fraction of good chips is called the yield.' }
+], { title: 'From idea to shipped chip', playLabel: 'Play the flow', speed: 2000 });
+
+/* ---------- 9. find the fault ---------- */
+L5.Challenge('ch', [
+  { title: 'Single AND gate', def: andDef, inputs: { A: 1, B: 1 }, fault: { net: 'Y', type: 'sa0' }, faultNet: 'Y',
+    prompt: 'Is there a fault?', options: ['No, the output is correct', 'Yes, the output behaves as stuck-at-0', 'Yes, the output behaves as stuck-at-1'], answer: 1,
+    explain: 'With A = B = 1 an AND gate must give 1. The chip gives 0, so the output behaves as if stuck at 0.' },
+  { title: 'Single OR gate', def: orDef, inputs: { A: 0, B: 0 }, fault: { net: 'Y', type: 'sa1' }, faultNet: 'Y',
+    prompt: 'Which single stuck-at fault explains the measurement?', options: ['A stuck-at-0', 'B stuck-at-0', 'Y stuck-at-1', 'There is no fault'], answer: 2,
+    explain: 'An OR gate gives 0 only when both inputs are 0. The chip shows 1, so something forces a 1. Input stuck-at-0 faults cannot do that because the inputs are already 0. Y stuck-at-1 fits.' },
+  { title: 'AND feeding OR', def: cutDef, inputs: { A: 1, B: 1, C: 0 }, fault: { net: 'n1', type: 'sa0' }, faultNet: 'n1',
+    prompt: 'Which node is most likely faulty?', options: ['C stuck-at-1', 'n1 stuck-at-0', 'Y stuck-at-1', 'No fault'], answer: 1,
+    explain: 'A = B = 1 should make n1 = 1 and so Y = 1. The measured 0 means the 1 never arrived. C stuck-at-1 or Y stuck-at-1 would make Y = 1, not 0. n1 stuck-at-0 explains it.' },
+  { title: 'Same circuit, different pattern', def: cutDef, inputs: { A: 0, B: 1, C: 1 }, fault: { net: 'n1', type: 'sa0' }, faultNet: 'n1',
+    prompt: 'Expected and measured outputs match. What can you conclude?',
+    options: ['This pattern passes, but a fault could still be present', 'The chip is definitely fault-free', 'A fault is detected'], answer: 0,
+    explain: 'This chip actually has n1 stuck-at-0. With A = 0 the good n1 is already 0, and C = 1 forces Y = 1 anyway, so the fault is hidden twice over. One passing pattern never proves a chip is good.' },
+  { title: 'NAND feeding NOR', def: nnDef, inputs: { A: 1, B: 1, C: 0 }, fault: { net: 'C', type: 'sa1' }, faultNet: 'C',
+    prompt: 'Which single stuck-at fault explains the measurement?', options: ['A stuck-at-1', 'C stuck-at-1', 'n1 stuck-at-0', 'Y stuck-at-1'], answer: 1,
+    explain: 'Good circuit: n1 = NAND(1,1) = 0, Y = NOR(0,0) = 1. Measured Y = 0. A stuck-at-1 and n1 stuck-at-0 change nothing (those lines already carry those values). Y stuck-at-1 gives 1. C stuck-at-1 makes Y = NOR(0,1) = 0, which matches.' }
+], { title: 'Find the fault', tag: '5 problems' });
+
+/* ---------- 10. quiz ---------- */
+L5.Quiz('quizBox', [
+  { type: 'MCQ', prompt: 'What is the main purpose of manufacturing testing?', options: ['To check that the RTL code meets the specification', 'To find chips that have physical defects from fabrication', 'To measure the power of the design before layout', 'To write the testbench'], answer: 1, explain: 'Manufacturing test is applied to every chip to screen out those damaged during fabrication.' },
+  { type: 'True / False', prompt: 'If a design passes verification, every fabricated chip of that design will work.', options: ['True', 'False'], answer: 1, explain: 'Verification checks the design, not the chips. Random fabrication defects can still make individual chips fail.' },
+  { type: 'Circuit analysis', prompt: 'For the fault-free circuit below, with A = 1, B = 0, C = 0, what is Y?', fig: { circuit: cutDef, inputs: { A: 1, B: 0, C: 0 } }, options: ['0', '1'], answer: 0, explain: 'n1 = A·B = 1·0 = 0 and Y = n1 + C = 0 + 0 = 0.' },
+  { type: 'Identify the fault', prompt: 'An AND gate receives A = 1, B = 1 and its output reads 0. Which single stuck-at fault at the output explains this?', options: ['Y stuck-at-1', 'Y stuck-at-0', 'No fault'], answer: 1, explain: 'The good output is 1; a stuck-at-0 output gives 0.' },
+  { type: 'Select the test response', prompt: 'For Y = A·B + C, pattern ABC = 110 is applied to a good chip. What is the expected response?', options: ['Y = 0', 'Y = 1'], answer: 1, explain: 'A·B = 1, so Y = 1 + 0 = 1. This value is stored in the tester as the expected response.' },
+  { type: 'MCQ', prompt: 'Which order is correct?', options: ['Fault → defect → failure → error', 'Defect → fault → error → failure', 'Error → defect → fault → failure', 'Failure → error → fault → defect'], answer: 1, explain: 'A physical defect is modelled as a fault; an activated fault produces an error; an error that reaches the user is a failure.' },
+  { type: 'True / False', prompt: 'The pattern A = 0, B = 1 detects an output stuck-at-0 fault on an AND gate.', options: ['True', 'False'], answer: 1, explain: 'The good output is already 0 for A = 0, B = 1, so a stuck-at-0 output gives the same value. The fault is not activated.' },
+  { type: 'MCQ', prompt: 'Observability of an internal node means…', options: ['how easily the node can be set to 0 or 1 from the inputs', 'how easily a change at the node can be seen at a primary output', 'how much current the node draws', 'how many gates drive the node'], answer: 1, explain: 'Observability is about seeing the node\'s effect at an output. Setting its value is controllability.' },
+  { type: 'MCQ', prompt: 'Why are dies tested on the wafer before packaging?', options: ['Packaging makes testing impossible', 'To avoid spending money packaging dies that are already bad', 'Wafer testing replaces verification', 'Only wafer testing can find stuck-at faults'], answer: 1, explain: 'The cost of a bad part grows at each later stage. Rejecting bad dies early saves the packaging cost.' },
+  { type: 'Identify the fault', prompt: 'An OR gate has input A stuck-at-1. Which pattern (A, B) detects it?', options: ['0, 0', '0, 1', '1, 0', '1, 1'], answer: 0, explain: 'To activate A stuck-at-1 we need A = 0. To see it at the output we need B = 0 (the non-controlling value of OR). Then good Y = 0, faulty Y = 1.' }
+], { module: 1 });
+
+</script>
+</body>
+</html>

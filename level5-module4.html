@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 5 Module 4: Test Pattern Generation (ATPG) | Digital Design Explorer</title>
+<meta name="description" content="Digital Design Explorer, Level 5 VLSI Testing, Module 4: Test Pattern Generation (ATPG).">
+<link rel="stylesheet" href="level5.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="2" fill="none" stroke="#D98A00" stroke-width="2"/><path d="M9 1v4M13 1v4M17 1v4M9 21v4M13 21v4M17 21v4M1 9h4M1 13h4M1 17h4M21 9h4M21 13h4M21 17h4" stroke="#fff" stroke-width="1.6"/><path d="M9 15h3v-4h5" stroke="#D98A00" stroke-width="1.8" fill="none"/></svg><span>Digital Design Explorer</span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="level5-dashboard.html">Level 5: VLSI Testing</a> / Module 4</nav>
+    <div class="top-actions">
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="rail">Sections</button>
+      <a href="level5-dashboard.html">Level 5 dashboard</a>
+    </div>
+  </div>
+  <div class="pbar" id="pbar" aria-hidden="true"><span></span></div>
+</header>
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="Module sections"></nav>
+  <main id="main">
+    <header class="hero">
+      <p class="kicker">Level 5 / Module 4 of 6</p>
+      <h1>Test Pattern Generation (ATPG)</h1>
+      <p class="lead">Instead of trying every input, ATPG algorithms work backwards from a fault to find the exact pattern that exposes it.</p>
+      <div class="scope" id="scope"></div>
+    </header>
+
+    <section class="sec" id="objectives" data-title="Learning objectives">
+      <div class="sec-head"><span class="sec-no">1</span><h2>Learning objectives</h2></div>
+      <div class="prose"><p>By the end of this module you should be able to:</p></div>
+      <ul class="obj-list">
+        <li>Explain why exhaustive testing is impractical</li>
+        <li>Describe fault activation, propagation and justification</li>
+        <li>Find tests using the Boolean difference</li>
+        <li>Evaluate gates using the D-calculus (0, 1, X, D, D̄)</li>
+        <li>Trace the main steps of the D-algorithm</li>
+        <li>Trace the objective–backtrace–imply loop of PODEM</li>
+        <li>Recognise a redundant (untestable) fault</li>
+      </ul>
+    </section>
+
+    <section class="sec" id="why" data-title="Why ATPG?">
+      <div class="sec-head"><span class="sec-no">2</span><h2>Why not apply every input combination?</h2></div>
+      <div class="prose">
+        <p>A circuit with n inputs has 2<sup>n</sup> input combinations. Applying all of them is called <span class="term">exhaustive testing</span>. It works for tiny circuits, but the number doubles with every extra input. Move the slider to see how long exhaustive testing would take on a tester applying 100 million patterns per second.</p>
+      </div>
+      <div id="expLab"></div>
+      <div class="prose"><p><span class="term">Automatic Test Pattern Generation (ATPG)</span> takes the opposite approach: it picks one fault at a time and <em>calculates</em> a pattern that detects it. Most patterns detect many faults, so a few thousand patterns can cover millions of faults.</p></div>
+    </section>
+
+    <section class="sec" id="steps" data-title="Activate, propagate, justify">
+      <div class="sec-head"><span class="sec-no">3</span><h2>Activate, propagate, justify</h2></div>
+      <div class="prose"><p>Every test generation method does three jobs. Click each one.</p></div>
+      <div id="stepFlow"></div>
+      <div class="prose"><p>Now do it yourself on the circuit Y = NAND(A·B, C + D). Pick a target fault and set the inputs until the lab says the fault is detected.</p></div>
+      <div id="doLab"></div>
+    </section>
+
+    <section class="sec" id="bdiff" data-title="Boolean difference">
+      <div class="sec-head"><span class="sec-no">4</span><h2>Boolean difference</h2></div>
+      <div class="prose">
+        <p>The <span class="term">Boolean difference</span> of output F with respect to a line x tells us when F depends on x:</p>
+        <p class="formula">dF/dx = F(x = 0) ⊕ F(x = 1)</p>
+        <p>When dF/dx = 1, flipping x flips the output, so an error on x reaches the output. Therefore:</p>
+        <p class="formula">Tests for x s-a-0: x · dF/dx = 1 &nbsp;&nbsp; Tests for x s-a-1: x̄ · dF/dx = 1</p>
+        <p>Choose a line and a fault. The table computes the Boolean difference for every pattern and marks the tests.</p>
+      </div>
+      <div id="bdLab"></div>
+    </section>
+
+    <section class="sec" id="dcalc" data-title="D-calculus">
+      <div class="sec-head"><span class="sec-no">5</span><h2>The five-valued D-calculus</h2></div>
+      <div class="prose">
+        <p>To track a fault through a circuit, each line carries a pair of values: <em>good circuit / faulty circuit</em>.</p>
+        <ul>
+          <li><span class="term">D</span> means 1 in the good circuit and 0 in the faulty circuit (1/0).</li>
+          <li><span class="term">D̄</span> means 0 in the good circuit and 1 in the faulty circuit (0/1).</li>
+          <li><span class="term">X</span> means not yet decided.</li>
+        </ul>
+        <p>Gates are evaluated separately on the good and faulty values. Try some combinations.</p>
+      </div>
+      <div id="dLab"></div>
+    </section>
+
+    <section class="sec" id="dalg" data-title="D-algorithm">
+      <div class="sec-head"><span class="sec-no">6</span><h2>The D-algorithm, step by step</h2></div>
+      <div class="prose">
+        <p>The <span class="term">D-algorithm</span> (Roth, 1966) places a D at the fault site, drives it forward through the <span class="term">D-frontier</span> (gates with D on an input and X on the output) to an output, and then justifies every value it needed. If a choice fails, it backtracks. Target: <strong>n1 stuck-at-0</strong>.</p>
+      </div>
+      <div id="dalgLab"></div>
+    </section>
+
+    <section class="sec" id="podem" data-title="PODEM">
+      <div class="sec-head"><span class="sec-no">7</span><h2>PODEM, step by step</h2></div>
+      <div class="prose">
+        <p><span class="term">PODEM</span> (Goel, 1981) only ever assigns values to <em>primary inputs</em>. It repeats three moves: set an <span class="term">objective</span> (a line and a value), <span class="term">backtrace</span> the objective to one primary input, then <span class="term">imply</span> (simulate) the result. Because decisions are made only at inputs, backtracking is simple and PODEM is usually faster than the D-algorithm. Target: <strong>n2 stuck-at-1</strong>.</p>
+      </div>
+      <div id="podemLab"></div>
+      <div class="note">Some faults have no test at all. If PODEM tries every input choice and still fails, the fault is <span class="term">redundant</span>: the circuit contains logic that never affects the output. Redundant faults are removed from the coverage calculation, and the redundant logic can often be removed from the design.</div>
+    </section>
+
+    <section class="sec" id="challenge" data-title="Problem challenge">
+      <div class="sec-head"><span class="sec-no">8</span><h2>Problem challenge</h2></div>
+      <div class="prose"><p>Five problems on test generation. Answers appear after you submit.</p></div>
+      <div id="ch"></div>
+    </section>
+
+    <section class="sec" id="quiz" data-title="Mini quiz">
+      <div class="sec-head"><span class="sec-no">9</span><h2>Mini quiz</h2></div>
+      <div class="prose"><p>Ten questions. Your score appears after you submit all answers. You need 6 correct to complete the module.</p></div>
+      <div id="quizBox"></div>
+    </section>
+
+    <section class="sec" id="summary" data-title="What you learned">
+      <div class="sec-head"><span class="sec-no">10</span><h2>What you learned</h2></div>
+      <ul class="learned">
+        <li>Exhaustive testing needs 2<sup>n</sup> patterns and quickly becomes impossible.</li>
+        <li>A test must activate the fault, propagate its effect to an output, and justify every required value from the inputs.</li>
+        <li>Side inputs on the propagation path need the non-controlling value: 1 for AND/NAND, 0 for OR/NOR.</li>
+        <li>The Boolean difference dF/dx = F(x=0) ⊕ F(x=1) shows when an output depends on a line.</li>
+        <li>The D-calculus tracks good/faulty values together with 0, 1, X, D and D̄.</li>
+        <li>The D-algorithm drives D through the D-frontier and justifies values, backtracking when needed.</li>
+        <li>PODEM assigns only primary inputs using objective, backtrace and implication.</li>
+        <li>A fault with no possible test is redundant.</li>
+      </ul>
+      <a class="next-card" href="level5-module5.html">
+        <div><small>Next module</small><h3>Module 5: Design for Testability and Scan</h3>
+          <ul><li>SCOAP testability measures</li><li>Test points</li><li>Scan flip-flops</li><li>Scan chains and test time</li></ul></div>
+        <span class="go">Next Module → DFT and Scan</span>
+      </a>
+    </section>
+
+    <footer class="foot">
+      <span>Digital Design Explorer / Level 5 VLSI Testing</span>
+      <span><a href="level5-module3.html">Previous module</a> | <a href="level5-dashboard.html">Level 5 dashboard</a></span>
+    </footer>
+  </main>
+</div>
+<script src="level5.js"></script>
+<script>
+/* ===== Module 4 page script ===== */
+L5.page({ module: 4, trace: {"expected": [1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], "measured": [1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1]} });
+var S = L5.sim;
+var atpgDef = { w: 530, h: 260,
+  inputs: [{ id: 'A', x: 60, y: 40 }, { id: 'B', x: 60, y: 100 }, { id: 'C', x: 60, y: 170 }, { id: 'D', x: 60, y: 230 }],
+  gates: [{ id: 'G1', type: 'AND', x: 170, y: 70, in: ['A', 'B'], out: 'n1' },
+          { id: 'G2', type: 'OR', x: 170, y: 200, in: ['C', 'D'], out: 'n2' },
+          { id: 'G3', type: 'NAND', x: 330, y: 135, in: ['n1', 'n2'], out: 'Y' }],
+  outputs: [{ id: 'Y', net: 'Y', x: 480, y: 135 }],
+  labels: { n1: [272, 56], n2: [272, 214] },
+  bpos: { A: [100, 18], B: [100, 78], C: [100, 148], D: [100, 208], n1: [272, 90], n2: [272, 182], Y: [440, 112] } };
+var cutDef = L5.lib.twoLevel('AND', 'OR');
+var redDef = { w: 520, h: 190,
+  inputs: [{ id: 'A', x: 60, y: 50 }, { id: 'B', x: 60, y: 130 }],
+  gates: [{ id: 'G1', type: 'AND', x: 170, y: 110, in: ['A', 'B'], out: 'n1', mid: [150, 150] },
+          { id: 'G2', type: 'OR', x: 320, y: 80, in: ['A', 'n1'], out: 'Y', mid: [300, 300] }],
+  outputs: [{ id: 'Y', net: 'Y', x: 470, y: 80 }], labels: { n1: [268, 124] } };
+
+/* ---------- 2. exhaustive calculator ---------- */
+(function () {
+  var body = L5.lab('expLab', 'How long would exhaustive testing take?', 'Move the slider');
+  var r = L5.h('div', { class: 'range' });
+  r.innerHTML = '<label for="nIn">Number of inputs n</label><input id="nIn" type="range" min="4" max="100" step="1" value="20"><output>20</output>';
+  body.appendChild(r);
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  var inp = r.querySelector('input'), o = r.querySelector('output');
+  function fmt(sec) {
+    if (sec < 1e-3) return (sec * 1e6).toFixed(2) + ' microseconds';
+    if (sec < 1) return (sec * 1e3).toFixed(2) + ' milliseconds';
+    if (sec < 60) return sec.toFixed(2) + ' seconds';
+    if (sec < 3600) return (sec / 60).toFixed(1) + ' minutes';
+    if (sec < 86400) return (sec / 3600).toFixed(1) + ' hours';
+    var y = sec / 31557600;
+    if (y < 1) return (sec / 86400).toFixed(1) + ' days';
+    return y < 1e6 ? Math.round(y).toLocaleString('en-IN') + ' years' : y.toExponential(2) + ' years';
+  }
+  function draw() {
+    var n = +inp.value, p = Math.pow(2, n), t = p / 1e8;
+    o.textContent = n;
+    out.innerHTML = '<div class="given"><div><span>Patterns needed (2<sup>' + n + '</sup>)</span><strong>' + (p < 1e15 ? p.toLocaleString('en-IN') : p.toExponential(3)) + '</strong></div><div><span>Test time per chip</span><strong>' + fmt(t) + '</strong></div></div>' +
+      '<div class="verdict ' + (t < 1 ? 'good' : 'bad') + '">' + (t < 1 ? 'Exhaustive testing is still practical' : 'Exhaustive testing is not practical') + '<small>' + (n <= 30 ? 'Now imagine a 64-bit adder with 129 inputs.' : 'Even a 64-bit adder has 129 inputs. Real chips have thousands of inputs and flip-flops.') + '</small></div>';
+  }
+  inp.addEventListener('input', draw); draw();
+})();
+
+/* ---------- 3. activate / propagate / justify ---------- */
+L5.Flow('stepFlow', [
+  { t: 'Activate (excite) the fault', d: 'Drive the faulty line to the opposite of its stuck value, so the good and faulty circuits differ at the fault site.', eg: 'For n1 s-a-0 we need n1 = 1 in the good circuit. The site now carries D (1/0).' },
+  { t: 'Propagate the fault effect', d: 'Choose a path from the fault site to an output. Every gate on the path must pass the D, so its other (side) inputs get the non-controlling value: 1 for AND/NAND, 0 for OR/NOR.', eg: 'n1 enters the NAND gate G3, so the side input n2 must be 1. Then Y = D̄.' },
+  { t: 'Justify the values', d: 'Work backwards from each required internal value to the primary inputs, choosing input values that produce it.', eg: 'n1 = 1 needs A = 1 and B = 1. n2 = 1 needs C = 1 or D = 1. One test is ABCD = 1110.' }
+], { title: 'Three jobs of every test generator', playLabel: 'Play the steps', speed: 2600 });
+L5.FaultLab('doLab', atpgDef, { title: 'Generate a test yourself', tag: 'Your turn',
+  faults: [{ label: 'n1 s-a-0', f: { net: 'n1', type: 'sa0' } }, { label: 'n2 s-a-1', f: { net: 'n2', type: 'sa1' } }, { label: 'C s-a-0', f: { net: 'C', type: 'sa0' } }, { label: 'Y s-a-1', f: { net: 'Y', type: 'sa1' } }],
+  inputs: { A: 0, B: 0, C: 0, D: 0 },
+  goal: { text: 'set A, B, C, D so the selected fault is detected (activate, propagate, justify).', done: 'you found a test for this fault. Try the next fault.' } });
+
+/* ---------- 4. Boolean difference ---------- */
+(function () {
+  var body = L5.lab('bdLab', 'Boolean difference for Y = NAND(A·B, C + D)', 'Compute');
+  var lines = ['A', 'B', 'C', 'D', 'n1', 'n2'], li = 4, fv = 0;
+  var c1 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Line x:</span>');
+  c1.appendChild(L5.seg(lines, li, function (i) { li = i; draw(); }));
+  var c2 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Fault:</span>');
+  c2.appendChild(L5.seg(['x s-a-0', 'x s-a-1'], 0, function (i) { fv = i; draw(); }));
+  body.appendChild(c1); body.appendChild(c2);
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  function draw() {
+    var x = lines[li], tests = [];
+    var rows = S.allPatterns(atpgDef).map(function (p) {
+      var g = S.run(atpgDef, p), f0 = S.simulate(atpgDef, p, { net: x, type: 'sa0' }).Y, f1 = S.simulate(atpgDef, p, { net: x, type: 'sa1' }).Y, bd = f0 ^ f1;
+      var isT = bd && (g[x] === (fv ? 0 : 1)), k = ['A', 'B', 'C', 'D'].map(function (i) { return p[i]; }).join('');
+      if (isT) tests.push(k);
+      return '<tr' + (isT ? ' class="hl"' : '') + '><td>' + k + '</td><td>' + g[x] + '</td><td>' + f0 + '</td><td>' + f1 + '</td><td>' + bd + '</td>' + (isT ? '<td class="det">test</td>' : '<td></td>') + '</tr>';
+    }).join('');
+    out.innerHTML = '<div class="verdict ' + (tests.length ? 'good' : 'bad') + '">' + x + ' s-a-' + fv + ': ' + tests.length + ' test' + (tests.length === 1 ? '' : 's') + ' found' +
+      '<small>' + (tests.length ? 'Tests (ABCD): ' + tests.join(', ') + '. Each has x = ' + (fv ? 0 : 1) + ' and dY/dx = 1.' : 'No pattern makes x = ' + (fv ? 0 : 1) + ' while dY/dx = 1.') + '</small></div>' +
+      '<div class="tbl-wrap" style="max-height:360px;overflow:auto"><table class="tt"><thead><tr><th>ABCD</th><th>x (good)</th><th>Y with x=0</th><th>Y with x=1</th><th>dY/dx</th><th>Result</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+  draw();
+})();
+
+/* ---------- 5. D-calculus calculator ---------- */
+var DV = ['0', '1', 'X', 'D', 'D̄'];
+function pair(v) { return v === '0' ? [0, 0] : v === '1' ? [1, 1] : v === 'D' ? [1, 0] : v === 'D̄' ? [0, 1] : ['x', 'x']; }
+function ev3(type, a, b) {
+  var and = function (p, q) { return (p === 0 || q === 0) ? 0 : (p === 'x' || q === 'x') ? 'x' : 1; };
+  var or = function (p, q) { return (p === 1 || q === 1) ? 1 : (p === 'x' || q === 'x') ? 'x' : 0; };
+  var not = function (p) { return p === 'x' ? 'x' : 1 - p; };
+  var xor = function (p, q) { return (p === 'x' || q === 'x') ? 'x' : p ^ q; };
+  switch (type) { case 'AND': return and(a, b); case 'OR': return or(a, b); case 'NAND': return not(and(a, b)); case 'NOR': return not(or(a, b)); case 'XOR': return xor(a, b); }
+}
+function dEval(type, a, b) {
+  var pa = pair(a), pb = pair(b), g = ev3(type, pa[0], pb[0]), f = ev3(type, pa[1], pb[1]);
+  if (g === 'x' || f === 'x') return 'X';
+  return g === f ? String(g) : (g === 1 ? 'D' : 'D̄');
+}
+(function () {
+  var body = L5.lab('dLab', 'D-calculus calculator', 'Pick values');
+  var types = ['AND', 'OR', 'NAND', 'NOR', 'XOR'], ti = 0, a = 3, b = 1;
+  var c0 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Gate:</span>'); c0.appendChild(L5.seg(types, 0, function (i) { ti = i; draw(); }));
+  var c1 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Input 1:</span>'); c1.appendChild(L5.seg(DV, a, function (i) { a = i; draw(); }));
+  var c2 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Input 2:</span>'); c2.appendChild(L5.seg(DV, b, function (i) { b = i; draw(); }));
+  body.appendChild(c0); body.appendChild(c1); body.appendChild(c2);
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  function draw() {
+    var t = types[ti], r = dEval(t, DV[a], DV[b]), pa = pair(DV[a]), pb = pair(DV[b]);
+    var show = function (p) { return p[0] + '/' + p[1]; };
+    var tbl = '<table class="tt"><thead><tr><th>' + t + '</th>' + DV.map(function (v) { return '<th>' + v + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      DV.map(function (u, i) { return '<tr><th>' + u + '</th>' + DV.map(function (v, j) { var x = dEval(t, u, v); return '<td style="' + (i === a && j === b ? 'background:#FFF3DC;font-weight:700' : '') + (x === 'D' || x === 'D̄' ? ';color:var(--fail)' : '') + '">' + x + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>';
+    out.innerHTML = '<div class="given"><div><span>Good circuit</span><strong>' + t + '(' + pa[0] + ', ' + pb[0] + ')</strong></div><div><span>Faulty circuit</span><strong>' + t + '(' + pa[1] + ', ' + pb[1] + ')</strong></div><div><span>Output</span><strong style="color:' + (r === 'D' || r === 'D̄' ? 'var(--fail)' : 'var(--ink)') + '">' + r + '</strong></div></div>' +
+      '<p class="hint">Inputs as good/faulty pairs: ' + show(pa) + ' and ' + show(pb) + '. The full table for ' + t + ' is below; your choice is highlighted.</p><div class="tbl-wrap">' + tbl + '</div>';
+  }
+  draw();
+})();
+
+/* ---------- 6/7. step-through widget ---------- */
+function Stepper(id, title, steps) {
+  var body = L5.lab(id, title, steps.length + ' steps');
+  var grid = L5.h('div', { class: 'lab-grid' }), left = L5.h('div'), right = L5.h('div', { 'aria-live': 'polite' });
+  grid.appendChild(left); grid.appendChild(right); body.appendChild(grid);
+  var cw = L5.h('div', { class: 'circuit-wrap' }); left.appendChild(cw);
+  var C = L5.drawCircuit(cw, atpgDef, {});
+  var ctl = L5.h('div', { class: 'controls' });
+  var prev = L5.h('button', { class: 'btn ghost', type: 'button' }, 'Previous step'), next = L5.h('button', { class: 'btn', type: 'button' }, 'Next step');
+  ctl.appendChild(prev); ctl.appendChild(next); left.appendChild(ctl);
+  var k = 0;
+  function show() {
+    var s = steps[k];
+    C.badges(s.b);
+    Object.keys(C.groups).forEach(function (n) { C.groups[n].classList.toggle('sel', (s.hl || []).indexOf(n) >= 0); });
+    right.innerHTML = '<p class="hint" style="margin:0">Step ' + (k + 1) + ' of ' + steps.length + '</p><h4 style="margin:2px 0 8px;font-size:1.1rem">' + s.t + '</h4><p style="margin:0 0 10px">' + s.d + '</p>' + (s.f ? '<div class="verdict ' + (s.ok ? 'good' : 'info') + '">' + s.f + '</div>' : '');
+    prev.disabled = k === 0; next.disabled = k === steps.length - 1;
+  }
+  prev.addEventListener('click', function () { if (k > 0) { k--; show(); } });
+  next.addEventListener('click', function () { if (k < steps.length - 1) { k++; show(); } });
+  show();
+}
+var allX = { A: 'X', B: 'X', C: 'X', D: 'X', n1: 'X', n2: 'X', Y: 'X' };
+function m(o) { var r = {}; Object.keys(allX).forEach(function (k) { r[k] = allX[k]; }); Object.keys(o).forEach(function (k) { r[k] = o[k]; }); return r; }
+Stepper('dalgLab', 'D-algorithm for n1 stuck-at-0', [
+  { t: 'Start', d: 'Every line begins unassigned (X). The target fault is n1 stuck-at-0.', b: m({}) },
+  { t: 'Activate the fault', d: 'To activate n1 s-a-0 the good value of n1 must be 1, so n1 = 1/0 = D.', b: m({ n1: 'D' }), hl: ['n1'], f: 'D-frontier: {G3}. G3 has D on an input and X on its output.' },
+  { t: 'D-drive through G3', d: 'G3 is a NAND gate. To let the D through, its other input n2 must be the non-controlling value 1. Then Y = NAND(D, 1) = D̄.', b: m({ n1: 'D', n2: '1', Y: 'D̄' }), hl: ['n1', 'Y'], f: 'The fault effect has reached the primary output Y.' },
+  { t: 'Justify n1 = 1', d: 'n1 is the output of AND gate G1. The only way to make it 1 is A = 1 and B = 1.', b: m({ A: '1', B: '1', n1: 'D', n2: '1', Y: 'D̄' }), hl: ['A', 'B'] },
+  { t: 'Justify n2 = 1', d: 'n2 is the output of OR gate G2. One input at 1 is enough: choose C = 1 and leave D as X (don\'t care).', b: m({ A: '1', B: '1', C: '1', n1: 'D', n2: '1', Y: 'D̄' }), hl: ['C'] },
+  { t: 'Test found', d: 'ABCD = 111X. Check: good Y = NAND(1, 1) = 0, faulty Y = NAND(0, 1) = 1. They differ.', b: m({ A: '1', B: '1', C: '1', n1: 'D', n2: '1', Y: 'D̄' }), f: 'Test: ABCD = 1110 or 1111. No backtracking was needed.', ok: true }
+]);
+Stepper('podemLab', 'PODEM for n2 stuck-at-1', [
+  { t: 'Start', d: 'All primary inputs are X. The target fault is n2 stuck-at-1.', b: m({}) },
+  { t: 'Objective: n2 = 0', d: 'To activate s-a-1 we need the good n2 = 0. Backtrace through OR gate G2: an OR output is 0 only if all inputs are 0, so pick input C and assign C = 0.', b: m({ C: '0' }), hl: ['C'], f: 'Imply: n2 is still X, because D is unknown.' },
+  { t: 'Objective again: n2 = 0', d: 'The objective is not met yet. Backtrace again to the other input: D = 0.', b: m({ C: '0', D: '0', n2: 'D̄' }), hl: ['D', 'n2'], f: 'Imply: n2 = 0 in the good circuit and 1 in the faulty circuit, so n2 = D̄. The fault is activated.' },
+  { t: 'Objective: n1 = 1', d: 'To propagate D̄ through NAND gate G3, the side input n1 needs the non-controlling value 1. Backtrace through AND gate G1: assign A = 1.', b: m({ A: '1', C: '0', D: '0', n2: 'D̄' }), hl: ['A'], f: 'Imply: n1 is still X, because B is unknown.' },
+  { t: 'Objective again: n1 = 1', d: 'Backtrace to the other AND input: B = 1.', b: m({ A: '1', B: '1', C: '0', D: '0', n1: '1', n2: 'D̄', Y: 'D' }), hl: ['B', 'n1', 'Y'], f: 'Imply: n1 = 1 and Y = NAND(1, D̄) = D. The fault effect reaches Y.' },
+  { t: 'Test found', d: 'Every decision was made at a primary input: A = 1, B = 1, C = 0, D = 0. Good Y = NAND(1, 0) = 1, faulty Y = NAND(1, 1) = 0.', b: m({ A: '1', B: '1', C: '0', D: '0', n1: '1', n2: 'D̄', Y: 'D' }), f: 'Test: ABCD = 1100.', ok: true }
+]);
+
+/* ---------- 8. challenge ---------- */
+L5.Challenge('ch', [
+  { title: 'Activation', fig: { circuit: atpgDef }, prompt: 'To activate B stuck-at-1 in this circuit, what value must B have?', options: ['B = 0', 'B = 1', 'B can be anything'], answer: 0,
+    explain: 'A stuck-at-1 fault is activated only when the good value is the opposite, 0.' },
+  { title: 'Side inputs', fig: { circuit: L5.lib.gate2('AND') }, prompt: 'A fault effect arrives on input A of this AND gate. What value must B have so the effect reaches Y?', options: ['0', '1', 'X is fine'], answer: 1,
+    explain: '0 is the controlling value of AND and would force Y = 0. B must be the non-controlling value 1.' },
+  { title: 'D-calculus', prompt: 'What is AND(D, D̄)?', options: ['D', 'D̄', '0', '1'], answer: 2, fig: '<div class="given"><div><span>Good values</span><strong>AND(1, 0)</strong></div><div><span>Faulty values</span><strong>AND(0, 1)</strong></div></div>',
+    explain: 'Good: AND(1, 0) = 0. Faulty: AND(0, 1) = 0. Both are 0, so the output is 0 and the fault effect is lost.' },
+  { title: 'Find a test', fig: { circuit: cutDef }, prompt: 'Which pattern (A, B, C) detects A stuck-at-0 in Y = A·B + C?', options: ['1, 1, 0', '1, 0, 0', '1, 1, 1', '0, 1, 0'], answer: 0,
+    explain: 'Activate: A = 1. Propagate through AND: B = 1. Propagate through OR: C = 0. Test = 110.' },
+  { title: 'ATPG gives up', def: redDef, inputs: { A: 1, B: 1 }, fault: { net: 'n1', type: 'sa0' }, faultNet: 'n1',
+    text: 'ATPG tried every choice for n1 stuck-at-0 in this circuit and could not find a test.',
+    prompt: 'Why?', options: ['The fault is redundant: Y = A + A·B = A, so n1 can never change Y', 'ATPG needs more time', 'n1 can never be set to 1', 'The circuit has no primary outputs'], answer: 0,
+    explain: 'To propagate n1 through the OR gate we need A = 0, but activating n1 s-a-0 needs A = 1. These conflict, so no test exists. The AND gate is redundant logic.' }
+], { title: 'Problems', tag: '5 problems' });
+
+/* ---------- 9. quiz ---------- */
+L5.Quiz('quizBox', [
+  { type: 'MCQ', prompt: 'How many patterns does exhaustive testing of a 32-input combinational circuit need?', options: ['32', '64', '2^32 ≈ 4.3 billion', '32²'], answer: 2, explain: 'Every input combination: 2^32 patterns.' },
+  { type: 'MCQ', prompt: 'The non-controlling value for a NOR gate is…', options: ['0', '1', 'X', 'D'], answer: 0, explain: 'A 1 on any NOR input forces the output to 0 (controlling). 0 lets other inputs decide.' },
+  { type: 'MCQ', prompt: 'The Boolean difference dF/dx equals…', options: ['F(x=0) · F(x=1)', 'F(x=0) + F(x=1)', 'F(x=0) ⊕ F(x=1)', 'F(x=1) − F(x=0)'], answer: 2, explain: 'dF/dx = 1 exactly when F changes as x changes, which is the XOR of the two cofactors.' },
+  { type: 'MCQ', prompt: 'In the D-calculus, D means…', options: ['good 0, faulty 1', 'good 1, faulty 0', 'unknown', 'both circuits 1'], answer: 1, explain: 'D = 1/0: good value 1, faulty value 0. D̄ is the opposite.' },
+  { type: 'Circuit analysis', prompt: 'What is OR(D, 0)?', options: ['D', 'D̄', '0', '1'], answer: 0, explain: 'Good: OR(1, 0) = 1. Faulty: OR(0, 0) = 0. Result 1/0 = D; 0 is non-controlling for OR.' },
+  { type: 'True / False', prompt: 'PODEM assigns values only to primary inputs.', options: ['True', 'False'], answer: 0, explain: 'That is PODEM\'s key idea: backtrace each objective to a primary input, then imply.' },
+  { type: 'MCQ', prompt: 'The D-frontier is…', options: ['the set of primary outputs', 'the set of gates with D or D̄ on an input and X on the output', 'the list of redundant faults', 'the first gate in the circuit'], answer: 1, explain: 'Those gates are where the fault effect can be pushed forward next.' },
+  { type: 'Identify the fault', prompt: 'For Y = NAND(A·B, C + D), which pattern ABCD detects n1 stuck-at-0?', options: ['1100', '1110', '0111', '0000'], answer: 1, explain: 'n1 = 1 needs A = B = 1; propagation through NAND needs n2 = 1, so C or D = 1. 1110 does both.' },
+  { type: 'True / False', prompt: 'If no test exists for a fault, the fault is called redundant.', options: ['True', 'False'], answer: 0, explain: 'A redundant fault cannot change any output, so the logic around it is unnecessary.' },
+  { type: 'Select the test response', prompt: 'Pattern ABCD = 1100 is applied to Y = NAND(A·B, C + D) with n2 stuck-at-1. What does the faulty chip output?', options: ['Y = 0', 'Y = 1'], answer: 0, explain: 'n1 = 1 and the faulty n2 = 1, so Y = NAND(1, 1) = 0. The good chip gives 1.' }
+], { module: 4 });
+
+</script>
+</body>
+</html>

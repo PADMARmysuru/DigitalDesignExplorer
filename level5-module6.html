@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 5 Module 6: BIST and Boundary Scan | Digital Design Explorer</title>
+<meta name="description" content="Digital Design Explorer, Level 5 VLSI Testing, Module 6: BIST and Boundary Scan.">
+<link rel="stylesheet" href="level5.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="2" fill="none" stroke="#D98A00" stroke-width="2"/><path d="M9 1v4M13 1v4M17 1v4M9 21v4M13 21v4M17 21v4M1 9h4M1 13h4M1 17h4M21 9h4M21 13h4M21 17h4" stroke="#fff" stroke-width="1.6"/><path d="M9 15h3v-4h5" stroke="#D98A00" stroke-width="1.8" fill="none"/></svg><span>Digital Design Explorer</span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="level5-dashboard.html">Level 5: VLSI Testing</a> / Module 6</nav>
+    <div class="top-actions">
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="rail">Sections</button>
+      <a href="level5-dashboard.html">Level 5 dashboard</a>
+    </div>
+  </div>
+  <div class="pbar" id="pbar" aria-hidden="true"><span></span></div>
+</header>
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="Module sections"></nav>
+  <main id="main">
+    <header class="hero">
+      <p class="kicker">Level 5 / Module 6 of 6</p>
+      <h1>BIST and Boundary Scan</h1>
+      <p class="lead">Chips that test themselves, and boards that can be tested through four pins. The last module of Level 5.</p>
+      <div class="scope" id="scope"></div>
+    </header>
+
+    <section class="sec" id="objectives" data-title="Learning objectives">
+      <div class="sec-head"><span class="sec-no">1</span><h2>Learning objectives</h2></div>
+      <div class="prose"><p>By the end of this module you should be able to:</p></div>
+      <ul class="obj-list">
+        <li>Describe the parts of a BIST architecture</li>
+        <li>Generate pseudo-random patterns with an LFSR</li>
+        <li>Compress responses into a signature and explain aliasing</li>
+        <li>List the operating modes of a BILBO register</li>
+        <li>Explain why boards need boundary scan</li>
+        <li>Walk the JTAG TAP controller through its states</li>
+        <li>Choose the right JTAG instruction for a task</li>
+      </ul>
+    </section>
+
+    <section class="sec" id="bist" data-title="Built-in self-test">
+      <div class="sec-head"><span class="sec-no">2</span><h2>Built-in self-test (BIST)</h2></div>
+      <div class="prose">
+        <p>External testers are expensive and cannot easily reach deeply embedded blocks at full speed. <span class="term">Built-in self-test</span> puts a small tester <em>inside</em> the chip. The chip generates its own patterns, applies them at its own clock speed, compresses the responses and reports a single pass/fail.</p>
+        <p>BIST is used for memories (MBIST) and logic (LBIST), for at-speed testing, and for testing chips in the field, for example every time a car's electronics power up.</p>
+      </div>
+      <div id="bistFlow"></div>
+      <div id="bistCheck"></div>
+    </section>
+
+    <section class="sec" id="lfsr" data-title="LFSR pattern generator">
+      <div class="sec-head"><span class="sec-no">3</span><h2>LFSR: the pattern generator</h2></div>
+      <div class="prose">
+        <p>A <span class="term">linear feedback shift register (LFSR)</span> is a shift register whose input is the XOR of some of its bits (the <span class="term">taps</span>). It needs only flip-flops and XOR gates, yet produces a long, random-looking sequence.</p>
+        <p>With the right taps, an n-bit LFSR visits every non-zero state before repeating: a <span class="term">maximal-length</span> sequence of 2<sup>n</sup> − 1 patterns. Try different taps on this 4-bit LFSR and find which give all 15 states.</p>
+      </div>
+      <div id="lfsrLab"></div>
+      <div class="note warn">The all-zero state is a trap: XOR of zeros is zero, so the LFSR would stay at 0000 forever. That is why the seed must be non-zero.</div>
+    </section>
+
+    <section class="sec" id="sig" data-title="Signature analysis">
+      <div class="sec-head"><span class="sec-no">4</span><h2>Signature analysis</h2></div>
+      <div class="prose">
+        <p>Storing every expected response on chip would take too much memory. Instead, the response stream is fed into another LFSR, a <span class="term">signature register</span>, which compresses it into a short <span class="term">signature</span>. Only the final signature is compared with the expected (golden) one. A register with several parallel inputs is called a <span class="term">MISR</span> (multiple-input signature register).</p>
+        <p>Tap bits in the faulty response stream to create errors, and compare the two signatures.</p>
+      </div>
+      <div id="sigLab"></div>
+      <div class="note">Compression loses information. Occasionally a faulty stream produces the good signature, called <span class="term">aliasing</span>. For an n-bit signature register the aliasing probability is about 2<sup>−n</sup>: 1 in 16 here, but about 1 in 65,536 for a 16-bit register.</div>
+    </section>
+
+    <section class="sec" id="bilbo" data-title="BILBO">
+      <div class="sec-head"><span class="sec-no">5</span><h2>BILBO: one register, four jobs</h2></div>
+      <div class="prose"><p>A <span class="term">BILBO</span> (built-in logic block observer) register can switch between four modes using two control bits, B1 and B2. The same flip-flops act as normal registers, a scan chain, a pattern generator or a signature analyser, so no separate test registers are needed.</p></div>
+      <div class="lab"><div class="lab-head"><h4>BILBO modes</h4><span class="tag">Toggle</span></div><div class="lab-body" id="bilboToggle"></div></div>
+    </section>
+
+    <section class="sec" id="bscan" data-title="Boundary scan">
+      <div class="sec-head"><span class="sec-no">6</span><h2>Boundary scan (IEEE 1149.1, JTAG)</h2></div>
+      <div class="prose">
+        <p>On a modern board, chips in ball-grid packages have their pins hidden underneath, so a tester cannot touch them with probes. <span class="term">Boundary scan</span> places a small scan cell between the core and every pin. All the cells form one chain that is controlled through four pins: <span class="term">TDI</span> (data in), <span class="term">TDO</span> (data out), <span class="term">TCK</span> (clock) and <span class="term">TMS</span> (mode select), plus an optional <span class="term">TRST</span>.</p>
+        <p>With the <span class="term">EXTEST</span> instruction, chip 1's output cells drive the board wires and chip 2's input cells capture them. Inject a board defect and apply test vectors.</p>
+      </div>
+      <div id="boardLab"></div>
+    </section>
+
+    <section class="sec" id="tap" data-title="TAP controller">
+      <div class="sec-head"><span class="sec-no">7</span><h2>The TAP controller</h2></div>
+      <div class="prose">
+        <p>Every JTAG chip contains the same 16-state <span class="term">TAP controller</span>. It changes state on each rising edge of TCK, depending on TMS. Two parallel paths do similar jobs: the <em>DR</em> path works on data registers, the <em>IR</em> path on the instruction register. Holding TMS = 1 for five clocks always returns to Test-Logic-Reset.</p>
+        <p>Choose a goal, then set TMS and pulse TCK to walk there.</p>
+      </div>
+      <div id="tapLab"></div>
+    </section>
+
+    <section class="sec" id="instr" data-title="JTAG instructions">
+      <div class="sec-head"><span class="sec-no">8</span><h2>JTAG instructions</h2></div>
+      <div class="prose"><p>The instruction loaded through the IR path decides which data register sits between TDI and TDO.</p></div>
+      <div class="lab"><div class="lab-head"><h4>Common instructions</h4><span class="tag">Toggle</span></div><div class="lab-body" id="instrToggle"></div></div>
+    </section>
+
+    <section class="sec" id="challenge" data-title="Problem challenge">
+      <div class="sec-head"><span class="sec-no">9</span><h2>Problem challenge</h2></div>
+      <div class="prose"><p>Five problems on BIST and boundary scan. Answers appear after you submit.</p></div>
+      <div id="ch"></div>
+    </section>
+
+    <section class="sec" id="quiz" data-title="Mini quiz">
+      <div class="sec-head"><span class="sec-no">10</span><h2>Mini quiz</h2></div>
+      <div class="prose"><p>Ten questions. Your score appears after you submit all answers. You need 6 correct to complete the module.</p></div>
+      <div id="quizBox"></div>
+    </section>
+
+    <section class="sec" id="summary" data-title="What you learned">
+      <div class="sec-head"><span class="sec-no">11</span><h2>What you learned</h2></div>
+      <ul class="learned">
+        <li>BIST adds a pattern generator, a response analyser and a controller on chip, enabling at-speed and in-field testing.</li>
+        <li>An n-bit LFSR with suitable taps generates 2<sup>n</sup> − 1 pseudo-random patterns and must never start at all-zero.</li>
+        <li>Signature registers compress long responses into a short signature, with a small aliasing risk of about 2<sup>−n</sup>.</li>
+        <li>A BILBO register can work as a normal register, scan chain, pattern generator or signature analyser.</li>
+        <li>Boundary scan puts a scan cell at every pin so board wiring can be tested without physical probes.</li>
+        <li>The TAP controller is a 16-state machine driven by TMS on each TCK edge; five TMS = 1 clocks always reset it.</li>
+        <li>EXTEST tests board interconnects, BYPASS shortens the chain, SAMPLE/PRELOAD captures pin values and IDCODE reads the chip ID.</li>
+      </ul>
+      <a class="next-card" href="level5-dashboard.html">
+        <div><small>You have reached the end of Level 5</small><h3>Level 5 complete: check your progress</h3>
+          <ul><li>See your score for all six modules</li><li>Retry any module quiz</li><li>Unlock your Level 5 certificate</li><li>Pass mark: 6 of 10 in every module</li></ul></div>
+        <span class="go">Open the Level 5 dashboard</span>
+      </a>
+    </section>
+
+    <footer class="foot">
+      <span>Digital Design Explorer / Level 5 VLSI Testing</span>
+      <span><a href="level5-module5.html">Previous module</a> | <a href="level5-dashboard.html">Level 5 dashboard</a></span>
+    </footer>
+  </main>
+</div>
+<script src="level5.js"></script>
+<script>
+/* ===== Module 6 page script ===== */
+L5.page({ module: 6, trace: {"expected": [1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0], "measured": [1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0]} });
+/* ---------- 2. BIST architecture ---------- */
+L5.Flow('bistFlow', [
+  { t: 'BIST controller starts the test', d: 'A small state machine takes over when a test is requested (at power-up, or by a JTAG command). It resets the pattern generator and signature register and counts the patterns.' },
+  { t: 'Test pattern generator (TPG)', d: 'Usually an LFSR. Every clock it produces a new pseudo-random pattern for the circuit under test.', eg: 'No pattern memory is needed: a few flip-flops and XOR gates generate thousands of patterns.' },
+  { t: 'Circuit under test (CUT)', d: 'The logic or memory block is exercised by the patterns at its full operating speed.' },
+  { t: 'Output response analyser (ORA)', d: 'A signature register (MISR) compresses all the responses into one short signature.' },
+  { t: 'Compare with the golden signature', d: 'The final signature is compared with the value computed by simulating a good circuit. One comparison replaces thousands.' },
+  { t: 'Pass / fail', d: 'The controller reports a single pass/fail bit, which can be read through a pin or through JTAG.' }
+], { title: 'Inside a BIST-equipped chip', playLabel: 'Play the BIST sequence', speed: 2000 });
+L5.Check('bistCheck', {
+  prompt: 'Which is a key advantage of BIST over testing only with external equipment?',
+  options: ['BIST needs no extra hardware', 'The chip can test itself at full speed, even in the field', 'BIST gives 100% fault coverage automatically', 'BIST replaces verification'],
+  answer: 1, explain: 'BIST costs some area, and coverage depends on the patterns, but it runs at speed with no tester and can be repeated in the field.'
+});
+
+/* ---------- 3. LFSR ---------- */
+(function () {
+  var body = L5.lab('lfsrLab', '4-bit LFSR', 'Choose taps, clock it');
+  var taps = [false, false, true, true], seed = [1, 0, 0, 0], s = seed.slice(), seen = {}, order = [], period = null;
+  var r1 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Taps (XOR inputs):</span>'), tb = [];
+  [0, 1, 2, 3].forEach(function (i) {
+    var b = L5.h('button', { class: 'chip', type: 'button', 'aria-pressed': taps[i] ? 'true' : 'false' }, 'Q' + i);
+    b.addEventListener('click', function () { taps[i] = !taps[i]; b.setAttribute('aria-pressed', taps[i] ? 'true' : 'false'); reset(); });
+    tb.push(b); r1.appendChild(b);
+  });
+  body.appendChild(r1);
+  var r2 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Seed:</span>'), sb = [];
+  [0, 1, 2, 3].forEach(function (i) { var b = L5.bitButton('Q' + i, function () { return seed[i]; }, function (v) { seed[i] = v; reset(); }); sb.push(b); r2.appendChild(b); });
+  body.appendChild(r2);
+  var r3 = L5.h('div', { class: 'controls' });
+  var bc = L5.h('button', { class: 'btn', type: 'button' }, 'Clock once'), br = L5.h('button', { class: 'btn ghost', type: 'button' }, 'Run until it repeats'), bz = L5.h('button', { class: 'btn ghost', type: 'button' }, 'Reset to seed');
+  r3.appendChild(bc); r3.appendChild(br); r3.appendChild(bz); body.appendChild(r3);
+  var fig = L5.h('div', { class: 'circuit-wrap' }), out = L5.h('div', { 'aria-live': 'polite' });
+  body.appendChild(fig); body.appendChild(out);
+  function fb() { return taps.reduce(function (a, t, i) { return t ? a ^ s[i] : a; }, 0); }
+  function reset() { s = seed.slice(); seen = {}; order = []; period = null; record(); draw(); }
+  function record() { var k = s.join(''); if (k in seen) { if (period === null) period = order.length - seen[k]; return; } seen[k] = order.length; order.push(k); }
+  function clock() { if (period !== null) return; s = [fb(), s[0], s[1], s[2]]; record(); draw(); }
+  function draw() {
+    sb.forEach(function (b) { b.paint(); });
+    var f = fb(), x0 = 150, g = '<svg viewBox="0 0 660 200" role="img" aria-label="4-bit LFSR">';
+    var tapped = taps.map(function (t, i) { return t ? i : -1; }).filter(function (i) { return i >= 0; });
+    if (tapped.length) g += '<path d="M' + (x0 + Math.max.apply(null, tapped) * 120 + 35) + ',30 H80 V56" fill="none" stroke="#2B5FAE" stroke-width="2.5"/>';
+    tapped.forEach(function (i) { g += '<path d="M' + (x0 + i * 120 + 35) + ',110 V30" stroke="#2B5FAE" stroke-width="2.5"/><circle cx="' + (x0 + i * 120 + 35) + '" cy="30" r="4" fill="#2B5FAE"/>'; });
+    g += '<circle cx="80" cy="70" r="14" fill="#fff" stroke="#15233B" stroke-width="2"/><path d="M80,58 V82 M68,70 H92" stroke="#15233B" stroke-width="2"/>';
+    g += '<path d="M80,84 V140 H' + x0 + '" fill="none" stroke="' + (f ? '#D98A00' : '#8FA0B5') + '" stroke-width="3"/><text x="88" y="120" class="svgmono" style="font-size:12px">fb=' + f + '</text>';
+    for (var i = 0; i < 4; i++) {
+      var x = x0 + i * 120;
+      g += '<rect x="' + x + '" y="110" width="70" height="60" rx="6" fill="' + (s[i] ? '#FFF3DC' : '#fff') + '" stroke="#15233B" stroke-width="2"/><text x="' + (x + 35) + '" y="130" text-anchor="middle" class="svgtxt" style="font-size:11px">Q' + i + '</text><text x="' + (x + 35) + '" y="158" text-anchor="middle" class="svgmono" style="font-size:20px">' + s[i] + '</text>';
+      if (i < 3) g += '<path d="M' + (x + 70) + ',140 H' + (x + 120) + '" stroke="' + (s[i] ? '#D98A00' : '#8FA0B5') + '" stroke-width="3"/>';
+    }
+    g += '<text x="' + (x0 + 250) + '" y="194" text-anchor="middle" class="svgtxt" style="font-size:12px">Each clock: bits shift right, Q0 takes the XOR of the tapped bits</text></svg>';
+    fig.innerHTML = g;
+    var chips = order.map(function (k, i) { return '<span class="chip" style="cursor:default' + (i === order.length - 1 ? ';background:var(--trace);color:#fff;border-color:var(--trace)' : '') + '">' + k + '</span>'; }).join(' ');
+    var msg;
+    if (seed.join('') === '0000') msg = '<div class="verdict bad">All-zero seed<small>The feedback is always 0, so the LFSR is stuck at 0000. Choose a non-zero seed.</small></div>';
+    else if (!tapped.length) msg = '<div class="verdict bad">No taps selected<small>Without feedback the register just shifts in zeros.</small></div>';
+    else if (period !== null) msg = period === 15 ? '<div class="verdict good">Maximal length: period 15 = 2⁴ − 1<small>Every non-zero 4-bit pattern appeared exactly once. These taps match a primitive polynomial.</small></div>' :
+      '<div class="verdict bad">Period ' + period + ', not maximal<small>Only ' + period + ' different patterns before repeating. Try taps Q2 and Q3, or Q0 and Q3.</small></div>';
+    else msg = '<div class="verdict info">States visited: ' + order.length + '<small>Keep clocking until a state repeats.</small></div>';
+    out.innerHTML = msg + '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">' + chips + '</div>';
+    bc.disabled = br.disabled = period !== null || seed.join('') === '0000';
+  }
+  bc.addEventListener('click', clock);
+  br.addEventListener('click', function () { var n = 0; while (period === null && n < 40) { clock(); n++; } });
+  bz.addEventListener('click', reset);
+  reset();
+})();
+
+/* ---------- 4. signature analysis ---------- */
+(function () {
+  var body = L5.lab('sigLab', 'Compressing a 12-bit response into a 4-bit signature', 'Inject errors');
+  var good = [1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0], bad = good.slice();
+  function sig(bits) { var s = [0, 0, 0, 0], trail = []; bits.forEach(function (b) { var f = s[3] ^ s[2] ^ b; s = [f, s[0], s[1], s[2]]; trail.push(s.join('')); }); return { s: s.join(''), trail: trail }; }
+  var row1 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Good response:</span>');
+  good.forEach(function (b) { row1.appendChild(L5.h('span', { class: 'chip', style: 'cursor:default' }, String(b))); });
+  var row2 = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Chip response (tap to flip):</span>'), bb = [];
+  bad.forEach(function (b, i) { var c = L5.h('button', { class: 'chip', type: 'button' }); c.addEventListener('click', function () { bad[i] ^= 1; draw(); }); bb.push(c); row2.appendChild(c); });
+  body.appendChild(row1); body.appendChild(row2);
+  var r3 = L5.h('div', { class: 'controls' });
+  var rs = L5.h('button', { class: 'btn ghost small', type: 'button' }, 'Remove all errors'), al = L5.h('button', { class: 'btn ghost small', type: 'button' }, 'Show an aliasing example');
+  rs.addEventListener('click', function () { bad = good.slice(); draw(); });
+  al.addEventListener('click', function () {
+    for (var i = 0; i < 12; i++) for (var j = i + 1; j < 12; j++) {
+      var t = good.slice(); t[i] ^= 1; t[j] ^= 1;
+      if (sig(t).s === sig(good).s) { bad = t; draw(); return; }
+    }
+  });
+  r3.appendChild(rs); r3.appendChild(al); body.appendChild(r3);
+  var out = L5.h('div', { 'aria-live': 'polite' }); body.appendChild(out);
+  function draw() {
+    bb.forEach(function (c, i) { c.textContent = bad[i]; c.setAttribute('aria-pressed', bad[i] !== good[i] ? 'true' : 'false'); c.style.background = bad[i] !== good[i] ? 'var(--fail)' : ''; c.style.borderColor = bad[i] !== good[i] ? 'var(--fail)' : ''; c.style.color = bad[i] !== good[i] ? '#fff' : ''; });
+    var g = sig(good), b = sig(bad), errs = bad.filter(function (x, i) { return x !== good[i]; }).length;
+    var rows = good.map(function (x, i) { return '<tr><td>' + (i + 1) + '</td><td>' + x + '</td><td>' + g.trail[i] + '</td><td class="' + (bad[i] !== good[i] ? 'det' : '') + '">' + bad[i] + '</td><td>' + b.trail[i] + '</td></tr>'; }).join('');
+    var v = !errs ? '<div class="verdict info">No errors in the chip response<small>Both signatures are equal, as expected.</small></div>' :
+      g.s !== b.s ? '<div class="verdict good">✓ Fault detected by the signature<small>' + errs + ' wrong bit' + (errs > 1 ? 's' : '') + ' changed the signature from ' + g.s + ' to ' + b.s + '.</small></div>' :
+      '<div class="verdict bad">Aliasing: the errors escaped<small>The faulty stream has ' + errs + ' wrong bits, but it compresses to the same signature ' + b.s + '. The chip would wrongly pass.</small></div>';
+    out.innerHTML = '<div class="given"><div><span>Golden signature</span><strong>' + g.s + '</strong></div><div><span>Chip signature</span><strong style="color:' + (g.s !== b.s ? 'var(--fail)' : 'var(--ink)') + '">' + b.s + '</strong></div></div>' + v +
+      '<details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">Show the register contents after every bit</summary><p class="hint">Register update: new Q0 = input ⊕ Q3 ⊕ Q2, other bits shift right. Contents shown as Q0 Q1 Q2 Q3.</p><div class="tbl-wrap"><table class="tt"><thead><tr><th>Bit</th><th>Good in</th><th>Good register</th><th>Chip in</th><th>Chip register</th></tr></thead><tbody>' + rows + '</tbody></table></div></details>';
+  }
+  draw();
+})();
+
+/* ---------- 5. BILBO ---------- */
+function mode(code, name, text) { return '<p class="big-q">B1 B2 = ' + code + ': ' + name + '</p><p style="max-width:65ch;margin:0">' + text + '</p>'; }
+L5.Toggle('bilboToggle', [
+  { label: '11 Normal', html: mode('11', 'normal register', 'The flip-flops load data from the logic in parallel, exactly like ordinary registers. The chip works as designed.') },
+  { label: '00 Scan', html: mode('00', 'shift register', 'The flip-flops are linked into a scan chain, so the tester can shift in a seed and shift out a signature.') },
+  { label: '10 Pattern / signature', html: mode('10', 'LFSR / MISR', 'XOR feedback is switched on. With constant inputs the register acts as a pattern generator; with the logic outputs connected it compresses them as a MISR.') },
+  { label: '01 Reset', html: mode('01', 'reset', 'All flip-flops are cleared to 0, putting the register in a known state before a test session.') }
+]);
+
+/* ---------- 6. board interconnect test ---------- */
+(function () {
+  var body = L5.lab('boardLab', 'EXTEST on a board with two chips', 'Apply vectors');
+  var defect = 0, vecs = ['100', '010', '001', '110'], vi = 0, log = [], last = null;
+  var d = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Board defect:</span>');
+  d.appendChild(L5.seg(['None', 'N2 open', 'N1–N3 short (wired-AND)'], 0, function (i) { defect = i; log = []; last = null; draw(); }));
+  body.appendChild(d);
+  var v = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Vector on N1 N2 N3:</span>'), vb = [];
+  vecs.forEach(function (x, i) {
+    var b = L5.h('button', { class: 'chip', type: 'button', 'aria-pressed': i === 0 ? 'true' : 'false' }, x);
+    b.addEventListener('click', function () { vi = i; vb.forEach(function (c, j) { c.setAttribute('aria-pressed', j === i ? 'true' : 'false'); }); last = null; draw(); });
+    vb.push(b); v.appendChild(b);
+  });
+  var go = L5.h('button', { class: 'btn', type: 'button' }, 'Shift in, update, capture');
+  v.appendChild(go); body.appendChild(v);
+  var fig = L5.h('div', { class: 'circuit-wrap' }), out = L5.h('div', { 'aria-live': 'polite' });
+  body.appendChild(fig); body.appendChild(out);
+  function receive(drv) {
+    var r = drv.slice();
+    if (defect === 1) r[1] = 1;
+    if (defect === 2) { var a = drv[0] & drv[2]; r[0] = a; r[2] = a; }
+    return r;
+  }
+  function draw() {
+    var drv = vecs[vi].split('').map(Number), rc = last ? receive(drv) : null, ys = [90, 150, 210];
+    var g = '<svg viewBox="0 0 700 310" role="img" aria-label="Two chips connected by three board nets with boundary scan cells">';
+    g += '<rect x="60" y="50" width="170" height="200" rx="8" fill="#22324F"/><text x="130" y="80" text-anchor="middle" class="svgtxt" style="fill:#fff">Chip 1</text><text x="130" y="100" text-anchor="middle" class="svgtxt" style="fill:#B9C6D8;font-size:11px">core logic</text>';
+    g += '<rect x="470" y="50" width="170" height="200" rx="8" fill="#22324F"/><text x="570" y="80" text-anchor="middle" class="svgtxt" style="fill:#fff">Chip 2</text><text x="570" y="100" text-anchor="middle" class="svgtxt" style="fill:#B9C6D8;font-size:11px">core logic</text>';
+    g += '<path d="M20,30 H210 V270 H490 V30 H680" fill="none" stroke="#2B5FAE" stroke-width="2" stroke-dasharray="6 5"/><text x="20" y="22" class="svgtxt" style="fill:#2B5FAE">TDI</text><text x="680" y="22" text-anchor="end" class="svgtxt" style="fill:#2B5FAE">TDO</text>';
+    ys.forEach(function (y, i) {
+      var col = last ? (drv[i] ? '#D98A00' : '#8FA0B5') : '#8FA0B5', open = defect === 1 && i === 1;
+      if (open) g += '<path d="M230,' + y + ' H340 M360,' + y + ' H470" stroke="' + col + '" stroke-width="3"/><g stroke="#C4302B" stroke-width="3"><line x1="342" y1="' + (y - 8) + '" x2="358" y2="' + (y + 8) + '"/></g><text x="350" y="' + (y - 12) + '" text-anchor="middle" class="svgtxt" style="fill:#C4302B;font-size:11px">open</text>';
+      else g += '<path d="M230,' + y + ' H470" stroke="' + col + '" stroke-width="3"/>';
+      g += '<text x="300" y="' + (y - 8) + '" class="svgtxt" style="font-size:11px">N' + (i + 1) + '</text>';
+      g += '<rect x="198" y="' + (y - 12) + '" width="24" height="24" rx="3" fill="#fff" stroke="#D98A00" stroke-width="2"/><text x="210" y="' + (y + 5) + '" text-anchor="middle" class="svgmono" style="font-size:13px">' + drv[i] + '</text>';
+      var bad = rc && rc[i] !== drv[i];
+      g += '<rect x="478" y="' + (y - 12) + '" width="24" height="24" rx="3" fill="' + (bad ? '#FBEAEA' : '#fff') + '" stroke="' + (bad ? '#C4302B' : '#D98A00') + '" stroke-width="2"/><text x="490" y="' + (y + 5) + '" text-anchor="middle" class="svgmono" style="font-size:13px;fill:' + (bad ? '#C4302B' : '#15233B') + '">' + (rc ? rc[i] : '?') + '</text>';
+    });
+    if (defect === 2) g += '<path d="M400,90 C440,120 440,180 400,210" fill="none" stroke="#C4302B" stroke-width="2.5" stroke-dasharray="5 4"/><text x="402" y="140" text-anchor="end" class="svgtxt" style="fill:#C4302B;font-size:11px">short</text>';
+    g += '<text x="210" y="298" text-anchor="middle" class="svgtxt" style="font-size:11px">output cells drive</text><text x="490" y="298" text-anchor="middle" class="svgtxt" style="font-size:11px">input cells capture</text></svg>';
+    fig.innerHTML = g;
+    var rows = log.map(function (r) { return '<tr><td>' + r.v + '</td><td>' + r.c + '</td>' + (r.bad.length ? '<td class="det">' + r.bad.join(', ') + '</td>' : '<td class="ok">none</td>') + '</tr>'; }).join('');
+    out.innerHTML = (last ? (last.bad.length ? '<div class="verdict bad">❌ Mismatch on ' + last.bad.join(', ') + '<small>Chip 2 captured ' + last.c + ' but chip 1 drove ' + last.v + '. The board has an interconnect defect.</small></div>' : '<div class="verdict good">✓ Captured values match<small>' + (defect ? 'This vector does not expose the defect. Try another one.' : 'All three nets carry the driven values.') + '</small></div>') : '<div class="verdict info">Choose a vector and apply it<small>The vector is shifted into chip 1\'s output cells through TDI, driven onto the nets, captured by chip 2 and shifted out through TDO.</small></div>') +
+      (rows ? '<div class="tbl-wrap"><table class="tt"><thead><tr><th>Driven</th><th>Captured</th><th>Wrong nets</th></tr></thead><tbody>' + rows + '</tbody></table></div>' : '');
+  }
+  go.addEventListener('click', function () {
+    var drv = vecs[vi].split('').map(Number), rc = receive(drv), bad = [];
+    rc.forEach(function (x, i) { if (x !== drv[i]) bad.push('N' + (i + 1)); });
+    last = { v: vecs[vi], c: rc.join(''), bad: bad }; log.unshift(last); log = log.slice(0, 6); draw();
+  });
+  draw();
+})();
+
+/* ---------- 7. TAP controller ---------- */
+(function () {
+  var body = L5.lab('tapLab', 'TAP controller state machine', 'Walk the states');
+  var ST = {
+    TLR: ['Test-Logic-Reset', 90, 40, 'RTI', 'TLR', 'Test logic is disabled; the chip works normally.'],
+    RTI: ['Run-Test/Idle', 90, 110, 'RTI', 'SDR', 'Idle between operations, or running BIST.'],
+    SDR: ['Select-DR-Scan', 290, 110, 'CDR', 'SIR', 'Choose the data-register path, or go on to the IR path.'],
+    CDR: ['Capture-DR', 290, 175, 'SHDR', 'E1DR', 'The selected data register loads its parallel inputs (for example, the pin values).'],
+    SHDR: ['Shift-DR', 290, 240, 'SHDR', 'E1DR', 'The data register shifts one bit from TDI towards TDO on every TCK.'],
+    E1DR: ['Exit1-DR', 290, 305, 'PDR', 'UDR', 'Temporary state after shifting.'],
+    PDR: ['Pause-DR', 290, 370, 'PDR', 'E2DR', 'Shifting is paused, for example while the tester fetches more data.'],
+    E2DR: ['Exit2-DR', 290, 435, 'SHDR', 'UDR', 'Resume shifting or finish.'],
+    UDR: ['Update-DR', 290, 500, 'RTI', 'SDR', 'Shifted data is copied to the register outputs, for example driven onto the pins in EXTEST.'],
+    SIR: ['Select-IR-Scan', 510, 110, 'CIR', 'TLR', 'Choose the instruction-register path, or reset.'],
+    CIR: ['Capture-IR', 510, 175, 'SHIR', 'E1IR', 'The instruction register loads a fixed pattern ending in 01.'],
+    SHIR: ['Shift-IR', 510, 240, 'SHIR', 'E1IR', 'A new instruction is shifted in from TDI.'],
+    E1IR: ['Exit1-IR', 510, 305, 'PIR', 'UIR', 'Temporary state after shifting.'],
+    PIR: ['Pause-IR', 510, 370, 'PIR', 'E2IR', 'Instruction shifting is paused.'],
+    E2IR: ['Exit2-IR', 510, 435, 'SHIR', 'UIR', 'Resume shifting or finish.'],
+    UIR: ['Update-IR', 510, 500, 'RTI', 'SDR', 'The new instruction becomes active.']
+  };
+  var cur = 'TLR', tms = 0, hist = [], goal = 'SHDR', goals = [['SHDR', 'Shift-DR'], ['SHIR', 'Shift-IR'], ['UIR', 'Update-IR'], ['PDR', 'Pause-DR']];
+  var gc = L5.h('div', { class: 'controls' }, '<span class="ctl-label">Goal:</span>');
+  gc.appendChild(L5.seg(goals.map(function (x) { return x[1]; }), 0, function (i) { goal = goals[i][0]; draw(); }));
+  body.appendChild(gc);
+  var grid = L5.h('div', { class: 'lab-grid' }), left = L5.h('div'), right = L5.h('div', { 'aria-live': 'polite' });
+  grid.appendChild(left); grid.appendChild(right); body.appendChild(grid);
+  var fig = L5.h('div', { class: 'circuit-wrap' }); left.appendChild(fig);
+  var c = L5.h('div', { class: 'controls' });
+  var tb = L5.bitButton('TMS', function () { return tms; }, function (v) { tms = v; draw(); });
+  var clk = L5.h('button', { class: 'btn', type: 'button' }, 'Pulse TCK'), rst = L5.h('button', { class: 'btn ghost', type: 'button' }, 'Reset (TMS = 1 × 5)');
+  c.appendChild(tb); c.appendChild(clk); c.appendChild(rst); left.appendChild(c);
+  clk.addEventListener('click', function () { hist.push(tms); cur = ST[cur][tms ? 4 : 3]; draw(); });
+  rst.addEventListener('click', function () { for (var i = 0; i < 5; i++) cur = ST[cur][4]; hist = []; draw(); });
+  function draw() {
+    tb.paint();
+    var n0 = ST[cur][3], n1 = ST[cur][4], g = '<svg viewBox="0 0 640 540" role="img" aria-label="TAP controller states">';
+    g += '<g stroke="#B8C4D3" stroke-width="2" fill="none"><path d="M90,58 V92"/><path d="M165,110 H215"/><path d="M365,110 H435"/><path d="M290,128 V482"/><path d="M510,128 V482"/></g>';
+    g += '<text x="290" y="532" text-anchor="middle" class="svgtxt" style="fill:#55657D">data register path</text><text x="510" y="532" text-anchor="middle" class="svgtxt" style="fill:#55657D">instruction register path</text>';
+    Object.keys(ST).forEach(function (k) {
+      var s = ST[k], isC = k === cur, isN = k === ST[cur][tms ? 4 : 3], isG = k === goal;
+      g += '<rect x="' + (s[1] - 75) + '" y="' + (s[2] - 18) + '" width="150" height="36" rx="18" fill="' + (isC ? '#2B5FAE' : '#fff') + '" stroke="' + (isC ? '#2B5FAE' : isN ? '#D98A00' : isG ? '#1D8752' : '#15233B') + '" stroke-width="' + (isN || isG ? 3 : 1.5) + '"' + (isN && !isC ? ' stroke-dasharray="6 4"' : '') + '/>';
+      g += '<text x="' + s[1] + '" y="' + (s[2] + 5) + '" text-anchor="middle" class="svgtxt" style="font-size:12.5px;fill:' + (isC ? '#fff' : '#15233B') + '">' + s[0] + '</text>';
+    });
+    g += '</svg>';
+    fig.innerHTML = g;
+    var reached = cur === goal;
+    right.innerHTML = '<div class="rd-row"><span>Current state</span><strong style="font-family:var(--sans);font-size:1rem">' + ST[cur][0] + '</strong></div>' +
+      '<p style="margin:8px 0">' + ST[cur][5] + '</p>' +
+      '<div class="rd-row"><span>Next if TMS = 0</span><strong style="font-family:var(--sans);font-size:.95rem">' + ST[n0][0] + '</strong></div>' +
+      '<div class="rd-row" style="margin-top:8px"><span>Next if TMS = 1</span><strong style="font-family:var(--sans);font-size:.95rem">' + ST[n1][0] + '</strong></div>' +
+      '<p class="hint">TMS values used since reset: ' + (hist.join(', ') || 'none yet') + '. The dashed orange state is where the next TCK will go.</p>' +
+      (reached ? '<div class="verdict good">✓ Goal reached: ' + ST[goal][0] + '<small>You used ' + hist.length + ' TCK pulses since the last reset.</small></div>' : '<div class="verdict info">Goal: ' + ST[goal][0] + ' (green outline)</div>');
+  }
+  draw();
+})();
+
+/* ---------- 8. instructions ---------- */
+function ins(name, reg, text) { return '<p class="big-q">' + name + '</p><dl class="cmp"><div><dt>Register between TDI and TDO</dt><dd>' + reg + '</dd></div><div><dt>Used for</dt><dd>' + text + '</dd></div></dl>'; }
+L5.Toggle('instrToggle', [
+  { label: 'EXTEST', html: ins('EXTEST (mandatory)', 'Boundary scan register', 'Testing the board: output cells drive the pins, input cells capture them. Finds opens and shorts between chips.') },
+  { label: 'BYPASS', html: ins('BYPASS (mandatory)', 'A 1-bit bypass register', 'Skipping a chip. On a board with many chips in one chain, chips not being tested are bypassed so the chain stays short.') },
+  { label: 'SAMPLE/PRELOAD', html: ins('SAMPLE/PRELOAD (mandatory)', 'Boundary scan register', 'Taking a snapshot of the pins while the chip runs normally, and preloading safe values before EXTEST.') },
+  { label: 'IDCODE', html: ins('IDCODE (optional)', '32-bit device identification register', 'Reading the manufacturer, part number and version, to check the right chip is mounted.') },
+  { label: 'INTEST', html: ins('INTEST (optional)', 'Boundary scan register', 'Testing the chip\'s own core logic through its boundary cells, with the pins isolated.') }
+]);
+
+/* ---------- 9. challenge ---------- */
+L5.Challenge('ch', [
+  { title: 'Period of an LFSR', fig: '<div class="given"><div><span>LFSR length</span><strong>8 bits</strong></div><div><span>Taps</span><strong>primitive polynomial</strong></div></div>',
+    prompt: 'How many different patterns does it produce before repeating?', options: ['8', '128', '255', '256'], answer: 2, explain: 'A maximal-length n-bit LFSR has period 2^n − 1 = 255. The all-zero state is never reached.' },
+  { title: 'Wrong seed', fig: '<div class="given"><div><span>LFSR seed</span><strong>0000</strong></div></div>', prompt: 'What happens when this LFSR is clocked?',
+    options: ['It produces all 16 patterns', 'It stays at 0000 forever', 'It counts upwards', 'It produces random values'], answer: 1, explain: 'The feedback is an XOR of zeros, which is 0, so zeros are shifted in forever.' },
+  { title: 'Aliasing risk', fig: '<div class="given"><div><span>Signature register</span><strong>16 bits</strong></div></div>', prompt: 'Approximately what is the probability that a faulty response gives the good signature?',
+    options: ['1/16', '1/256', '1/65,536', '0'], answer: 2, explain: 'Aliasing probability ≈ 2^−16 = 1/65,536.' },
+  { title: 'Reaching Shift-IR', fig: '<div class="given"><div><span>Start</span><strong>Test-Logic-Reset</strong></div><div><span>Target</span><strong>Shift-IR</strong></div></div>',
+    prompt: 'Which TMS sequence (one value per TCK) reaches Shift-IR?', options: ['0, 1, 0, 0', '0, 1, 1, 0, 0', '1, 1, 0, 0', '0, 0, 1, 1'], answer: 1,
+    explain: 'TLR →(0) Run-Test/Idle →(1) Select-DR →(1) Select-IR →(0) Capture-IR →(0) Shift-IR. The sequence 0, 1, 0, 0 reaches Shift-DR instead.' },
+  { title: 'Board test result', fig: '<div class="given"><div><span>Driven on N1 N2 N3</span><strong>101</strong></div><div><span>Captured</span><strong style="color:var(--fail)">001</strong></div><div><span>Board nets pull up when open</span><strong>yes</strong></div></div>',
+    prompt: 'Which defect explains this?', options: ['N1 open', 'N1 shorted to N2 (wired-AND)', 'N3 open', 'No defect'], answer: 1,
+    explain: 'N1 was driven 1 but read 0. An open net would float high and read 1. A wired-AND short to N2, which carries 0, pulls N1 down.' }
+], { title: 'Problems', tag: '5 problems' });
+
+/* ---------- 10. quiz ---------- */
+L5.Quiz('quizBox', [
+  { type: 'MCQ', prompt: 'Which of these is NOT part of a BIST architecture?', options: ['Test pattern generator', 'Output response analyser', 'BIST controller', 'Wafer probe card'], answer: 3, explain: 'A probe card belongs to external test equipment. BIST is on-chip.' },
+  { type: 'MCQ', prompt: 'What is the period of a maximal-length 5-bit LFSR?', options: ['5', '16', '31', '32'], answer: 2, explain: '2^5 − 1 = 31.' },
+  { type: 'True / False', prompt: 'An LFSR may be started from any seed, including all zeros.', options: ['True', 'False'], answer: 1, explain: 'An all-zero seed locks the LFSR at zero.' },
+  { type: 'MCQ', prompt: 'Aliasing in signature analysis means…', options: ['two good chips give different signatures', 'a faulty response produces the same signature as the good response', 'the LFSR repeats', 'the signature register is too long'], answer: 1, explain: 'The fault escapes because compression hides the difference.' },
+  { type: 'MCQ', prompt: 'In a BILBO register, B1 B2 = 00 selects…', options: ['normal operation', 'scan (shift register) mode', 'reset', 'signature analysis'], answer: 1, explain: '00 links the flip-flops into a shift register.' },
+  { type: 'MCQ', prompt: 'Which JTAG pin controls the TAP controller state transitions?', options: ['TDI', 'TDO', 'TMS', 'TRST only'], answer: 2, explain: 'TMS (test mode select), sampled on each TCK rising edge.' },
+  { type: 'MCQ', prompt: 'How many states does the IEEE 1149.1 TAP controller have?', options: ['4', '8', '16', '32'], answer: 2, explain: 'Sixteen: a DR path, an IR path, plus Test-Logic-Reset and Run-Test/Idle.' },
+  { type: 'Identify the fault', prompt: 'Which instruction do you load to find opens and shorts between chips on a board?', options: ['BYPASS', 'IDCODE', 'EXTEST', 'SAMPLE'], answer: 2, explain: 'EXTEST drives values from one chip\'s pins and captures them at another\'s.' },
+  { type: 'MCQ', prompt: 'How long is the BYPASS register?', options: ['1 bit', '8 bits', '32 bits', 'As long as the boundary register'], answer: 0, explain: 'One bit, so a bypassed chip adds only one clock of delay to the chain.' },
+  { type: 'True / False', prompt: 'Holding TMS = 1 for five TCK pulses always brings the TAP controller to Test-Logic-Reset, from any state.', options: ['True', 'False'], answer: 0, explain: 'The state machine is designed so that five TMS = 1 clocks reach reset from anywhere.' }
+], { module: 6 });
+
+</script>
+</body>
+</html>
