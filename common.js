@@ -134,6 +134,19 @@
     }
   ];
 
+  /* Part B – Advanced VLSI & Digital IC Design: ROADMAP ONLY.
+     These levels have no pages yet; they are always shown as locked / coming soon. */
+  var PART_B = [
+    [7, 'Digital VLSI Design', 'Advanced digital VLSI design, circuit architectures and emerging technologies.'],
+    [8, 'VLSI Timing & Power', 'Timing behavior, timing analysis and power-related concepts in VLSI circuits.'],
+    [9, 'RTL Design & Synthesis', 'Advanced RTL design and synthesis methodologies.'],
+    [10, 'Physical Design', 'Physical implementation of digital VLSI designs.'],
+    [11, 'Advanced Verification', 'Advanced verification strategies and methodologies.'],
+    [12, 'DFT & Advanced Testing', 'Design-for-test and advanced VLSI testing techniques.'],
+    [13, 'Processor / VLSI Architecture', 'Pipelining, hazards, branch prediction, speculation, cache and processor architecture.'],
+    [14, 'AI/ML for VLSI', 'Applications of artificial intelligence and machine learning in VLSI and EDA.']
+  ];
+
   function isOpen(n) { return A.checkLevelAccess ? A.checkLevelAccess(n) : false; }
   function levelStats(L) {
     var items = L.progress(), done = items.filter(function (x) { return x.done; }).length;
@@ -141,7 +154,7 @@
   }
   function student() { return A.currentStudent ? A.currentStudent() : null; }
 
-  var DDE = window.DDE = { LEVELS: LEVELS, levelStats: levelStats, isOpen: isOpen, student: student };
+  var DDE = window.DDE = { PART_B: PART_B, LEVELS: LEVELS, levelStats: levelStats, isOpen: isOpen, student: student };
 
   /* ---------- Small SVG pieces ---------- */
   var LOGO = '<svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="3" fill="none" stroke="#c9a227" stroke-width="2"/>' +
@@ -178,15 +191,17 @@
       '<button type="button" class="dde-burger" aria-expanded="false" aria-controls="dde-navbar">☰ Menu</button></div>' +
       '<div class="dde-navbar" id="dde-navbar"><div class="dde-nav" role="navigation" aria-label="Main navigation">';
     h += '<a href="index.html"' + (page === 'index.html' ? ' class="is-current" aria-current="page"' : '') + '>🏠 Home</a>';
-    h += '<a href="dashboard.html"' + (page === 'dashboard.html' ? ' class="is-current" aria-current="page"' : '') + '>📊 Dashboard</a>';
+    h += '<a href="student-dashboard.html"' + (page === 'student-dashboard.html' ? ' class="is-current" aria-current="page"' : '') + '>📊 Dashboard</a>';
     // All levels
-    h += '<details class="dde-dd"><summary>📚 Levels</summary><div class="dde-menu">' + LEVELS.map(function (x) {
+    h += '<details class="dde-dd"><summary>📚 Levels</summary><div class="dde-menu"><span class="dde-menu-head">Part A — Foundations</span>' + LEVELS.map(function (x) {
       return isOpen(x.n)
         ? '<a href="' + x.dashboard + '"' + (L && L.n === x.n ? ' class="is-current"' : '') + '><span class="dde-num">' + x.n + '</span>🟢 ' + esc(x.title) + '</a>'
         : '<span class="is-locked" title="Not yet released"><span class="dde-num">' + x.n + '</span>🔒 ' + esc(x.title) + '</span>';
+    }).join('') + '<hr><span class="dde-menu-head">Part B — Advanced VLSI</span>' + PART_B.map(function (x) {
+      return '<span class="is-locked" title="Coming soon"><span class="dde-num">' + x[0] + '</span>🔒 ' + esc(x[1]) + ' <em class="dde-soon">Coming soon</em></span>';
     }).join('') + '</div></details>';
     // Current level menu
-    var mp = page === 'dashboard.html' ? '' : page;   // on the main Dashboard only “Dashboard” is highlighted
+    var mp = page;
     if (L && isOpen(L.n)) {
       h += '<span class="dde-levelname">Level ' + L.n + '</span>';
       var mods = [[(L.n === 6 ? 'Level 6 overview' : 'Level ' + L.n + ' dashboard'), L.dashboard]].concat(
@@ -205,7 +220,7 @@
 
   function buildCrumbs(page, L) {
     var c = ['<li><a href="index.html">Home</a></li>'];
-    if (page === 'dashboard.html') c.push('<li><span aria-current="page">Dashboard</span></li>');
+    if (page === 'student-dashboard.html') c.push('<li><span aria-current="page">Dashboard</span></li>');
     else if (L) {
       var t = pageTitleFor(page, L);
       if (t && t.kind === 'dashboard') c.push('<li><span aria-current="page">Level ' + L.n + ': ' + esc(L.title) + '</span></li>');
@@ -321,7 +336,11 @@
       '<text x="60" y="68" text-anchor="middle">' + pct + '%</text></svg>' +
       '<div><p><b>' + done + ' of ' + tot + '</b> learning items completed</p><p>across the <b>' + open.length + '</b> released level' + (open.length === 1 ? '' : 's') + '</p>' +
       '<p><b>' + finished + '</b> level' + (finished === 1 ? '' : 's') + ' fully completed</p></div></div></section></div>';
-    html += '<h2 class="dde-h2">📚 My Learning Levels</h2><div class="dde-levels">';
+    var doneLevels = LEVELS.filter(function (L) { if (!isOpen(L.n)) return false; var s = levelStats(L); return s.done === s.total; }).length;
+    html += '<h2 class="dde-h2">📚 My Learning Levels</h2>' +
+      '<div class="dde-part dde-part-a"><span class="dde-part-badge">PART A</span><div><h3>Foundations</h3>' +
+      '<p>Build strong foundations in digital logic, digital circuits, Verilog, VLSI and SystemVerilog.</p>' +
+      '<span class="dde-part-meta">Levels 1–6 · ' + doneLevels + ' of 6 completed</span></div></div><div class="dde-levels">';
     LEVELS.forEach(function (L) {
       var o = isOpen(L.n), s = o ? levelStats(L) : null, full = s && s.done === s.total;
       html += '<article class="dde-card dde-level' + (o ? '' : ' is-locked') + '" style="--lvl:' + (o ? L.color : '#9aa3b2') + '">' +
@@ -339,6 +358,15 @@
       html += '</article>';
     });
     html += '</div>';
+    html += '<div class="dde-part dde-part-b"><span class="dde-part-badge">PART B</span><div><h3>Advanced VLSI &amp; Digital IC Design</h3>' +
+      '<p>The advanced track: digital VLSI design, timing and power, synthesis, physical design, verification, DFT, processor architecture and AI/ML for VLSI.</p>' +
+      '<span class="dde-part-meta">Levels 7–14 · 🔒 Locked · ⏳ Coming Soon</span></div></div><div class="dde-levels dde-levels-b">';
+    PART_B.forEach(function (x) {
+      html += '<article class="dde-card dde-level dde-roadmap"><div class="dde-level-top"><div><span class="dde-level-num">🔒 Level ' + x[0] + '</span><h3>' + esc(x[1]) + '</h3></div>' +
+        '<span class="dde-pill is-locked">🔒 Locked</span></div><p class="dde-level-note">' + esc(x[2]) + '</p>' +
+        '<div class="dde-level-actions"><span class="dde-soonbar">⏳ Coming Soon</span></div></article>';
+    });
+    html += '</div>';
     root.innerHTML = html;
   }
   DDE.renderOverview = renderOverview;
@@ -352,7 +380,7 @@
       '<h1>' + (L ? 'Level ' + n + ' is currently locked' : 'This level is currently locked') + '</h1>' +
       (L ? '<p><b>Level ' + n + ' – ' + esc(L.title) + '</b></p>' : '') +
       '<p>This level will be available when it is released by the instructor.</p>' +
-      '<div class="dde-actions"><a class="dde-btn" href="dashboard.html">📊 Return to Dashboard</a><a class="dde-btn is-ghost" href="index.html">🏠 Home</a></div></div>';
+      '<div class="dde-actions"><a class="dde-btn" href="student-dashboard.html">📊 Return to Dashboard</a><a class="dde-btn is-ghost" href="index.html">🏠 Home</a></div></div>';
   }
   DDE.renderLocked = renderLocked;
 
@@ -396,7 +424,7 @@
         '<ul class="dde-req">' + s.items.map(function (x) {
           return '<li class="' + (x.done ? 'is-done' : 'is-todo') + '"><b aria-hidden="true">' + (x.done ? '✓' : '') + '</b><span>' + esc(x.label) +
             '<span class="dde-hidden"> – ' + (x.done ? 'completed' : 'not completed') + '</span></span>' + (x.done ? '' : '<a href="' + x.href + '">Open</a>') + '</li>';
-        }).join('') + '</ul><div class="dde-actions"><a class="dde-btn" href="' + L.dashboard + '">Go to Level ' + n + ' dashboard</a><a class="dde-btn is-ghost" href="dashboard.html">📊 Dashboard</a></div></div></div>';
+        }).join('') + '</ul><div class="dde-actions"><a class="dde-btn" href="' + L.dashboard + '">Go to Level ' + n + ' dashboard</a><a class="dde-btn is-ghost" href="student-dashboard.html">📊 Dashboard</a></div></div></div>';
       return;
     }
     var name = String(st.name || '').trim() || 'Student Name';

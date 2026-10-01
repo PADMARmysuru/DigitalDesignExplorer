@@ -155,6 +155,27 @@
                 font-size: 13px;
             }
         }
+    
+        /* ---------- Part A / Part B learning tracks ---------- */
+        .part-head { display: flex; gap: 18px; align-items: center; margin: 30px 0 18px; padding: 20px 22px; border-radius: 16px; text-align: left; }
+        .part-head h2 { margin: 0 0 4px; font-size: 1.4rem; }
+        .part-head p { margin: 0 0 8px; line-height: 1.55; }
+        .part-badge { flex: none; font-weight: 800; letter-spacing: .12em; font-size: .85rem; padding: 12px 14px; border-radius: 12px; }
+        .part-meta { display: inline-block; font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; }
+        .part-a { background: #eef3fc; border: 1px solid #d3def3; }
+        .part-a h2 { color: #243b64; }
+        .part-a .part-badge { background: #243b64; color: #fff; }
+        .part-a .part-meta { background: #dfe8f8; color: #243b64; }
+        .part-b { background: linear-gradient(135deg, #14213d, #2b2d6e 60%, #0b5d66); color: #e6ecf7; margin-top: 44px; box-shadow: 0 10px 26px rgba(20, 33, 61, .25); }
+        .part-b h2 { color: #fff; }
+        .part-b p { color: #cfd8ea; }
+        .part-b .part-badge { background: #c9a227; color: #14213d; }
+        .part-b .part-meta { background: rgba(255,255,255,.12); color: #fff; }
+        .path-b .path-circle { background: #3b3f86 !important; }
+        .path-b .path-card { border-left-color: #6c63d9 !important; background: #fbfbff; }
+        .status-soon { background: #fff4d6; color: #8a6d0f; margin-left: 4px; }
+        .path-b .path-button[disabled] { opacity: .75; cursor: not-allowed; }
+        @media (max-width: 600px) { .part-head { flex-direction: column; align-items: flex-start; padding: 16px; } }
     </style>
 
 </head>
@@ -200,6 +221,16 @@
         <div class="path-heading">
             <h2>🧭 14-Level Digital Design Learning Path</h2>
             <p><strong>Students must complete all 14 levels in sequence.</strong></p>
+        </div>
+
+        <!-- ================= PART A — FOUNDATIONS ================= -->
+        <div class="part-head part-a">
+            <span class="part-badge">PART A</span>
+            <div>
+                <h2>Foundations</h2>
+                <p>Build strong foundations in digital logic, digital circuits, Verilog, VLSI and SystemVerilog.</p>
+                <span class="part-meta">Levels 1–6</span>
+            </div>
         </div>
 
         <div class="path">
@@ -272,13 +303,26 @@
             </div>
         
 
+        </div>
+
+        <!-- ================= PART B — ADVANCED VLSI (roadmap only) ================= -->
+        <div class="part-head part-b">
+            <span class="part-badge">PART B</span>
+            <div>
+                <h2>Advanced VLSI &amp; Digital IC Design</h2>
+                <p>Advanced VLSI learning: design, timing and power, synthesis, physical design, verification, test, architecture and AI/ML for VLSI.</p>
+                <span class="part-meta">Levels 7–14 · 🔒 Locked · ⏳ Coming Soon</span>
+            </div>
+        </div>
+
+        <div class="path path-b">
             <div class="path-step">
                 <div class="path-circle">L7</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
                     <h3>LEVEL 7 — Digital VLSI Design</h3>
-                    <p>Practical digital VLSI design concepts and implementation flow.</p>
-                    <button class="path-button" onclick="requestFutureLevel(7)">🔒 Locked — Complete Previous Levels</button>
+                    <p>Advanced digital VLSI design, circuit architectures and emerging technologies.</p>
+                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
                 </div>
             </div>
         
@@ -286,10 +330,10 @@
             <div class="path-step">
                 <div class="path-circle">L8</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
                     <h3>LEVEL 8 — VLSI Timing & Power</h3>
-                    <p>Timing behavior and power-related concepts in VLSI circuits.</p>
-                    <button class="path-button" onclick="requestFutureLevel(8)">🔒 Locked — Complete Previous Levels</button>
+                    <p>Timing behavior, timing analysis and power-related concepts in VLSI circuits.</p>
+                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
                 </div>
             </div>
         
@@ -297,10 +341,10 @@
             <div class="path-step">
                 <div class="path-circle">L9</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
                     <h3>LEVEL 9 — RTL Design & Synthesis</h3>
-                    <p>RTL design development and the synthesis process.</p>
-                    <button class="path-button" onclick="requestFutureLevel(9)">🔒 Locked — Complete Previous Levels</button>
+                    <p>Advanced RTL design and synthesis methodologies.</p>
+                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
                 </div>
             </div>
         
@@ -308,10 +352,10 @@
             <div class="path-step">
                 <div class="path-circle">L10</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
                     <h3>LEVEL 10 — Physical Design</h3>
-                    <p>Physical implementation stages of VLSI design.</p>
-                    <button class="path-button" onclick="requestFutureLevel(10)">🔒 Locked — Complete Previous Levels</button>
+                    <p>Physical implementation of digital VLSI designs.</p>
+                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
                 </div>
             </div>
         
@@ -319,10 +363,10 @@
             <div class="path-step">
                 <div class="path-circle">L11</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
                     <h3>LEVEL 11 — Advanced Verification</h3>
                     <p>Advanced verification strategies and methodologies.</p>
-                    <button class="path-button" onclick="requestFutureLevel(11)">🔒 Locked — Complete Previous Levels</button>
+                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
                 </div>
             </div>
         
@@ -330,10 +374,10 @@
             <div class="path-step">
                 <div class="path-circle">L12</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
                     <h3>LEVEL 12 — DFT & Advanced Testing</h3>
-                    <p>Design-for-test concepts and advanced VLSI testing techniques.</p>
-                    <button class="path-button" onclick="requestFutureLevel(12)">🔒 Locked — Complete Previous Levels</button>
+                    <p>Design-for-test and advanced VLSI testing techniques.</p>
+                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
                 </div>
             </div>
         
@@ -341,10 +385,10 @@
             <div class="path-step">
                 <div class="path-circle">L13</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
                     <h3>LEVEL 13 — Processor / VLSI Architecture</h3>
                     <p>Pipelining, hazards, branch prediction, speculation, cache and processor architecture.</p>
-                    <button class="path-button" onclick="requestFutureLevel(13)">🔒 Locked — Complete Previous Levels</button>
+                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
                 </div>
             </div>
         
@@ -352,10 +396,10 @@
             <div class="path-step">
                 <div class="path-circle">L14</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
                     <h3>LEVEL 14 — AI/ML for VLSI</h3>
-                    <p>Applications of artificial intelligence and machine learning in VLSI design.</p>
-                    <button class="path-button" onclick="requestFutureLevel(14)">🔒 Locked — Complete Previous Levels</button>
+                    <p>Applications of artificial intelligence and machine learning in VLSI and EDA.</p>
+                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
                 </div>
             </div>
         

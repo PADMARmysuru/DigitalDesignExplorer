@@ -185,6 +185,30 @@ body.dde-on .topbar .top-actions > a { display: none !important; }
 .dde-level.is-locked { background: #fafbfc; }
 .dde-level.is-locked h3 { color: var(--dde-ink-2); }
 
+/* ---------- Part A / Part B tracks ---------- */
+.dde-part { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-radius: 16px; margin: 6px 0 16px; }
+.dde-part h3 { margin: 0 0 2px; font-size: 1.15rem; }
+.dde-part p { margin: 0 0 6px; font-size: .92rem; line-height: 1.5; }
+.dde-part-badge { flex: none; font-weight: 800; letter-spacing: .12em; font-size: .8rem; padding: 10px 12px; border-radius: 10px; }
+.dde-part-meta { display: inline-block; font-size: .78rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+.dde-part-a { background: #eef3fc; border: 1px solid #d3def3; }
+.dde-part-a h3 { color: var(--dde-navy); } .dde-part-a p { color: var(--dde-ink-2); }
+.dde-part-a .dde-part-badge { background: var(--dde-navy); color: #fff; }
+.dde-part-a .dde-part-meta { background: #dfe8f8; color: var(--dde-navy); }
+.dde-part-b { margin-top: 34px; background: linear-gradient(135deg, #14213d, #2b2d6e 60%, #0b5d66); color: #e6ecf7; box-shadow: 0 10px 26px rgba(20,33,61,.22); }
+.dde-part-b h3 { color: #fff; } .dde-part-b p { color: #cfd8ea; }
+.dde-part-b .dde-part-badge { background: var(--dde-gold); color: #14213d; }
+.dde-part-b .dde-part-meta { background: rgba(255,255,255,.12); color: #fff; }
+.dde-levels-b { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.dde-roadmap { --lvl: #6c63d9; background: #fbfbff; border-top-color: #6c63d9; }
+.dde-roadmap h3 { font-size: 1rem; color: var(--dde-ink-2); }
+.dde-roadmap .dde-level-num { color: #5b52c7; }
+.dde-soonbar { flex: 1; text-align: center; font-weight: 700; font-size: .88rem; padding: 9px 10px; border-radius: 10px; background: #fff4d6; color: #8a6d0f; }
+.dde-menu-head { display: block !important; font-size: .72rem !important; font-weight: 800 !important; letter-spacing: .08em; text-transform: uppercase; color: var(--dde-ink-3) !important; padding: 8px 12px 4px !important; }
+.dde-soon { font-style: normal; font-size: .72rem; font-weight: 700; color: #8a6d0f; background: #fff4d6; padding: 1px 7px; border-radius: 99px; margin-left: auto; }
+@media (max-width: 980px) { .dde-levels-b { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .dde-part { flex-direction: column; align-items: flex-start; } .dde-levels-b { grid-template-columns: 1fr; } }
+
 /* ---------- Locked screen ---------- */
 .dde-locked { max-width: 640px; margin: 50px auto; text-align: center; padding: 38px 30px; }
 .dde-locked .dde-big { font-size: 3rem; line-height: 1; margin-bottom: 10px; }
@@ -284,3 +308,7 @@ body.dde-on .topbar .top-actions > a { display: none !important; }
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 }
+
+/* Levels menu: keep "Coming soon" on one line */
+.dde-menu { min-width: 320px; }
+.dde-menu .dde-soon { white-space: nowrap; flex: none; margin-left: auto; font-style: normal; }

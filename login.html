@@ -252,7 +252,7 @@ function loginStudent() {
         localStorage.setItem("studentLoggedIn", "true");
         // Return to the page the student originally asked for (only pages of this site)
         const next = new URLSearchParams(window.location.search).get("next");
-        window.location.href = (next && /^[a-z0-9-]+\.html$/i.test(next) && next !== "login.html") ? next : "dashboard.html";
+        window.location.href = (next && /^[a-z0-9-]+\.html$/i.test(next) && next !== "login.html") ? next : "student-dashboard.html";
     } else {
         document.getElementById("loginMessage").innerText = "❌ Invalid USN, Email or Password.";
         document.getElementById("loginMessage").style.color = "red";
