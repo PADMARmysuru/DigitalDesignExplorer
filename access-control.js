@@ -8,11 +8,11 @@
    ===================================================================== */
 var LEVEL_ACCESS = {
   level1: true,   // Digital Design Fundamentals
-  level2: true,   // Digital Circuit Design
-  level3: true,   // Verilog for Beginners
+  level2: false,   // Digital Circuit Design
+  level3: false,   // Verilog for Beginners
   level4: false,  // VLSI Basics       (locked until you release it)
   level5: false,  // VLSI Testing      (locked until you release it)
-  level6: false   // SystemVerilog     (locked until you release it)
+  level6: false,   // SystemVerilog     (locked until you release it)
 };
 
 /* Only ECE students of GSSSIETW: 4GW + 2 digits + EC + 3 digits, e.g. 4GW24EC001 */
