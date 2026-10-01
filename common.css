@@ -1,0 +1,286 @@
+/* =====================================================================
+   Digital Design Explorer – common design system
+   Header, navigation, breadcrumbs, footer, dashboard, locked screens,
+   certificate. Every class is prefixed dde- so page styles are untouched.
+   ===================================================================== */
+:root {
+  --dde-navy: #162746;
+  --dde-navy-2: #243b64;
+  --dde-gold: #c9a227;
+  --dde-gold-soft: #f6efd6;
+  --dde-ink: #1d2433;
+  --dde-ink-2: #4a5468;
+  --dde-ink-3: #7b8597;
+  --dde-line: #dfe4ec;
+  --dde-paper: #f4f6fa;
+  --dde-white: #ffffff;
+  --dde-ok: #1f8a4c;
+  --dde-ok-soft: #e4f4ea;
+  --dde-lock: #8a94a6;
+  --dde-accent: #2f6bd2;           /* overridden per level */
+  --dde-radius: 14px;
+  --dde-shadow: 0 6px 22px rgba(22, 39, 70, .08);
+  --dde-font: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --dde-serif: Georgia, "Times New Roman", "Book Antiqua", serif;
+}
+body.dde-l1 { --dde-accent: #2f6bd2; }
+body.dde-l2 { --dde-accent: #0f8b8d; }
+body.dde-l3 { --dde-accent: #6c4fd1; }
+body.dde-l4 { --dde-accent: #c2570c; }
+body.dde-l5 { --dde-accent: #b7791f; }
+body.dde-l6 { --dde-accent: #0b7a83; }
+
+/* Old per-page site headers, navs and footers are hidden, never deleted,
+   so any page script that still refers to them keeps working. */
+.dde-old-chrome { display: none !important; }
+.dde-hidden { display: none !important; }
+/* Level 5 / Level 6 keep their own top bars (section menu, progress) – only
+   their duplicate brand and breadcrumb are hidden. */
+body.dde-on .topbar .brand, body.dde-on .topbar .crumbs,
+body.dde-on .l6-topbar .l6-brand, body.dde-on .l6-topbar .l6-crumbs { display: none !important; }
+body.dde-on .l6-topbar { justify-content: flex-end; }
+/* Level 5: the duplicate dashboard link goes; on wide screens the empty strip goes too
+   (its reading-progress bar stays). Phones/tablets keep the “Sections” menu button. */
+body.dde-on .topbar .top-actions > a { display: none !important; }
+@media (min-width: 1001px) { body.dde-on .topbar .topbar-in { display: none !important; } }
+#dde-locked, [data-dde-certificate] { min-height: calc(100vh - 360px); }
+
+
+/* ---------- Header ---------- */
+.dde-header, .dde-footer, .dde-crumbs, .dde-header *, .dde-footer *, .dde-crumbs * { box-sizing: border-box; }
+.dde-header {
+  font-family: var(--dde-font); background: var(--dde-navy); color: #fff;
+  position: relative; z-index: 900; text-align: left; line-height: 1.35;
+}
+.dde-header a { color: inherit; text-decoration: none; }
+.dde-brandbar {
+  max-width: 1240px; margin: 0 auto; padding: 12px 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.dde-brand { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+.dde-logo { flex: none; width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,.08); display: grid; place-items: center; }
+.dde-brand-text { min-width: 0; }
+.dde-brand-text strong { display: block; font-size: 1.22rem; font-weight: 700; letter-spacing: .01em; color: #fff; }
+.dde-brand-text small { display: block; font-size: .8rem; color: #c8d2e6; font-weight: 400; margin-top: 1px; }
+.dde-user { font-size: .82rem; color: #c8d2e6; text-align: right; white-space: nowrap; }
+.dde-user b { color: #fff; font-weight: 600; display: block; font-size: .9rem; }
+.dde-burger {
+  display: none; flex: none; background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.25);
+  border-radius: 10px; padding: 8px 12px; font: 600 .9rem var(--dde-font); cursor: pointer;
+}
+
+/* ---------- Navigation ---------- */
+.dde-navbar { background: var(--dde-navy-2); border-top: 3px solid var(--dde-accent); }
+.dde-nav {
+  max-width: 1240px; margin: 0 auto; padding: 0 12px;
+  display: flex; flex-wrap: wrap; align-items: stretch; gap: 2px;
+}
+.dde-nav > a, .dde-dd > summary {
+  display: flex; align-items: center; gap: 6px; padding: 11px 13px; font-size: .92rem; font-weight: 600;
+  color: #e3e9f5; border-bottom: 3px solid transparent; cursor: pointer; list-style: none; white-space: nowrap;
+  margin: 0; background: none; border-radius: 0; box-shadow: none; text-decoration: none;
+}
+.dde-dd > summary::-webkit-details-marker { display: none; }
+.dde-dd > summary::after { content: "▾"; font-size: .75rem; opacity: .8; }
+.dde-nav > a:hover, .dde-dd > summary:hover { color: #fff; background: rgba(255,255,255,.07); }
+.dde-nav > a.is-current, .dde-dd.is-current > summary { color: #fff; border-bottom-color: var(--dde-gold); }
+.dde-nav .dde-sep { flex: 1; }
+.dde-nav .dde-levelname { display: flex; align-items: center; padding: 0 10px 0 14px; color: var(--dde-gold); font-size: .82rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; border-left: 1px solid rgba(255,255,255,.18); margin-left: 6px; }
+.dde-dd { position: relative; }
+.dde-menu {
+  position: absolute; top: 100%; left: 0; min-width: 270px; max-height: 70vh; overflow-y: auto;
+  background: #fff; color: var(--dde-ink); border-radius: 0 0 12px 12px; box-shadow: 0 14px 32px rgba(10, 20, 40, .22);
+  padding: 6px; z-index: 950;
+}
+.dde-menu a, .dde-menu span {
+  display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; color: var(--dde-ink) !important;
+  font-size: .9rem; font-weight: 500; text-decoration: none; margin: 0; background: none;
+}
+.dde-menu a:hover { background: var(--dde-paper); }
+.dde-menu a.is-current { background: #eaf0fb; color: var(--dde-navy) !important; font-weight: 700; }
+.dde-menu span.is-locked { color: var(--dde-lock) !important; cursor: not-allowed; }
+.dde-menu .dde-num { flex: none; min-width: 26px; height: 22px; border-radius: 6px; background: var(--dde-paper); color: var(--dde-ink-2); font-size: .74rem; font-weight: 700; display: grid; place-items: center; }
+.dde-menu hr { border: 0; border-top: 1px solid var(--dde-line); margin: 6px 4px; }
+
+/* ---------- Breadcrumbs ---------- */
+.dde-crumbs {
+  font-family: var(--dde-font); background: #fff; border-bottom: 1px solid var(--dde-line); font-size: .86rem; color: var(--dde-ink-3);
+}
+.dde-crumbs ol { max-width: 1240px; margin: 0 auto; padding: 9px 20px; list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.dde-crumbs li { display: flex; align-items: center; gap: 4px; margin: 0; }
+.dde-crumbs li + li::before { content: "→"; color: #b0b8c6; margin: 0 4px; }
+.dde-crumbs a { color: var(--dde-navy-2); text-decoration: none; font-weight: 600; }
+.dde-crumbs a:hover { text-decoration: underline; }
+.dde-crumbs [aria-current] { color: var(--dde-ink); font-weight: 600; }
+
+/* ---------- Footer ---------- */
+.dde-footer { font-family: var(--dde-font); background: var(--dde-navy); color: #c8d2e6; margin-top: 48px; text-align: left; }
+.dde-footer-in { max-width: 1240px; margin: 0 auto; padding: 30px 20px 18px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 26px; align-items: start; }
+.dde-footer h3 { color: #fff; font-size: 1.05rem; margin: 0 0 4px; font-weight: 700; }
+.dde-footer p { margin: 2px 0; font-size: .9rem; line-height: 1.5; color: #c8d2e6; }
+.dde-footer .dde-role { color: var(--dde-gold); font-weight: 600; }
+.dde-footer a { color: #fff; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,.5); }
+.dde-footer a:hover { border-bottom-style: solid; }
+.dde-contact { display: grid; gap: 8px; }
+.dde-contact a { display: inline-flex; align-items: center; gap: 8px; border: 0; background: rgba(255,255,255,.07); padding: 9px 14px; border-radius: 10px; width: fit-content; font-size: .92rem; }
+.dde-contact a:hover { background: rgba(255,255,255,.14); }
+.dde-footer-brand { font-weight: 700; color: #fff; margin-top: 10px !important; }
+.dde-footer-bottom { border-top: 1px solid rgba(255,255,255,.12); text-align: center; padding: 12px 20px; font-size: .82rem; color: #9fb0cf; }
+
+/* ---------- Shared page building blocks ---------- */
+.dde-wrap { font-family: var(--dde-font); color: var(--dde-ink); max-width: 1180px; margin: 26px auto; padding: 0 18px; text-align: left; }
+.dde-wrap *, .dde-wrap *::before, .dde-wrap *::after { box-sizing: border-box; }
+.dde-h2 { font-size: 1.3rem; color: var(--dde-navy); margin: 30px 0 14px; display: flex; align-items: center; gap: 10px; }
+.dde-h2::after { content: ""; flex: 1; height: 1px; background: var(--dde-line); }
+.dde-card { background: #fff; border: 1px solid var(--dde-line); border-radius: var(--dde-radius); box-shadow: var(--dde-shadow); padding: 20px 22px; }
+.dde-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 600 .95rem var(--dde-font);
+  padding: 11px 20px; border-radius: 10px; border: 0; cursor: pointer; text-decoration: none !important;
+  background: var(--dde-navy); color: #fff !important; transition: transform .12s, box-shadow .12s; margin: 0;
+}
+.dde-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(22,39,70,.25); }
+.dde-btn.is-gold { background: var(--dde-gold); color: var(--dde-navy) !important; }
+.dde-btn.is-ghost { background: #fff; color: var(--dde-navy) !important; border: 1px solid var(--dde-line); }
+.dde-btn[disabled], .dde-btn.is-disabled { background: #e7eaf0; color: var(--dde-lock) !important; cursor: not-allowed; transform: none; box-shadow: none; }
+.dde-bar { height: 12px; background: #e9edf3; border-radius: 99px; overflow: hidden; }
+.dde-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--dde-accent), #4f8ff7); border-radius: 99px; transition: width .5s ease; }
+.dde-bar.is-full span { background: linear-gradient(90deg, #1f8a4c, #3cb371); }
+
+/* ---------- Dashboard overview ---------- */
+.dde-top { display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; }
+.dde-profile h2, .dde-overall h2 { margin: 0 0 14px; font-size: 1.1rem; color: var(--dde-navy); }
+.dde-profile-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.dde-avatar { flex: none; width: 54px; height: 54px; border-radius: 50%; background: var(--dde-navy) !important; color: var(--dde-gold) !important; display: grid; place-items: center; font-weight: 700; font-size: 1.3rem; }
+.dde-profile-head strong { display: block; font-size: 1.15rem; color: var(--dde-ink); }
+.dde-profile-head span { color: var(--dde-ink-3); font-size: .9rem; font-family: ui-monospace, Consolas, monospace; }
+.dde-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; margin: 0; }
+.dde-facts div { min-width: 0; }
+.dde-facts dt { font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; color: var(--dde-ink-3); margin: 0; }
+.dde-facts dd { margin: 2px 0 0; font-weight: 600; color: var(--dde-ink); overflow-wrap: anywhere; }
+.dde-overall { background: linear-gradient(135deg, var(--dde-navy), #2c4a80); color: #fff; border: 0; }
+.dde-overall h2 { color: #fff; }
+.dde-overall-row { display: flex; align-items: center; gap: 20px; }
+.dde-ring { flex: none; width: 118px; height: 118px; }
+.dde-ring circle { fill: none; stroke-width: 11; }
+.dde-ring .bg { stroke: rgba(255,255,255,.16); }
+.dde-ring .fg { stroke: var(--dde-gold); stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset .8s ease; }
+.dde-ring text { fill: #fff; font: 700 22px var(--dde-font); }
+.dde-overall p { margin: 4px 0; color: #dbe3f2; font-size: .92rem; }
+.dde-overall p b { color: #fff; }
+.dde-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.dde-level { display: flex; flex-direction: column; gap: 10px; border-top: 5px solid var(--lvl, var(--dde-accent)); }
+.dde-level-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.dde-level-num { font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--lvl); }
+.dde-level h3 { margin: 2px 0 0; font-size: 1.08rem; color: var(--dde-ink); }
+.dde-pill { flex: none; font-size: .78rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
+.dde-pill.is-open { background: var(--dde-ok-soft); color: var(--dde-ok); }
+.dde-pill.is-done { background: var(--dde-gold-soft); color: #8a6d0f; }
+.dde-pill.is-locked { background: #eef0f4; color: var(--dde-lock); }
+.dde-level .dde-bar span { background: var(--lvl); }
+.dde-level-meta { display: flex; justify-content: space-between; font-size: .88rem; color: var(--dde-ink-2); }
+.dde-level-meta b { color: var(--dde-ink); }
+.dde-level-note { font-size: .88rem; color: var(--dde-ink-3); margin: 0; flex: 1; }
+.dde-level-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+.dde-level-actions .dde-btn { flex: 1; padding: 10px 14px; font-size: .9rem; }
+.dde-level.is-locked { background: #fafbfc; }
+.dde-level.is-locked h3 { color: var(--dde-ink-2); }
+
+/* ---------- Locked screen ---------- */
+.dde-locked { max-width: 640px; margin: 50px auto; text-align: center; padding: 38px 30px; }
+.dde-locked .dde-big { font-size: 3rem; line-height: 1; margin-bottom: 10px; }
+.dde-locked h1 { font-size: 1.6rem; color: var(--dde-navy); margin: 0 0 10px; }
+.dde-locked p { color: var(--dde-ink-2); margin: 0 0 8px; font-size: 1rem; line-height: 1.55; }
+.dde-locked .dde-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+.dde-req { list-style: none; padding: 0; margin: 16px auto 0; text-align: left; max-width: 460px; }
+.dde-req li { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; margin: 4px 0; background: var(--dde-paper); font-size: .94rem; }
+.dde-req li b { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: .8rem; }
+.dde-req li.is-done b { background: var(--dde-ok); color: #fff; }
+.dde-req li.is-todo b { background: #fff; border: 2px solid var(--dde-lock); color: var(--dde-lock); }
+.dde-req li span { flex: 1; }
+.dde-req li a { font-size: .85rem; font-weight: 600; color: var(--dde-navy-2); }
+
+/* ---------- Certificate ---------- */
+.dde-cert-page { background: #eef1f6; padding: 10px 0 30px; }
+.dde-cert-bar { max-width: 1060px; margin: 20px auto 18px; padding: 0 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; font-family: var(--dde-font); }
+.dde-cert-status { flex: 1; min-width: 220px; font-weight: 700; color: var(--dde-ok); font-size: 1.1rem; }
+.dde-cert-status small { display: block; font-weight: 400; color: var(--dde-ink-2); font-size: .88rem; }
+.dde-cert-scroll { overflow-x: auto; padding: 4px 18px 20px; }
+.dde-cert {
+  position: relative; width: 1000px; max-width: none; aspect-ratio: 297 / 210; margin: 0 auto; background: #fffdf7;
+  color: #1f2433; font-family: var(--dde-serif); box-shadow: 0 18px 50px rgba(20, 30, 60, .18); padding: 26px; box-sizing: border-box;
+}
+.dde-cert * { box-sizing: border-box; }
+.dde-cert-frame {
+  position: absolute; inset: 22px; border: 3px solid var(--dde-navy);
+  outline: 1px solid var(--dde-gold); outline-offset: -10px;
+}
+.dde-cert-frame::before {
+  content: ""; position: absolute; inset: 14px; border: 1px solid rgba(201, 162, 39, .55);
+  background:
+    radial-gradient(circle at 50% 46%, rgba(201,162,39,.06), transparent 60%);
+}
+.dde-cert-corner { position: absolute; width: 74px; height: 74px; }
+.dde-cert-body { position: relative; height: 100%; padding: 50px 80px 62px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dde-cert-org { font-family: var(--dde-font); font-size: 14px; letter-spacing: .32em; font-weight: 700; color: var(--dde-navy); margin: 0; }
+.dde-cert-orgsub { font-family: var(--dde-font); font-size: 11.5px; letter-spacing: .08em; color: #6b7387; margin: 4px 0 0; }
+.dde-cert-title { font-size: 54px; font-weight: 400; color: var(--dde-navy); margin: 16px 0 0; letter-spacing: .02em; line-height: 1.05; }
+.dde-cert-title em { display: block; font-size: 18px; font-style: normal; letter-spacing: .38em; color: #9a7b14; text-transform: uppercase; margin-top: 6px; font-family: var(--dde-font); font-weight: 600; }
+.dde-cert-rule { width: 240px; height: 2px; background: linear-gradient(90deg, transparent, var(--dde-gold), transparent); margin: 18px 0 16px; }
+.dde-cert-lead { font-style: italic; font-size: 18px; color: #4a5268; margin: 6px 0; }
+.dde-cert-name { font-size: 44px; color: #121a2e; margin: 6px 0 2px; font-weight: 700; border-bottom: 1px solid #c9ced8; padding: 0 30px 4px; min-width: 420px; }
+.dde-cert-usn { font-family: ui-monospace, Consolas, monospace; font-size: 16px; letter-spacing: .12em; color: #3d465c; margin: 8px 0 12px; }
+.dde-cert-course { font-size: 27px; color: var(--dde-navy); font-weight: 700; margin: 4px 0 2px; }
+.dde-cert-desc { font-size: 16px; color: #4a5268; max-width: 720px; line-height: 1.55; margin: 6px 0 0; }
+.dde-cert-foot { margin-top: auto; width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 24px; }
+.dde-cert-sign { text-align: center; font-family: var(--dde-font); font-size: 12px; color: #4a5268; line-height: 1.45; }
+.dde-cert-sign .line { border-top: 1px solid #2b3245; padding-top: 6px; margin: 0 auto 2px; width: 220px; font-family: var(--dde-serif); font-size: 16px; color: #1f2433; font-weight: 700; }
+.dde-cert-seal { width: 104px; height: 104px; }
+.dde-cert-meta { position: absolute; left: 0; right: 0; bottom: 26px; text-align: center; font-family: var(--dde-font); font-size: 10.5px; color: #7b8396; letter-spacing: .04em; }
+.dde-cert-meta b { color: #3d465c; font-family: ui-monospace, Consolas, monospace; letter-spacing: .06em; }
+.dde-cert-hint { max-width: 1060px; margin: 0 auto; padding: 0 18px; font-family: var(--dde-font); font-size: .86rem; color: var(--dde-ink-3); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px) {
+  .dde-levels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dde-top { grid-template-columns: 1fr; }
+}
+@media (max-width: 820px) {
+  .dde-burger { display: inline-flex; }
+  .dde-user { display: none; }
+  .dde-brand-text small { font-size: .72rem; }
+  .dde-navbar { display: none; }
+  .dde-header.is-open .dde-navbar { display: block; }
+  .dde-nav { flex-direction: column; padding: 6px 10px 12px; }
+  .dde-nav > a, .dde-dd > summary { border-bottom: 0; border-left: 3px solid transparent; padding: 11px 12px; }
+  .dde-nav > a.is-current, .dde-dd.is-current > summary { border-left-color: var(--dde-gold); background: rgba(255,255,255,.06); }
+  .dde-nav .dde-sep { display: none; }
+  .dde-nav .dde-levelname { border-left: 0; margin: 8px 0 0; padding: 8px 12px 4px; border-top: 1px solid rgba(255,255,255,.15); }
+  .dde-menu { position: static; box-shadow: none; border-radius: 10px; margin: 2px 0 8px; max-height: none; min-width: 0; }
+  .dde-footer-in { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .dde-brandbar { padding: 10px 14px; }
+  .dde-logo { width: 34px; height: 34px; }
+  .dde-brand-text strong { font-size: 1.05rem; }
+  .dde-levels { grid-template-columns: 1fr; }
+  .dde-facts { grid-template-columns: 1fr; }
+  .dde-overall-row { flex-direction: column; align-items: flex-start; }
+  .dde-crumbs ol { padding: 8px 14px; font-size: .82rem; }
+  .dde-locked { margin: 26px 14px; padding: 28px 18px; }
+}
+
+/* ---------- Print: only the certificate ---------- */
+@media print {
+  @page { size: A4 landscape; margin: 0; }
+  body.dde-certpage { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+  body.dde-certpage > *:not(.dde-cert-page) { display: none !important; }
+  body.dde-certpage .dde-cert-page { display: block !important; padding: 0 !important; margin: 0 !important; background: #fff !important; }
+  body.dde-certpage .dde-cert-page > *:not(.dde-cert-scroll) { display: none !important; }
+  body.dde-certpage .dde-cert-scroll { overflow: visible !important; padding: 0 !important; }
+  body.dde-certpage .dde-cert-fit { width: auto !important; height: auto !important; margin: 0 !important; }
+  body.dde-certpage .dde-cert {
+    transform: none !important; width: 297mm !important; height: 209mm !important; aspect-ratio: auto !important;
+    box-shadow: none !important; margin: 0 !important; page-break-inside: avoid; break-inside: avoid;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+}

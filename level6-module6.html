@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 6: Interfaces and Advanced SystemVerilog – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 6</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#interfaces" data-acts="ifconn">Interfaces</a></li><li><a href="#modports" data-acts="modport">Modports</a></li><li><a href="#clocking" data-acts="clocking">Clocking blocks</a></li><li><a href="#vif" data-acts="vif">Virtual interfaces</a></li><li><a href="#packages" data-acts="pkg">Packages, import, include</a></li><li><a href="#params" data-acts="param">Parameters and type parameters</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 6</p>
+      <h1>Interfaces and Advanced SystemVerilog</h1>
+      <p class="l6-lead">Real designs connect blocks with buses of many signals. Interfaces bundle those signals into one named object; modports give each side its directions; clocking blocks remove testbench races; packages share definitions everywhere.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Replace long port lists with an <code>interface</code>.</li><li>Use <code>modport</code> to give each block the right signal directions.</li><li>Explain how a clocking block avoids sampling races in testbenches.</li><li>Connect a class-based testbench to the DUT with a <code>virtual interface</code>.</li><li>Share types and constants with <code>package</code> and <code>import</code>, and know when <code>`include</code> is appropriate.</li><li>Write modules with value parameters and type parameters.</li></ol></div>
+      <div class="l6-note"><p>Modules 1 and 5: user-defined types and classes.</p></div>
+    </section>
+<section class="l6-section" id="interfaces"><h2>Interfaces: one bundle instead of many wires</h2><p class="l6-sub">Without an interface, every signal of a bus appears in the port list of every module and at every instantiation. Add one signal and you edit every file. An interface declares the bundle once.</p><pre class="l6-code"><code>interface bus_if (input logic clk);
+  logic        valid, ready;
+  logic [7:0]  addr;
+  logic [31:0] data;
+endinterface
+
+module master (bus_if bus);          // one port instead of five
+  always_ff @(posedge bus.clk) bus.valid &lt;= 1'b1;
+endmodule
+
+module top;
+  logic clk;
+  bus_if  b (clk);                   // instantiate the bundle
+  master  m (.bus(b));
+  slave   s (.bus(b));
+endmodule</code></pre><div class="l6-card"><p class="l6-card-title">Connection diagram <span class="l6-tag" data-activity="ifconn">Activity</span></p><div class="l6-btnrow" id="icMode"></div><div id="icView"></div><div class="l6-btnrow"><button type="button" class="l6-btn" id="icAdd">Add a new signal <code>prot</code> to the bus</button></div><div class="l6-fb" id="icNote" aria-live="polite"></div></div></section><section class="l6-section" id="modports"><h2>Modports: directions for each side</h2><p class="l6-sub">Inside an interface every signal is just a signal. A <code>modport</code> says which signals a particular user may drive and which it may only read. The compiler then rejects code that drives the wrong one.</p><pre class="l6-code"><code>interface bus_if (input logic clk);
+  logic valid, ready;
+  logic [7:0] addr;  logic [31:0] data;
+
+  modport master  (input clk, ready, output valid, addr, data);
+  modport slave   (input clk, valid, addr, data, output ready);
+  modport monitor (input clk, valid, ready, addr, data);
+endinterface
+
+module master (bus_if.master bus);   // this module sees the master view</code></pre><div class="l6-card"><p class="l6-card-title">Modport direction visualizer <span class="l6-tag" data-activity="modport">Activity</span></p><div class="l6-btnrow" id="mpSel"></div><div id="mpView"></div><div class="l6-fb" id="mpNote" aria-live="polite"></div></div></section><section class="l6-section" id="clocking"><h2>Clocking blocks</h2><p class="l6-sub">When the DUT and the testbench both react to the same clock edge, the order in which the simulator runs them is not defined. A testbench might read a signal before or after the DUT updates it: a <b>race</b>. A clocking block fixes the timing: inputs are sampled just <b>before</b> the edge, outputs are driven just <b>after</b> it.</p><pre class="l6-code"><code>interface bus_if (input logic clk);
+  logic valid, ready;  logic [31:0] data;
+
+  clocking cb @(posedge clk);
+    default input #1step output #2;   // sample just before the edge, drive 2 time units after
+    output valid, data;               // testbench drives these
+    input  ready;                     // testbench samples this
+  endclocking
+
+  modport tb (clocking cb);
+endinterface
+
+// In the testbench:
+@(bus.cb);                 // wait for the clocking event
+bus.cb.valid &lt;= 1'b1;      // drive through the clocking block (use &lt;=)
+if (bus.cb.ready) ...      // read the value sampled before the edge</code></pre><div class="l6-card"><p class="l6-card-title">Race demo <span class="l6-tag" data-activity="clocking">Activity</span></p><p><code>ready</code> changes exactly at the rising edge of cycle 2. Choose how the testbench reads it at that edge.</p><div class="l6-btnrow" id="ckMode"></div><div id="ckWave"></div><div class="l6-fb" id="ckNote" aria-live="polite"></div></div></section><section class="l6-section" id="vif"><h2>Virtual interfaces</h2><p class="l6-sub">Classes are created at run time, but modules and interfaces exist from the start, so a class cannot have ports. Instead it holds a <code>virtual interface</code>: a handle pointing at a real interface instance.</p><div class="l6-card"><p class="l6-card-title">Follow the connection <span class="l6-tag" data-activity="vif">Activity</span></p><p>Click each part to see how the class reaches the DUT pins.</p><div class="l6-btnrow" id="vifBtns"></div><div id="vifCode"></div><div class="l6-fb" id="vifNote" aria-live="polite"></div></div></section><section class="l6-section" id="packages"><h2>Packages, import and `include</h2><p class="l6-sub">A <b>package</b> is a named container for types, parameters, functions and classes. <code>import</code> makes its names visible. <code>`include</code> is different: the preprocessor pastes a file's text in place, as if you had typed it there.</p><pre class="l6-code"><code>package alu_pkg;
+  typedef enum logic [1:0] {ADD, SUB, AND_OP, OR_OP} op_t;
+  parameter int WIDTH = 8;
+  function automatic logic [WIDTH-1:0] model(op_t op, logic [WIDTH-1:0] a, b);
+    case (op) ADD: return a + b; SUB: return a - b; AND_OP: return a &amp; b; default: return a | b; endcase
+  endfunction
+endpackage
+
+import alu_pkg::*;        // wildcard: every name, only where it is used
+import alu_pkg::op_t;     // explicit: just this one name
+alu_pkg::WIDTH            // scope resolution: no import needed</code></pre><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th></th><th>package + import</th><th>`include</th></tr></thead><tbody><tr><td>What it is</td><td>A compiled scope with its own names</td><td>Text pasted by the preprocessor</td></tr><tr><td>Included twice?</td><td>Harmless</td><td>Duplicate declarations (use include guards)</td></tr><tr><td>Typical use</td><td>Shared types, parameters, classes</td><td>Pulling class files into a package, macros</td></tr></tbody></table></div><div class="l6-card"><p class="l6-card-title">Which name is used? <span class="l6-tag" data-activity="pkg">Activity</span></p><div class="l6-choice-list" id="pkgList"></div><p class="l6-score" id="pkgScore"></p></div></section><section class="l6-section" id="params"><h2>Parameters and type parameters</h2><p class="l6-sub">Value parameters make sizes configurable. <b>Type parameters</b> go further: the same FIFO code can store bytes, ints or whole structs.</p><pre class="l6-code"><code>module fifo #(
+  parameter type T     = logic [7:0],   // type parameter
+  parameter int  DEPTH = 16             // value parameter
+) (
+  input  logic clk, push, pop,
+  input  T     din,
+  output T     dout
+);
+  T mem [DEPTH];
+  localparam int AW = $clog2(DEPTH);    // derived: address width
+  logic [AW-1:0] wr_ptr, rd_ptr;
+endmodule
+
+fifo #(.T(packet_t), .DEPTH(8)) pkt_fifo (...);</code></pre><div class="l6-card"><p class="l6-card-title">Parameter explorer <span class="l6-tag" data-activity="param">Activity</span></p><div class="l6-btnrow" id="prT"></div><div class="l6-controls"><div><label class="l6-label" for="prD">DEPTH: <b id="prDv">16</b></label><input type="range" class="l6-range" id="prD" min="2" max="64" value="16"></div><div></div><div></div></div><pre class="l6-code" id="prCode"><code></code></pre><div class="l6-stats" id="prStats"></div></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">This interface and its users have <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. Add a <code>resp</code> signal (2 bits, driven by the slave) to <code>bus_if</code>. Which lines change?</summary><div class="l6-details-body"><p>Only the interface: declare <code>logic [1:0] resp;</code>, add <code>input resp</code> to the master and monitor modports and <code>output resp</code> to the slave modport. Module port lists and instantiations do not change.</p></div></details><details class="l6-details"><summary>2. Why does a class need <code>virtual bus_if</code> instead of <code>bus_if</code>?</summary><div class="l6-details-body"><p>An interface is a static, elaborated structure like a module; it cannot be created inside a class at run time. A virtual interface is a handle that is set at run time to point to an interface instance that already exists in the module hierarchy.</p></div></details><details class="l6-details"><summary>3. What does <code>default input #1step</code> mean?</summary><div class="l6-details-body"><p>Inputs are sampled at the very end of the previous time step, i.e. just before the clock edge. The testbench therefore sees the same values the DUT's flip-flops see.</p></div></details><details class="l6-details"><summary>4. Two imported packages both define <code>WIDTH</code>. How do you use one of them?</summary><div class="l6-details-body"><p>Refer to it explicitly as <code>pkg_a::WIDTH</code>, or import that one name explicitly with <code>import pkg_a::WIDTH;</code>. A plain reference to <code>WIDTH</code> after two wildcard imports is an error.</p></div></details><details class="l6-details"><summary>5. Write a parameterised register of type T with default <code>logic [7:0]</code>.</summary><div class="l6-details-body"><pre class="l6-code"><code>module dreg #(parameter type T = logic [7:0]) (
+  input logic clk, input T d, output T q
+);
+  always_ff @(posedge clk) q &lt;= d;
+endmodule</code></pre></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 6</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 6 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module5.html">Module 5: Object-Oriented SystemVerilog</a></span><span>Next: <a href="level6-module7.html">Module 7: SystemVerilog Assertions (SVA)</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module6.js"></script>
+</body>
+</html>

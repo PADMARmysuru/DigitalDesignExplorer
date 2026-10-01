@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 5: Object-Oriented SystemVerilog – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 5</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#classes" data-acts="handles">Classes, objects, handles</a></li><li><a href="#this-static" data-acts="static">this and static</a></li><li><a href="#copy" data-acts="copy">Shallow vs deep copy</a></li><li><a href="#inherit" data-acts="inherit">Inheritance</a></li><li><a href="#poly" data-acts="poly">Polymorphism and virtual</a></li><li><a href="#abstract" data-acts="abstract">Abstract classes</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 5</p>
+      <h1>Object-Oriented SystemVerilog</h1>
+      <p class="l6-lead">Modern testbenches are built from classes. If you have never written object-oriented code, this module builds the picture step by step: a class is a blueprint, an object is a thing built from it, and a handle is how you point at that thing.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Explain the difference between a class, an object and a handle.</li><li>Write a class with properties, methods, a constructor <code>new()</code> and <code>this</code>.</li><li>Predict what happens when handles are assigned and when objects are copied (shallow vs deep).</li><li>Use <code>static</code> members shared by all objects.</li><li>Extend a class with <code>extends</code> and call the parent with <code>super</code>.</li><li>Explain how <code>virtual</code> methods give polymorphism, and why abstract classes cannot be constructed.</li></ol></div>
+      <div class="l6-note"><p>Module 4: functions and tasks. No previous OOP experience needed.</p></div>
+    </section>
+<section class="l6-section" id="classes"><h2>Classes, objects and handles</h2><p class="l6-sub">A <b>class</b> is a blueprint describing data (properties) and behaviour (methods). An <b>object</b> is one instance built from it with <code>new()</code>. A <b>handle</b> is a variable that points to an object; it starts as <code>null</code>.</p><div class="l6-grid-2"><div><pre class="l6-code"><code>class Packet;
+  bit [7:0] addr;          // properties
+  bit [7:0] data;
+
+  function new(bit [7:0] a = 0);   // constructor
+    addr = a;
+  endfunction
+
+  function void display();         // method
+    $display("addr=%h data=%h", addr, data);
+  endfunction
+endclass</code></pre></div><div><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th>Term</th><th>Analogy</th></tr></thead><tbody><tr><td>Class</td><td>The architect's drawing of a house</td></tr><tr><td>Object</td><td>A house built from the drawing</td></tr><tr><td>Handle</td><td>The address written on a piece of paper</td></tr><tr><td><code>new()</code></td><td>Building a new house</td></tr><tr><td><code>null</code></td><td>A blank piece of paper: no house yet</td></tr></tbody></table></div></div></div><div class="l6-card"><p class="l6-card-title">Handle and object visualizer <span class="l6-tag" data-activity="handles">Activity</span></p><p>Press <b>Next</b> to run one line at a time. Handles are on the left; objects in memory are on the right.</p><div id="hvCode"></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="hvNext">Next</button><button type="button" class="l6-btn" id="hvReset">Restart</button></div><div class="l6-grid-2"><div><p class="l6-label">Handles</p><div class="l6-boxes" id="hvHandles" style="flex-direction:column;align-items:stretch"></div></div><div><p class="l6-label">Objects in memory</p><div class="l6-boxes" id="hvObjs" style="flex-direction:column;align-items:stretch"></div></div></div><div class="l6-fb" id="hvNote" aria-live="polite"></div></div></section><section class="l6-section" id="this-static"><h2><code>this</code> and <code>static</code> members</h2><p class="l6-sub"><code>this</code> means "the object whose method is running". Use it when an argument has the same name as a property. A <code>static</code> property belongs to the class, not to any single object: all objects share one copy.</p><pre class="l6-code"><code>class Packet;
+  static int count = 0;   // one copy, shared by every Packet
+  int id;                 // one copy per object
+  bit [7:0] addr;
+
+  function new(bit [7:0] addr);
+    this.addr = addr;     // this.addr = the property, addr = the argument
+    count++;
+    id = count;
+  endfunction
+endclass</code></pre><div class="l6-card"><p class="l6-card-title">Static counter <span class="l6-tag" data-activity="static">Activity</span></p><div class="l6-btnrow"><button type="button" class="l6-btn is-primary is-mono" id="stNew">p = new(addr);</button><button type="button" class="l6-btn" id="stReset">Restart</button></div><div class="l6-grid-2"><div><p class="l6-label">Class Packet (static)</p><div class="l6-boxes" id="stClass"></div></div><div><p class="l6-label">Objects</p><div class="l6-boxes" id="stObjs"></div></div></div><div class="l6-fb" id="stNote" aria-live="polite"></div></div></section><section class="l6-section" id="copy"><h2>Shallow vs deep copy</h2><p class="l6-sub"><code>p2 = new p1;</code> makes a <b>shallow copy</b>: a new object whose properties are copied from p1. But if a property is itself a handle, only the handle is copied, so both objects share the inner object. A <b>deep copy</b> also copies every inner object, and you write it yourself.</p><pre class="l6-code"><code>class Header;  int len;  endclass
+
+class Packet;
+  int     id;
+  Header  hdr = new();          // a handle to another object
+
+  function Packet copy();       // deep copy, written by hand
+    copy = new();
+    copy.id      = id;
+    copy.hdr.len = hdr.len;     // copy the inner object's contents too
+  endfunction
+endclass</code></pre><div class="l6-card"><p class="l6-card-title">Copy lab <span class="l6-tag" data-activity="copy">Activity</span></p><p>Start with <code>p1</code> (id 1, hdr.len 10). Make a copy, then change the copy and see whether p1 is affected.</p><div class="l6-btnrow" id="cpBtns"></div><div id="cpView"></div><div class="l6-fb" id="cpNote" aria-live="polite"></div></div></section><section class="l6-section" id="inherit"><h2>Inheritance: <code>extends</code> and <code>super</code></h2><p class="l6-sub">A derived class <b>extends</b> a base class: it inherits every property and method and can add new ones or override existing ones. <code>super</code> calls the parent's version.</p><pre class="l6-code"><code>class EthPacket extends Packet;
+  bit [47:0] mac;                        // new property
+
+  function new(bit [7:0] addr);
+    super.new(addr);                     // build the Packet part first
+    mac = 48'h00_11_22_33_44_55;
+  endfunction
+
+  virtual function void display();       // override
+    super.display();                     // reuse the parent's printing
+    $display("  mac=%h", mac);
+  endfunction
+endclass</code></pre><div class="l6-card"><p class="l6-card-title">Inheritance tree <span class="l6-tag" data-activity="inherit">Activity</span></p><p>Click a class to see what it contains. Grey entries are inherited.</p><div id="treeView"></div><div class="l6-fb" id="treeNote" aria-live="polite"></div></div></section><section class="l6-section" id="poly"><h2>Polymorphism and virtual methods</h2><p class="l6-sub">A base-class handle can point to an object of any derived class. When you call a method through that handle, <code>virtual</code> decides which version runs: without it, the handle's type decides; with it, the object's actual type decides.</p><div class="l6-card"><p class="l6-card-title">Which display() runs? <span class="l6-tag" data-activity="poly">Activity</span></p><p>Choose the object, whether <code>display()</code> is virtual, and call it through a <code>Packet</code> handle.</p><pre class="l6-code"><code>Packet h;          // base-class handle
+h = &lt;object&gt;;
+h.display();</code></pre><div class="l6-btnrow" id="polyObj"></div><div class="l6-btnrow" id="polyVirt"></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary is-mono" id="polyCall">h.display();</button></div><div class="l6-fb" id="polyNote" aria-live="polite"></div></div><div class="l6-note"><p>Going the other way needs a check. A derived handle cannot simply take a base handle: use <code>if ($cast(eth_h, h))</code>, which succeeds only if h really points to an EthPacket.</p></div></section><section class="l6-section" id="abstract"><h2>Abstract (virtual) classes</h2><p class="l6-sub">A <code>virtual class</code> is abstract: a template that you can only extend, never construct. A <code>pure virtual</code> method has no body; every non-abstract child must implement it. Verification libraries such as UVM are built this way.</p><pre class="l6-code"><code>virtual class BaseTxn;
+  pure virtual function string convert2string();   // no body
+endclass
+
+class WriteTxn extends BaseTxn;
+  bit [7:0] addr, data;
+  virtual function string convert2string();
+    return $sformatf("WRITE %h &lt;= %h", addr, data);
+  endfunction
+endclass</code></pre><div class="l6-card"><p class="l6-card-title">Allowed or not? <span class="l6-tag" data-activity="abstract">Activity</span></p><div class="l6-choice-list" id="absList"></div><p class="l6-score" id="absScore"></p></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">This class hierarchy has <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. What is printed? <code>Packet a = new(); Packet b = a; b.addr = 7; $display(a.addr);</code></summary><div class="l6-details-body"><p>7. <code>b = a</code> copies the handle, not the object, so a and b point to the same object.</p></div></details><details class="l6-details"><summary>2. Why must a derived constructor call <code>super.new()</code> first?</summary><div class="l6-details-body"><p>The base part of the object must be built before the derived part uses it. If the base constructor has arguments without defaults, the compiler cannot call it automatically, so you must call <code>super.new(args)</code> as the first statement.</p></div></details><details class="l6-details"><summary>3. Write a class <code>Counter</code> with a static property <code>total</code> that counts how many Counter objects exist.</summary><div class="l6-details-body"><pre class="l6-code"><code>class Counter;
+  static int total = 0;
+  function new();
+    total++;
+  endfunction
+endclass</code></pre></div></details><details class="l6-details"><summary>4. When is a shallow copy enough?</summary><div class="l6-details-body"><p>When the class contains only plain values (ints, bit vectors, enums), with no handles to other objects. Then the shallow copy already duplicates everything.</p></div></details><details class="l6-details"><summary>5. Why do verification libraries use virtual methods everywhere?</summary><div class="l6-details-body"><p>So that generic code (a driver, a scoreboard) can work with base-class handles, while each test supplies derived classes with specialised behaviour. The generic code never needs to change.</p></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 5</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 5 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module4.html">Module 4: Functions and Tasks</a></span><span>Next: <a href="level6-module6.html">Module 6: Interfaces and Advanced SystemVerilog</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module5.js"></script>
+</body>
+</html>

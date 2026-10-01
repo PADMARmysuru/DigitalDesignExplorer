@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 12: Verification Projects – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 12</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#flow">The verification flow</a></li><li><a href="#projects" data-acts="stages,p_fifo,p_alu,p_uart,p_fsm,p_ram,p_bus">Project workspace</a></li><li><a href="#signoff">Sign-off checklist</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 12</p>
+      <h1>Verification Projects</h1>
+      <p class="l6-lead">Time to put everything together. Each project takes a small design through the complete verification flow: RTL, testbench, assertions, constrained randomization, functional coverage and a final PASS/FAIL verdict. Every project hides a realistic bug you can switch on to see which part of the testbench catches it.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Read a complete verification environment for a small design and explain each part.</li><li>Run a verification flow and interpret scoreboard results, assertion results and coverage together.</li><li>Recognise which checker (scoreboard or assertion) catches which kind of bug.</li><li>Decide when a design is ready for sign-off.</li></ol></div>
+      <div class="l6-note"><p>Modules 7 to 11. This module revisits every earlier technique.</p></div>
+    </section>
+<section class="l6-section" id="flow"><h2>The verification flow</h2><p class="l6-sub">Every project follows the same six stages. Click through them for any project, then run it.</p><div class="l6-flow"><div class="l6-block" style="cursor:default">1. RTL</div><span class="l6-arrow">→</span><div class="l6-block" style="cursor:default">2. Testbench</div><span class="l6-arrow">→</span><div class="l6-block" style="cursor:default">3. Assertions</div><span class="l6-arrow">→</span><div class="l6-block" style="cursor:default">4. Randomization</div><span class="l6-arrow">→</span><div class="l6-block" style="cursor:default">5. Coverage</div><span class="l6-arrow">→</span><div class="l6-block" style="cursor:default">6. PASS / FAIL</div></div><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th>Checker</th><th>Catches</th><th>Example</th></tr></thead><tbody><tr><td>Scoreboard + reference model</td><td>Wrong data at the outputs</td><td>ALU subtracts in the wrong order</td></tr><tr><td>Assertions</td><td>Protocol and timing rule violations, often before they corrupt data</td><td>FIFO full flag one entry early</td></tr><tr><td>Coverage</td><td>Nothing by itself: it shows which checks were really exercised</td><td>The "full" case was never reached</td></tr></tbody></table></div></section><section class="l6-section" id="projects"><h2>Project workspace</h2><p class="l6-sub">Pick a project, step through its stages, then run 20 transactions. Run once with the design correct, then switch on the bug and run again. A project counts as done when you have seen both a PASS and a caught bug.</p><div class="l6-card"><p class="l6-card-title">Projects <span class="l6-tag" data-activity="stages">Activity</span> <span class="l6-tag" data-activity="p_fifo">FIFO</span> <span class="l6-tag" data-activity="p_alu">ALU</span> <span class="l6-tag" data-activity="p_uart">UART</span> <span class="l6-tag" data-activity="p_fsm">FSM</span> <span class="l6-tag" data-activity="p_ram">RAM</span> <span class="l6-tag" data-activity="p_bus">Bus</span></p><div class="l6-btnrow" id="pjTabs"></div><p id="pjSpec"></p><p class="l6-label">Stages</p><div class="l6-btnrow" id="pjStages"></div><pre class="l6-code" id="pjCode"><code></code></pre><p id="pjStageNote" style="color:var(--ink-2)"></p><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><p class="l6-label">Run the verification</p><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="pjRun">Run 20 transactions</button><label style="display:inline-flex;gap:8px;align-items:center"><input type="checkbox" id="pjBug"> inject bug: <span id="pjBugDesc"></span></label></div><div class="l6-stats"><div class="l6-stat"><b id="pjTx">0</b><span>transactions</span></div><div class="l6-stat"><b id="pjSb">–</b><span>scoreboard ok / errors</span></div><div class="l6-stat"><b id="pjAs">–</b><span>assertion failures</span></div><div class="l6-stat"><b id="pjCv">–</b><span>functional coverage</span></div></div><div id="pjCovBins"></div><div id="pjVerdict"></div><div class="l6-log" id="pjLog"></div><div id="pjExplain"></div></div></section><section class="l6-section" id="signoff"><h2>When is verification done?</h2><p class="l6-sub">No real project is ever "fully" verified; teams sign off when agreed goals are met.</p><div class="l6-card"><ol class="l6-objectives"><li>All directed and random regression tests pass, over many seeds.</li><li>No assertion failures, and cover properties show every assertion was actually triggered.</li><li>Functional coverage goals from the verification plan reach 100% (or every hole is reviewed and waived).</li><li>Code coverage is reviewed: unreached code is either tested or explained.</li><li>Every bug found is fixed, re-tested and has a test that would catch it again.</li></ol></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">This top-level test has <b>three</b> bugs that would make a regression meaningless. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. In the FIFO project, the scoreboard sometimes passes even with the bug on. Why, and what catches it every time?</summary><div class="l6-details-body"><p>If the random stimulus never tries to write a fourth entry, the early full flag never changes any data, so the scoreboard sees nothing wrong. The assertion <code>full == (count == 4)</code> checks the flag every cycle, so it catches the bug as soon as the FIFO holds three entries. Coverage shows whether the full case was reached.</p></div></details><details class="l6-details"><summary>2. The UART bug (MSB first) is not caught by the start/stop-bit assertions. Why?</summary><div class="l6-details-body"><p>Those assertions only check the frame's framing bits, which the bug does not touch. Only the scoreboard, which decodes the data bits and compares them with what was sent, sees the reversed byte.</p></div></details><details class="l6-details"><summary>3. Design a coverage bin that would have proved the FSM's overlapping case was tested.</summary><div class="l6-details-body"><pre class="l6-code"><code>cp_overlap: coverpoint (detect &amp;&amp; $past(detect, 3)) { bins hit = {1}; }</code></pre><p>Or a cover property: <code>cover property (@(posedge clk) detect ##3 detect);</code></p></div></details><details class="l6-details"><summary>4. Why do the RAM project's writes and reads need to cover both halves of the address space?</summary><div class="l6-details-body"><p>The aliasing bug (address bit 3 ignored) only shows when an address in one half and its partner in the other half are both written, then read. Coverage of both halves and of address pairs makes sure this situation occurs.</p></div></details><details class="l6-details"><summary>5. Your ALU passes 1000 random tests with 100% coverage. Name one more thing to check before sign-off.</summary><div class="l6-details-body"><p>Run with several different seeds; review the coverage model against the specification (for example, flags such as carry or overflow may have no coverpoint); check that the reference model was written independently; and confirm there are no assertion failures or unexpected X values.</p></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 12</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 12 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module11.html">Module 11: Functional Coverage</a></span><span>Next: <a href="level6.html">Level 6 overview</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module12.js"></script>
+</body>
+</html>

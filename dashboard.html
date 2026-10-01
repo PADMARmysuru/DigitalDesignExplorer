@@ -2,6 +2,11 @@
 <html lang="en">
 
 <head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
 
     <meta charset="UTF-8">
 
@@ -109,18 +114,22 @@
 
 <main>
 
+    <!-- Platform overview: student profile, overall progress, all six levels (rendered by common.js) -->
+    <div class="dde-wrap" id="dde-overview" style="margin-top:0"></div>
+
+
     <section class="welcome">
 
-        <h2>👩‍🎓 My Learning Dashboard</h2>
+        <h2>📘 Level 1 – Digital Design Fundamentals</h2>
 
         <p>
-            Track your Digital System Design learning progress.
+            Your Level 1 modules, activities and certificate.
         </p>
 
     </section>
 
 
-    <div class="student-info">
+    <div class="student-info dde-hidden">
 
         <h2>👨‍🎓 Student Details</h2>
 
@@ -158,7 +167,7 @@
 
 
     <section class="overall-progress">
-        <h2>📊 Overall Learning Progress</h2>
+        <h2>📊 Level 1 Progress</h2>
         <div class="overall-bar">
             <div id="overallProgress">0%</div>
         </div>

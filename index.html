@@ -2,6 +2,11 @@
 <html>
 
 <head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
 
     <meta charset="UTF-8">
 
@@ -357,7 +362,7 @@
         </div>
 
         <div class="path-note">
-            🔐 Levels 2–14 are faculty restricted. Each level will be completed before progressing to the next level.
+            🔐 Levels are released by the instructor. Released levels show 🟢 AVAILABLE; the others stay 🔒 locked until they are released.
         </div>
 
     </section>
@@ -394,113 +399,45 @@
     <script>
 
         /*
-        ============================================
-        LEVEL 2 ACCESS CONTROL
-        ============================================
-
-        Change this PIN to your own faculty PIN.
-
-        IMPORTANT:
-        This is a basic client-side restriction.
-        For stronger security, we can later move
-        Level 2 authorization to Supabase.
+        Level access is controlled in ONE place: access-control.js (LEVEL_ACCESS).
+        The old faculty PIN prompt has been removed from this page because
+        anyone could read the PIN in the page source.
         */
+        var LEVEL_PAGES = { 1: 'dashboard.html', 2: 'level2-dashboard.html', 3: 'level3-dashboard.html',
+                            4: 'level4-dashboard.html', 5: 'level5-dashboard.html', 6: 'level6.html' };
 
-        const FACULTY_PIN = "padma@2026";
-
-
-        function requestFutureLevel(level) {
-
-            const unlockKey = "level" + level + "Unlocked";
-
-            if (localStorage.getItem(unlockKey) === "true") {
-                alert(
-                    "🔓 Level " + level + " is already unlocked.\n\n" +
-                    "This level is reserved for future content."
-                );
+        function goLevel(level) {
+            if (!LEVEL_PAGES[level]) {
+                alert("Level " + level + " is coming soon. It will be released by the instructor.");
                 return;
             }
-
-            const enteredPIN = prompt(
-                "🔐 Level " + level + " is restricted.\n\n" +
-                "Enter Faculty PIN:"
-            );
-
-            if (enteredPIN === FACULTY_PIN) {
-                localStorage.setItem(unlockKey, "true");
-                alert(
-                    "✅ Faculty access granted for Level " + level + ".\n\n" +
-                    "The content for this level will be added later."
-                );
-            } else if (enteredPIN !== null) {
-                alert("❌ Incorrect Faculty PIN.\n\nLevel " + level + " remains locked.");
-            }
+            window.location.href = checkLevelAccess(level) ? LEVEL_PAGES[level] : "locked.html?level=" + level;
         }
+        function openLevel2() { goLevel(2); }
+        function openLevel(level) { goLevel(level); }
+        function requestFutureLevel(level) { goLevel(level); }
 
-
-        function openLevel2() {
-
-            // Check whether Level 2 is already unlocked
-            if (localStorage.getItem("level2Unlocked") === "true") {
-
-                window.location.href = "level2-dashboard.html";
-
-                return;
-
-            }
-
-
-            // Ask for faculty PIN
-            const enteredPIN = prompt(
-                "🔐 Level 2 is restricted.\n\nEnter Faculty PIN to unlock Level 2:"
-            );
-
-
-            if (enteredPIN === FACULTY_PIN) {
-
-                localStorage.setItem("level2Unlocked", "true");
-
-                alert(
-                    "✅ Level 2 access granted."
-                );
-
-                window.location.href = "level2-dashboard.html";
-
-            }
-
-            else if (enteredPIN !== null) {
-
-                alert(
-                    "❌ Incorrect Faculty PIN.\n\nLevel 2 remains locked."
-                );
-
-            }
-
-        }
-
-
-        function openLevel(level, page) {
-
-            const unlockKey = "level" + level + "Unlocked";
-
-            if (localStorage.getItem(unlockKey) === "true") {
-                window.location.href = page;
-                return;
-            }
-
-            const enteredPIN = prompt(
-                "🔐 Level " + level + " is restricted.\n\nEnter Faculty PIN to unlock Level " + level + ":"
-            );
-
-            if (enteredPIN === FACULTY_PIN) {
-                localStorage.setItem(unlockKey, "true");
-                alert("✅ Level " + level + " access granted.");
-                window.location.href = page;
-            } else if (enteredPIN !== null) {
-                alert("❌ Incorrect Faculty PIN.\n\nLevel " + level + " remains locked.");
-            }
-        }
-
+        /* Show each level's real status on the learning path */
+        document.addEventListener("DOMContentLoaded", function () {
+            var steps = document.querySelectorAll(".path .path-step");
+            Array.prototype.forEach.call(steps, function (step, i) {
+                var level = i + 1, status = step.querySelector(".path-status"), btn = step.querySelector(".path-button");
+                if (!status || !btn) return;
+                if (LEVEL_PAGES[level] && checkLevelAccess(level)) {
+                    step.classList.add("open");
+                    status.className = "path-status status-open";
+                    status.textContent = level === 1 ? "🟢 START HERE" : "🟢 AVAILABLE";
+                    btn.textContent = "Open Level " + level + " →";
+                } else if (LEVEL_PAGES[level]) {
+                    step.classList.remove("open");
+                    status.className = "path-status status-locked";
+                    status.textContent = "🔒 LOCKED";
+                    btn.textContent = "🔒 Not yet released";
+                } else {
+                    btn.textContent = "⏳ Coming soon";
+                }
+            });
+        });
 
         function logout() {
 

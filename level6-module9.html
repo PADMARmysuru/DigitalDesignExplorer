@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 9: Testbench Architecture – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 9</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#layers" data-acts="blocks">The layered testbench</a></li><li><a href="#flow" data-acts="flow">A transaction's journey</a></li><li><a href="#directed" data-acts="dirrand">Directed vs random</a></li><li><a href="#selfcheck" data-acts="selfcheck">Self-checking and reference models</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 9</p>
+      <h1>Testbench Architecture</h1>
+      <p class="l6-lead">A professional testbench is not one long initial block. It is a small team of components, each with one job: create stimulus, drive pins, watch pins, predict and compare. This module shows how the team is organised and how a transaction travels through it.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Name the components of a layered testbench and describe each one's job.</li><li>Follow a transaction from generator to scoreboard.</li><li>Explain why a self-checking testbench with a reference model scales better than checking waveforms by eye.</li><li>Compare directed and constrained-random testing, and say when each is useful.</li></ol></div>
+      <div class="l6-note"><p>Modules 5 (classes), 6 (virtual interfaces) and 8 (randomization).</p></div>
+    </section>
+<section class="l6-section" id="layers"><h2>The layered testbench</h2><p class="l6-sub">Each box below is usually a class. Transactions (objects describing one operation, such as "add 12 and 30") flow between them through mailboxes. Only the driver and the monitor touch real pins, through the virtual interface.</p><div class="l6-card"><p class="l6-card-title">Explore the architecture <span class="l6-tag" data-activity="blocks">Activity</span></p><p>Click each block to learn its role and see its core code.</p><div class="l6-flow" id="tbTop"></div><div class="l6-flow" id="tbBottom"></div><div id="tbInfo"></div></div></section><section class="l6-section" id="flow"><h2>A transaction's journey</h2><p class="l6-sub">The DUT here is an 8-bit adder with a 9-bit result (<code>sum = a + b</code>). Send transactions and watch every component do its part. Then switch on the hidden bug and see the scoreboard catch it.</p><div class="l6-card"><p class="l6-card-title">Transaction flow <span class="l6-tag" data-activity="flow">Activity</span></p><div class="l6-flow" id="flDiagram"></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="flOne">Send 1 transaction (animated)</button><button type="button" class="l6-btn" id="flTen">Send 10 (fast)</button><label style="display:inline-flex;gap:8px;align-items:center"><input type="checkbox" id="flBug"> inject DUT bug</label><button type="button" class="l6-btn" id="flReset">Reset</button></div><div class="l6-stats"><div class="l6-stat"><b id="flSent">0</b><span>sent</span></div><div class="l6-stat"><b id="flOk">0</b><span>matched</span></div><div class="l6-stat"><b id="flBad">0</b><span>mismatched</span></div><div class="l6-stat"><b id="flVerdict">–</b><span>verdict</span></div></div><div class="l6-log" id="flLog"></div></div></section><section class="l6-section" id="directed"><h2>Directed vs constrained-random testing</h2><p class="l6-sub">A <b>directed</b> test uses values you chose by hand; it proves the cases you thought of. A <b>random</b> test lets the solver pick values; it finds the cases you did not think of. Real projects use both: directed tests for reset and specific corner cases, random tests for volume.</p><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th></th><th>Directed</th><th>Constrained random</th></tr></thead><tbody><tr><td>Who picks the values</td><td>You</td><td>The solver, within your constraints</td></tr><tr><td>Finds unexpected bugs</td><td>Rarely</td><td>Often</td></tr><tr><td>Needs a self-checking scoreboard</td><td>Optional (expected values can be hard-coded)</td><td>Essential (you cannot hand-compute thousands of results)</td></tr><tr><td>Knowing what was tested</td><td>Obvious</td><td>Requires functional coverage (Module 11)</td></tr></tbody></table></div><div class="l6-card"><p class="l6-card-title">Bug hunt <span class="l6-tag" data-activity="dirrand">Activity</span></p><p>This adder has a bug you do not know about. Try the five hand-written directed tests, then try random stimulus.</p><div class="l6-btnrow"><button type="button" class="l6-btn" id="drDir">Run 5 directed tests</button><button type="button" class="l6-btn is-primary" id="drRand">Run 20 random tests</button></div><div class="l6-log" id="drLog"></div><div class="l6-fb" id="drNote" aria-live="polite"></div></div></section><section class="l6-section" id="selfcheck"><h2>Self-checking and reference models</h2><p class="l6-sub">A self-checking testbench decides PASS or FAIL by itself. The <b>reference model</b> (also called the predictor) computes what the DUT <i>should</i> produce; the <b>scoreboard</b> compares prediction with reality and counts errors.</p><pre class="l6-code"><code>class scoreboard;
+  mailbox #(adder_txn) mon2sb;
+  int n_ok, n_err;
+
+  function bit [8:0] ref_model(bit [7:0] a, b);   // the predictor
+    return a + b;
+  endfunction
+
+  task run();
+    adder_txn t;
+    forever begin
+      mon2sb.get(t);                               // blocks until the monitor sends one
+      if (t.sum === ref_model(t.a, t.b)) n_ok++;
+      else begin
+        n_err++;
+        $error("a=%0d b=%0d: DUT sum=%0d, expected %0d", t.a, t.b, t.sum, ref_model(t.a, t.b));
+      end
+    end
+  endtask
+
+  function void report();
+    if (n_err == 0) $display("TEST PASSED: %0d transactions", n_ok);
+    else            $display("TEST FAILED: %0d errors", n_err);
+  endfunction
+endclass</code></pre><div class="l6-card"><p class="l6-card-title">Who does it? <span class="l6-tag" data-activity="selfcheck">Activity</span></p><div class="l6-choice-list" id="whoList"></div><p class="l6-score" id="whoScore"></p></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">This scoreboard and test have <b>three</b> bugs that would let a broken design pass. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. Why does the monitor not simply get transactions from the generator?</summary><div class="l6-details-body"><p>The monitor must report what really happened on the pins, not what was intended. If the driver or the DUT corrupts or drops something, only an independent monitor sees it.</p></div></details><details class="l6-details"><summary>2. Where would you put a check that <code>valid</code> never goes X after reset?</summary><div class="l6-details-body"><p>In an assertion bound to the interface or DUT (Module 7). Protocol rules belong in assertions; data correctness belongs in the scoreboard.</p></div></details><details class="l6-details"><summary>3. The reference model and the DUT were written by the same person from the same misunderstanding. What happens?</summary><div class="l6-details-body"><p>Both are wrong in the same way, so the scoreboard sees no mismatch. This is why models are ideally written independently from the specification, and why reviews and assertions from the spec matter.</p></div></details><details class="l6-details"><summary>4. List the components that must know about the virtual interface.</summary><div class="l6-details-body"><p>Only the driver and the monitor (plus any component that waits on the clock). Generator, scoreboard and reference model work purely with transactions.</p></div></details><details class="l6-details"><summary>5. Why should a random test print its seed?</summary><div class="l6-details-body"><p>So a failure can be reproduced. Re-running with the same seed generates the same random sequence, letting you debug the exact failing case.</p></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 9</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 9 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module8.html">Module 8: Constrained Randomization</a></span><span>Next: <a href="level6-module10.html">Module 10: Verification Components</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module9.js"></script>
+</body>
+</html>

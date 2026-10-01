@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 2: Procedural SystemVerilog – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 2</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#blocks" data-acts="classify">always_comb, always_ff, always_latch</a></li><li><a href="#assign" data-acts="nba">Blocking vs non-blocking</a></li><li><a href="#decisions" data-acts="casez">if, case, casez, casex</a></li><li><a href="#loops" data-acts="loops">Loops, break, continue</a></li><li><a href="#latches" data-acts="latch">Accidental latches</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 2</p>
+      <h1>Procedural SystemVerilog</h1>
+      <p class="l6-lead">Procedural code describes what happens on each clock edge or whenever an input changes. SystemVerilog adds blocks that state your intent, and loops and case forms that make intent checkable.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Choose between <code>always_comb</code>, <code>always_ff</code> and <code>always_latch</code>, and explain what each checks.</li><li>Predict the result of blocking (<code>=</code>) and non-blocking (<code>&lt;=</code>) assignments step by step.</li><li>Explain how <code>case</code>, <code>casez</code> and <code>casex</code> treat X and Z, and what <code>unique</code> and <code>priority</code> add.</li><li>Trace <code>for</code>, <code>while</code>, <code>do-while</code>, <code>repeat</code> and <code>foreach</code> loops, including <code>break</code> and <code>continue</code>.</li><li>Spot code that accidentally creates a latch.</li></ol></div>
+      <div class="l6-note"><p>Module 1: <code>logic</code>, nets vs variables, and literals such as <code>'0</code>.</p></div>
+    </section>
+<section class="l6-section" id="blocks"><h2>Three blocks that state your intent</h2><p class="l6-sub">Verilog's plain <code>always</code> can describe any logic, so the tool must guess what you meant. SystemVerilog's specialised blocks tell the tool, and it warns you when the code doesn't match.</p><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th>Block</th><th>Describes</th><th>Sensitivity</th><th>Tool checks</th></tr></thead><tbody><tr><td><code>always_comb</code></td><td>Combinational logic</td><td>Automatic (every signal read)</td><td>No latches inferred; one block drives each variable</td></tr><tr><td><code>always_ff</code></td><td>Flip-flops</td><td>You write <code>@(posedge clk ...)</code></td><td>Exactly one event control; code should infer flops</td></tr><tr><td><code>always_latch</code></td><td>Level-sensitive latches</td><td>Automatic</td><td>Code should infer a latch</td></tr></tbody></table></div><pre class="l6-code"><code>always_comb begin            // combinational: y updates whenever a, b or sel change
+  if (sel) y = a;
+  else     y = b;
+end
+
+always_ff @(posedge clk or negedge rst_n)   // flip-flop with async active-low reset
+  if (!rst_n) q &lt;= '0;
+  else        q &lt;= d;
+
+always_latch                 // transparent latch
+  if (en) l &lt;= d;</code></pre><div class="l6-note"><p><code>always_comb</code> also runs once at time 0, so outputs are correct from the start. A Verilog <code>always @(*)</code> waits for the first input change.</p></div><div class="l6-card"><p class="l6-card-title">Which block fits? <span class="l6-tag" data-activity="classify">Activity</span></p><p>Pick the block you would use for each piece of logic.</p><div class="l6-choice-list" id="clsList"></div><p class="l6-score" id="clsScore"></p></div></section><section class="l6-section" id="assign"><h2>Blocking vs non-blocking assignment</h2><p class="l6-sub"><code>=</code> (blocking) updates the variable immediately, before the next statement runs. <code>&lt;=</code> (non-blocking) reads the right-hand side now but updates the variable only after every block triggered by this clock edge has finished.</p><div class="l6-card"><p class="l6-card-title">Step through a 2-stage shift register <span class="l6-tag" data-activity="nba">Activity</span></p><p>The intended hardware is two flip-flops in a chain: <code>a → b → c</code>. Choose an assignment style, then press <b>Step</b> to run one statement at a time.</p><div class="l6-btnrow" id="nbaMode"></div><div id="nbaCode"></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="nbaStep">Step</button><button type="button" class="l6-btn" id="nbaReset">Reset</button></div><div class="l6-table-wrap"><table class="l6-table" id="nbaTable"></table></div><div class="l6-fb" id="nbaNote" aria-live="polite"></div></div><div class="l6-note"><p>The rule every RTL designer follows: use <code>&lt;=</code> in <code>always_ff</code> and <code>=</code> in <code>always_comb</code>. Never mix both styles on one variable.</p></div></section><section class="l6-section" id="decisions"><h2>Decisions: if, case, casez, casex</h2><p class="l6-sub">A <code>case</code> compares the selector with each item from top to bottom and takes the first match. The three forms differ only in how they treat X, Z and <code>?</code> bits.</p><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th>Form</th><th>Don't-care bits</th><th>Typical use</th></tr></thead><tbody><tr><td><code>case</code></td><td>None. X matches only X, Z only Z</td><td>Normal decoding</td></tr><tr><td><code>casez</code></td><td>Z or <code>?</code> in selector or item</td><td>Priority encoders, instruction decoding with <code>?</code></td></tr><tr><td><code>casex</code></td><td>X, Z or <code>?</code> in selector or item</td><td>Avoid in RTL: an X on the selector can silently match an item</td></tr></tbody></table></div><div class="l6-card"><p class="l6-card-title">Case matcher <span class="l6-tag" data-activity="casez">Activity</span></p><p>Click the selector bits to cycle them through 0, 1, X, Z. Change the case form and modifier and see which item matches.</p><div class="l6-btnrow" id="caseKind"></div><div class="l6-btnrow" id="caseMod"></div><label style="display:inline-flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" id="caseDef" checked> include <code>default</code></label><p class="l6-label">sel[3:0]</p><div class="l6-bits" id="caseSel"></div><div id="caseCode"></div><div class="l6-fb" id="caseNote" aria-live="polite"></div></div><div class="l6-note"><p><code>unique case</code>: the items never overlap and one always matches, so synthesis may build parallel logic. <code>priority case</code>: take the first match, and at least one must match. Both produce simulation warnings when the promise is broken, which catches bugs early.</p></div></section><section class="l6-section" id="loops"><h2>Loops</h2><p class="l6-sub">Loops run in zero simulation time unless they contain a delay or event control. In RTL, a loop is unrolled into copies of hardware, so its bounds must be fixed at compile time.</p><div class="l6-card"><p class="l6-card-title">Loop visualizer <span class="l6-tag" data-activity="loops">Activity</span></p><p>Pick a loop, then step through it. Try the start value 5 with <code>while</code> and with <code>do-while</code>.</p><div class="l6-btnrow" id="loopKind"></div><div class="l6-btnrow" id="loopOpt"></div><div class="l6-btnrow" id="loopStart"></div><div id="loopCode"></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="loopStep">Step</button><button type="button" class="l6-btn" id="loopRun">Run to end</button><button type="button" class="l6-btn" id="loopReset">Reset</button></div><div class="l6-stats"><div class="l6-stat"><b id="loopI">–</b><span>i</span></div><div class="l6-stat"><b id="loopIter">0</b><span>body runs</span></div></div><div class="l6-log" id="loopLog"></div></div></section><section class="l6-section" id="latches"><h2>Accidental latches</h2><p class="l6-sub">If a combinational block does not assign a variable on every path, the variable must remember its old value, and remembering means a latch. <code>always_comb</code> turns this mistake into a warning or error.</p><pre class="l6-code"><code>always_comb
+  if (en) y = d;      // what is y when en == 0?  -&gt; latch!
+
+always_comb begin
+  y = '0;             // default assignment first: every path now assigns y
+  if (en) y = d;
+end</code></pre><div class="l6-card"><p class="l6-card-title">Latch or no latch? <span class="l6-tag" data-activity="latch">Activity</span></p><div class="l6-choice-list" id="latchList"></div><p class="l6-score" id="latchScore"></p></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">This registered mux has <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. Why does <code>always_ff</code> use <code>&lt;=</code>?</summary><div class="l6-details-body"><p>All flip-flops in real hardware sample their inputs at the same clock edge. <code>&lt;=</code> models this: every right-hand side is read before any register updates, so the order of statements and blocks does not change the result.</p></div></details><details class="l6-details"><summary>2. Rewrite this so it has no latch: <code>always_comb case (s) 2'd0: y = a; 2'd1: y = b; endcase</code></summary><div class="l6-details-body"><pre class="l6-code"><code>always_comb
+  case (s)
+    2'd0:    y = a;
+    2'd1:    y = b;
+    default: y = '0;
+  endcase</code></pre><p>A default assignment before the case works too.</p></div></details><details class="l6-details"><summary>3. What is printed? <code>for (int i = 0; i &lt; 6; i++) begin if (i == 1) continue; if (i == 4) break; $display(i); end</code></summary><div class="l6-details-body"><p>0, 2, 3. <code>continue</code> skips the rest of the body for i = 1; <code>break</code> leaves the loop at i = 4.</p></div></details><details class="l6-details"><summary>4. Why is <code>casex</code> dangerous in RTL?</summary><div class="l6-details-body"><p>If the selector becomes X in simulation (for example, it was never reset), <code>casex</code> treats those X bits as don't-care and matches an item anyway. The simulation looks fine while real hardware would do something unpredictable. <code>casez</code> or <code>case ... inside</code> avoids this.</p></div></details><details class="l6-details"><summary>5. When does a <code>do-while</code> behave differently from a <code>while</code>?</summary><div class="l6-details-body"><p>When the condition is false at the start. <code>while</code> checks first and runs the body zero times; <code>do-while</code> runs the body once, then checks.</p></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 2</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 2 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module1.html">Module 1: SystemVerilog Fundamentals</a></span><span>Next: <a href="level6-module3.html">Module 3: Arrays and Data Structures</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module2.js"></script>
+</body>
+</html>

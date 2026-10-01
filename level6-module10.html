@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 10: Verification Components – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 10</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#components" data-acts="builder">Components and hierarchy</a></li><li><a href="#mailbox" data-acts="mailbox">Mailboxes</a></li><li><a href="#sync" data-acts="sync">Events and semaphores</a></li><li><a href="#fork" data-acts="fork">fork / join</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 10</p>
+      <h1>Verification Components</h1>
+      <p class="l6-lead">Module 9 showed the team. This module shows how to build each member and how they talk: transactions carry data, mailboxes pass them between threads, events and semaphores coordinate timing, and fork/join runs everything in parallel.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Write a transaction class and explain what each component does with it.</li><li>Assemble generator, driver, monitor, scoreboard, agent, environment and test in the right hierarchy.</li><li>Use a mailbox with <code>put</code>, <code>get</code>, <code>try_put</code>, <code>try_get</code> and a bounded size.</li><li>Synchronise threads with events and share resources with semaphores.</li><li>Choose between <code>fork ... join</code>, <code>join_any</code> and <code>join_none</code>.</li></ol></div>
+      <div class="l6-note"><p>Module 9: testbench architecture.</p></div>
+    </section>
+<section class="l6-section" id="components"><h2>The components and their hierarchy</h2><p class="l6-sub">An <b>agent</b> groups everything for one interface (generator or sequencer, driver, monitor). The <b>environment</b> holds agents plus the scoreboard and coverage. The <b>test</b> builds and configures the environment.</p><pre class="l6-code"><code>class txn;                                  // the transaction: data only
+  rand bit [7:0] a, b;
+  bit      [8:0] sum;
+  function string show(); return $sformatf("a=%0d b=%0d sum=%0d", a, b, sum); endfunction
+endclass
+
+class agent;
+  generator gen;  driver drv;  monitor mon;
+  mailbox #(txn) gen2drv = new();
+  function new(virtual adder_if vif, mailbox #(txn) mon2sb);
+    gen = new(gen2drv);  drv = new(vif, gen2drv);  mon = new(vif, mon2sb);
+  endfunction
+  task run(); fork gen.run(); drv.run(); mon.run(); join_none endtask
+endclass
+
+class env;
+  agent agt;  scoreboard sb;  coverage cov;
+  mailbox #(txn) mon2sb = new();
+  ...
+endclass</code></pre><div class="l6-card"><p class="l6-card-title">Architecture builder <span class="l6-tag" data-activity="builder">Activity</span></p><p>Click a component, then click the slot where it belongs. Components can be reused where it makes sense.</p><div class="l6-btnrow" id="abPalette"></div><div class="l6-nest"><b>test</b><div class="l6-nest"><b>env</b><div class="l6-nest"><b>agent</b><div class="l6-nest-row" id="abAgent"></div></div><div class="l6-nest-row" style="margin-top:8px" id="abEnv"></div></div></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="abCheck">Check</button><button type="button" class="l6-btn" id="abClear">Clear</button></div><div class="l6-fb" id="abNote" aria-live="polite"></div></div></section><section class="l6-section" id="mailbox"><h2>Mailboxes</h2><p class="l6-sub">A mailbox is a thread-safe queue between two processes. <code>put</code> and <code>get</code> <b>block</b> (wait) when the mailbox is full or empty; <code>try_put</code> and <code>try_get</code> never wait and return 0 if they could not do it. <code>new(2)</code> makes a bounded mailbox that holds at most 2 items.</p><div class="l6-card"><p class="l6-card-title">Producer / consumer <span class="l6-tag" data-activity="mailbox">Activity</span></p><pre class="l6-code"><code>mailbox #(txn) mbx = new(2);   // bounded: at most 2 items</code></pre><div class="l6-grid-2"><div><p class="l6-label">Generator (producer)</p><div class="l6-btnrow" id="mbGen"></div><p id="mbGenState" class="l6-label"></p></div><div><p class="l6-label">Driver (consumer)</p><div class="l6-btnrow" id="mbDrv"></div><p id="mbDrvState" class="l6-label"></p></div></div><p class="l6-label">Mailbox contents</p><div class="l6-boxes" id="mbBox"></div><div class="l6-log" id="mbLog"></div></div></section><section class="l6-section" id="sync"><h2>Events and semaphores</h2><p class="l6-sub">An <b>event</b> is a signal between threads: one triggers it with <code>-&gt;</code>, others wait with <code>@</code> or <code>wait(ev.triggered)</code>. A <b>semaphore</b> is a bucket of keys: a thread takes a key with <code>get()</code> before using a shared resource (such as a bus) and returns it with <code>put()</code>.</p><pre class="l6-code"><code>event reset_done;
+initial begin  apply_reset();  -&gt; reset_done;  end       // trigger
+initial begin  @(reset_done);  start_traffic();  end     // wait for the trigger
+
+semaphore bus_key = new(1);                              // one key: one user at a time
+task automatic use_bus(string who);
+  bus_key.get(1);   drive_something(who);   bus_key.put(1);
+endtask</code></pre><div class="l6-card"><p class="l6-card-title">Semaphore: two drivers, one bus <span class="l6-tag" data-activity="sync">Activity</span></p><div class="l6-grid-2"><div><p class="l6-label">Driver A</p><div class="l6-btnrow" id="smA"></div></div><div><p class="l6-label">Driver B</p><div class="l6-btnrow" id="smB"></div></div></div><div class="l6-stats"><div class="l6-stat"><b id="smKeys">1</b><span>keys in the semaphore</span></div><div class="l6-stat"><b id="smOwner">nobody</b><span>using the bus</span></div><div class="l6-stat"><b id="smWait">–</b><span>waiting</span></div></div><div class="l6-fb" id="smNote" aria-live="polite"></div></div><div class="l6-card"><p class="l6-card-title">Event timing: @ vs wait(triggered)</p><p>Thread A triggers <code>done</code> at time 10. Thread B starts waiting at time 10 too, in the same time step, but after A ran.</p><div class="l6-btnrow" id="evMode"></div><div class="l6-fb" id="evNote" aria-live="polite"></div></div></section><section class="l6-section" id="fork"><h2>fork ... join, join_any, join_none</h2><p class="l6-sub"><code>fork</code> starts several threads in parallel. The keyword at the end decides when the parent continues.</p><div class="l6-card"><p class="l6-card-title">fork timeline <span class="l6-tag" data-activity="fork">Activity</span></p><pre class="l6-code"><code>fork
+  #10 $display("A done");
+  #20 $display("B done");
+  #30 $display("C done");
+join            // or join_any, join_none
+$display("parent continues");</code></pre><div class="l6-btnrow" id="fkMode"></div><div id="fkView"></div><div class="l6-fb" id="fkNote" aria-live="polite"></div></div><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th>Ending</th><th>Parent continues when</th><th>Typical use</th></tr></thead><tbody><tr><td><code>join</code></td><td>All threads have finished</td><td>Run steps that must all complete</td></tr><tr><td><code>join_any</code></td><td>The first thread finishes (others keep running)</td><td>Timeouts: race a task against a watchdog</td></tr><tr><td><code>join_none</code></td><td>Immediately (threads run in the background)</td><td>Starting forever-running components</td></tr></tbody></table></div><div class="l6-note"><p>After <code>join_any</code> or <code>join_none</code>, use <code>disable fork;</code> to kill leftover threads, or <code>wait fork;</code> to wait for all of them.</p></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">This driver and environment have <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. Why use a bounded mailbox between generator and driver?</summary><div class="l6-details-body"><p>An unbounded mailbox lets the generator create thousands of transactions at time 0 before the driver sends any. Bounding it (e.g. size 1) keeps the generator just one step ahead, saving memory and keeping log messages in a sensible order.</p></div></details><details class="l6-details"><summary>2. Write a timeout: run <code>wait_for_done()</code> but give up after 1000 ns.</summary><div class="l6-details-body"><pre class="l6-code"><code>fork
+  wait_for_done();
+  begin #1000ns; $error("timeout"); end
+join_any
+disable fork;</code></pre></div></details><details class="l6-details"><summary>3. What is the difference between <code>@(ev)</code> and <code>wait(ev.triggered)</code>?</summary><div class="l6-details-body"><p><code>@(ev)</code> waits for a future trigger; if the event was triggered earlier in the same time step, it is missed. <code>wait(ev.triggered)</code> also succeeds if the event has already been triggered in the current time step, avoiding that race.</p></div></details><details class="l6-details"><summary>4. Why does <code>env.run()</code> usually start its components with <code>join_none</code>?</summary><div class="l6-details-body"><p>Drivers, monitors and scoreboards contain <code>forever</code> loops and never finish. With <code>join</code>, run() would never return and the test could not decide when to stop.</p></div></details><details class="l6-details"><summary>5. Two monitors write to the same log file. How can you stop their lines from interleaving?</summary><div class="l6-details-body"><p>Guard the write with a semaphore of one key: <code>log_key.get(); write lines; log_key.put();</code>.</p></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 10</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 10 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module9.html">Module 9: Testbench Architecture</a></span><span>Next: <a href="level6-module11.html">Module 11: Functional Coverage</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module10.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6: SystemVerilog – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+
+  <style>
+    .l6-hub { max-width: 1060px; margin: 0 auto; padding: 28px 22px 60px; }
+    .l6-hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .l6-mod { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 18px 20px; transition: border-color .15s, transform .15s; }
+    .l6-mod:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .l6-mod:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .l6-mod-num { font-family: 'IBM Plex Mono', monospace; font-size: .8rem; color: var(--accent-ink); font-weight: 600; }
+    .l6-mod h2 { font-size: 1.15rem; margin: 0; }
+    .l6-mod p { margin: 0; color: var(--ink-2); font-size: .92rem; }
+    .l6-mod-status { margin-top: auto; display: flex; align-items: center; gap: 10px; font-size: .85rem; color: var(--ink-2); }
+    .l6-mod-status .l6-progress-track { flex: 1; }
+    .l6-mod.is-done { border-color: var(--ok); }
+    .l6-mod.is-done .l6-mod-num::after { content: "  ✓ completed"; color: var(--ok); }
+    .l6-hub-summary { display: flex; align-items: center; gap: 14px; margin: 0 0 24px; }
+    .l6-hub-summary .l6-progress-track { flex: 1; max-width: 360px; height: 12px; }
+  </style>
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <span aria-current="page">Level 6: SystemVerilog</span>
+  </nav>
+</header>
+
+<main class="l6-hub">
+  <section class="l6-hero">
+    <p class="l6-hero-level">Level 6</p>
+    <h1>SystemVerilog for Design and Verification</h1>
+    <p class="l6-lead">Twelve interactive modules take you from SystemVerilog data types to complete verification environments with assertions, constrained randomization and functional coverage. Work through them in order: each module builds on the ones before.</p>
+  </section>
+
+  <div class="l6-hub-summary" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="hubFill"></span></div>
+    <span id="hubText">0 of 12 modules completed</span>
+  </div>
+
+  <p style="margin:-8px 0 24px"><a class="l6-btn" href="level6-certificate.html">🏆 Level 6 Certificate</a>
+    <span style="color:var(--ink-2);font-size:.9rem;margin-left:8px">Unlocks when all 12 modules are completed.</span></p>
+
+  <div class="l6-hub-grid" id="hubGrid"></div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var MODS = [
+    [1, 'SystemVerilog Fundamentals', 'logic, 4-state values, data types, literals, packed and unpacked arrays, enums and structs.', 15],
+    [2, 'Procedural SystemVerilog', 'always_comb, always_ff, blocking vs non-blocking, case forms, loops, latches.', 8],
+    [3, 'Arrays and Data Structures', 'Dynamic arrays, queues, associative arrays and array methods.', 9],
+    [4, 'Functions and Tasks', 'Timing, argument directions, ref, automatic vs static.', 7],
+    [5, 'Object-Oriented SystemVerilog', 'Classes, handles, copying, inheritance, polymorphism, abstract classes.', 9],
+    [6, 'Interfaces and Advanced SystemVerilog', 'Interfaces, modports, clocking blocks, virtual interfaces, packages, parameters.', 9],
+    [7, 'SystemVerilog Assertions (SVA)', 'Immediate and concurrent assertions, implication, sampled value functions, an assertion checker.', 7],
+    [8, 'Constrained Randomization', 'rand, randc, constraints, dist, solve before, randomize() with.', 8],
+    [9, 'Testbench Architecture', 'Generator, driver, monitor, scoreboard, reference model, directed vs random.', 7],
+    [10, 'Verification Components', 'Agents and environments, mailboxes, events, semaphores, fork/join.', 7],
+    [11, 'Functional Coverage', 'Covergroups, bins, cross coverage and coverage closure.', 7],
+    [12, 'Verification Projects', 'FIFO, ALU, UART, FSM, RAM and a valid/ready bus, verified end to end.', 10]
+  ];
+  function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  var grid = document.getElementById('hubGrid'), done = 0;
+  MODS.forEach(function (m) {
+    var n = m[0], isDone = get('level6_module' + n + '_completed') === 'true', acts = 0;
+    try { acts = Object.keys(JSON.parse(get('level6_module' + n + '_activities') || '{}')).length; } catch (e) { acts = 0; }
+    if (isDone) done++;
+    var pct = isDone ? 100 : Math.round(100 * Math.min(acts, m[3]) / m[3]);
+    var a = document.createElement('a');
+    a.href = 'level6-module' + n + '.html';
+    a.className = 'l6-mod' + (isDone ? ' is-done' : '');
+    a.innerHTML = '<span class="l6-mod-num">Module ' + n + '</span><h2>' + m[1] + '</h2><p>' + m[2] + '</p>' +
+      '<div class="l6-mod-status"><div class="l6-progress-track"><span class="l6-progress-fill" style="width:' + pct + '%"></span></div><span>' +
+      (isDone ? 'Completed' : (acts ? acts + ' of ' + m[3] + ' activities' : 'Not started')) + '</span></div>';
+    grid.appendChild(a);
+  });
+  document.getElementById('hubFill').style.width = (100 * done / 12) + '%';
+  document.getElementById('hubText').textContent = done + ' of 12 modules completed';
+})();
+</script>
+</body>
+</html>

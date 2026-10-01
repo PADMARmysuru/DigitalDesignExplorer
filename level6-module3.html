@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 3: Arrays and Data Structures – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 3</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#fixed" data-acts="multidim">Fixed-size arrays</a></li><li><a href="#dynamic" data-acts="dynarr">Dynamic arrays</a></li><li><a href="#queues" data-acts="queue">Queues</a></li><li><a href="#methods" data-acts="methods">Array methods</a></li><li><a href="#assoc" data-acts="assoc">Associative arrays</a></li><li><a href="#choose" data-acts="choose">Choosing a structure</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 3</p>
+      <h1>Arrays and Data Structures</h1>
+      <p class="l6-lead">Testbenches juggle collections of data: expected results, pending transactions, memory contents. SystemVerilog gives you four kinds of array, each suited to a different job. Here you'll operate on each one and watch it change.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Index multidimensional packed and unpacked arrays correctly.</li><li>Create, resize and delete dynamic arrays with <code>new[]</code>.</li><li>Use a queue with <code>push_back</code>, <code>push_front</code>, <code>pop_back</code>, <code>pop_front</code>, <code>insert</code> and <code>delete</code>.</li><li>Apply array methods such as <code>find</code>, <code>sort</code>, <code>reverse</code>, <code>sum</code> and <code>size</code>.</li><li>Model a sparse memory with an associative array.</li><li>Pick the right array type for a given verification task.</li></ol></div>
+      <div class="l6-note"><p>Module 1: packed vs unpacked dimensions.</p></div>
+    </section>
+<section class="l6-section" id="fixed"><h2>Fixed-size and multidimensional arrays</h2><p class="l6-sub">Fixed arrays have a size set at compile time. When you index, <b>unpacked dimensions come first</b> (left to right), then packed ones.</p><pre class="l6-code"><code>logic [7:0]  mem   [256];        // 256 bytes: one packed, one unpacked dimension
+int          grid  [4][8];       // 4 x 8 ints, both unpacked
+logic [3:0]  m     [2][3];       // 2 x 3 elements, each a 4-bit vector
+
+m[1][2]      // element at row 1, column 2  -&gt; a 4-bit value
+m[1][2][3]   // bit 3 of that element
+int total = $size(grid, 1);  // 4  (size of the first dimension)</code></pre><div class="l6-card"><p class="l6-card-title">Index it <span class="l6-tag" data-activity="multidim">Activity</span></p><div class="l6-choice-list" id="mdList"></div><p class="l6-score" id="mdScore"></p></div></section><section class="l6-section" id="dynamic"><h2>Dynamic arrays</h2><p class="l6-sub">A dynamic array is declared with empty brackets <code>[]</code> and gets its size at run time with <code>new[n]</code>. It holds nothing until you allocate it.</p><div class="l6-card"><p class="l6-card-title">Dynamic array playground <span class="l6-tag" data-activity="dynarr">Activity</span></p><pre class="l6-code"><code>int d[];   // declared, but size 0</code></pre><div class="l6-btnrow" id="dynBtns"></div><div class="l6-boxes" id="dynBoxes"></div><div class="l6-log" id="dynLog"></div></div></section><section class="l6-section" id="queues"><h2>Queues</h2><p class="l6-sub">A queue <code>[$]</code> grows and shrinks at both ends, like a line of people. It is the most-used container in testbenches: scoreboards keep expected transactions in a queue and pop them as the DUT produces results.</p><div class="l6-card"><p class="l6-card-title">Queue simulator <span class="l6-tag" data-activity="queue">Activity</span></p><pre class="l6-code"><code>int q[$] = '{3, 5};</code></pre><div class="l6-btnrow"><label class="l6-label" for="qVal" style="align-self:center;margin:0">value</label><input type="number" class="l6-input" id="qVal" value="7" style="width:80px"><label class="l6-label" for="qIdx" style="align-self:center;margin:0">index</label><input type="number" class="l6-input" id="qIdx" value="1" min="0" style="width:70px"><label style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" id="qBound"> bounded <code>[$:4]</code></label></div><div class="l6-btnrow" id="qBtns"></div><div class="l6-boxes" id="qBoxes"></div><div class="l6-log" id="qLog"></div></div><div class="l6-note"><p><code>q[0]</code> is the front and <code>q[$]</code> is the back. Popping an empty queue returns the default value (0 for int) and gives a warning, so check <code>q.size()</code> first.</p></div></section><section class="l6-section" id="methods"><h2>Array methods</h2><p class="l6-sub">Arrays and queues share built-in methods for searching, ordering and reducing. Methods that search return a <b>queue</b> of results, because there may be zero, one or many matches.</p><div class="l6-card"><p class="l6-card-title">Method lab <span class="l6-tag" data-activity="methods">Activity</span></p><pre class="l6-code"><code>int arr[$] = '{7, 2, 9, 4, 2, 8};</code></pre><div class="l6-btnrow"><label class="l6-label" for="mN" style="align-self:center;margin:0">N for <code>with</code> clauses</label><input type="number" class="l6-input" id="mN" value="5" style="width:80px"></div><div class="l6-btnrow" id="mBtns"></div><div class="l6-boxes" id="mBoxes"></div><div class="l6-result" id="mOut"></div></div><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th>Group</th><th>Methods</th><th>Returns</th></tr></thead><tbody><tr><td>Locators</td><td><code>find</code>, <code>find_index</code>, <code>find_first</code>, <code>find_last</code>, <code>min</code>, <code>max</code>, <code>unique</code></td><td>A queue</td></tr><tr><td>Ordering</td><td><code>sort</code>, <code>rsort</code>, <code>reverse</code>, <code>shuffle</code></td><td>Nothing: they change the array in place</td></tr><tr><td>Reduction</td><td><code>sum</code>, <code>product</code>, <code>and</code>, <code>or</code>, <code>xor</code></td><td>A single value</td></tr><tr><td>Size</td><td><code>size()</code> (queues, dynamic), <code>$size()</code> (any)</td><td>int</td></tr></tbody></table></div></section><section class="l6-section" id="assoc"><h2>Associative arrays</h2><p class="l6-sub">An associative array stores only the entries you write, indexed by any key type. It is ideal for a large, sparse space such as a 4 GB memory where the test touches only a few hundred addresses.</p><div class="l6-card"><p class="l6-card-title">Sparse memory model <span class="l6-tag" data-activity="assoc">Activity</span></p><pre class="l6-code"><code>bit [31:0] mem [bit [31:0]];   // key: 32-bit address, value: 32-bit data</code></pre><div class="l6-controls"><div><label class="l6-label" for="aAddr">address (hex)</label><input class="l6-input is-wide" id="aAddr" value="1000_0000"></div><div><label class="l6-label" for="aData">data (hex)</label><input class="l6-input is-wide" id="aData" value="CAFE"></div><div></div></div><div class="l6-btnrow" id="aBtns"></div><div id="aTable"></div><div class="l6-log" id="aLog"></div></div></section><section class="l6-section" id="choose"><h2>Which array would you use?</h2><p class="l6-sub">Each structure has a sweet spot. Pick the best fit for each job.</p><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th>Type</th><th>Declared</th><th>Size</th><th>Best for</th></tr></thead><tbody><tr><td>Fixed</td><td><code>int a[16];</code></td><td>Compile time</td><td>RTL memories, lookup tables</td></tr><tr><td>Dynamic</td><td><code>int d[];</code></td><td>Set with <code>new[n]</code></td><td>Payloads whose length is decided at run time</td></tr><tr><td>Queue</td><td><code>int q[$];</code></td><td>Grows and shrinks at both ends</td><td>Scoreboards, FIFOs of transactions</td></tr><tr><td>Associative</td><td><code>int m[int];</code></td><td>Only stored entries</td><td>Sparse memories, lookups by name or ID</td></tr></tbody></table></div><div class="l6-card"><p class="l6-card-title">Pick the structure <span class="l6-tag" data-activity="choose">Activity</span></p><div class="l6-choice-list" id="chList"></div><p class="l6-score" id="chScore"></p></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">This testbench fragment has <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. Declare a queue of bytes, add 8'hAA to the back and 8'h55 to the front. What is <code>q[0]</code>?</summary><div class="l6-details-body"><pre class="l6-code"><code>byte q[$];
+q.push_back(8'hAA);
+q.push_front(8'h55);   // q = '{8'h55, 8'hAA}</code></pre><p><code>q[0]</code> is 8'h55, the front.</p></div></details><details class="l6-details"><summary>2. Resize a dynamic array <code>d</code> of 4 elements to 10 without losing its contents.</summary><div class="l6-details-body"><pre class="l6-code"><code>d = new[10](d);   // copies the old 4 elements, the rest are 0</code></pre></div></details><details class="l6-details"><summary>3. Why is an associative array better than <code>bit [31:0] mem [2**32]</code> for a memory model?</summary><div class="l6-details-body"><p>The fixed array would try to allocate 2<sup>32</sup> × 4 bytes = 16 GB. The associative array stores only addresses that were written, so a test touching 500 addresses uses a few kilobytes.</p></div></details><details class="l6-details"><summary>4. Write code that returns all elements greater than 10 from <code>int arr[]</code>.</summary><div class="l6-details-body"><pre class="l6-code"><code>int big[$];
+big = arr.find(x) with (x &gt; 10);</code></pre></div></details><details class="l6-details"><summary>5. How do you safely read an associative array entry that might not exist?</summary><div class="l6-details-body"><pre class="l6-code"><code>if (mem.exists(addr)) data = mem[addr];
+else                   data = '0;   // or report "read of unwritten address"</code></pre></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 3</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 3 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module2.html">Module 2: Procedural SystemVerilog</a></span><span>Next: <a href="level6-module4.html">Module 4: Functions and Tasks</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module3.js"></script>
+</body>
+</html>

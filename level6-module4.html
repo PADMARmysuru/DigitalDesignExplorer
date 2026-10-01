@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 4: Functions and Tasks – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 4</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#functions">Functions</a></li><li><a href="#tasks" data-acts="timeline">Tasks and timing</a></li><li><a href="#which" data-acts="fortask">Function or task?</a></li><li><a href="#args" data-acts="args">Argument directions</a></li><li><a href="#lifetime" data-acts="recursion">automatic vs static</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 4</p>
+      <h1>Functions and Tasks</h1>
+      <p class="l6-lead">Functions and tasks package reusable code. The one rule to remember: a function finishes in zero simulation time, while a task may wait for clocks and delays. Everything else follows from that.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Write functions that return a value and <code>void</code> functions.</li><li>Write tasks that consume simulation time with delays and clock events.</li><li>Decide whether a job needs a function or a task.</li><li>Predict how <code>input</code>, <code>output</code>, <code>inout</code> and <code>ref</code> arguments move data.</li><li>Explain why recursion and <code>ref</code> arguments need <code>automatic</code>.</li></ol></div>
+      <div class="l6-note"><p>Module 2: procedural code and loops.</p></div>
+    </section>
+<section class="l6-section" id="functions"><h2>Functions</h2><p class="l6-sub">A function computes a result from its arguments and returns immediately. It can be used inside an expression, and it cannot contain <code>#</code> delays, <code>@</code> events or <code>wait</code>.</p><pre class="l6-code"><code>function automatic logic parity(input logic [7:0] d);
+  return ^d;                 // XOR of all bits
+endfunction
+
+function automatic int max3(int a, int b, int c = 0);   // c has a default value
+  int m = (a &gt; b) ? a : b;
+  return (m &gt; c) ? m : c;
+endfunction
+
+function void print_pkt(int id, byte data);   // void: returns nothing
+  $display("pkt %0d: data = %h", id, data);
+endfunction
+
+// Usage
+logic p = parity(8'hA5);          // inside an expression
+int   m = max3(.a(4), .b(9));     // named arguments, c uses its default
+print_pkt(1, 8'h3C);              // a void function is called like a statement</code></pre></section><section class="l6-section" id="tasks"><h2>Tasks and simulation time</h2><p class="l6-sub">A task is called as a statement and may take time: it can wait for clock edges, use delays and call other tasks. Testbenches use tasks for every protocol action: reset, write, read, send a packet.</p><pre class="l6-code"><code>task automatic send_byte(input byte data);
+  for (int i = 0; i &lt; 8; i++) begin
+    @(posedge clk);
+    tx &lt;= data[i];           // LSB first, one bit per clock
+  end
+endtask
+
+function automatic bit parity(input byte data);
+  return ^data;
+endfunction</code></pre><div class="l6-card"><p class="l6-card-title">Simulation-time timeline <span class="l6-tag" data-activity="timeline">Activity</span></p><p>Call the function and the task and watch simulation time. The clock period is 10 ns.</p><div class="l6-btnrow"><button type="button" class="l6-btn is-mono" id="tlFunc">p = parity(8'hA5);</button><button type="button" class="l6-btn is-mono" id="tlTask">send_byte(8'hA5);</button><button type="button" class="l6-btn" id="tlReset">Reset time</button></div><div class="l6-stats"><div class="l6-stat"><b id="tlTime">0 ns</b><span>$time</span></div><div class="l6-stat"><b id="tlCalls">0</b><span>calls made</span></div></div><div id="tlWave"></div><div class="l6-log" id="tlLog"></div></div></section><section class="l6-section" id="which"><h2>Function or task?</h2><p class="l6-sub">Use a function whenever the job takes no time. Use a task only when you must wait.</p><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th></th><th>Function</th><th>Task</th></tr></thead><tbody><tr><td>Returns a value</td><td>Yes (or <code>void</code>)</td><td>No (use <code>output</code> arguments)</td></tr><tr><td>Consumes time (#, @, wait)</td><td>Never</td><td>Allowed</td></tr><tr><td>Can call</td><td>Functions only</td><td>Functions and tasks</td></tr><tr><td>Used in an expression</td><td>Yes</td><td>No, only as a statement</td></tr><tr><td>Synthesizable</td><td>Yes (combinational logic)</td><td>Only without timing, rarely used in RTL</td></tr></tbody></table></div><div class="l6-card"><p class="l6-card-title">Decide <span class="l6-tag" data-activity="fortask">Activity</span></p><div class="l6-choice-list" id="ftList"></div><p class="l6-score" id="ftScore"></p></div></section><section class="l6-section" id="args"><h2>Argument directions: input, output, inout, ref</h2><p class="l6-sub"><code>input</code>, <code>output</code> and <code>inout</code> <b>copy</b> values: in at the call, out when the task returns. <code>ref</code> passes a <b>reference</b>: the task works on the caller's own variable, so every change is visible immediately.</p><div class="l6-card"><p class="l6-card-title">Watch the data move <span class="l6-tag" data-activity="args">Activity</span></p><pre class="l6-code"><code>task automatic bump(&lt;dir&gt; int x);
+  x = x + 10;      // at time 0
+  #5;
+  x = x * 2;       // at time 5
+endtask
+
+initial begin v = 1; bump(v); end           // process A
+initial begin #2 $display("v = %0d", v); end // process B peeks at time 2</code></pre><div class="l6-btnrow" id="argDir"></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="argStep">Step</button><button type="button" class="l6-btn" id="argReset">Reset</button></div><div class="l6-table-wrap"><table class="l6-table" id="argTable"></table></div><div class="l6-fb" id="argNote" aria-live="polite"></div></div><div class="l6-note"><p>Use <code>const ref</code> to pass a large array without copying it while promising not to change it: <code>function automatic int sum(const ref int a[]);</code></p></div></section><section class="l6-section" id="lifetime"><h2>automatic vs static</h2><p class="l6-sub">A <b>static</b> subroutine has one copy of its arguments and local variables, shared by every call. An <b>automatic</b> one creates a fresh copy on each call, like functions in C. Subroutines in modules are static by default; in classes they are automatic.</p><div class="l6-card"><p class="l6-card-title">Recursion on the call stack <span class="l6-tag" data-activity="recursion">Activity</span></p><pre class="l6-code"><code>function &lt;lifetime&gt; int fact(int n);
+  if (n &lt;= 1) return 1;
+  return n * fact(n - 1);
+endfunction
+
+initial $display("fact(4) = %0d", fact(4));</code></pre><div class="l6-btnrow" id="recMode"></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="recStep">Step</button><button type="button" class="l6-btn" id="recReset">Reset</button></div><div class="l6-boxes" id="recStack" style="flex-direction:column;align-items:stretch"></div><div class="l6-fb" id="recNote" aria-live="polite"></div></div><div class="l6-note is-warn"><p>Always write <code>function automatic</code> and <code>task automatic</code> in testbenches unless you have a reason not to. Static tasks called from two processes at once share their variables and corrupt each other.</p></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">These three subroutines contain <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. Write a function that returns the number of 1s in a 16-bit value.</summary><div class="l6-details-body"><pre class="l6-code"><code>function automatic int count_ones(input logic [15:0] v);
+  int n = 0;
+  foreach (v[i]) n += v[i];
+  return n;
+endfunction</code></pre><p>The built-in <code>$countones(v)</code> does the same.</p></div></details><details class="l6-details"><summary>2. Write a task that drives <code>rst_n</code> low for 3 clock cycles, then high.</summary><div class="l6-details-body"><pre class="l6-code"><code>task automatic apply_reset();
+  rst_n &lt;= 0;
+  repeat (3) @(posedge clk);
+  rst_n &lt;= 1;
+endtask</code></pre></div></details><details class="l6-details"><summary>3. Why can't a function call a task?</summary><div class="l6-details-body"><p>A function must complete in zero time. A task may wait, so calling it could make the function take time. The compiler forbids it. (A function can start a task inside a <code>fork ... join_none</code>, but that is an advanced pattern.)</p></div></details><details class="l6-details"><summary>4. With <code>task t(output int x); x = 5; #10; x = 7; endtask</code> and <code>t(v);</code>, when does v change and to what?</summary><div class="l6-details-body"><p>v changes once, when the task returns at time 10, to 7. Output arguments are copied back only at the end.</p></div></details><details class="l6-details"><summary>5. When would you pass an array by <code>ref</code>?</summary><div class="l6-details-body"><p>When the array is large (copying costs time), or when the task must modify the caller's array directly, for example pushing results into a queue owned by the caller.</p></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 4</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 4 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module3.html">Module 3: Arrays and Data Structures</a></span><span>Next: <a href="level6-module5.html">Module 5: Object-Oriented SystemVerilog</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module4.js"></script>
+</body>
+</html>

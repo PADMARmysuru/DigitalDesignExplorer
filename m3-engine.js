@@ -6,10 +6,7 @@ var M3 = (function () {
   var COL = { on: "#1b8a3a", off: "#5b6b8a", neutral: "#243b64", pmos: "#b3261e" };
 
   function guard() {
-    if (localStorage.getItem("level4Unlocked") !== "true") {
-      alert("🔒 Level 4 is restricted. Faculty authorization is required.");
-      window.location.replace("index.html");
-    }
+    /* Level access is now checked centrally in access-control.js */
   }
 
   function flag(key, value) {

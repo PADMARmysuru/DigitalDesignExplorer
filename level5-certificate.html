@@ -3,106 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Level 5 certificate | Digital Design Explorer</title>
-<link rel="stylesheet" href="level5.css">
-<style>
-  .wrap{max-width:1080px;margin:0 auto;padding:24px 20px 60px}
-  .tools{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px}
-  .tools label{display:grid;gap:4px;font-size:.9rem;color:var(--muted)}
-  .tools input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:var(--r-s);min-width:220px;background:#fff;color:var(--ink)}
-  .sheet-scroll{overflow-x:auto}
-  .sheet{position:relative;width:1000px;aspect-ratio:297/210;margin:0 auto;background:#fff;color:var(--ink);box-shadow:0 10px 30px rgba(21,35,59,.14);border:14px solid var(--ink)}
-  .sheet .inner{position:absolute;inset:12px;border:2px solid var(--hi);padding:40px 64px 30px;display:flex;flex-direction:column;align-items:center;text-align:center}
-  .sheet .corner{position:absolute;width:120px;height:120px}
-  .sheet .brandline{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--trace);font-size:1rem}
-  .sheet h1{font-size:2.6rem;margin:14px 0 0;letter-spacing:.01em;line-height:1.1}
-  .sheet .sub{color:var(--muted);margin:6px 0 18px}
-  .sheet .nm{font-size:2.2rem;font-weight:700;border-bottom:2px solid var(--line);padding:0 30px 4px;min-width:420px;margin:4px 0}
-  .sheet .usn{font-family:var(--mono);color:var(--muted);margin:4px 0 14px}
-  .sheet .body{max-width:640px;margin:0;font-size:1.05rem}
-  .sheet .mods{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 18px;margin:18px 0 0;width:100%;max-width:760px;text-align:left;font-size:.86rem}
-  .sheet .mods div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted var(--line);padding:3px 0}
-  .sheet .mods b{font-family:var(--mono)}
-  .sheet .foot2{margin-top:auto;padding:0 40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;width:100%;align-items:end;font-size:.88rem}
-  .sheet .sig{border-top:1.5px solid var(--ink);padding-top:6px;line-height:1.35}
-  .sheet .meta{text-align:left;color:var(--muted);line-height:1.5}
-  .sheet .seal{justify-self:center}
-  .locked{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m);padding:26px}
-  @media print{
-    @page{size:A4 landscape;margin:0}
-    body{background:#fff}
-    .wrap{padding:0;max-width:none}
-    .sheet-scroll{overflow:visible}
-    .sheet{width:297mm;height:210mm;aspect-ratio:auto;box-shadow:none;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  }
-</style>
+<title>Level 5 Certificate | Digital Design Explorer</title>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+<style>body{margin:0;background:#eef1f6;font-family:"Segoe UI",system-ui,Arial,sans-serif}</style>
 </head>
 <body>
-<header class="topbar no-print">
-  <div class="topbar-in">
-    <a class="brand" href="index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="2" fill="none" stroke="#D98A00" stroke-width="2"/><path d="M9 1v4M13 1v4M17 1v4M9 21v4M13 21v4M17 21v4M1 9h4M1 13h4M1 17h4M21 9h4M21 13h4M21 17h4" stroke="#fff" stroke-width="1.6"/><path d="M9 15h3v-4h5" stroke="#D98A00" stroke-width="1.8" fill="none"/></svg><span>Digital Design Explorer</span></a>
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="level5-dashboard.html">Level 5: VLSI Testing</a> / Certificate</nav>
-    <div class="top-actions"><a href="level5-dashboard.html">Level 5 dashboard</a></div>
-  </div>
-</header>
-
-<div class="wrap" id="app"></div>
-
-<script src="level5.js"></script>
-<script>
-/* Who signs the certificate — change here if needed */
-var ISSUER = { name: 'Mrs. Padma R', title: 'Assistant Professor, Dept. of ECE', org: 'GSSSIETW, Mysuru' };
-
-(function () {
-  var app = document.getElementById('app');
-  var all = L5.MODULES.map(function (m) { return { m: m, p: L5.store.mod(m.n) }; });
-  var missing = all.filter(function (x) { return !x.p.passed; });
-  if (missing.length) {
-    app.innerHTML = '<div class="locked"><h1 style="margin:0 0 8px;font-size:1.6rem">The certificate is not unlocked yet</h1><p>Pass the quiz (6 of 10 or better) in every Level 5 module. Still to complete:</p><ul>' +
-      missing.map(function (x) { return '<li><a href="' + x.m.file + '#quiz">Module ' + x.m.n + ': ' + x.m.title + '</a></li>'; }).join('') +
-      '</ul><a class="btn" href="level5-dashboard.html">Back to the dashboard</a></div>';
-    return;
-  }
-  var st = L5.student();
-  var score = 0, total = 0, last = '';
-  all.forEach(function (x) { score += x.p.best; total += (x.p.total || 10); if ((x.p.date || '') > last) last = x.p.date || ''; });
-  var date = new Date(last || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-  function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return ('00000000' + (h >>> 0).toString(16).toUpperCase()).slice(-8); }
-  var corner = function (tf) {
-    return '<svg class="corner" viewBox="0 0 120 120" style="' + tf + '" aria-hidden="true"><g fill="none" stroke="#D98A00" stroke-width="2"><path d="M18,62 H38 V38 H62 V18"/><path d="M18,80 H56 V56 H80 V18"/><circle cx="38" cy="62" r="3" fill="#D98A00"/><circle cx="62" cy="38" r="3" fill="#D98A00"/><circle cx="56" cy="80" r="3" fill="#D98A00"/><circle cx="80" cy="56" r="3" fill="#D98A00"/></g></svg>';
-  };
-  app.innerHTML =
-    '<div class="tools no-print"><label>Name on certificate<input id="nmIn" type="text" autocomplete="name" value=""></label>' +
-    '<label>USN<input id="usnIn" type="text" value=""></label>' +
-    '<button class="btn" type="button" id="printBtn">Print or save as PDF</button>' +
-    '<span class="hint">In the print window choose “Save as PDF” and landscape orientation.</span></div>' +
-    '<div class="sheet-scroll"><article class="sheet" aria-label="Level 5 certificate">' +
-    corner('left:0;top:0') + corner('right:0;top:0;transform:scaleX(-1)') + corner('left:0;bottom:0;transform:scaleY(-1)') + corner('right:0;bottom:0;transform:scale(-1,-1)') +
-    '<div class="inner"><div class="brandline"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="2" fill="none" stroke="#D98A00" stroke-width="2"/><path d="M9 1v4M13 1v4M17 1v4M9 21v4M13 21v4M17 21v4M1 9h4M1 13h4M1 17h4M21 9h4M21 13h4M21 17h4" stroke="#15233B" stroke-width="1.6"/><path d="M9 15h3v-4h5" stroke="#D98A00" stroke-width="1.8" fill="none"/></svg>Digital Design Explorer</div>' +
-    '<h1>Certificate of Completion</h1><p class="sub">Level 5: VLSI Testing</p><p style="margin:0">This is to certify that</p>' +
-    '<div class="nm" id="nmOut"></div><div class="usn" id="usnOut"></div>' +
-    '<p class="body">has successfully completed all six modules of Level 5, VLSI Testing, including interactive laboratories and assessments on fault models, fault simulation, test generation, design for testability, BIST and boundary scan.</p>' +
-    '<div class="mods">' + all.map(function (x) { return '<div><span>' + x.m.n + '. ' + x.m.title + '</span><b>' + x.p.best + '/' + (x.p.total || 10) + '</b></div>'; }).join('') + '</div>' +
-    '<div class="foot2"><div class="meta">Overall score: <strong style="color:var(--ink)">' + Math.round(100 * score / total) + '%</strong><br>Completed on ' + date + '<br>Certificate ID: <span id="cid" style="font-family:var(--mono)"></span></div>' +
-    '<svg class="seal" width="96" height="96" viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="44" fill="none" stroke="#D98A00" stroke-width="3"/><circle cx="48" cy="48" r="36" fill="#15233B"/><path d="M30,54 H40 V40 H56 V54 H66" fill="none" stroke="#D98A00" stroke-width="3"/><text x="48" y="72" text-anchor="middle" style="font:700 10px var(--sans);fill:#fff">LEVEL 5</text></svg>' +
-    '<div class="sig"><strong>' + ISSUER.name + '</strong><br>' + ISSUER.title + '<br>' + ISSUER.org + '</div></div></div></article></div>';
-  var nmIn = document.getElementById('nmIn'), usnIn = document.getElementById('usnIn');
-  nmIn.value = st.name; usnIn.value = st.usn;
-  function paint() {
-    var n = nmIn.value.trim(), u = usnIn.value.trim();
-    document.getElementById('nmOut').textContent = n || 'Enter your name above';
-    document.getElementById('nmOut').style.color = n ? '' : 'var(--muted)';
-    document.getElementById('usnOut').textContent = u ? 'USN: ' + u : '';
-    document.getElementById('cid').textContent = 'DDE-L5-' + hash(n.toUpperCase() + '|' + u.toUpperCase() + '|' + last);
-    try { localStorage.setItem('dde_level5_certname', JSON.stringify({ name: n, usn: u })); } catch (e) {}
-  }
-  nmIn.addEventListener('input', paint); usnIn.addEventListener('input', paint);
-  document.getElementById('printBtn').addEventListener('click', function () {
-    if (!nmIn.value.trim()) { nmIn.focus(); nmIn.setAttribute('aria-invalid', 'true'); nmIn.style.borderColor = 'var(--fail)'; return; }
-    window.print();
-  });
-  paint();
-})();
-</script>
+<!--
+  Level 5 certificate.
+  Eligibility is checked when the page opens, using the same progress keys the
+  Level 5 dashboard uses. If any requirement is missing, a "Certificate Locked"
+  checklist is shown instead of the certificate, so opening this file directly
+  cannot bypass the rules. The certificate itself is drawn by common.js.
+-->
+<main id="ddeCertificate" data-dde-certificate="5">
+  <noscript><p style="padding:30px;text-align:center">Please enable JavaScript to view your certificate.</p></noscript>
+</main>
 </body>
 </html>

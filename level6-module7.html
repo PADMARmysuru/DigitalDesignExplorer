@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 7: SystemVerilog Assertions (SVA) – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 7</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#why">Why assertions?</a></li><li><a href="#anatomy" data-acts="impl">Properties and sequences</a></li><li><a href="#sampled" data-acts="sampled">Sampled value functions</a></li><li><a href="#checker" data-acts="checker,predict">Assertion Checker</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 7</p>
+      <h1>SystemVerilog Assertions (SVA)</h1>
+      <p class="l6-lead">An assertion is a rule about your design that the simulator checks on every clock cycle. Instead of staring at waveforms hoping to spot a mistake, you write the rule once and the tool tells you exactly when and where it was broken.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Explain why assertions find bugs earlier than output checking alone.</li><li>Write immediate assertions in procedural code.</li><li>Write clocked concurrent assertions with <code>property</code> and <code>sequence</code>.</li><li>Tell <code>|-&gt;</code> from <code>|=&gt;</code> and use <code>##n</code> and <code>##[m:n]</code> delays.</li><li>Use <code>$past</code>, <code>$rose</code>, <code>$fell</code>, <code>$stable</code> and <code>$changed</code>.</li><li>Use <code>disable iff</code> to switch checks off during reset.</li><li>Predict, from a waveform, whether an assertion passes or fails, and explain why.</li></ol></div>
+      <div class="l6-note"><p>Module 2 (clocked logic) and Module 6 (interfaces). Comfort reading waveforms helps.</p></div>
+    </section>
+<section class="l6-section" id="why"><h2>Why assertions?</h2><p class="l6-sub">A scoreboard only notices a bug when a wrong value reaches an output, maybe thousands of cycles after the cause. An assertion sits right next to the logic and fires on the cycle the rule is broken, pointing at the exact signal.</p><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th></th><th>Immediate assertion</th><th>Concurrent assertion</th></tr></thead><tbody><tr><td>Where</td><td>Inside procedural code (<code>always</code>, <code>initial</code>, tasks)</td><td>Module, interface or program level (also in procedural code)</td></tr><tr><td>When checked</td><td>When the statement executes</td><td>At every clock edge</td></tr><tr><td>Can span cycles</td><td>No</td><td>Yes: sequences over many cycles</td></tr><tr><td>Example</td><td><code>assert (addr &lt; 16);</code></td><td><code>assert property (@(posedge clk) req |=&gt; ack);</code></td></tr></tbody></table></div><pre class="l6-code"><code>// Immediate: a simple check at one moment
+always_comb
+  a_onehot: assert ($onehot0(state)) else $error("state %b is not one-hot", state);
+
+// Concurrent: a rule over time, sampled at each rising clock edge
+a_ack: assert property (@(posedge clk) disable iff (!rst_n)
+                        req |-&gt; ##[1:3] ack)
+       else $error("ack did not arrive within 3 cycles of req");</code></pre><div class="l6-note"><p>A concurrent assertion samples every signal just <b>before</b> the clock edge (like a clocking block). In the waveforms below, each column is one clock edge and shows the value sampled there.</p></div></section><section class="l6-section" id="anatomy"><h2>Sequences, properties and implication</h2><p class="l6-sub">A <b>sequence</b> describes signal values over consecutive clock cycles. A <b>property</b> combines sequences into a rule, usually an implication: <i>if the antecedent happens, then the consequent must follow</i>.</p><pre class="l6-code"><code>sequence s_req_ack;
+  req ##1 ack;              // req, then ack one cycle later
+endsequence
+
+property p_handshake;
+  @(posedge clk) disable iff (!rst_n)
+    req |-&gt; ##[1:3] ack;    // antecedent |-&gt; consequent
+endproperty
+
+a_handshake: assert property (p_handshake);
+c_handshake: cover  property (p_handshake);   // counts how often it really happened</code></pre><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th>Operator</th><th>Meaning</th></tr></thead><tbody><tr><td><code>a |-&gt; b</code></td><td>Overlapping: if a at this edge, b must hold <b>at the same edge</b></td></tr><tr><td><code>a |=&gt; b</code></td><td>Non-overlapping: if a at this edge, b must hold <b>at the next edge</b> (same as <code>a |-&gt; ##1 b</code>)</td></tr><tr><td><code>##n</code></td><td>Wait exactly n clock cycles</td></tr><tr><td><code>##[m:n]</code></td><td>Wait between m and n cycles: passes at the first cycle that matches</td></tr><tr><td><code>disable iff (c)</code></td><td>Abandon the check while c is true (typically reset)</td></tr></tbody></table></div><div class="l6-note is-warn"><p>If the antecedent is false, the property is <b>vacuously true</b>: nothing is checked on that cycle. That is why a cover property is useful, to prove the antecedent actually happened.</p></div><div class="l6-card"><p class="l6-card-title">|-&gt; vs |=&gt; <span class="l6-tag" data-activity="impl">Activity</span></p><div class="l6-btnrow" id="imOp"></div><pre class="l6-code" id="imCode"><code></code></pre><div id="imWave"></div><div class="l6-fb" id="imNote" aria-live="polite"></div></div></section><section class="l6-section" id="sampled"><h2>Sampled value functions</h2><p class="l6-sub">These functions compare the value sampled at this clock edge with the value at the previous edge.</p><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th>Function</th><th>True when</th></tr></thead><tbody><tr><td><code>$rose(a)</code></td><td>a was 0 at the previous edge and is 1 now</td></tr><tr><td><code>$fell(a)</code></td><td>a was 1 and is 0 now</td></tr><tr><td><code>$stable(a)</code></td><td>a has the same value as at the previous edge</td></tr><tr><td><code>$changed(a)</code></td><td>a has a different value (the opposite of $stable)</td></tr><tr><td><code>$past(a, n)</code></td><td>Returns the value of a n edges ago (n = 1 by default)</td></tr></tbody></table></div><div class="l6-card"><p class="l6-card-title">Sampled value lab <span class="l6-tag" data-activity="sampled">Activity</span></p><p>Click the <code>a</code> row to change it and watch every function update. The value before cycle 0 is taken as 0.</p><div id="svWave"></div><div class="l6-fb" id="svNote" aria-live="polite"></div></div></section><section class="l6-section" id="checker"><h2>Assertion Checker</h2><p class="l6-sub">Choose a property and a scenario. <b>Predict</b> whether the assertion passes or fails, then see the verdict for every attempt with the reason. Click any signal cell to edit the waveform and build your own scenario.</p><div class="l6-card"><p class="l6-card-title">Interactive checker <span class="l6-tag" data-activity="checker">Activity</span> <span class="l6-tag" data-activity="predict">Activity</span></p><p class="l6-label">1. Choose a property</p><div class="l6-btnrow" id="acProps"></div><pre class="l6-code" id="acCode"><code></code></pre><p id="acDesc" style="color:var(--ink-2)"></p><p class="l6-label">2. Choose a scenario, or click cells to edit</p><div class="l6-btnrow" id="acScen"></div><div id="acWave"></div><p class="l6-label">3. Predict, then check</p><div class="l6-btnrow"><button type="button" class="l6-btn" id="acPredPass">Predict PASS ✓</button><button type="button" class="l6-btn" id="acPredFail">Predict FAIL ✗</button><button type="button" class="l6-btn is-primary" id="acRun">Just check</button></div><div id="acVerdict"></div><div id="acList"></div><p class="l6-score" id="acScore" aria-live="polite"></p></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">These FIFO assertions contain <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. Write an assertion: whenever <code>start</code> rises, <code>done</code> must be high within 2 to 5 cycles.</summary><div class="l6-details-body"><pre class="l6-code"><code>assert property (@(posedge clk) disable iff (!rst_n)
+                 $rose(start) |-&gt; ##[2:5] done);</code></pre></div></details><details class="l6-details"><summary>2. What is the difference between <code>req |-&gt; ##1 ack</code> and <code>req |=&gt; ack</code>?</summary><div class="l6-details-body"><p>None: they are equivalent. <code>|=&gt;</code> is shorthand for an overlapping implication followed by a one-cycle delay.</p></div></details><details class="l6-details"><summary>3. An assertion never fails, but the feature is broken. How can that happen?</summary><div class="l6-details-body"><p>The antecedent may never be true, so the assertion is vacuously true on every cycle. Add a <code>cover property</code> on the antecedent (or the whole property) to prove it actually triggered.</p></div></details><details class="l6-details"><summary>4. Write an assertion that <code>count</code> increases by exactly 1 on every cycle where <code>en</code> is high, except during reset.</summary><div class="l6-details-body"><pre class="l6-code"><code>assert property (@(posedge clk) disable iff (!rst_n)
+                 en |=&gt; count == $past(count) + 1);</code></pre></div></details><details class="l6-details"><summary>5. Why use <code>disable iff (!rst_n)</code>?</summary><div class="l6-details-body"><p>During reset, signals are forced to reset values and many rules do not apply. Without disable iff, an assertion that started just before reset could fail spuriously. The check is abandoned whenever the condition is true.</p></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 7</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 7 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module6.html">Module 6: Interfaces and Advanced SystemVerilog</a></span><span>Next: <a href="level6-module8.html">Module 8: Constrained Randomization</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module7.js"></script>
+</body>
+</html>

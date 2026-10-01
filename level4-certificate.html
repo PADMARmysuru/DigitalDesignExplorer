@@ -2,79 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Level 4 Certificate | Digital Design Explorer</title>
-<style>
-body{margin:0;font-family:Arial,sans-serif;background:#f4f6f9}
-.certificate{max-width:900px;margin:40px auto;padding:45px;background:white;border:10px solid #243b64;box-shadow:0 5px 20px rgba(0,0,0,.15);text-align:center}
-.certificate h1{color:#243b64;font-size:36px;margin:0 0 8px}
-.certificate h2{color:#c9a227;font-size:28px;margin:15px 0}
-.subtitle{font-size:18px;color:#555}
-.name{font-size:32px;font-weight:bold;color:#162746;margin:25px 0}
-.details{font-size:17px;line-height:1.8;margin:20px 0}
-.mods{text-align:left;max-width:640px;margin:20px auto;background:#f5f7fa;border-radius:10px;padding:14px 22px;line-height:1.8}
-.footer{margin-top:35px;display:flex;justify-content:space-between;gap:20px}
-.footer div{width:45%}
-.line{border-top:1px solid #333;margin-top:35px;padding-top:8px}
-button{margin-top:25px;padding:11px 20px;border:0;border-radius:8px;background:#243b64;color:white;font-weight:bold;cursor:pointer}
-@media print{button{display:none}body{background:white}.certificate{margin:0;box-shadow:none}}
-@media(max-width:600px){.certificate{padding:22px;margin:10px}.certificate h1{font-size:26px}.name{font-size:24px}.footer{flex-direction:column}.footer div{width:100%}}
-</style>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+<style>body{margin:0;background:#eef1f6;font-family:"Segoe UI",system-ui,Arial,sans-serif}</style>
 </head>
 <body>
-<script>
-(function(){
-  var keys=["vlsiL4M1Done","vlsiL4M2Done","vlsiL4M3Done","vlsiL4M4Done","vlsiL4M5Done","vlsiL4M6Done","vlsiL4M7Done","vlsiL4M8Done"];
-  if(!keys.every(function(k){return localStorage.getItem(k)==="true";})){
-    alert("🔒 Complete all 8 Level 4 modules before generating the certificate.");
-    window.location.replace("level4-dashboard.html");
-  }
-})();
-</script>
-
-<div class="certificate">
-  <h1>Digital Design Explorer</h1>
-  <div class="subtitle">Level 4 – VLSI Basics</div>
-  <h2>🏆 Certificate of Completion</h2>
-  <p>This certificate is proudly presented to</p>
-  <div class="name" id="studentName">Student Name</div>
-  <div class="details">
-    <div><strong>USN:</strong> <span id="studentUSN">—</span></div>
-    <div><strong>Branch:</strong> <span id="studentBranch">—</span></div>
-    <div><strong>Semester:</strong> <span id="studentSemester">—</span></div>
-    <div><strong>Section:</strong> <span id="studentSection">—</span></div>
-  </div>
-  <p>for successfully completing all eight modules of <strong>Level 4 – VLSI Basics</strong>:</p>
-  <div class="mods">
-    ✔ Module 1: VLSI Foundations &amp; the MOSFET<br>
-    ✔ Module 2: MOSFET Fundamentals<br>
-    ✔ Module 3: CMOS Logic &amp; Transistor-Level Design<br>
-    ✔ Module 4: MOSFET Characteristics &amp; CMOS Inverter Analysis<br>
-    ✔ Module 5: Layout &amp; Stick Diagrams<br>
-    ✔ Module 6: Fabrication<br>
-    ✔ Module 7: Scaling<br>
-    ✔ Module 8: Advanced CMOS Logic Styles
-  </div>
-  <p><strong>Date:</strong> <span id="certDate"></span></p>
-  <div class="footer">
-    <div><div class="line">Mrs. Padma R</div>Assistant Professor<br>ECE Department</div>
-    <div><div class="line">GSSSIETW, Mysuru</div>Digital Design Explorer</div>
-  </div>
-  <button onclick="window.print()">🖨 Print / Save as PDF</button>
-  <button onclick="window.location.href='level4-dashboard.html'">← Back to Level 4</button>
-</div>
-
-<script>
-var student=null;
-try{student=JSON.parse(localStorage.getItem("studentAccount")||"null");}catch(e){}
-if(student){
-  document.getElementById("studentName").textContent=student.name||"Student Name";
-  document.getElementById("studentUSN").textContent=student.usn||"—";
-  document.getElementById("studentBranch").textContent=student.branch||"—";
-  document.getElementById("studentSemester").textContent=student.semester||"—";
-  document.getElementById("studentSection").textContent=student.section||"—";
-}
-document.getElementById("certDate").textContent=new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"2-digit",year:"numeric"});
-</script>
+<!--
+  Level 4 certificate.
+  Eligibility is checked when the page opens, using the same progress keys the
+  Level 4 dashboard uses. If any requirement is missing, a "Certificate Locked"
+  checklist is shown instead of the certificate, so opening this file directly
+  cannot bypass the rules. The certificate itself is drawn by common.js.
+-->
+<main id="ddeCertificate" data-dde-certificate="4">
+  <noscript><p style="padding:30px;text-align:center">Please enable JavaScript to view your certificate.</p></noscript>
+</main>
 </body>
 </html>

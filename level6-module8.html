@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 8: Constrained Randomization – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 8</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#basics" data-acts="randc">rand, randc, randomize()</a></li><li><a href="#playground" data-acts="playground">Constraint playground</a></li><li><a href="#dist" data-acts="dist">Weighted distributions</a></li><li><a href="#solve" data-acts="solve">Implication and solve before</a></li><li><a href="#lifecycle" data-acts="lifecycle">Inline constraints and callbacks</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 8</p>
+      <h1>Constrained Randomization</h1>
+      <p class="l6-lead">Writing every test value by hand is slow and only finds the bugs you already imagined. Constrained random testing lets the simulator choose values for you, inside rules you define, so each run explores cases you never thought of.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Declare random properties with <code>rand</code> and <code>randc</code> and call <code>randomize()</code>.</li><li>Write constraints with relational operators, <code>inside</code> and <code>dist</code>.</li><li>Explain the difference between <code>:=</code> and <code>:/</code> weights.</li><li>Use implication (<code>-&gt;</code>) and <code>solve ... before</code> to shape distributions.</li><li>Add inline constraints with <code>randomize() with { }</code>.</li><li>Use <code>pre_randomize()</code> and <code>post_randomize()</code>, and handle randomization failure.</li></ol></div>
+      <div class="l6-note"><p>Module 5: classes and objects.</p></div>
+    </section>
+<section class="l6-section" id="basics"><h2>rand, randc and randomize()</h2><p class="l6-sub">Random variables live in a class. <code>randomize()</code> picks new values for every <code>rand</code> and <code>randc</code> property so that all constraints are satisfied, and returns 1 on success or 0 if no solution exists.</p><pre class="l6-code"><code>class Txn;
+  rand  bit [7:0] addr;       // rand: any legal value, repeats allowed
+  rand  bit [7:0] data;
+  randc bit [1:0] id;         // randc: cycles through all 4 values before repeating
+  bit        [7:0] tag;       // not random: randomize() leaves it alone
+
+  constraint c_addr { addr inside {[8'h10:8'h1F]}; }
+endclass
+
+Txn t = new();
+if (!t.randomize()) $fatal(1, "randomization failed");   // ALWAYS check the result</code></pre><div class="l6-card"><p class="l6-card-title">rand vs randc <span class="l6-tag" data-activity="randc">Activity</span></p><p>Generate 12 values of a 2-bit variable (4 possible values) with each keyword.</p><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="rcGo">Generate 12 values</button></div><div id="rcOut"></div><div class="l6-fb" id="rcNote" aria-live="polite"></div></div></section><section class="l6-section" id="playground"><h2>Constraint playground</h2><p class="l6-sub">Type constraints for <code>rand bit [W-1:0] data;</code> and generate values. Supported here: comparisons (<code>&lt; &lt;= &gt; &gt;= == !=</code>), <code>inside {...}</code>, <code>!(data inside {...})</code>, <code>data % N == M</code>, and one <code>dist</code>. Each line is a separate constraint; all must hold.</p><div class="l6-card"><p class="l6-card-title">Playground <span class="l6-tag" data-activity="playground">Activity</span></p><div class="l6-btnrow" id="pgW"></div><div class="l6-btnrow" id="pgPresets"></div><textarea class="l6-input is-wide" id="pgText" rows="5" spellcheck="false" aria-label="Constraints"></textarea><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="pg1">randomize() × 1</button><button type="button" class="l6-btn" id="pg20">× 20</button><button type="button" class="l6-btn" id="pg500">× 500</button></div><div id="pgOut"></div></div></section><section class="l6-section" id="dist"><h2>Weighted distributions: := vs :/</h2><p class="l6-sub"><code>dist</code> makes some values more likely than others. <code>:=</code> gives the weight to <b>each value</b> in a range; <code>:/</code> <b>divides</b> the weight across the range.</p><div class="l6-card"><p class="l6-card-title">Compare the two operators <span class="l6-tag" data-activity="dist">Activity</span></p><div class="l6-btnrow" id="dsOp"></div><pre class="l6-code" id="dsCode"><code></code></pre><div id="dsOut"></div><div class="l6-fb" id="dsNote" aria-live="polite"></div></div></section><section class="l6-section" id="solve"><h2>Implication and solve ... before</h2><p class="l6-sub"><code>a -&gt; b</code> means "if a then b". The solver picks uniformly among <b>all legal combinations</b>, which can make one value of a very rare. <code>solve a before b</code> picks a first, uniformly, then b.</p><pre class="l6-code"><code>class Pkt;
+  rand bit       is_short;
+  rand bit [2:0] len;
+  constraint c_len { is_short -&gt; len == 0; }   // short packets have length 0
+  // constraint c_order { solve is_short before len; }
+endclass</code></pre><div class="l6-card"><p class="l6-card-title">Solution space <span class="l6-tag" data-activity="solve">Activity</span></p><div class="l6-btnrow" id="svMode"></div><div id="svGrid"></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="svRun">randomize() × 900</button></div><div id="svOut"></div><div class="l6-fb" id="svNote" aria-live="polite"></div></div></section><section class="l6-section" id="lifecycle"><h2>Inline constraints, callbacks and failure</h2><p class="l6-sub"><code>randomize() with { ... }</code> adds constraints for one call only. <code>pre_randomize()</code> runs before solving and <code>post_randomize()</code> after a successful solve, typically to compute derived fields such as a checksum.</p><pre class="l6-code"><code>class Frame;
+  rand bit [7:0] len;
+  rand bit [7:0] payload[];
+  bit      [7:0] crc;
+  constraint c_len  { len inside {[1:8]}; payload.size() == len; }
+
+  function void pre_randomize();  $display("about to randomize"); endfunction
+  function void post_randomize(); crc = payload.xor();            endfunction
+endclass
+
+Frame f = new();
+ok = f.randomize() with { len == 4; };      // inline constraint</code></pre><div class="l6-card"><p class="l6-card-title">Step through a randomize() call <span class="l6-tag" data-activity="lifecycle">Activity</span></p><div class="l6-btnrow" id="lcMode"></div><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="lcStep">Step</button><button type="button" class="l6-btn" id="lcReset">Reset</button></div><div class="l6-log" id="lcLog"></div><div class="l6-fb" id="lcNote" aria-live="polite"></div></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">This transaction class and test have <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. Write a constraint so that <code>addr</code> is word-aligned (a multiple of 4) and below 256.</summary><div class="l6-details-body"><pre class="l6-code"><code>constraint c_align { addr % 4 == 0; addr &lt; 256; }</code></pre><p>Or <code>addr[1:0] == 2'b00;</code>, which solvers handle more efficiently.</p></div></details><details class="l6-details"><summary>2. Make <code>kind</code> (an enum READ/WRITE/IDLE) 45% READ, 45% WRITE, 10% IDLE.</summary><div class="l6-details-body"><pre class="l6-code"><code>constraint c_kind { kind dist { READ := 45, WRITE := 45, IDLE := 10 }; }</code></pre></div></details><details class="l6-details"><summary>3. Why check the return value of <code>randomize()</code>?</summary><div class="l6-details-body"><p>If constraints conflict, randomize() returns 0 and leaves the variables unchanged. The test then silently reuses old values, and you may believe you tested cases you never did.</p></div></details><details class="l6-details"><summary>4. How do you turn off one constraint for a single test?</summary><div class="l6-details-body"><pre class="l6-code"><code>t.c_addr.constraint_mode(0);   // disable
+void'(t.randomize());
+t.c_addr.constraint_mode(1);   // re-enable</code></pre></div></details><details class="l6-details"><summary>5. What is <code>randc</code> useful for?</summary><div class="l6-details-body"><p>Covering every value of a small field quickly with no repeats, for example visiting all 16 register addresses or all opcodes before starting again.</p></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 8</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 8 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module7.html">Module 7: SystemVerilog Assertions (SVA)</a></span><span>Next: <a href="level6-module9.html">Module 9: Testbench Architecture</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module8.js"></script>
+</body>
+</html>

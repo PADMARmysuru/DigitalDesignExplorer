@@ -2,6 +2,11 @@
 <html>
 
 <head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
     <title>Digital Design Explorer - Student Login</title>
     <link rel="stylesheet" href="style.css">
     <script src="supabase-config.js"></script>
@@ -22,7 +27,7 @@
            placeholder="Student Name">
 
     <input type="text" id="studentUSN"
-           placeholder="USN">
+           placeholder="USN (e.g. 4GW24EC001)" autocapitalize="characters" autocomplete="off">
 
     <input type="text" id="studentBranch"
            placeholder="Branch">
@@ -49,6 +54,9 @@
 
     <h2>🔐 Student Login</h2>
 
+    <input type="text" id="loginUSN"
+           placeholder="USN (e.g. 4GW24EC001)" autocapitalize="characters" autocomplete="off">
+
     <input type="email" id="loginEmail"
            placeholder="Email ID">
 
@@ -64,7 +72,25 @@
 </div>
 
 <script>
+/* ---- USN rule: 4GWxxECxxx (pattern defined once in access-control.js) ---- */
+function showInvalidUSN(messageId) {
+    const el = document.getElementById(messageId);
+    el.innerHTML = "<strong>Invalid USN</strong><br>Please enter your USN in the format: <strong>4GWxxECxxx</strong><br>Example: <strong>4GW24EC001</strong>";
+    el.style.color = "red";
+}
+function validateUSNField(inputId, messageId) {
+    const input = document.getElementById(inputId);
+    const usn = String(input.value || "").trim().toUpperCase();
+    if (!USN_PATTERN.test(usn)) { showInvalidUSN(messageId); return null; }
+    input.value = usn;
+    return usn;
+}
+
 async function registerStudent() {
+    // Validate the USN first: an invalid USN is never saved locally or sent to Supabase
+    const validUSN = validateUSNField("studentUSN", "registerMessage");
+    if (!validUSN) return;
+
     const studentId = crypto.randomUUID();
 localStorage.setItem("studentId", studentId);
     let student = {
@@ -73,7 +99,7 @@ localStorage.setItem("studentId", studentId);
             document.getElementById("studentName").value,
 
         usn:
-            document.getElementById("studentUSN").value,
+            validUSN,
 
         branch:
             document.getElementById("studentBranch").value,
@@ -171,6 +197,8 @@ const progressResponse = await fetch(
         })
     }
 );
+console.log("Progress insert status:", progressResponse.status);
+console.log("Progress insert response:", await progressResponse.text());
 
         document.getElementById("registerMessage")
             .innerText =
@@ -198,48 +226,36 @@ const progressResponse = await fetch(
 
 
 function loginStudent() {
+    const enteredUSN = validateUSNField("loginUSN", "loginMessage");
+    if (!enteredUSN) return;
 
-    let savedStudent =
-        JSON.parse(
-            localStorage.getItem("studentAccount")
-        );
+    let savedStudent = null;
+    try { savedStudent = JSON.parse(localStorage.getItem("studentAccount")); } catch (e) { savedStudent = null; }
 
-    let email =
-        document.getElementById("loginEmail").value;
-
-    let password =
-        document.getElementById("loginPassword").value;
+    let email = document.getElementById("loginEmail").value;
+    let password = document.getElementById("loginPassword").value;
 
     if (!savedStudent) {
-
-        document.getElementById("loginMessage")
-            .innerText =
-            "❌ Please register first.";
-
+        document.getElementById("loginMessage").innerText = "❌ Please register first.";
+        document.getElementById("loginMessage").style.color = "red";
         return;
     }
 
-    if (
-        email === savedStudent.email &&
-        password === savedStudent.password
-    ) {
+    const savedUSN = String(savedStudent.usn || "").trim().toUpperCase();
+    if (!USN_PATTERN.test(savedUSN)) {
+        document.getElementById("loginMessage").innerHTML = "<strong>Invalid USN</strong><br>The account saved on this device does not have a valid USN (format <strong>4GWxxECxxx</strong>, e.g. <strong>4GW24EC001</strong>). Please register again with your correct USN.";
+        document.getElementById("loginMessage").style.color = "red";
+        return;
+    }
 
-        localStorage.setItem(
-            "studentLoggedIn",
-            "true"
-        );
-
-        window.location.href =
-            "dashboard.html";
-
+    if (email === savedStudent.email && password === savedStudent.password && enteredUSN === savedUSN) {
+        localStorage.setItem("studentLoggedIn", "true");
+        // Return to the page the student originally asked for (only pages of this site)
+        const next = new URLSearchParams(window.location.search).get("next");
+        window.location.href = (next && /^[a-z0-9-]+\.html$/i.test(next) && next !== "login.html") ? next : "dashboard.html";
     } else {
-
-        document.getElementById("loginMessage")
-            .innerText =
-            "❌ Invalid Email or Password.";
-
-        document.getElementById("loginMessage")
-            .style.color = "red";
+        document.getElementById("loginMessage").innerText = "❌ Invalid USN, Email or Password.";
+        document.getElementById("loginMessage").style.color = "red";
     }
 }
 </script>

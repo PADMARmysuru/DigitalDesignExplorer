@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Level 4 Dashboard | Digital Design Explorer</title>
@@ -30,10 +35,7 @@
 <body>
 <script>
 (function(){
-  if(localStorage.getItem("level4Unlocked")!=="true"){
-    alert("🔒 Level 4 is restricted. Faculty authorization is required.");
-    window.location.replace("index.html");
-  }
+  /* Level access is now checked centrally in access-control.js */
 })();
 </script>
 

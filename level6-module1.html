@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 1: SystemVerilog Fundamentals – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 1</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol>
+      <li><a href="#objectives">Objectives</a></li>
+      <li><a href="#why-sv" data-acts="compare,categorize">Why SystemVerilog?</a></li>
+      <li><a href="#file-structure" data-acts="filestruct">File structure</a></li>
+      <li><a href="#data-types" data-acts="types">Data types</a></li>
+      <li><a href="#four-state" data-acts="fourstate">2-state vs 4-state</a></li>
+      <li><a href="#nets-vars" data-acts="netsvars">wire vs logic</a></li>
+      <li><a href="#literals" data-acts="literals">Literals &amp; constants</a></li>
+      <li><a href="#arrays" data-acts="arrays">Packed &amp; unpacked</a></li>
+      <li><a href="#user-types" data-acts="enum,struct,union,string">enum, struct, union, string</a></li>
+      <li><a href="#try-it" data-acts="tryit">Try it yourself</a></li>
+      <li><a href="#debug" data-acts="debug">Debugging challenge</a></li>
+      <li><a href="#quiz" data-acts="quiz">Quiz</a></li>
+      <li><a href="#practice">Practice questions</a></li>
+      <li><a href="#complete">Complete module</a></li>
+    </ol>
+  </aside>
+
+  <main class="l6-main">
+
+    <!-- ================= HERO ================= -->
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 1</p>
+      <h1>SystemVerilog Fundamentals</h1>
+      <p class="l6-lead">SystemVerilog is Verilog with a bigger toolbox: clearer RTL, richer data types, and a full language for checking that your design works. This module teaches the data types every later module builds on, by letting you poke at them.</p>
+      <svg class="l6-wave" viewBox="0 0 640 90" role="img" aria-label="Waveform showing a signal moving through the four logic states 0, 1, X and Z">
+        <g font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600">
+          <text x="4" y="52" fill="#4A5668">sig</text>
+          <!-- 0 -->
+          <polyline points="50,62 180,62" fill="none" stroke="#2F6BD2" stroke-width="3"/>
+          <text x="108" y="82" fill="#2F6BD2">0</text>
+          <!-- 1 -->
+          <polyline points="180,62 180,22 310,22" fill="none" stroke="#16924F" stroke-width="3"/>
+          <text x="240" y="14" fill="#16924F">1</text>
+          <!-- X -->
+          <rect x="310" y="22" width="130" height="40" fill="#FBE3E4" stroke="#D23A3F" stroke-width="2"/>
+          <path d="M310,22 L440,62 M310,62 L440,22" stroke="#D23A3F" stroke-width="1.5" opacity=".6"/>
+          <text x="368" y="82" fill="#D23A3F">X</text>
+          <!-- Z -->
+          <polyline points="440,42 600,42" fill="none" stroke="#C4860A" stroke-width="3" stroke-dasharray="8 6"/>
+          <text x="514" y="82" fill="#C4860A">Z</text>
+          <line x1="50" y1="88" x2="600" y2="88" stroke="#D6DDE6"/>
+        </g>
+      </svg>
+      <p class="l6-wave-caption">One wire, four possible values. Verilog and SystemVerilog both model all four, and knowing when a type can hold X or Z is the first skill you'll need.</p>
+    </section>
+
+    <!-- ================= OBJECTIVES ================= -->
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card">
+        <ol class="l6-objectives">
+          <li>Explain what SystemVerilog adds to Verilog for design and for verification.</li>
+          <li>Read the structure of a SystemVerilog design file, package and testbench.</li>
+          <li>Choose between <code>logic</code>, <code>bit</code>, <code>byte</code>, <code>int</code> and <code>integer</code>, and predict their default values.</li>
+          <li>Explain why a 2-state type can hide bugs that a 4-state type would show.</li>
+          <li>Decide when a signal must be a net (<code>wire</code>) and when it can be a variable (<code>logic</code>).</li>
+          <li>Decode sized, unsized and fill literals such as <code>8'hA5</code>, <code>4'b10xz</code> and <code>'1</code>.</li>
+          <li>Tell packed from unpacked arrays and index them correctly.</li>
+          <li>Use <code>enum</code>, <code>struct</code>, <code>union</code> and <code>string</code> to write clearer code.</li>
+        </ol>
+      </div>
+      <div class="l6-note"><p>Prerequisite: Level 3 (Verilog for Beginners). If <code>always @(posedge clk)</code> and <code>assign</code> look unfamiliar, revisit Level 3 first.</p></div>
+    </section>
+
+    <!-- ================= WHY SV ================= -->
+    <section class="l6-section" id="why-sv">
+      <h2>Verilog vs SystemVerilog</h2>
+      <p class="l6-sub">SystemVerilog (IEEE 1800) is a superset of Verilog: any legal Verilog-2001 file is also SystemVerilog. It adds features in two directions: safer design code, and a complete verification language.</p>
+
+      <div class="l6-card">
+        <p class="l6-card-title">Same counter, two languages <span class="l6-tag" data-activity="compare">Activity</span></p>
+        <p>Switch to the SystemVerilog version, then click each highlighted line to see what changed and why it helps.</p>
+        <div class="l6-btnrow" role="tablist">
+          <button type="button" class="l6-btn is-on" id="cmpTabV" role="tab" aria-selected="true">Verilog-2001</button>
+          <button type="button" class="l6-btn" id="cmpTabS" role="tab" aria-selected="false">SystemVerilog</button>
+        </div>
+        <div id="cmpCode"></div>
+        <div class="l6-fb" id="cmpNote" aria-live="polite"></div>
+      </div>
+
+      <h3>At a glance</h3>
+      <div class="l6-table-wrap">
+        <table class="l6-table">
+          <thead><tr><th>Area</th><th>Verilog</th><th>SystemVerilog adds</th></tr></thead>
+          <tbody>
+            <tr><td>Data types</td><td><code>reg</code>, <code>wire</code>, <code>integer</code></td><td><code>logic</code>, 2-state <code>bit</code>/<code>int</code>/<code>byte</code>, <code>string</code></td></tr>
+            <tr><td>Procedural blocks</td><td><code>always</code></td><td><code>always_comb</code>, <code>always_ff</code>, <code>always_latch</code> (intent is checked)</td></tr>
+            <tr><td>User types</td><td>none</td><td><code>typedef</code>, <code>enum</code>, <code>struct</code>, <code>union</code></td></tr>
+            <tr><td>Arrays</td><td>fixed arrays</td><td>multi-dimensional packed arrays, dynamic arrays, queues, associative arrays</td></tr>
+            <tr><td>Connections</td><td>long port lists</td><td><code>interface</code>, <code>modport</code>, <code>.*</code> port connection, <code>package</code></td></tr>
+            <tr><td>Verification</td><td>directed tests, <code>$display</code></td><td>classes (OOP), constrained random, assertions (SVA), functional coverage</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="l6-card">
+        <p class="l6-card-title">Design, verification, or both? <span class="l6-tag" data-activity="categorize">Activity</span></p>
+        <p>"Design" means you would write it in synthesizable RTL. "Verification" means it only lives in testbenches. Sort each feature.</p>
+        <div class="l6-choice-list" id="catList"></div>
+        <p class="l6-score" id="catScore" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ================= FILE STRUCTURE ================= -->
+    <section class="l6-section" id="file-structure">
+      <h2>SystemVerilog file structure</h2>
+      <p class="l6-sub">A small project usually has three kinds of file: a <b>package</b> with shared types and constants, the <b>design</b> module, and a <b>testbench</b> module that drives it. Files normally use the <code>.sv</code> extension.</p>
+      <div class="l6-card">
+        <p class="l6-card-title">Explore the parts <span class="l6-tag" data-activity="filestruct">Activity</span></p>
+        <p>Click each part to highlight it in the code. Explore at least four.</p>
+        <div class="l6-btnrow" id="fsButtons"></div>
+        <div id="fsCode"></div>
+        <div class="l6-fb" id="fsNote" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ================= DATA TYPES ================= -->
+    <section class="l6-section" id="data-types">
+      <h2>Data type explorer</h2>
+      <p class="l6-sub">Every data type answers four questions: how many values can one bit take (2 or 4), how wide is it, is it signed, and what does it start as? Pick a type to see its answers.</p>
+      <div class="l6-card">
+        <p class="l6-card-title">Pick a type <span class="l6-tag" data-activity="types">Activity</span></p>
+        <div class="l6-typegrid" id="typeButtons"></div>
+        <div id="typePanel" aria-live="polite"></div>
+      </div>
+      <div class="l6-note"><p>Rule of thumb: use <code>logic</code> for design signals and anything connected to the DUT. Use <code>int</code>, <code>bit</code> and <code>byte</code> for loop counters and testbench data where X and Z can never occur.</p></div>
+    </section>
+
+    <!-- ================= 4-STATE ================= -->
+    <section class="l6-section" id="four-state">
+      <h2>2-state vs 4-state</h2>
+      <p class="l6-sub">A 4-state type (<code>logic</code>, <code>reg</code>, <code>integer</code>, <code>wire</code>) stores 0, 1, X and Z. A 2-state type (<code>bit</code>, <code>byte</code>, <code>int</code>) stores only 0 and 1. Click each state to learn what it means in real hardware.</p>
+
+      <div class="l6-card">
+        <p class="l6-card-title">The four states <span class="l6-tag" data-activity="fourstate">Activity</span></p>
+        <div class="l6-states" id="stateButtons"></div>
+        <div class="l6-fb" id="stateNote" aria-live="polite"></div>
+      </div>
+
+      <div class="l6-card">
+        <p class="l6-card-title">What happens when you copy <code>logic</code> into <code>bit</code>?</p>
+        <p>Click any bit of <code>a</code> to cycle it through 0 → 1 → X → Z. Watch what <code>b</code> receives.</p>
+        <pre class="l6-code"><code>logic [7:0] a;
+bit   [7:0] b;
+assign b = a;   // X and Z cannot be stored in bit</code></pre>
+        <p class="l6-label">logic [7:0] a</p>
+        <div class="l6-bits" id="convA"></div>
+        <p class="l6-label" style="margin-top:12px">bit [7:0] b</p>
+        <div class="l6-bits" id="convB"></div>
+        <div class="l6-fb" id="convNote" aria-live="polite"></div>
+      </div>
+
+      <div class="l6-card">
+        <p class="l6-card-title">The hidden bug: a flip-flop with no reset</p>
+        <p>Imagine the designer forgot to reset a register. The testbench samples the output into a 4-state and a 2-state variable after the first clock.</p>
+        <div class="l6-btnrow">
+          <button type="button" class="l6-btn" id="bugResetOff">Reset forgotten</button>
+          <button type="button" class="l6-btn" id="bugResetOn">Reset applied</button>
+        </div>
+        <div class="l6-grid-2" id="bugOut"></div>
+        <div class="l6-fb" id="bugNote" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ================= NETS VS VARIABLES ================= -->
+    <section class="l6-section" id="nets-vars">
+      <h2>wire vs logic: nets and variables</h2>
+      <p class="l6-sub">A <b>net</b> (<code>wire</code>) is a connection: it has no memory and takes the resolved value of everything driving it. A <b>variable</b> (<code>logic</code>, <code>bit</code>, <code>int</code>…) holds the last value written to it.</p>
+      <div class="l6-grid-2">
+        <div class="l6-card">
+          <p class="l6-card-title">Net: <code>wire</code></p>
+          <ul class="l6-objectives">
+            <li>Driven by <code>assign</code> or a module output.</li>
+            <li>Can have many drivers (resolved, e.g. tri-state bus).</li>
+            <li>Can never be written inside <code>always</code> or <code>initial</code>.</li>
+            <li>Undriven value is Z.</li>
+          </ul>
+        </div>
+        <div class="l6-card">
+          <p class="l6-card-title">Variable: <code>logic</code></p>
+          <ul class="l6-objectives">
+            <li>Written by procedural code <b>or</b> one <code>assign</code>.</li>
+            <li>Only one continuous driver allowed.</li>
+            <li>Keeps its value until written again.</li>
+            <li>Uninitialised value is X.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="l6-card">
+        <p class="l6-card-title">Legal or compile error? <span class="l6-tag" data-activity="netsvars">Activity</span></p>
+        <div class="l6-choice-list" id="nvList"></div>
+        <p class="l6-score" id="nvScore" aria-live="polite"></p>
+      </div>
+      <div class="l6-note"><p>Practical rule: declare everything as <code>logic</code>. Switch to <code>wire</code> only when a signal really has more than one driver, such as a bidirectional or tri-state bus.</p></div>
+    </section>
+
+    <!-- ================= LITERALS ================= -->
+    <section class="l6-section" id="literals">
+      <h2>Literals and constants</h2>
+      <p class="l6-sub">A literal is written as <code>&lt;size&gt;'&lt;base&gt;&lt;digits&gt;</code>. The size is in bits; the base is <code>b</code>, <code>o</code>, <code>d</code> or <code>h</code>. SystemVerilog adds fill literals <code>'0</code>, <code>'1</code>, <code>'x</code> and <code>'z</code>, which fill every bit of the target, whatever its width.</p>
+      <div class="l6-card">
+        <p class="l6-card-title">Literal decoder <span class="l6-tag" data-activity="literals">Activity</span></p>
+        <p>Type a literal or pick an example. Decode at least three.</p>
+        <div class="l6-btnrow" id="litChips"></div>
+        <div class="l6-btnrow">
+          <input class="l6-input" id="litInput" value="8'hA5" aria-label="Literal to decode" style="flex:1">
+          <button type="button" class="l6-btn is-primary" id="litGo">Decode</button>
+        </div>
+        <div id="litOut" aria-live="polite"></div>
+      </div>
+      <h3>Constants</h3>
+      <pre class="l6-code"><code>parameter  int WIDTH = 8;         // can be overridden when the module is instantiated
+localparam int DEPTH = 1 &lt;&lt; 4;    // fixed inside this module (16)
+const      int MAX_PKTS = 100;    // run-time constant, mostly used in testbenches</code></pre>
+      <p>Use <code>parameter</code> for things the user of your module should be able to change, and <code>localparam</code> for values derived from them.</p>
+    </section>
+
+    <!-- ================= ARRAYS ================= -->
+    <section class="l6-section" id="arrays">
+      <h2>Packed and unpacked arrays</h2>
+      <p class="l6-sub">Dimensions written <b>before</b> the name are <b>packed</b>: the bits are stored as one continuous vector and can be used as a single number. Dimensions written <b>after</b> the name are <b>unpacked</b>: a collection of separate elements, like a memory.</p>
+      <div class="l6-card">
+        <p class="l6-card-title">Array visualizer <span class="l6-tag" data-activity="arrays">Activity</span></p>
+        <div class="l6-btnrow">
+          <button type="button" class="l6-btn is-on" id="arrModeP">Packed: logic [N-1:0][W-1:0] v;</button>
+          <button type="button" class="l6-btn" id="arrModeU">Unpacked: logic [W-1:0] v [N];</button>
+        </div>
+        <div class="l6-controls">
+          <div><label class="l6-label" for="arrW">Element width W: <b id="arrWv">8</b></label><input type="range" class="l6-range" id="arrW" min="1" max="8" value="8"></div>
+          <div><label class="l6-label" for="arrN">Number of elements N: <b id="arrNv">4</b></label><input type="range" class="l6-range" id="arrN" min="1" max="4" value="4"></div>
+          <div><span class="l6-label">Total storage</span><b id="arrTotal">32 bits</b></div>
+        </div>
+        <pre class="l6-code" id="arrDecl"><code></code></pre>
+        <div id="arrView"></div>
+        <div class="l6-fb" id="arrNote" aria-live="polite"></div>
+        <p class="l6-label" style="margin-top:14px">Can you treat the whole array as one number?</p>
+        <pre class="l6-code" id="arrMath"><code></code></pre>
+      </div>
+    </section>
+
+    <!-- ================= USER TYPES ================= -->
+    <section class="l6-section" id="user-types">
+      <h2>enum, struct, union and string</h2>
+      <p class="l6-sub"><code>typedef</code> gives a type a name you can reuse. These four features make code read like the problem it solves instead of raw bit vectors.</p>
+
+      <div class="l6-card">
+        <p class="l6-card-title"><code>enum</code>: named FSM states <span class="l6-tag" data-activity="enum">Activity</span></p>
+        <p>An enum lists the legal values of a variable by name. The simulator shows <code>READ</code> instead of <code>2'b01</code> in the waveform. Pick an encoding, then step through the states with the built-in methods.</p>
+        <div class="l6-btnrow" id="enumEnc"></div>
+        <pre class="l6-code" id="enumDecl"><code></code></pre>
+        <div class="l6-btnrow" id="enumStates"></div>
+        <div class="l6-btnrow" id="enumMethods"></div>
+        <div class="l6-result" id="enumOut" aria-live="polite"></div>
+      </div>
+
+      <div class="l6-card">
+        <p class="l6-card-title"><code>struct</code>: a packet with named fields <span class="l6-tag" data-activity="struct">Activity</span></p>
+        <p>A packed struct groups fields into one vector. The <b>first</b> field declared sits in the <b>most significant</b> bits. Change the fields and watch the 16-bit value.</p>
+        <pre class="l6-code"><code>typedef struct packed {
+  logic [3:0] opcode;   // bits [15:12]
+  logic [7:0] addr;     // bits [11:4]
+  logic [3:0] data;     // bits [3:0]
+} packet_t;
+
+packet_t pkt;</code></pre>
+        <div class="l6-controls">
+          <div><label class="l6-label" for="stOp">pkt.opcode (0–15)</label><input type="number" class="l6-input is-wide" id="stOp" min="0" max="15" value="10"></div>
+          <div><label class="l6-label" for="stAddr">pkt.addr (0–255)</label><input type="number" class="l6-input is-wide" id="stAddr" min="0" max="255" value="60"></div>
+          <div><label class="l6-label" for="stData">pkt.data (0–15)</label><input type="number" class="l6-input is-wide" id="stData" min="0" max="15" value="5"></div>
+        </div>
+        <div class="l6-fieldkey"><span class="l6-field-op">opcode</span><span class="l6-field-addr">addr</span><span class="l6-field-data">data</span></div>
+        <div class="l6-bits" id="stBits"></div>
+        <div class="l6-result" id="stOut" aria-live="polite"></div>
+      </div>
+
+      <div class="l6-card">
+        <p class="l6-card-title"><code>union</code>: two views of the same bits <span class="l6-tag" data-activity="union">Activity</span></p>
+        <p>A packed union lets several members share the same storage. Here one 16-bit register can be read as a whole word or as two bytes. Edit either view.</p>
+        <pre class="l6-code"><code>typedef union packed {
+  logic [15:0] word;
+  struct packed { logic [7:0] hi; logic [7:0] lo; } bytes;
+} reg16_t;
+
+reg16_t r;</code></pre>
+        <div class="l6-controls">
+          <div><label class="l6-label" for="unWord">r.word (hex)</label><input class="l6-input is-wide" id="unWord" value="BEEF" maxlength="4"></div>
+          <div><label class="l6-label" for="unHi">r.bytes.hi (hex)</label><input class="l6-input is-wide" id="unHi" value="BE" maxlength="2"></div>
+          <div><label class="l6-label" for="unLo">r.bytes.lo (hex)</label><input class="l6-input is-wide" id="unLo" value="EF" maxlength="2"></div>
+        </div>
+        <div class="l6-fieldkey"><span class="l6-field-hi">bytes.hi</span><span class="l6-field-lo">bytes.lo</span></div>
+        <div class="l6-bits" id="unBits"></div>
+        <div class="l6-fb" id="unNote" aria-live="polite"></div>
+      </div>
+
+      <div class="l6-card">
+        <p class="l6-card-title"><code>string</code>: text in testbenches <span class="l6-tag" data-activity="string">Activity</span></p>
+        <p>A <code>string</code> grows and shrinks automatically and has built-in methods. It is for testbenches and messages, not synthesizable hardware. Indexes start at 0.</p>
+        <pre class="l6-code"><code>string s = "SystemVerilog";</code></pre>
+        <div class="l6-str" id="strBoxes"></div>
+        <div class="l6-btnrow" id="strMethods"></div>
+        <div class="l6-btnrow">
+          <label class="l6-label" for="strI" style="align-self:center;margin:0">substr(</label>
+          <input type="number" class="l6-input" id="strI" value="6" min="0" style="width:70px">
+          <input type="number" class="l6-input" id="strJ" value="12" min="0" style="width:70px">
+          <button type="button" class="l6-btn is-mono" id="strSub">) run</button>
+        </div>
+        <div class="l6-result" id="strOut" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ================= TRY IT ================= -->
+    <section class="l6-section" id="try-it">
+      <h2>Try it yourself</h2>
+      <p class="l6-sub">Write one line of SystemVerilog for each task and press Check. Spacing does not matter. Solve all five to complete the activity. <span class="l6-tag" data-activity="tryit">Activity</span></p>
+      <div id="tryList"></div>
+    </section>
+
+    <!-- ================= DEBUG ================= -->
+    <section class="l6-section" id="debug">
+      <h2>Debugging challenge</h2>
+      <p class="l6-sub">This traffic-light controller has <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p>
+      <div class="l6-card">
+        <div id="dbgCode"></div>
+        <p class="l6-score" id="dbgScore" aria-live="polite">Bugs found: 0 of 3</p>
+        <div class="l6-fb" id="dbgNote" aria-live="polite"></div>
+        <details class="l6-details" id="dbgFixWrap" hidden>
+          <summary>Show the corrected code</summary>
+          <div class="l6-details-body">
+            <pre class="l6-code"><code>module traffic_ctrl (
+  input  logic       clk, rst_n,
+  output logic [1:0] light
+);
+  typedef enum logic [2:0] {RED, GREEN, YELLOW, OFF, FLASH} state_t;
+  state_t     state;
+  logic [1:0] timer;
+  always_ff @(posedge clk or negedge rst_n)
+    if (!rst_n) timer &lt;= '0;
+    else        timer &lt;= timer + 1'b1;
+  logic [7:0] status = 8'bxxxx_0000;
+  assign light = state[1:0];
+endmodule</code></pre>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ================= QUIZ ================= -->
+    <section class="l6-section" id="quiz">
+      <h2>Quiz</h2>
+      <p class="l6-sub">Nine questions, instant feedback. You need 6 or more to complete the module. <span class="l6-tag" data-activity="quiz">Activity</span></p>
+      <div id="quizRoot"></div>
+    </section>
+
+    <!-- ================= PRACTICE ================= -->
+    <section class="l6-section" id="practice">
+      <h2>Practice questions</h2>
+      <p class="l6-sub">Work these on paper first, then open the model answer.</p>
+
+      <details class="l6-details">
+        <summary>1. Why can using <code>bit</code> to sample a DUT output hide bugs?</summary>
+        <div class="l6-details-body"><p>A <code>bit</code> cannot store X or Z. If the DUT output is X (for example, an unreset register) or Z (an undriven output), it is silently converted to 0. The testbench then sees a clean 0 and may report a pass. Sample DUT outputs with <code>logic</code> so unknowns stay visible.</p></div>
+      </details>
+
+      <details class="l6-details">
+        <summary>2. Declare an array for 32 words of 16 bits each. Which dimension is packed and which is unpacked?</summary>
+        <div class="l6-details-body">
+<pre class="l6-code"><code>logic [15:0] mem [32];   // or: logic [15:0] mem [0:31];</code></pre>
+<p><code>[15:0]</code> is packed: each word is a 16-bit number. <code>[32]</code> is unpacked: 32 separate words, like rows of a memory. <code>mem[3]</code> is one word; <code>mem[3][15]</code> is its MSB.</p></div>
+      </details>
+
+      <details class="l6-details">
+        <summary>3. Write a packed struct for a header with an 8-bit <code>dest</code>, an 8-bit <code>src</code> and a 16-bit <code>len</code>. What is its width, and which bits hold <code>src</code>?</summary>
+        <div class="l6-details-body">
+<pre class="l6-code"><code>typedef struct packed {
+  logic [7:0]  dest;   // [31:24]
+  logic [7:0]  src;    // [23:16]
+  logic [15:0] len;    // [15:0]
+} hdr_t;</code></pre>
+<p>The struct is 32 bits wide. The first field is the most significant, so <code>src</code> occupies bits [23:16].</p></div>
+      </details>
+
+      <details class="l6-details">
+        <summary>4. When must you use <code>wire</code> instead of <code>logic</code>?</summary>
+        <div class="l6-details-body"><p>When a signal has more than one driver that must be resolved, such as a tri-state bus driven by several <code>assign ... ? ... : 'z</code> statements, or an <code>inout</code> port. A <code>logic</code> variable allows only one continuous driver.</p></div>
+      </details>
+
+      <details class="l6-details">
+        <summary>5. Write an enum for a 4-state FSM (IDLE, LOAD, SHIFT, DONE) with one-hot encoding. What does <code>DONE.next()</code> return?</summary>
+        <div class="l6-details-body">
+<pre class="l6-code"><code>typedef enum logic [3:0] {
+  IDLE  = 4'b0001,
+  LOAD  = 4'b0010,
+  SHIFT = 4'b0100,
+  DONE  = 4'b1000
+} state_t;</code></pre>
+<p><code>next()</code> moves to the next value in the declaration order and wraps around, so after DONE it returns IDLE.</p></div>
+      </details>
+
+      <details class="l6-details">
+        <summary>6. What are the values of these after <code>logic [7:0] a = 8'b1z;</code> and <code>logic [7:0] b = 8'bz1;</code>?</summary>
+        <div class="l6-details-body"><p><code>a</code> = <code>0000_001z</code>: the leftmost given digit is 1, so the value is padded with 0s. <code>b</code> = <code>zzzz_zzz1</code>: the leftmost given digit is z, so the padding is z.</p></div>
+      </details>
+    </section>
+
+    <!-- ================= COMPLETE ================= -->
+    <section class="l6-section" id="complete">
+      <h2>Complete Module 1</h2>
+      <div class="l6-card l6-complete">
+        <ul class="l6-reqs">
+          <li id="reqQuiz">Score 6 or more on the quiz</li>
+          <li id="reqActs">Finish at least 10 of the 15 activities</li>
+        </ul>
+        <div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 1 complete</button></div>
+        <p id="completeStatus" aria-live="polite"></p>
+      </div>
+      <nav class="l6-modnav" aria-label="Module navigation">
+        <a href="dashboard.html">Back to dashboard</a>
+        <span>Next: <a href="level6-module2.html">Module 2: Procedural SystemVerilog</a></span>
+      </nav>
+    </section>
+
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module1.js"></script>
+</body>
+</html>

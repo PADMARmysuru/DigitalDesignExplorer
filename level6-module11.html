@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 6 Module 11: Functional Coverage – Digital Design Explorer</title>
+
+  <!-- Your existing site stylesheet (keeps shared look) -->
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/level6.css">
+
+  <!-- Login and level access are handled by access-control.js (loaded above) -->
+</head>
+<body class="l6">
+
+<header class="l6-topbar">
+  <a class="l6-brand" href="index.html">Digital Design Explorer</a>
+  <nav class="l6-crumbs" aria-label="Breadcrumb">
+    <a href="dashboard.html">Dashboard</a><span>/</span>
+    <a href="level6.html">Level 6: SystemVerilog</a><span>/</span>
+    <span aria-current="page">Module 11</span>
+  </nav>
+  <div class="l6-progress" aria-live="polite">
+    <div class="l6-progress-track"><span class="l6-progress-fill" id="l6ProgressFill"></span></div>
+    <span id="l6ProgressText">0 of 0 activities</span>
+  </div>
+</header>
+
+<div class="l6-layout">
+  <aside class="l6-toc" aria-label="Module contents">
+    <h2>In this module</h2>
+    <ol><li><a href="#objectives">Objectives</a></li><li><a href="#kinds" data-acts="kind">Code vs functional coverage</a></li><li><a href="#covergroups" data-acts="bins">Covergroups and bins</a></li><li><a href="#dashboard" data-acts="dashboard,closure">Coverage dashboard</a></li><li><a href="#closure">Coverage closure</a></li><li><a href="#try-it" data-acts="tryit">Try it yourself</a></li><li><a href="#debug" data-acts="debug">Debugging challenge</a></li><li><a href="#quiz" data-acts="quiz">Quiz</a></li><li><a href="#practice">Practice questions</a></li><li><a href="#complete">Complete module</a></li></ol>
+  </aside>
+
+  <main class="l6-main">
+    <section class="l6-hero">
+      <p class="l6-hero-level">Level 6: SystemVerilog, Module 11</p>
+      <h1>Functional Coverage</h1>
+      <p class="l6-lead">Random tests raise an obvious question: what did they actually test? Functional coverage answers it. You list the situations that matter, and the simulator counts which of them really happened. Only when every item is covered are you done.</p>
+    </section>
+
+    <section class="l6-section" id="objectives">
+      <h2>Learning objectives</h2>
+      <p class="l6-sub">By the end of this module you will be able to:</p>
+      <div class="l6-card"><ol class="l6-objectives"><li>Tell code coverage from functional coverage.</li><li>Write a <code>covergroup</code> with <code>coverpoint</code>s and explicit <code>bins</code>.</li><li>Use <code>ignore_bins</code> and <code>illegal_bins</code>.</li><li>Measure cross coverage between two coverpoints.</li><li>Read a coverage report, find the holes and close them with constraints or directed tests.</li></ol></div>
+      <div class="l6-note"><p>Module 8 (randomization) and Module 9 (testbench architecture).</p></div>
+    </section>
+<section class="l6-section" id="kinds"><h2>Code coverage vs functional coverage</h2><p class="l6-sub"><b>Code coverage</b> is measured automatically from the RTL: which lines, branches, conditions and toggles were exercised. <b>Functional coverage</b> is written by you from the specification: which features, values and combinations were exercised. You need both: 100% code coverage can still miss an entire feature that was never implemented.</p><div class="l6-table-wrap"><table class="l6-table"><thead><tr><th></th><th>Code coverage</th><th>Functional coverage</th></tr></thead><tbody><tr><td>Source</td><td>Generated from the RTL by the tool</td><td>Written by the verification engineer</td></tr><tr><td>Measures</td><td>Lines, branches, conditions, toggles, FSM states</td><td>Spec features, value ranges, combinations, sequences</td></tr><tr><td>Finds missing features?</td><td>No (it cannot cover code that does not exist)</td><td>Yes</td></tr></tbody></table></div><div class="l6-card"><p class="l6-card-title">Which kind? <span class="l6-tag" data-activity="kind">Activity</span></p><div class="l6-choice-list" id="kindList"></div><p class="l6-score" id="kindScore"></p></div></section><section class="l6-section" id="covergroups"><h2>Covergroups, coverpoints and bins</h2><p class="l6-sub">A <b>coverpoint</b> watches one variable or expression. <b>Bins</b> split its values into buckets; a bin is covered once it has been hit at least once. A <b>cross</b> covers every combination of the bins of two coverpoints.</p><pre class="l6-code"><code>typedef enum logic [2:0] {ADD, SUB, AND, OR, NOP=3'b110, RSV=3'b111} op_t;
+
+covergroup cg_alu @(posedge clk iff valid);
+  cp_op: coverpoint op {
+    bins        arith[] = {ADD, SUB};     // [] = one bin per value
+    bins        logic_[] = {AND, OR};
+    ignore_bins nop     = {NOP};          // not interesting: excluded from the score
+    illegal_bins rsv    = {RSV};          // must never happen: reports an error if hit
+  }
+  cp_a: coverpoint a {
+    bins zero  = {0};
+    bins small = {[1:127]};
+    bins large = {[128:254]};
+    bins max   = {255};
+  }
+  cx_op_a: cross cp_op, cp_a;           // 4 ops x 4 ranges = 16 combinations
+endgroup
+
+cg_alu cov = new();                     // a covergroup must be constructed</code></pre><div class="l6-card"><p class="l6-card-title">Count the bins <span class="l6-tag" data-activity="bins">Activity</span></p><div class="l6-choice-list" id="binList"></div><p class="l6-score" id="binScore"></p></div></section><section class="l6-section" id="dashboard"><h2>Coverage dashboard</h2><p class="l6-sub">This is the <code>cg_alu</code> covergroup above, running live. Generate stimulus and watch the bins fill. Try pure random first: which bins stay empty, and why? Then use the options to close the holes.</p><div class="l6-card"><p class="l6-card-title">cg_alu <span class="l6-tag" data-activity="dashboard">Activity</span> <span class="l6-tag" data-activity="closure">Activity</span></p><div class="l6-btnrow"><button type="button" class="l6-btn is-primary" id="cvR1">Random × 1</button><button type="button" class="l6-btn" id="cvR10">Random × 10</button><button type="button" class="l6-btn" id="cvR100">Random × 100</button><button type="button" class="l6-btn" id="cvDir">Directed: fill the holes</button><button type="button" class="l6-btn" id="cvReset">Reset coverage</button></div><div class="l6-btnrow"><label style="display:inline-flex;gap:8px;align-items:center"><input type="checkbox" id="cvNoRsv"> constraint <code>op != RSV;</code></label><label style="display:inline-flex;gap:8px;align-items:center"><input type="checkbox" id="cvDist"> constraint <code>a dist {0:=10, 255:=10, [1:254]:/80};</code></label></div><div class="l6-stats"><div class="l6-stat"><b id="cvN">0</b><span>samples</span></div><div class="l6-stat"><b id="cvTot">0%</b><span>total coverage</span></div><div class="l6-stat"><b id="cvIll">0</b><span>illegal hits</span></div><div class="l6-stat"><b id="cvIgn">0</b><span>ignored (NOP)</span></div></div><div id="cvMeters"></div><div class="l6-grid-2"><div><p class="l6-label">cp_op bins</p><div id="cvOp"></div><p class="l6-label" style="margin-top:10px">cp_a bins</p><div id="cvA"></div></div><div><p class="l6-label">cx_op_a cross (hits per combination)</p><div class="l6-table-wrap" id="cvX"></div></div></div><div class="l6-log" id="cvLog"></div><div class="l6-fb" id="cvNote" aria-live="polite"></div></div></section><section class="l6-section" id="closure"><h2>Closing coverage</h2><p class="l6-sub">Coverage-driven verification is a loop: run random tests, read the coverage report, and for each hole either adjust constraints (so random reaches it) or write a directed test. Stop when the coverage goals are met and all tests pass.</p><div class="l6-flow"><div class="l6-block" style="cursor:default">Write coverage model</div><span class="l6-arrow">→</span><div class="l6-block" style="cursor:default">Run random tests</div><span class="l6-arrow">→</span><div class="l6-block" style="cursor:default">Analyse holes</div><span class="l6-arrow">→</span><div class="l6-block" style="cursor:default">Tune constraints / add directed tests</div><span class="l6-arrow">→</span><div class="l6-block" style="cursor:default">Repeat until 100%</div></div><div class="l6-note"><p>Coverage says what was <b>exercised</b>, not whether the result was correct. A bin can be hit while the scoreboard reports an error. Sign-off needs both: all tests passing <b>and</b> coverage goals met.</p></div></section><section class="l6-section" id="try-it"><h2>Try it yourself</h2><p class="l6-sub">Write the code for each task and press Check. Spacing does not matter. <span class="l6-tag" data-activity="tryit">Activity</span></p><div id="tryList"></div></section><section class="l6-section" id="debug"><h2>Debugging challenge</h2><p class="l6-sub">This coverage model has <b>three</b> bugs. Click the lines you think are wrong. <span class="l6-tag" data-activity="debug">Activity</span></p><div class="l6-card"><div id="dbgCode"></div><p class="l6-score" id="dbgScore" aria-live="polite"></p><div class="l6-fb" id="dbgNote" aria-live="polite"></div><details class="l6-details" id="dbgFixWrap" hidden><summary>Show the corrected code</summary><div class="l6-details-body"><pre class="l6-code" id="dbgFix"><code></code></pre></div></details></div></section><section class="l6-section" id="quiz"><h2>Quiz</h2><p class="l6-sub">Instant feedback on every answer. <span class="l6-tag" data-activity="quiz">Activity</span></p><div id="quizRoot"></div></section><section class="l6-section" id="practice"><h2>Practice questions</h2><p class="l6-sub">Work these on paper first, then open the model answer.</p><details class="l6-details"><summary>1. Write a coverpoint for a 4-bit <code>len</code> with bins for 0, 1–7, 8–14 and 15.</summary><div class="l6-details-body"><pre class="l6-code"><code>cp_len: coverpoint len {
+  bins zero = {0};
+  bins low  = {[1:7]};
+  bins high = {[8:14]};
+  bins max  = {15};
+}</code></pre></div></details><details class="l6-details"><summary>2. How many cross bins does <code>cross cp_x, cp_y</code> have if cp_x has 3 bins and cp_y has 5?</summary><div class="l6-details-body"><p>15: every combination of one bin from each coverpoint.</p></div></details><details class="l6-details"><summary>3. Random tests have run for hours but <code>a == 255</code> is never covered. What do you do?</summary><div class="l6-details-body"><p>With uniform 8-bit values, 255 appears only 1 time in 256. Add a <code>dist</code> constraint giving corner values extra weight, or write a short directed test for that value.</p></div></details><details class="l6-details"><summary>4. What is the difference between <code>ignore_bins</code> and <code>illegal_bins</code>?</summary><div class="l6-details-body"><p>ignore_bins removes values from the coverage calculation quietly (not interesting). illegal_bins also removes them, but reports an error if they occur (must never happen).</p></div></details><details class="l6-details"><summary>5. Why can 100% functional coverage still leave bugs?</summary><div class="l6-details-body"><p>Coverage only records what was exercised. If the coverage model is incomplete (a feature has no coverpoint), or the checker is missing, bugs can remain. The coverage plan must be reviewed against the specification.</p></div></details></section><section class="l6-section" id="complete"><h2>Complete Module 11</h2><div class="l6-card l6-complete"><ul class="l6-reqs"><li id="reqQuiz"></li><li id="reqActs"></li></ul><div><button type="button" class="l6-btn is-primary" id="completeBtn" disabled>Mark Module 11 complete</button></div><p id="completeStatus" aria-live="polite"></p></div><nav class="l6-modnav" aria-label="Module navigation"><span>Previous: <a href="level6-module10.html">Module 10: Verification Components</a></span><span>Next: <a href="level6-module12.html">Module 12: Verification Projects</a></span></nav></section>
+  </main>
+</div>
+
+<script src="js/level6-common.js"></script>
+<script src="js/level6-module11.js"></script>
+</body>
+</html>
