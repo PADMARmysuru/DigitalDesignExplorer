@@ -241,7 +241,7 @@
       '<div><h3>Mrs. Padma R</h3><p class="dde-role">Assistant Professor</p>' +
       '<p>Department of Electronics and Communication Engineering (ECE)</p><p>GSSSIETW, Mysuru</p>' +
       '<p class="dde-footer-brand">Digital Design Explorer</p></div>' +
-      '<div class="dde-contact"><a href="mailto:padmar@gsss.edu.in">📧 padmar@gsss.edu.in</a><a href="tel:9886412057">☎️ 9886412057</a></div>' +
+      '<div class="dde-contact"><a href="mailto:padmar@gsss.edu.in">📧 padmar@gsss.edu.in</a></div>' +
       '</div><div class="dde-footer-bottom">© 2026 Digital Design Explorer. All Rights Reserved.</div></div>';
   }
 
