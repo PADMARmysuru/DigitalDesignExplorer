@@ -106,7 +106,7 @@ grant execute on function public.dde_teacher_login(text, text) to anon, authenti
 grant execute on function public.dde_teacher_me(text)          to anon, authenticated;
 
 -- 5) YOUR teacher account – change the three values, then run the whole file
-select public.dde_admin_set_teacher('your.email@gsss.edu.in', 'Mrs. Padma R', 'Choose-A-Strong-Password');
+select public.dde_admin_set_teacher('padmar@gsss.edu.in', 'Mrs. Padma R', 'Sidiksha@2019');
 
 notify pgrst, 'reload schema';
 

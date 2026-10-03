@@ -192,6 +192,7 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
   /* ---------- Teacher session (checked by the server on every visit) ---------- */
   function toLogin(reason) {
     setToken(null);
+    try { sessionStorage.removeItem('ddeTeacherPreviewUntil'); } catch (e) {}
     location.replace('teacher-login.html' + (reason ? '?' + reason + '=1' : ''));
   }
   function showLogin() { toLogin('expired'); }

@@ -184,7 +184,42 @@
     [14, 'AI/ML for VLSI', 'Applications of artificial intelligence and machine learning in VLSI and EDA.']
   ];
 
-  function isOpen(n) { return A.checkLevelAccess ? A.checkLevelAccess(n) : false; }
+  function isOpen(n) { return A.canOpenLevel ? A.canOpenLevel(n) : (A.checkLevelAccess ? A.checkLevelAccess(n) : false); }
+
+  /* ---------- Teacher preview of locked levels ---------- */
+  function endPreview() {
+    try { sessionStorage.removeItem('ddeTeacherPreviewUntil'); } catch (e) {}
+  }
+  window.DDE_endPreview = endPreview;
+  function previewBanner(L) {
+    var b = document.createElement('div');
+    b.className = 'dde-preview';
+    b.setAttribute('role', 'status');
+    b.innerHTML = '<span>👩‍🏫 <b>Teacher preview</b> – Level ' + L.n + ' is locked for students.</span>' +
+      '<button type="button">End preview</button>';
+    b.querySelector('button').addEventListener('click', function () { endPreview(); location.replace('locked.html?level=' + L.n); });
+    return b;
+  }
+  /* The teacher session is confirmed with the server; a fake or expired one ends the preview */
+  function confirmPreview(L) {
+    var check = function () {
+      var t; try { t = sessionStorage.getItem('ddeTeacherToken'); } catch (e) { t = null; }
+      if (typeof SUPABASE_URL === 'undefined' || !t) return;
+      fetch(SUPABASE_URL + '/rest/v1/rpc/dde_teacher_me', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+        body: JSON.stringify({ p_token: t })
+      }).then(function (r) { return r.json(); }).then(function (r) {
+        if (!r || !r.ok) {
+          endPreview();
+          try { sessionStorage.removeItem('ddeTeacherToken'); } catch (e) {}
+          location.replace('locked.html?level=' + L.n);
+        }
+      }).catch(function () { /* offline: keep the preview */ });
+    };
+    if (typeof SUPABASE_URL !== 'undefined') return check();
+    var s = document.createElement('script'); s.src = 'supabase-config.js'; s.onload = check;
+    document.head.appendChild(s);
+  }
   function levelStats(L) {
     var items = L.progress(), done = items.filter(function (x) { return x.done; }).length;
     return { items: items, done: done, total: items.length, pct: items.length ? Math.round(100 * done / items.length) : 0 };
@@ -328,6 +363,10 @@
     top.innerHTML = buildHeader(page, L) + buildCrumbs(page, L);
     var first = b.firstChild;
     while (top.firstChild) { var n = top.firstChild; b.insertBefore(n, first); }
+    if (L && A.checkLevelAccess && !A.checkLevelAccess(L.n) && A.teacherPreview && A.teacherPreview()) {
+      b.insertBefore(previewBanner(L), first);
+      confirmPreview(L);
+    }
     var f = document.createElement('div');
     f.innerHTML = buildFooter();
     b.appendChild(f.firstChild);
@@ -441,7 +480,8 @@
       '<h1>' + (L ? 'Level ' + n + ' is currently locked' : 'This level is currently locked') + '</h1>' +
       (L ? '<p><b>Level ' + n + ' – ' + esc(L.title) + '</b></p>' : '') +
       '<p>This level will be available when it is released by the instructor.</p>' +
-      '<div class="dde-actions"><a class="dde-btn" href="student-dashboard.html">📊 Return to Dashboard</a><a class="dde-btn is-ghost" href="index.html">🏠 Home</a></div></div>';
+      '<div class="dde-actions"><a class="dde-btn" href="student-dashboard.html">📊 Return to Dashboard</a><a class="dde-btn is-ghost" href="index.html">🏠 Home</a></div>' +
+      (L ? '<p style="margin-top:16px;font-size:.9rem">Teacher? <a href="teacher-login.html?next=' + encodeURIComponent(L.dashboard) + '">Log in to preview this level</a>.</p>' : '') + '</div>';
   }
   DDE.renderLocked = renderLocked;
 

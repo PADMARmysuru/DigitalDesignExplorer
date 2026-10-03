@@ -460,7 +460,8 @@
                 alert("Level " + level + " is coming soon. It will be released by the instructor.");
                 return;
             }
-            window.location.href = checkLevelAccess(level) ? LEVEL_PAGES[level] : "locked.html?level=" + level;
+            var open = window.canOpenLevel ? canOpenLevel(level) : checkLevelAccess(level);
+            window.location.href = open ? LEVEL_PAGES[level] : "locked.html?level=" + level;
         }
         function openLevel2() { goLevel(2); }
         function openLevel(level) { goLevel(level); }
@@ -472,7 +473,12 @@
             Array.prototype.forEach.call(steps, function (step, i) {
                 var level = i + 1, status = step.querySelector(".path-status"), btn = step.querySelector(".path-button");
                 if (!status || !btn) return;
-                if (LEVEL_PAGES[level] && checkLevelAccess(level)) {
+                if (LEVEL_PAGES[level] && !checkLevelAccess(level) && window.canOpenLevel && canOpenLevel(level)) {
+                    step.classList.add("open");
+                    status.className = "path-status status-open";
+                    status.textContent = "👩‍🏫 TEACHER PREVIEW";
+                    btn.textContent = "Preview Level " + level + " →";
+                } else if (LEVEL_PAGES[level] && checkLevelAccess(level)) {
                     step.classList.add("open");
                     status.className = "path-status status-open";
                     status.textContent = level === 1 ? "🟢 START HERE" : "🟢 AVAILABLE";

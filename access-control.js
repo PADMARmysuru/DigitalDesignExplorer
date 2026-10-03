@@ -87,11 +87,21 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
     return get('studentLoggedIn') === 'true' && !!s && isValidUSN(s.usn);
   }
 
-  /* checkLevelAccess("level4") or checkLevelAccess(4) → true / false */
+  /* checkLevelAccess("level4") or checkLevelAccess(4) → true / false (released for students?) */
   function checkLevelAccess(level) {
     var key = typeof level === 'number' ? 'level' + level : String(level).toLowerCase();
     return LEVEL_ACCESS[key] === true;
   }
+
+  /* Teacher preview: after Teacher Login, locked levels open for that teacher in this browser
+     session. Students never see locked levels. (The teacher session is re-checked with the
+     server by common.js; level pages contain no student data.) */
+  function sget(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  function teacherPreview() {
+    var until = +sget('ddeTeacherPreviewUntil') || 0;
+    return !!sget('ddeTeacherToken') && until > Date.now();
+  }
+  function canOpenLevel(level) { return checkLevelAccess(level) || teacherPreview(); }
 
   function hideAndGo(url) {
     // Hide the page immediately so protected content is never shown while leaving
@@ -114,9 +124,12 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
     currentStudent: currentStudent,
     isLoggedIn: isLoggedIn,
     checkLevelAccess: checkLevelAccess,
+    teacherPreview: teacherPreview,
+    canOpenLevel: canOpenLevel,
     STUDENT_PAGES: STUDENT_PAGES
   };
   window.checkLevelAccess = checkLevelAccess;
+  window.canOpenLevel = canOpenLevel;
   window.isValidUSN = isValidUSN;
 
   /* ---------- The guard: runs before the page body is shown ---------- */
@@ -130,7 +143,7 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
     return;
   }
 
-  if (level && !checkLevelAccess(level)) {
+  if (level && !canOpenLevel(level)) {
     hideAndGo('locked.html?level=' + level);
   }
 })();

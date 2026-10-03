@@ -312,3 +312,7 @@ body.dde-on .topbar .top-actions > a { display: none !important; }
 /* Levels menu: keep "Coming soon" on one line */
 .dde-menu { min-width: 320px; }
 .dde-menu .dde-soon { white-space: nowrap; flex: none; margin-left: auto; font-style: normal; }
+
+/* Teacher preview banner (locked levels opened by a logged-in teacher) */
+.dde-preview { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: center; padding: 9px 16px; background: #fff4d6; color: #5c4708; border-bottom: 1px solid #ecd48a; font: 600 .92rem var(--dde-font); text-align: center; }
+.dde-preview button { border: 1px solid #c9a227; background: #fff; color: #5c4708; border-radius: 99px; padding: 5px 14px; font: 700 .82rem var(--dde-font); cursor: pointer; }

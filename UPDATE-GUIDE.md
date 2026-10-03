@@ -119,6 +119,7 @@ To reset a student who forgot the password (they can register again):
 - Learning content (every released level) opens WITHOUT login, so teachers can teach with it. Locked levels stay locked (LEVEL_ACCESS).
 - Student login is required only for the student dashboard and certificates. Progress is saved only for logged-in students.
 - Teacher login is required for the teacher dashboard. The server checks every request.
+- Teacher preview: after Teacher Login, levels that are still locked for students open for the teacher in that browser (a yellow "Teacher preview" bar is shown). Logging out, "End preview", or closing the browser ends it. The teacher session is re-checked with the server; students still see the levels as locked.
 
 ### How it works
 - `STUDENTS` (id uuid) remains the only student identity. Login is now checked on the server (hashed password), so it works on any device; the old on-device login is kept as an offline fallback.

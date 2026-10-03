@@ -29,7 +29,7 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
 <main class="dde-wrap">
   <section class="dde-card tl">
     <h1>👩‍🏫 Teacher Login</h1>
-    <p class="sub">Log in to see student progress. Teaching with the learning content does not need a login.</p>
+    <p class="sub">Log in to see student progress and to preview levels that are still locked for students. Teaching with released levels does not need a login.</p>
     <form id="tlForm" novalidate>
       <label for="tlEmail">Email</label>
       <input type="email" id="tlEmail" autocomplete="username" required>
@@ -49,7 +49,12 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
   function msg(kind, text) { var el = $('tlMsg'); el.className = 'tl-msg' + (text ? ' is-' + kind : ''); el.textContent = text || ''; }
   function store(t) { try { if (t) sessionStorage.setItem(KEY, t); else sessionStorage.removeItem(KEY); } catch (e) {} }
   function token() { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } }
-  function go() { location.replace('teacher-dashboard.html'); }
+  function go() {
+    var next = new URLSearchParams(location.search).get('next');
+    location.replace(next && /^[a-z0-9-]+\.html$/i.test(next) ? next : 'teacher-dashboard.html');
+  }
+  function startPreview() { try { sessionStorage.setItem('ddeTeacherPreviewUntil', String(Date.now() + 12 * 3600 * 1000)); } catch (e) {} }
+  function endPreview() { try { sessionStorage.removeItem('ddeTeacherPreviewUntil'); } catch (e) {} }
   function errorText(e) {
     var c = e && e.code;
     if (c === 'network' || c === 'config') return 'Could not connect to the server. Please check your internet connection and try again.';
@@ -59,11 +64,12 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
 
   var q = new URLSearchParams(location.search);
   if (q.get('expired')) msg('info', 'Your teacher session has ended. Please log in again.');
+  if (q.get('out') || q.get('expired')) endPreview();
   if (q.get('out')) msg('info', 'You have logged out.');
 
   // Already logged in? Confirm with the server, then continue to the dashboard
   if (token() && window.DDEProgress) {
-    DDEProgress.rpc('dde_teacher_me', { p_token: token() }).then(function (r) { if (r && r.ok) go(); else store(null); }, function () {});
+    DDEProgress.rpc('dde_teacher_me', { p_token: token() }).then(function (r) { if (r && r.ok) { startPreview(); go(); } else { store(null); endPreview(); } }, function () {});
   }
 
   $('tlForm').addEventListener('submit', function (ev) {
@@ -75,7 +81,7 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
     DDEProgress.rpc('dde_teacher_login', { p_email: email, p_password: pass }).then(function (r) {
       $('tlBtn').disabled = false;
       if (!r || !r.ok) { $('tlPass').value = ''; msg('bad', 'Incorrect email or password.'); return; }
-      store(r.token); go();
+      store(r.token); startPreview(); go();
     }, function (e) { $('tlBtn').disabled = false; console.error('[DDE teacher] login failed:', e && e.code, e && e.message); msg('bad', errorText(e)); });
   });
 })();
