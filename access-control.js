@@ -52,8 +52,14 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
         'level8-module8.html', 'level8-module9.html', 'level8-module10.html', 'level8-certificate.html']
   };
 
-  /* Pages anyone may open without logging in */
-  var PUBLIC_PAGES = ['index.html', 'login.html', 'locked.html', 'supabase-test.html', 'teacher-dashboard.html'];
+  /* Learning content (all level pages) is open WITHOUT login, so teachers can teach with it.
+     Released / locked levels are still controlled by LEVEL_ACCESS above.
+     Only these student-specific pages require a STUDENT login: */
+  var STUDENT_PAGES = ['student-dashboard.html', 'certificate.html', 'level2-certificate.html', 'level3-certificate.html',
+                       'level4-certificate.html', 'level5-certificate.html', 'level6-certificate.html',
+                       'level7-certificate.html', 'level8-certificate.html'];
+  /* The teacher pages are protected by a teacher login checked in Supabase (teacher-login.html) */
+  var PUBLIC_PAGES = ['index.html', 'login.html', 'locked.html', 'supabase-test.html', 'teacher-dashboard.html', 'teacher-login.html'];
 
   function pageName() {
     var p = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
@@ -107,7 +113,8 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
     normalizeUSN: normalizeUSN,
     currentStudent: currentStudent,
     isLoggedIn: isLoggedIn,
-    checkLevelAccess: checkLevelAccess
+    checkLevelAccess: checkLevelAccess,
+    STUDENT_PAGES: STUDENT_PAGES
   };
   window.checkLevelAccess = checkLevelAccess;
   window.isValidUSN = isValidUSN;
@@ -115,9 +122,10 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
   /* ---------- The guard: runs before the page body is shown ---------- */
   if (PUBLIC_PAGES.indexOf(page) >= 0) return;
 
-  if (!isLoggedIn()) {
-    // An old session with an invalid USN is ended here
-    if (get('studentLoggedIn') === 'true') { try { localStorage.removeItem('studentLoggedIn'); } catch (e) {} }
+  // An old session with an invalid USN is ended here
+  if (get('studentLoggedIn') === 'true' && !isLoggedIn()) { try { localStorage.removeItem('studentLoggedIn'); } catch (e) {} }
+
+  if (STUDENT_PAGES.indexOf(page) >= 0 && !isLoggedIn()) {
     hideAndGo('login.html?next=' + encodeURIComponent(page));
     return;
   }

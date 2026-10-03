@@ -253,7 +253,8 @@
       h += '<a href="' + L.certificate + '"' + (page === L.certificate ? ' class="is-current" aria-current="page"' : '') + '>🏆 Certificate</a>';
     }
     h += '<span class="dde-sep"></span>';
-    h += logged ? '<a href="#" data-dde-logout>🚪 Logout</a>' : '<a href="login.html"' + (page === 'login.html' ? ' class="is-current"' : '') + '>🔐 Login</a>';
+    h += '<a href="teacher-dashboard.html"' + (page === 'teacher-dashboard.html' || page === 'teacher-login.html' ? ' class="is-current" aria-current="page"' : '') + '>👩‍🏫 Teacher Dashboard 🔐</a>';
+    h += logged ? '<a href="#" data-dde-logout>🚪 Logout</a>' : '<a href="login.html"' + (page === 'login.html' ? ' class="is-current"' : '') + '>🔐 Student Login</a>';
     h += '</div></div></div>';
     return h;
   }

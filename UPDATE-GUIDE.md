@@ -102,13 +102,23 @@ Progress is stored in the student's browser (`dde_level8_progress`, `level8_modu
 4. Upload the website files and push to GitHub.
 
 ### Teacher dashboard
-Open `teacher-dashboard.html` and enter the teacher PIN. Choose Level and Module (Level 1 → Module 1 = Logic Gates), filter by section, student or status, click a student for details, or download a CSV. The PIN is checked on the server; students cannot see the data by opening the page.
+Open **👩‍🏫 Teacher Dashboard 🔐** in the menu. Without a teacher login it goes to `teacher-login.html` (email + password). After login: choose Level and Module (Level 1 → Module 1 = Logic Gates), filter by section, student or status, click a student for details, or download a CSV.
 
-To change the PIN later:
-    update public.dde_settings set v = extensions.crypt('NEW-PIN', extensions.gen_salt('bf')) where k = 'teacher_pin_hash';
+Teacher accounts live in Supabase (`dde_teachers`), separate from students; passwords are stored only as hashes. Set them up once with `progress-teacher-auth.sql` (put your email, name and password in section 5).
+
+Add a teacher or reset a teacher password (SQL Editor):
+    select public.dde_admin_set_teacher('name@gsss.edu.in', 'Teacher Name', 'NewPassword123');
+
+Remove a teacher's access:
+    update public.dde_teachers set active = false where lower(email) = 'name@gsss.edu.in';
 
 To reset a student who forgot the password (they can register again):
     delete from public."STUDENTS" where student_id = '4GW24EC001';
+
+### Who needs to log in
+- Learning content (every released level) opens WITHOUT login, so teachers can teach with it. Locked levels stay locked (LEVEL_ACCESS).
+- Student login is required only for the student dashboard and certificates. Progress is saved only for logged-in students.
+- Teacher login is required for the teacher dashboard. The server checks every request.
 
 ### How it works
 - `STUDENTS` (id uuid) remains the only student identity. Login is now checked on the server (hashed password), so it works on any device; the old on-device login is kept as an offline fallback.

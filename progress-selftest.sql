@@ -1,9 +1,10 @@
 -- =====================================================================
 -- Digital Design Explorer – self-test for progress-setup.sql
--- Run AFTER progress-setup.sql: SQL Editor > New query > paste > Run.
--- It creates a temporary test student (4GW99EC999), checks every step,
--- deletes the test student again and shows a PASS / FAIL table.
--- Real students are not touched.
+-- Run AFTER progress-setup.sql and progress-teacher-auth.sql:
+-- SQL Editor > New query > paste > Run.
+-- It creates a temporary test student (4GW99EC999) and a temporary test
+-- teacher, checks every step, deletes both again and shows PASS / FAIL.
+-- Real students and teachers are not touched.
 -- =====================================================================
 drop table if exists dde_test_results;
 create temp table dde_test_results (n serial, step text, ok boolean, detail text);
@@ -19,6 +20,7 @@ declare
   procedure_ok boolean;
 begin
   delete from public."STUDENTS" where upper(student_id) = v_usn;   -- leftovers from an earlier test
+  delete from public.dde_teachers where lower(email) = 'selftest-teacher@example.com';
 
   r := public.dde_register(v_usn, 'Self Test', 'selftest@example.com', 'ECE', '6', 'a', 'test-pass-123');
   insert into dde_test_results (step, ok, detail) values ('01 register a new student', coalesce((r->>'ok')::boolean, false), r->>'error');
@@ -71,7 +73,16 @@ begin
   r := public.dde_teacher_report(tok, 1, 1);
   insert into dde_test_results (step, ok, detail) values ('15 student cannot open teacher report', r->>'error' = 'not_teacher', r->>'error');
 
-  ttok := public.dde_new_session(null, 'teacher');
+  perform public.dde_admin_set_teacher('selftest-teacher@example.com', 'Self Test Teacher', 'teacher-pass-123');
+  r := public.dde_teacher_login('selftest-teacher@example.com', 'wrong-password');
+  insert into dde_test_results (step, ok, detail) values ('15b teacher wrong password rejected', r->>'error' = 'wrong_credentials', r->>'error');
+  r := public.dde_teacher_login('SELFTEST-TEACHER@example.com', 'teacher-pass-123');
+  ttok := r->>'token';
+  insert into dde_test_results (step, ok, detail) values ('15c teacher email + password login works', ttok is not null, r->'teacher'->>'name');
+  r := public.dde_teacher_me(ttok);
+  insert into dde_test_results (step, ok, detail) values ('15d dashboard can confirm the teacher session', coalesce((r->>'ok')::boolean, false), null);
+  r := public.dde_teacher_me(tok);
+  insert into dde_test_results (step, ok, detail) values ('15e a STUDENT session is not a teacher session', r->>'error' = 'not_teacher', r->>'error');
   r := public.dde_teacher_report(ttok, 1, 1);
   select e into x from json_array_elements(r->'students') e where upper(e->>'usn') = v_usn;
   insert into dde_test_results (step, ok, detail) values ('16 teacher report shows the student at 100%',
@@ -105,12 +116,23 @@ begin
      and relname in ('STUDENTS', 'student_progress', 'student_module_progress', 'student_quiz_attempts', 'dde_sessions', 'dde_settings');
   insert into dde_test_results (step, ok, detail) values ('24 row level security ON for all 6 tables', c = 6, c || ' of 6');
 
-  select v = extensions.crypt('CHANGE-THIS-PIN', v) into procedure_ok from public.dde_settings where k = 'teacher_pin_hash';
-  insert into dde_test_results (step, ok, detail) values ('25 teacher PIN has been changed from the default', not coalesce(procedure_ok, true),
-    case when coalesce(procedure_ok, true) then 'Edit section 7 of progress-setup.sql and run it again' end);
+  insert into dde_test_results (step, ok, detail) values ('25 browser cannot read teacher accounts or call the admin function',
+    not has_table_privilege('anon', 'public.dde_teachers', 'select')
+    and not has_function_privilege('anon', 'public.dde_admin_set_teacher(text, text, text)', 'execute'), null);
+
+  update public.dde_teachers set active = false where lower(email) = 'selftest-teacher@example.com';
+  r := public.dde_teacher_report(ttok, 1, 1);
+  insert into dde_test_results (step, ok, detail) values ('26 a deactivated teacher loses access immediately', r->>'error' = 'not_teacher', r->>'error');
+
+  select count(*) into c from public.dde_teachers where active and lower(email) <> 'selftest-teacher@example.com';
+  insert into dde_test_results (step, ok, detail) values ('27 at least one real teacher account exists', c >= 1,
+    case when c = 0 then 'Run section 5 of progress-teacher-auth.sql with your email' else c || ' teacher account(s)' end);
+  select count(*) into c from public.dde_teachers where lower(email) = 'your.email@gsss.edu.in';
+  insert into dde_test_results (step, ok, detail) values ('28 example teacher email was replaced with a real one', c = 0,
+    case when c > 0 then 'Remove it: delete from public.dde_teachers where email = ''your.email@gsss.edu.in'';' end);
 
   -- clean up
-  delete from public.dde_sessions where token_hash = encode(extensions.digest(ttok, 'sha256'), 'hex');
+  delete from public.dde_teachers where lower(email) = 'selftest-teacher@example.com';
   delete from public."STUDENTS" where upper(student_id) = v_usn;
 end $$;
 

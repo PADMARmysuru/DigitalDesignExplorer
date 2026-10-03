@@ -135,8 +135,10 @@
   function submit(item) {
     item.id = Date.now() + '-' + Math.random().toString(36).slice(2, 8);
     if (!get(TOKEN)) {
+      // Not logged in (e.g. a teacher using the content in class): nothing is saved or queued
+      if (get('studentLoggedIn') !== 'true') return Promise.resolve({ ok: false, error: 'not_logged_in', anonymous: true });
       queue(item);
-      if (get('studentLoggedIn') === 'true') { log('Student ID missing: logged in on this device but no server session.'); report(Err('login')); }
+      log('Student ID missing: logged in on this device but no server session.'); report(Err('login'));
       return Promise.resolve({ ok: false, error: 'not_logged_in' });
     }
     return flush().catch(function () { /* older items keep waiting */ }).then(function () {

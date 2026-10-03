@@ -13,6 +13,7 @@
 <script src="js/progress-sync.js"></script>
 <style>
 body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial, sans-serif; }
+.tdb.is-checking { visibility: hidden; }
 .tdb h1 { margin: 0 0 4px; font-size: 1.5rem; color: var(--dde-navy); }
 .tdb .sub { margin: 0; color: var(--dde-ink-2); }
 .tdb-top { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
@@ -75,27 +76,17 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
 </style>
 </head>
 <body>
-<main class="dde-wrap tdb">
+<main class="dde-wrap tdb is-checking">
 
   <section class="dde-card">
     <div class="tdb-top">
       <div>
         <h1>👩‍🏫 Teacher Dashboard</h1>
-        <p class="sub">Student progress by level and module.</p>
+        <p class="sub">Student progress by level and module.<span id="tdbWho"></span></p>
       </div>
       <button type="button" class="dde-btn is-ghost" id="tdbLogout" hidden>Log out</button>
     </div>
     <div class="tdb-msg" id="tdbMsg" role="status"></div>
-  </section>
-
-  <!-- Teacher login -->
-  <section class="dde-card tdb-login" id="tdbLogin" hidden>
-    <h2 style="margin:0 0 6px;color:var(--dde-navy);font-size:1.15rem">Teacher login</h2>
-    <p class="sub" style="margin-bottom:14px">Enter the teacher PIN. It is checked on the server; students cannot open this data.</p>
-    <label for="tdbPin">Teacher PIN</label>
-    <input type="password" id="tdbPin" autocomplete="current-password">
-    <div class="tdb-actions"><button type="button" class="dde-btn" id="tdbPinBtn">Open dashboard</button></div>
-    <div class="tdb-msg" id="tdbLoginMsg" role="alert"></div>
   </section>
 
   <!-- Progress view -->
@@ -198,43 +189,38 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
   var ST = { done: 'Complete', prog: 'In progress', none: 'Not started' };
   function quiz(r) { return r.quiz_total ? (r.best_score + ' / ' + r.quiz_total) : '–'; }
 
-  /* ---------- Login ---------- */
-  function showLogin(text) {
+  /* ---------- Teacher session (checked by the server on every visit) ---------- */
+  function toLogin(reason) {
     setToken(null);
-    $('tdbLogin').hidden = false; $('tdbMain').hidden = true; $('tdbLogout').hidden = true;
-    msg('tdbLoginMsg', 'bad', text || '');
-    setTimeout(function () { $('tdbPin').focus(); }, 50);
+    location.replace('teacher-login.html' + (reason ? '?' + reason + '=1' : ''));
   }
-  function doLogin() {
-    var pin = $('tdbPin').value;
-    if (!pin) { msg('tdbLoginMsg', 'bad', 'Please enter the teacher PIN.'); return; }
-    $('tdbPinBtn').disabled = true; msg('tdbLoginMsg', 'info', 'Checking…');
-    DDEProgress.rpc('dde_teacher_login', { p_pin: pin }).then(function (r) {
-      $('tdbPinBtn').disabled = false;
-      if (!r || !r.ok) { msg('tdbLoginMsg', 'bad', 'Incorrect PIN.'); return; }
-      setToken(r.token); $('tdbPin').value = ''; showMain();
-    }, function (e) { $('tdbPinBtn').disabled = false; msg('tdbLoginMsg', 'bad', errorText(e)); });
-  }
-  function showMain() {
-    $('tdbLogin').hidden = true; $('tdbMain').hidden = false; $('tdbLogout').hidden = false;
+  function showLogin() { toLogin('expired'); }
+  function showMain(teacher) {
+    document.querySelector('.tdb').classList.remove('is-checking');
+    $('tdbMain').hidden = false; $('tdbLogout').hidden = false;
+    if (teacher) $('tdbWho').textContent = ' · Logged in as ' + (teacher.name || teacher.email);
     fillLevels(); load();
   }
 
   /* ---------- Load and draw ---------- */
-  function load() {
+  function load(after, quiet) {
+    if (typeof after !== 'function') after = null;   // called directly from a button/select event
     state.level = +$('fLevel').value || 1; state.module = +$('fModule').value || 1;
     $('tdbTitle').textContent = 'Level ' + state.level + ' → Module ' + state.module + (moduleName(state.level, state.module) ? ': ' + moduleName(state.level, state.module) : '');
-    $('tdbRows').innerHTML = '<tr><td colspan="7" class="tdb-empty">Loading…</td></tr>';
+    if (!quiet) $('tdbRows').innerHTML = '<tr><td colspan="7" class="tdb-empty">Loading…</td></tr>';
     msg('tdbMsg', '', '');
     DDEProgress.rpc('dde_teacher_report', { p_token: token(), p_level: state.level, p_module: state.module }).then(function (r) {
-      if (!r || !r.ok) { if (r && r.error === 'not_teacher') showLogin('Your teacher session has expired. Please enter the PIN again.'); else msg('tdbMsg', 'bad', 'Report failed: ' + ((r && r.error) || 'unknown')); return; }
+      if (!r || !r.ok) { if (r && r.error === 'not_teacher') showLogin(); else msg('tdbMsg', 'bad', 'Report failed: ' + ((r && r.error) || 'unknown')); return; }
       state.rows = r.students || [];
       var secs = {}; state.rows.forEach(function (x) { if (x.section) secs[x.section] = 1; });
       var keep = $('fSection').value;
       $('fSection').innerHTML = '<option value="">All sections</option>' + Object.keys(secs).sort().map(function (s) { return '<option>' + esc(s) + '</option>'; }).join('');
       if (secs[keep]) $('fSection').value = keep;
       draw();
-    }, function (e) { $('tdbRows').innerHTML = ''; msg('tdbMsg', 'bad', errorText(e)); });
+      state.loadedAt = Date.now();
+      $('tdbTitle').setAttribute('title', 'Updated ' + new Date().toLocaleTimeString());
+      if (typeof after === 'function') after();
+    }, function (e) { if (!quiet) $('tdbRows').innerHTML = ''; msg('tdbMsg', 'bad', errorText(e)); });
   }
 
   function filtered() {
@@ -266,7 +252,7 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
         '<td data-label="Updated">' + when(r.updated_at) + '</td></tr>';
     }).join('');
     Array.prototype.forEach.call($('tdbRows').querySelectorAll('tr[data-usn]'), function (tr) {
-      var open = function () { detail(tr.getAttribute('data-usn')); };
+      var open = function () { var u = tr.getAttribute('data-usn'); load(function () { detail(u); }, true); };
       tr.addEventListener('click', open);
       tr.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
     });
@@ -336,10 +322,12 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
 
   /* ---------- Wiring ---------- */
   function init() {
-    if (!window.DDEProgress) { msg('tdbMsg', 'bad', 'js/progress-sync.js could not be loaded.'); return; }
-    $('tdbPinBtn').addEventListener('click', doLogin);
-    $('tdbPin').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
-    $('tdbLogout').addEventListener('click', function () { var t = token(); setToken(null); if (t) DDEProgress.rpc('dde_logout', { p_token: t }).catch(function () {}); showLogin(''); });
+    if (!window.DDEProgress) { document.querySelector('.tdb').classList.remove('is-checking'); msg('tdbMsg', 'bad', 'js/progress-sync.js could not be loaded.'); return; }
+    $('tdbLogout').addEventListener('click', function () {
+      var t = token(); setToken(null);
+      var done = function () { toLogin('out'); };
+      if (t) DDEProgress.rpc('dde_logout', { p_token: t }).then(done, done); else done();
+    });
     $('fLevel').addEventListener('change', function () { state.module = 1; fillModules(); load(); });
     $('fModule').addEventListener('change', load);
     $('tdbRefresh').addEventListener('click', load);
@@ -348,7 +336,20 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
     $('fSearch').addEventListener('input', draw);
     $('tdbModal').addEventListener('click', function (e) { if (e.target === $('tdbModal')) closeDetail(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDetail(); });
-    if (token()) showMain(); else showLogin('');
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && token() && !$('tdbMain').hidden && !$('tdbModal').classList.contains('is-open')) load(null, true);
+    });
+    setInterval(function () {
+      if (!document.hidden && token() && !$('tdbMain').hidden && !$('tdbModal').classList.contains('is-open')) load(null, true);
+    }, 60000);
+    // Not logged in as a teacher → Teacher Login. The server decides, not the browser.
+    if (!token()) { toLogin(); return; }
+    DDEProgress.rpc('dde_teacher_me', { p_token: token() }).then(function (r) {
+      if (r && r.ok) showMain(r.teacher); else toLogin('expired');
+    }, function (e) {
+      document.querySelector('.tdb').classList.remove('is-checking');
+      msg('tdbMsg', 'bad', errorText(e));
+    });
   }
   /* common.js is deferred: wait for it so the level/module names are available */
   if (document.readyState === 'complete') init(); else window.addEventListener('load', init);

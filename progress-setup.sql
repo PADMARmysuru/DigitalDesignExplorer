@@ -364,7 +364,7 @@ end $$;
 -- 7) Teacher PIN (stored only as a hash). CHANGE THE TEXT BELOW, then run.
 -- ---------------------------------------------------------------------
 insert into public.dde_settings (k, v)
-values ('teacher_pin_hash', extensions.crypt('CHANGE-THIS-PIN', extensions.gen_salt('bf')))
+values ('teacher_pin_hash', extensions.crypt('060329', extensions.gen_salt('bf')))
 on conflict (k) do update set v = excluded.v;
 
 -- ---------------------------------------------------------------------

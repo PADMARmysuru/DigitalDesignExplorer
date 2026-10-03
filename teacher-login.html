@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teacher Login | Digital Design Explorer</title>
+<meta name="robots" content="noindex">
+<!-- Digital Design Explorer: common platform (header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+<script src="supabase-config.js"></script>
+<script src="js/progress-sync.js"></script>
+<style>
+body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial, sans-serif; }
+.tl { max-width: 440px; margin: 34px auto; }
+.tl h1 { margin: 0 0 4px; font-size: 1.4rem; color: var(--dde-navy); }
+.tl .sub { margin: 0 0 18px; color: var(--dde-ink-2); line-height: 1.5; }
+.tl label { display: block; font-size: .8rem; font-weight: 700; color: var(--dde-ink-2); margin: 12px 0 5px; text-transform: uppercase; letter-spacing: .03em; }
+.tl input { width: 100%; box-sizing: border-box; padding: 11px 12px; border: 1px solid var(--dde-line); border-radius: 10px; font: inherit; font-size: 16px; }
+.tl .dde-btn { width: 100%; margin-top: 18px; padding: 12px; font-size: 1rem; }
+.tl-msg { margin-top: 14px; padding: 10px 14px; border-radius: 10px; font-weight: 600; display: none; }
+.tl-msg.is-bad { display: block; background: #fdecec; color: #a12a2a; }
+.tl-msg.is-info { display: block; background: #eef3fc; color: var(--dde-navy); }
+.tl-note { margin-top: 16px; font-size: .88rem; color: var(--dde-ink-3); line-height: 1.5; }
+</style>
+</head>
+<body>
+<main class="dde-wrap">
+  <section class="dde-card tl">
+    <h1>👩‍🏫 Teacher Login</h1>
+    <p class="sub">Log in to see student progress. Teaching with the learning content does not need a login.</p>
+    <form id="tlForm" novalidate>
+      <label for="tlEmail">Email</label>
+      <input type="email" id="tlEmail" autocomplete="username" required>
+      <label for="tlPass">Password</label>
+      <input type="password" id="tlPass" autocomplete="current-password" required>
+      <button type="submit" class="dde-btn" id="tlBtn">Login</button>
+    </form>
+    <div class="tl-msg" id="tlMsg" role="alert"></div>
+    <p class="tl-note">Students: please use <a href="login.html">Student Login</a>.</p>
+  </section>
+</main>
+<script>
+(function () {
+  'use strict';
+  var KEY = 'ddeTeacherToken';
+  var $ = function (id) { return document.getElementById(id); };
+  function msg(kind, text) { var el = $('tlMsg'); el.className = 'tl-msg' + (text ? ' is-' + kind : ''); el.textContent = text || ''; }
+  function store(t) { try { if (t) sessionStorage.setItem(KEY, t); else sessionStorage.removeItem(KEY); } catch (e) {} }
+  function token() { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } }
+  function go() { location.replace('teacher-dashboard.html'); }
+  function errorText(e) {
+    var c = e && e.code;
+    if (c === 'network' || c === 'config') return 'Could not connect to the server. Please check your internet connection and try again.';
+    if (c === 'setup') return 'Teacher accounts are not set up yet. Run progress-teacher-auth.sql in the Supabase SQL Editor.';
+    return 'Server error. Please try again later.';
+  }
+
+  var q = new URLSearchParams(location.search);
+  if (q.get('expired')) msg('info', 'Your teacher session has ended. Please log in again.');
+  if (q.get('out')) msg('info', 'You have logged out.');
+
+  // Already logged in? Confirm with the server, then continue to the dashboard
+  if (token() && window.DDEProgress) {
+    DDEProgress.rpc('dde_teacher_me', { p_token: token() }).then(function (r) { if (r && r.ok) go(); else store(null); }, function () {});
+  }
+
+  $('tlForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var email = $('tlEmail').value.trim(), pass = $('tlPass').value;
+    if (!email || !pass) { msg('bad', 'Please enter your email and password.'); return; }
+    if (!window.DDEProgress) { msg('bad', 'js/progress-sync.js could not be loaded.'); return; }
+    $('tlBtn').disabled = true; msg('info', 'Checking…');
+    DDEProgress.rpc('dde_teacher_login', { p_email: email, p_password: pass }).then(function (r) {
+      $('tlBtn').disabled = false;
+      if (!r || !r.ok) { $('tlPass').value = ''; msg('bad', 'Incorrect email or password.'); return; }
+      store(r.token); go();
+    }, function (e) { $('tlBtn').disabled = false; console.error('[DDE teacher] login failed:', e && e.code, e && e.message); msg('bad', errorText(e)); });
+  });
+})();
+</script>
+</body>
+</html>
