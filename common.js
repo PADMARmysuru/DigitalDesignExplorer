@@ -135,8 +135,8 @@
   ];
 
   /* Part B – Advanced VLSI & Digital IC Design.
-     Levels 7, 8 and 9 have pages (released through LEVEL_ACCESS.level7 / level8 / level9 in access-control.js).
-     Levels 10–14 are ROADMAP ONLY: no pages yet, always shown as locked / coming soon. */
+     Levels 7–10 have pages (released through LEVEL_ACCESS.level7 … level10 in access-control.js).
+     Levels 11–14 are ROADMAP ONLY: no pages yet, always shown as locked / coming soon. */
   var LEVELS_B = [
     {
       n: 7, part: 'B', title: 'Digital VLSI Design', color: '#16b5c9', dashboard: 'level7.html', certificate: 'level7-certificate.html',
@@ -178,6 +178,20 @@
       unit: 'Modules', numbered: true,
       progress: function () {
         return LEVELS_B[2].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level9_module' + (i + 1) + '_completed'), href: m[1] }; });
+      }
+    },
+    {
+      n: 10, part: 'B', title: 'Physical Design', color: '#ff9500', dashboard: 'level10.html', certificate: 'level10-certificate.html',
+      modules: [
+        ['Physical Design Flow', 'level10-module1.html'], ['Floorplanning', 'level10-module2.html'],
+        ['Power Planning', 'level10-module3.html'], ['Placement', 'level10-module4.html'],
+        ['Clock Tree Synthesis', 'level10-module5.html'], ['Routing', 'level10-module6.html'],
+        ['Physical Design Challenges', 'level10-module7.html'], ['Physical Verification', 'level10-module8.html'],
+        ['Physical Design Optimization', 'level10-module9.html'], ['GDSII, Tape-out & Build Your Chip', 'level10-module10.html']
+      ],
+      unit: 'Modules', numbered: true,
+      progress: function () {
+        return LEVELS_B[3].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level10_module' + (i + 1) + '_completed'), href: m[1] }; });
       }
     }
   ];
@@ -456,7 +470,7 @@
     html += '</div>';
     html += '<div class="dde-part dde-part-b"><span class="dde-part-badge">PART B</span><div><h3>Advanced VLSI &amp; Digital IC Design</h3>' +
       '<p>The advanced track: digital VLSI design, timing and power, synthesis, physical design, verification, DFT, processor architecture and AI/ML for VLSI.</p>' +
-      '<span class="dde-part-meta">Levels 7–14 · Level 7 ' + (isOpen(7) ? '🟢 available' : '🔒 locked') + ' · Level 8 ' + (isOpen(8) ? '🟢 available' : '🔒 locked') + ' · Level 9 ' + (isOpen(9) ? '🟢 available' : '🔒 locked') + ' · ⏳ Levels 10–14 coming soon</span></div></div><div class="dde-levels dde-levels-b">';
+      '<span class="dde-part-meta">Levels 7–14 · Level 7 ' + (isOpen(7) ? '🟢 available' : '🔒 locked') + ' · Level 8 ' + (isOpen(8) ? '🟢 available' : '🔒 locked') + ' · Level 9 ' + (isOpen(9) ? '🟢 available' : '🔒 locked') + ' · Level 10 ' + (isOpen(10) ? '🟢 available' : '🔒 locked') + ' · ⏳ Levels 11–14 coming soon</span></div></div><div class="dde-levels dde-levels-b">';
     PART_B.forEach(function (x) {
       var B = levelByN(x[0]);
       if (B) {
@@ -519,7 +533,8 @@
     6: 'covering SystemVerilog design constructs, object-oriented programming, assertions, constrained randomization, functional coverage and layered testbenches',
     7: 'covering advanced CMOS logic, VLSI arithmetic circuits, datapaths, memory circuits, interconnect, standard cells, IP-based design, reliability and emerging VLSI technologies',
     8: 'covering timing fundamentals, CMOS delay analysis, setup and hold constraints, clock timing, static timing analysis, timing optimization, VLSI power, low-power techniques and power analysis',
-    9: 'covering RTL design methodology, synthesizable SystemVerilog, RTL architecture, FSM implementation, coding for synthesis, logic synthesis, synthesis constraints, synthesis reports and RTL optimization'
+    9: 'covering RTL design methodology, synthesizable SystemVerilog, RTL architecture, FSM implementation, coding for synthesis, logic synthesis, synthesis constraints, synthesis reports and RTL optimization',
+    10: 'covering the physical design flow, floorplanning, power planning, placement, clock tree synthesis, routing, physical design challenges, physical verification, physical optimization, GDSII and tape-out'
   };
 
   function corner(tf) {

@@ -521,3 +521,5 @@ body.dde-l7 .dde-footer .dde-role { color: #2997ff; }
 .l7-progdots span.ok { background: var(--l7-ok); } .l7-progdots span.cur { background: var(--l7-sig); }
 @media (max-width: 680px) { .l7-page pre.l7-code { font-size: .76rem; padding: 12px; } }
 .l7-choice > button.is-pick { background: var(--l7-sig-dim); border-color: var(--l7-sig); }
+.l7-box.ok { background: linear-gradient(160deg, rgba(52,199,89,.12), rgba(52,199,89,.04)); }
+.l7-box.ok h4 { color: #18813d; }

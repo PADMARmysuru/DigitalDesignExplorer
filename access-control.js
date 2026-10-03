@@ -17,6 +17,7 @@ var LEVEL_ACCESS = {
   level7: false,  // Digital VLSI Design (locked until you release it)
   level8: false,  // VLSI Timing & Power (locked until you release it)
   level9: false,  // RTL Design & Synthesis (locked until you release it)
+  level10: false, // Physical Design (locked until you release it)
 };
 
 /* Only ECE students of GSSSIETW: 4GW + 2 digits + EC + 3 digits, e.g. 4GW24EC001 */
@@ -53,7 +54,10 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
         'level8-module8.html', 'level8-module9.html', 'level8-module10.html', 'level8-certificate.html'],
     9: ['level9.html', 'level9-module1.html', 'level9-module2.html', 'level9-module3.html',
         'level9-module4.html', 'level9-module5.html', 'level9-module6.html', 'level9-module7.html',
-        'level9-module8.html', 'level9-module9.html', 'level9-module10.html', 'level9-certificate.html']
+        'level9-module8.html', 'level9-module9.html', 'level9-module10.html', 'level9-certificate.html'],
+    10: ['level10.html', 'level10-module1.html', 'level10-module2.html', 'level10-module3.html',
+        'level10-module4.html', 'level10-module5.html', 'level10-module6.html', 'level10-module7.html',
+        'level10-module8.html', 'level10-module9.html', 'level10-module10.html', 'level10-certificate.html']
   };
 
   /* Learning content (all level pages) is open WITHOUT login, so teachers can teach with it.
@@ -61,7 +65,7 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
      Only these student-specific pages require a STUDENT login: */
   var STUDENT_PAGES = ['student-dashboard.html', 'certificate.html', 'level2-certificate.html', 'level3-certificate.html',
                        'level4-certificate.html', 'level5-certificate.html', 'level6-certificate.html',
-                       'level7-certificate.html', 'level8-certificate.html', 'level9-certificate.html'];
+                       'level7-certificate.html', 'level8-certificate.html', 'level9-certificate.html', 'level10-certificate.html'];
   /* The teacher pages are protected by a teacher login checked in Supabase (teacher-login.html) */
   var PUBLIC_PAGES = ['index.html', 'login.html', 'locked.html', 'supabase-test.html', 'teacher-dashboard.html', 'teacher-login.html'];
 

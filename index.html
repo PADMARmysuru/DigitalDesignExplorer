@@ -315,7 +315,7 @@
             <div>
                 <h2>Advanced VLSI &amp; Digital IC Design</h2>
                 <p>Advanced VLSI learning: design, timing and power, synthesis, physical design, verification, test, architecture and AI/ML for VLSI.</p>
-                <span class="part-meta">Levels 7–14 · Level 7: Digital VLSI Design · Level 8: VLSI Timing &amp; Power · Level 9: RTL Design &amp; Synthesis · ⏳ Levels 10–14 coming soon</span>
+                <span class="part-meta">Levels 7–14 · Level 7: Digital VLSI Design · Level 8: VLSI Timing &amp; Power · Level 9: RTL Design &amp; Synthesis · Level 10: Physical Design · ⏳ Levels 11–14 coming soon</span>
             </div>
         </div>
 
@@ -356,10 +356,10 @@
             <div class="path-step">
                 <div class="path-circle">L10</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span>
                     <h3>LEVEL 10 — Physical Design</h3>
-                    <p>Physical implementation of digital VLSI designs.</p>
-                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
+                    <p>From netlist to GDSII: floorplanning, power planning, placement, clock trees, routing, physical verification and tape-out.</p>
+                    <button class="path-button" type="button" onclick="goLevel(10)">🔒 Not yet released</button>
                 </div>
             </div>
         
@@ -453,7 +453,7 @@
         */
         var LEVEL_PAGES = { 1: 'dashboard.html', 2: 'level2-dashboard.html', 3: 'level3-dashboard.html',
                             4: 'level4-dashboard.html', 5: 'level5-dashboard.html', 6: 'level6.html',
-                            7: 'level7.html', 8: 'level8.html', 9: 'level9.html' };
+                            7: 'level7.html', 8: 'level8.html', 9: 'level9.html', 10: 'level10.html' };
 
         function goLevel(level) {
             if (!LEVEL_PAGES[level]) {

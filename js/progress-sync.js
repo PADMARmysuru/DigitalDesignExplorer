@@ -192,7 +192,7 @@
      Local format: dde_level<L>_progress.m[<n>] = { a:{id:1}, req:{a,p,c}, q:{best,last,total,tries} }
      Mapping: concepts = Learn-tab animations (req.c), activities = labs/reveal/drag,
               practice = all practice sets, quiz = passed (best >= 70 %). */
-  var PARTB_SYNC = { 9: true };          // add 7 or 8 here to send those levels to Supabase too
+  var PARTB_SYNC = { 9: true, 10: true };          // add 7 or 8 here to send those levels to Supabase too
   var PARTB_PASS = 0.7;
   function partB(level, module) {
     var key = 'dde_level' + level + '_progress', doneKey = 'level' + level + '_module' + module + '_completed';

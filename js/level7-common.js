@@ -81,6 +81,25 @@
         { t: 'RTL Optimization', i: '🚀', d: 'Resource sharing, constant propagation, CSE, restructuring, pipelining and area/performance trade-offs.' },
         { t: 'RTL-to-Gate-Level Project', i: '🎯', d: 'Take a design of your choice from specification through RTL, simulation and synthesis to a netlist report.' }
       ]
+    },
+    10: {
+      title: 'Physical Design',
+      lead: 'From a synthesized gate-level netlist to a chip you could manufacture. Ten hands-on modules on floorplanning, power planning, placement, clock tree synthesis, routing, physical challenges, verification and optimisation – ending with Build Your Chip and tape-out.',
+      tags: ['10 modules', '100 quiz questions', 'floorplan & route labs', 'physical verification', '🏆 Build Your Chip'],
+      acc: ['#0071e3', '#ff9500', '#e5332a', '#34c759', '#5856d6', '#00a7c4', '#ff2d55', '#af52de', '#d48a00', '#00b39f'],
+      sync: true,
+      modules: [
+        { t: 'Physical Design Flow', i: '🗺️', d: 'Netlist to GDSII: stages, inputs, outputs, technology files, libraries and physical constraints.' },
+        { t: 'Floorplanning', i: '📐', d: 'Die and core, utilisation, aspect ratio, I/O and macro placement, blockages and floorplan quality.' },
+        { t: 'Power Planning', i: '🔌', d: 'VDD/VSS rings, straps, grids, rails, IR drop and electromigration – the physical power network.' },
+        { t: 'Placement', i: '🧩', d: 'Global placement, legalisation, detailed placement, density, overlaps and congestion.' },
+        { t: 'Clock Tree Synthesis', i: '🌳', d: 'Clock sources and sinks, buffers, H-trees, balancing and clock-tree quality.' },
+        { t: 'Routing', i: '🛣️', d: 'Global and detailed routing, layers, tracks, vias, blockages, congestion and design rules.' },
+        { t: 'Physical Design Challenges', i: '⚠️', d: 'Congestion, overflow, antenna effects, crosstalk, IR drop, EM and manufacturing constraints.' },
+        { t: 'Physical Verification', i: '🔎', d: 'DRC, LVS, ERC and antenna checks – finding and fixing physical violations.' },
+        { t: 'Physical Design Optimization', i: '⚙️', d: 'Spreading, buffering, resizing, layer promotion and the trade-offs of physical optimisation.' },
+        { t: 'GDSII, Tape-out & Build Your Chip', i: '🏆', d: 'Sign-off, GDSII, masks and fabrication – then build your own chip from netlist to tape-out.' }
+      ]
     }
   };
   var INFO = LEVEL_INFO[LV] || LEVEL_INFO[7];

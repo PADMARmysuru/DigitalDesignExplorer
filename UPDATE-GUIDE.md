@@ -145,3 +145,15 @@ New files: `level9.html`, `level9-module1.html` … `level9-module10.html`, `lev
 Level 9 uses the shared Part B engine (`js/level7-common.js`) and stylesheet (`css/level7.css`), like Levels 7 and 8. New shared helpers: `L7.code` (RTL code blocks) and `L7.drill` (read-the-code-and-choose activities).
 
 **Supabase progress:** Level 9 is the first Part B level that also saves module progress to Supabase (`student_module_progress`, level = 9), so it appears in the Teacher Dashboard (Level 9 → Module 1…10). Concepts = Learn-tab animations, Activities = labs / reveal / drag, Practice = all practice sets, Quiz = passed. Levels 7 and 8 still save on the device only; to add them, put `7: true, 8: true` in `PARTB_SYNC` in `js/progress-sync.js`.
+
+## Level 10 – Physical Design (Part B)
+
+Level 10 is installed but **locked**. Teachers can preview it after Teacher Login. To open it for students, change `level10: false` to `level10: true` in `access-control.js`.
+
+**No Supabase changes are needed** – the module-progress tables and functions already support levels 1–14.
+
+New files: `level10.html`, `level10-module1.html` … `level10-module10.html`, `level10-certificate.html`, `js/level10-module1.js` … `js/level10-module10.js`.
+
+Level 10 uses the shared Part B engine (`js/level7-common.js`) and stylesheet (`css/level7.css`). Its module progress is saved to Supabase like Level 9 (`PARTB_SYNC = { 9: true, 10: true }` in `js/progress-sync.js`), so the Teacher Dashboard shows Level 10 → Module 1…10 automatically.
+
+Labs: physical-design pipeline + arrange-the-flow, floorplan lab, power-grid lab (IR drop / EM / tracks), placement board with congestion map, clock-tree lab, routing grid (M2/M3 + vias), problem map + crosstalk/antenna lab, physical verification (DRC/LVS/ERC/antenna), physical optimisation + repeater lab, and the 11-step **Build Your Chip** project with a score out of 100.
