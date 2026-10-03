@@ -346,7 +346,13 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
     // Not logged in as a teacher → Teacher Login. The server decides, not the browser.
     if (!token()) { toLogin(); return; }
     DDEProgress.rpc('dde_teacher_me', { p_token: token() }).then(function (r) {
-      if (r && r.ok) showMain(r.teacher); else toLogin('expired');
+      if (r && r.ok) {
+        // A confirmed teacher session also turns on the preview of locked levels
+        var had = false;
+        try { had = (+sessionStorage.getItem('ddeTeacherPreviewUntil') || 0) > Date.now(); sessionStorage.setItem('ddeTeacherPreviewUntil', String(Date.now() + 12 * 3600 * 1000)); } catch (e) {}
+        if (!had) { location.reload(); return; }      // redraw the menu with the levels unlocked
+        showMain(r.teacher);
+      } else toLogin('expired');
     }, function (e) {
       document.querySelector('.tdb').classList.remove('is-checking');
       msg('tdbMsg', 'bad', errorText(e));
