@@ -48,7 +48,7 @@ to
 
     level7: true,
 
-then upload the file. Levels 8–14 remain "coming soon".
+then upload the file.
 
 New files for Level 7 (Levels 1–6 content is unchanged):
 
@@ -62,3 +62,33 @@ New files for Level 7 (Levels 1–6 content is unchanged):
 Shared files updated: `access-control.js` (Level 7 entry), `common.js` (Level 7 in menus, student dashboard and certificate), `index.html` (Level 7 card opens Level 7), `dashboard.html` (Level 1 progress cards now open their pages).
 
 Progress is stored in the student's browser (`dde_level7_progress`, `level7_moduleN_completed`, and `dde_level7_project` for the mini-project tracker), like the other levels.
+
+## Level 8 – VLSI Timing & Power (Part B)
+
+Level 8 is installed but **locked**. To open it for students, edit `access-control.js` and change
+
+    level8: false,
+
+to
+
+    level8: true,
+
+then upload the file. Levels 9–14 remain "coming soon". Levels 1–7 access is not affected.
+
+New files for Level 8:
+
+- `level8.html` – Level 8 dashboard (progress ring, module cards, certificate card)
+- `level8-module1.html` … `level8-module10.html` – the ten modules
+- `level8-certificate.html` – certificate (unlocks when all ten modules are completed)
+- `js/level8-module1.js` … `js/level8-module10.js` – content of each module
+
+Level 8 reuses the Level 7 design and engine – there is no separate Level 8 stylesheet or engine:
+
+- `js/level7-common.js` is now the shared Part B engine. Each page says which level it belongs to with `<body data-level="8">`.
+- `css/level7.css` is the shared Part B stylesheet (timing-diagram and verdict styles were added).
+
+Quiz upgrade (applies to Level 7 and Level 8): every attempt is recorded; the quiz shows Previous / Latest / Best score and the number of attempts, and a "Retake Quiz" button. Questions carry an Easy / Medium / Hard tag.
+
+Shared files updated: `access-control.js` (Level 8 entry), `common.js` (Level 8 in menus, student dashboard and certificate), `index.html` (Level 8 card opens Level 8).
+
+Progress is stored in the student's browser (`dde_level8_progress`, `level8_moduleN_completed`), in the same format as Level 7.

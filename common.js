@@ -135,8 +135,8 @@
   ];
 
   /* Part B – Advanced VLSI & Digital IC Design.
-     Level 7 has pages (released through LEVEL_ACCESS.level7 in access-control.js).
-     Levels 8–14 are ROADMAP ONLY: no pages yet, always shown as locked / coming soon. */
+     Levels 7 and 8 have pages (released through LEVEL_ACCESS.level7 / level8 in access-control.js).
+     Levels 9–14 are ROADMAP ONLY: no pages yet, always shown as locked / coming soon. */
   var LEVELS_B = [
     {
       n: 7, part: 'B', title: 'Digital VLSI Design', color: '#16b5c9', dashboard: 'level7.html', certificate: 'level7-certificate.html',
@@ -150,6 +150,20 @@
       unit: 'Modules', numbered: true,
       progress: function () {
         return LEVELS_B[0].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level7_module' + (i + 1) + '_completed'), href: m[1] }; });
+      }
+    },
+    {
+      n: 8, part: 'B', title: 'VLSI Timing & Power', color: '#5856d6', dashboard: 'level8.html', certificate: 'level8-certificate.html',
+      modules: [
+        ['Digital Circuit Timing Fundamentals', 'level8-module1.html'], ['CMOS Delay Analysis', 'level8-module2.html'],
+        ['Setup, Hold & Timing Constraints', 'level8-module3.html'], ['Clock Timing', 'level8-module4.html'],
+        ['Static Timing Analysis (STA)', 'level8-module5.html'], ['Timing Optimization', 'level8-module6.html'],
+        ['VLSI Power Fundamentals', 'level8-module7.html'], ['Low-Power VLSI Techniques', 'level8-module8.html'],
+        ['Power Analysis & Optimization', 'level8-module9.html'], ['Timing & Power Case Study', 'level8-module10.html']
+      ],
+      unit: 'Modules', numbered: true,
+      progress: function () {
+        return LEVELS_B[1].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level8_module' + (i + 1) + '_completed'), href: m[1] }; });
       }
     }
   ];
@@ -386,7 +400,7 @@
     html += '</div>';
     html += '<div class="dde-part dde-part-b"><span class="dde-part-badge">PART B</span><div><h3>Advanced VLSI &amp; Digital IC Design</h3>' +
       '<p>The advanced track: digital VLSI design, timing and power, synthesis, physical design, verification, DFT, processor architecture and AI/ML for VLSI.</p>' +
-      '<span class="dde-part-meta">Levels 7–14 · Level 7 ' + (isOpen(7) ? '🟢 available' : '🔒 locked') + ' · ⏳ Levels 8–14 coming soon</span></div></div><div class="dde-levels dde-levels-b">';
+      '<span class="dde-part-meta">Levels 7–14 · Level 7 ' + (isOpen(7) ? '🟢 available' : '🔒 locked') + ' · Level 8 ' + (isOpen(8) ? '🟢 available' : '🔒 locked') + ' · ⏳ Levels 9–14 coming soon</span></div></div><div class="dde-levels dde-levels-b">';
     PART_B.forEach(function (x) {
       var B = levelByN(x[0]);
       if (B) {
@@ -446,7 +460,8 @@
     4: 'covering MOSFET operation, CMOS logic design, inverter analysis, layout, fabrication, scaling and advanced logic styles',
     5: 'covering fault models, fault simulation, test pattern generation, design for testability, scan, BIST and boundary scan',
     6: 'covering SystemVerilog design constructs, object-oriented programming, assertions, constrained randomization, functional coverage and layered testbenches',
-    7: 'covering advanced CMOS logic, VLSI arithmetic circuits, datapaths, memory circuits, interconnect, standard cells, IP-based design, reliability and emerging VLSI technologies'
+    7: 'covering advanced CMOS logic, VLSI arithmetic circuits, datapaths, memory circuits, interconnect, standard cells, IP-based design, reliability and emerging VLSI technologies',
+    8: 'covering timing fundamentals, CMOS delay analysis, setup and hold constraints, clock timing, static timing analysis, timing optimization, VLSI power, low-power techniques and power analysis'
   };
 
   function corner(tf) {

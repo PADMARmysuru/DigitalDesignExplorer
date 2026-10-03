@@ -465,3 +465,40 @@ body.dde-l7 .dde-footer .dde-role { color: #2997ff; }
   .l7-hero::before { display: none; }
   .l7-grad, .l7-hero h1 .l7-grad { color: var(--l7-acc); background: none; }
 }
+
+/* ---------- Quiz attempt history & difficulty tags ---------- */
+.l7-attempts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 16px; }
+.l7-attempts:empty { display: none; }
+.l7-attempts div { background: var(--l7-bg-2); border-radius: 16px; padding: 12px 14px; }
+.l7-attempts div.ok { background: var(--l7-ok-dim); }
+.l7-attempts span { display: block; font-size: .74rem; font-weight: 600; color: var(--l7-ink-3); }
+.l7-attempts b { font-family: var(--l7-head); font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; }
+.l7-attempts b small { font-size: .8rem; color: var(--l7-ink-3); font-weight: 600; }
+.l7-diff { display: inline-block; font: 700 .66rem var(--l7-body); letter-spacing: .04em; text-transform: uppercase; border-radius: 99px; padding: 2px 8px; margin-right: 8px; vertical-align: 2px; }
+.l7-diff.d-easy { background: var(--l7-ok-dim); color: #18813d; }
+.l7-diff.d-medium { background: rgba(255,149,0,.14); color: #b35900; }
+.l7-diff.d-hard { background: var(--l7-bad-dim); color: #b8241d; }
+.l7-score small { color: var(--l7-ink-3); font-weight: 600; }
+@media (max-width: 680px) { .l7-attempts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- Timing waveforms (Level 8) ---------- */
+.l7-page svg .wv { stroke: var(--l7-ink); stroke-width: 2; fill: none; }
+.l7-page svg .wv-clk { stroke: #5856d6; stroke-width: 2.2; fill: none; }
+.l7-page svg .win-setup { fill: rgba(255,149,0,.16); stroke: #ff9500; stroke-width: 1; stroke-dasharray: 3 3; }
+.l7-page svg .win-hold { fill: rgba(175,82,222,.14); stroke: #af52de; stroke-width: 1; stroke-dasharray: 3 3; }
+.l7-page svg .win-bad { fill: rgba(255,59,48,.16); stroke: var(--l7-bad); stroke-width: 1.2; }
+.l7-page svg .win-ok { fill: rgba(52,199,89,.14); stroke: #34c759; stroke-width: 1; }
+.l7-page svg .grid { stroke: #ececf0; stroke-width: 1; }
+.l7-verdict { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; border-radius: 18px; padding: 14px 18px; margin-top: 12px; font-weight: 700; font-size: 1.05rem; }
+.l7-verdict.ok { background: var(--l7-ok-dim); color: #145c2e; }
+.l7-verdict.bad { background: var(--l7-bad-dim); color: #9b1c16; }
+.l7-verdict.warn { background: rgba(255,149,0,.13); color: #8a4600; }
+.l7-verdict small { display: block; flex-basis: 100%; font-weight: 500; font-size: .9rem; margin-top: 2px; }
+.l7-cmp { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .95rem; }
+.l7-cmp th, .l7-cmp td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--l7-line); }
+.l7-cmp th { font-size: .74rem; text-transform: uppercase; letter-spacing: .03em; color: var(--l7-ink-3); }
+.l7-cmp td.better { color: var(--l7-ok); font-weight: 700; }
+.l7-cmp td.worse { color: var(--l7-bad); font-weight: 700; }
+.l7-steps-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0; }
+.l7-steps-flow span { background: var(--l7-bg-2); border-radius: 99px; padding: 6px 12px; font-weight: 600; font-size: .85rem; }
+.l7-steps-flow b { color: var(--l7-ink-3); }

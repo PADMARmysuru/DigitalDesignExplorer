@@ -1,26 +1,38 @@
 /* =====================================================================
-   Digital Design Explorer – Level 7 (Part B) shared engine
-   Exposes one global: window.L7
+   Digital Design Explorer – Part B shared engine (Level 7, Level 8, …)
+   Exposes one global: window.L7 (name kept from Level 7 for compatibility).
+   The level is read from <body data-level="N"> (default 7), so every
+   Part B level reuses this one engine, stylesheet and progress format.
    ---------------------------------------------------------------------
    Progress keys (localStorage, same style as Levels 5 and 6):
-     level7_module<N>_completed = "true"      ← read by common.js
-     dde_level7_progress = { m: { "<N>": {
+     level<L>_module<N>_completed = "true"    ← read by common.js
+     dde_level<L>_progress = { m: { "<N>": {
          a:   { <activityId>: 1 },              activities + practice done
          req: { a:[ids], p:[ids] },             what the module contains
-         q:   { best, last, total, tries, date } module quiz
+         q:   { best, last, prev, total, tries, date, hist:[{s,t,d}] } module quiz
          done: "YYYY-MM-DD" } } }
    ===================================================================== */
 (function () {
   'use strict';
 
   var L7 = window.L7 = window.L7 || {};
-  var KEY = 'dde_level7_progress';
+  var LV = parseInt((document.body && document.body.getAttribute('data-level')) || '7', 10) || 7;
+  L7.LEVEL = LV;
+  var KEY = 'dde_level' + LV + '_progress';
+  function doneKey(n) { return 'level' + LV + '_module' + n + '_completed'; }
+  function lvPage(n) { return 'level' + LV + (n ? '-module' + n : '') + '.html'; }
+  L7.page = lvPage;
   var PASS = 0.7;
   L7.PASS = PASS;
 
   /* ---------- Module catalogue (used by the hub and the pager) ---------- */
-  L7.ACC = ['#0071e3', '#ff9500', '#34c759', '#af52de', '#ff2d55', '#00a7c4', '#5856d6', '#e5332a', '#00b39f', '#d48a00'];
-  L7.MODULES = [
+  var LEVEL_INFO = {
+    7: {
+      title: 'Digital VLSI Design',
+      lead: 'Move from logic to silicon. Ten interactive modules on transistor-level logic styles, arithmetic and datapath architectures, memories, wires, standard cells, IP reuse, reliability and the technologies shaping the next generation of chips.',
+      tags: ['10 modules', '100 quiz questions', 'interactive labs', 'mini project'],
+      acc: ['#0071e3', '#ff9500', '#34c759', '#af52de', '#ff2d55', '#00a7c4', '#5856d6', '#e5332a', '#00b39f', '#d48a00'],
+      modules: [
     { t: 'Advanced CMOS Logic Design', i: '⚡', d: 'Complex gates, PUN/PDN design, AOI/OAI, transmission-gate, pass-transistor, ratioed, dynamic and domino logic.' },
     { t: 'VLSI Arithmetic Circuit Design', i: '➕', d: 'Ripple, look-ahead, select, skip and prefix adders; subtractors, comparators, array, Wallace and Dadda multipliers.' },
     { t: 'Datapath Circuit Design', i: '🔀', d: 'Bit-sliced datapaths, multiplexer networks, shifters, barrel shifters and ALU organisation.' },
@@ -31,7 +43,31 @@
     { t: 'VLSI Design for Reliability', i: '🛡️', d: 'PVT variation, mismatch, ageing, soft errors and designing for robustness.' },
     { t: 'Emerging Digital VLSI Technologies', i: '🚀', d: 'FinFET, GAA nanosheets, 2.5D/3D integration, chiplets and advanced packaging.' },
     { t: 'Digital VLSI Mini Project', i: '🛠️', d: 'Design, verify and document a complete digital VLSI building block of your choice.' }
-  ];
+      ]
+    },
+    8: {
+      title: 'VLSI Timing & Power',
+      lead: 'Will it run fast enough, and how much power will it burn? Ten interactive modules on delay, setup and hold, clocks, static timing analysis, timing fixes, power sources, low-power techniques and power analysis – ending with a complete timing-and-power case study.',
+      tags: ['10 modules', '100 quiz questions', 'timing diagrams', 'STA & power labs', 'case study'],
+      acc: ['#5856d6', '#0071e3', '#ff2d55', '#00a7c4', '#ff9500', '#34c759', '#e5332a', '#00b39f', '#af52de', '#d48a00'],
+      modules: [
+        { t: 'Digital Circuit Timing Fundamentals', i: '⏱️', d: 'Propagation and contamination delay, rise and fall time, path delay, critical paths and delay estimation.' },
+        { t: 'CMOS Delay Analysis', i: '🔌', d: 'Resistance, load and parasitic capacitance, fan-out, wire delay, RC and Elmore delay, delay optimisation.' },
+        { t: 'Setup, Hold & Timing Constraints', i: '⏳', d: 'Clock-to-Q, setup, hold, recovery and removal, timing paths, constraints, margins and violations.' },
+        { t: 'Clock Timing', i: '🕒', d: 'Clock distribution, latency, insertion delay, skew, jitter, uncertainty and clock timing problems.' },
+        { t: 'Static Timing Analysis (STA)', i: '📊', d: 'Timing graphs, startpoints and endpoints, arrival and required times, slack and timing reports.' },
+        { t: 'Timing Optimization', i: '🛠️', d: 'Gate sizing, buffering, fan-out and load reduction, restructuring, setup and hold fixes, trade-offs.' },
+        { t: 'VLSI Power Fundamentals', i: '⚡', d: 'Dynamic, short-circuit and leakage power, switching activity and the αCV²f relationship.' },
+        { t: 'Low-Power VLSI Techniques', i: '🔋', d: 'Voltage and frequency scaling, clock and power gating, multi-VDD, multi-Vt, isolation and retention.' },
+        { t: 'Power Analysis & Optimization', i: '🔍', d: 'Vector-based and vectorless analysis, power reports, peak power, hotspots, energy and energy-delay.' },
+        { t: 'Timing & Power Case Study', i: '🏁', d: 'Analyse, fix and optimise a complete design, then compare delay, slack, power and area.' }
+      ]
+    }
+  };
+  var INFO = LEVEL_INFO[LV] || LEVEL_INFO[7];
+  L7.INFO = INFO;
+  L7.ACC = INFO.acc;
+  L7.MODULES = INFO.modules;
 
   /* ---------- Storage ---------- */
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -50,7 +86,7 @@
     return m;
   }
   function today() { var t = new Date(); return t.getFullYear() + '-' + ('0' + (t.getMonth() + 1)).slice(-2) + '-' + ('0' + t.getDate()).slice(-2); }
-  L7.isComplete = function (n) { return lsGet('level7_module' + n + '_completed') === 'true'; };
+  L7.isComplete = function (n) { return lsGet(doneKey(n)) === 'true'; };
 
   /* Summary of one module for dashboards */
   L7.summary = function (n) {
@@ -175,7 +211,7 @@
     var C = 2 * Math.PI * 50;
     page.innerHTML =
       '<section class="l7-hero"><div>' +
-      '<p class="l7-kicker"><span class="l7-partb">PART B</span>Level 7 · Module ' + n + ' ' + meta.i + '</p>' +
+      '<p class="l7-kicker"><span class="l7-partb">PART B</span>Level ' + LV + ' · Module ' + n + ' ' + meta.i + '</p>' +
       '<h1><span class="l7-grad">' + esc(cfg.title || meta.t) + '</span></h1><p class="l7-lead">' + cfg.lead + '</p>' +
       '<div class="l7-tags">' + (cfg.tags || []).map(function (t) { return '<span class="l7-tag">' + esc(t) + '</span>'; }).join('') + '</div></div>' +
       '<svg class="l7-ring" viewBox="0 0 128 128" role="img" aria-label="Module progress"><circle class="bg" cx="64" cy="64" r="50"/>' +
@@ -291,7 +327,7 @@
         }
       } catch (err) {
         content.innerHTML = '<p class="l7-fb bad">This activity could not load on this browser. Please refresh the page.</p>';
-        if (window.console) console.error('Level 7 section', id, err);
+        if (window.console) console.error('Level ' + LV + ' section', id, err);
       }
     });
 
@@ -320,26 +356,26 @@
     /* Completion */
     var cs = h('section', 'l7-sec k-complete'); cs.id = 's-complete';
     cs.innerHTML = '<div class="l7-sec-head"><div><span class="l7-badge t-scen">🎯 Completion</span><h2>Complete Module ' + n + '</h2></div></div>' +
-      '<p class="l7-intro">Finish every lab and activity, every practice set, and pass the quiz (70% or more). Then save the module to your Level 7 progress.</p>' +
+      '<p class="l7-intro">Finish every lab and activity, every practice set, and pass the quiz (70% or more). Then save the module to your Level ' + LV + ' progress.</p>' +
       '<ul class="l7-checklist" id="l7Check"></ul><div class="l7-row"><button type="button" class="l7-btn pri" id="l7Done" disabled>Mark Module ' + n + ' complete</button>' +
-      '<a class="l7-btn ghost" href="level7.html">← Level 7 dashboard</a></div><div class="l7-fb" id="l7DoneFb"></div>';
+      '<a class="l7-btn ghost" href="' + lvPage() + '">← Level ' + LV + ' dashboard</a></div><div class="l7-fb" id="l7DoneFb"></div>';
     panels.done._list.appendChild(cs);
 
     /* Pager */
     var pg = h('div', 'l7-pager');
-    pg.innerHTML = (n > 1 ? '<a href="level7-module' + (n - 1) + '.html"><small>← Previous module</small>' + esc(L7.MODULES[n - 2].t) + '</a>' : '<a href="level7.html"><small>← Back</small>Level 7 dashboard</a>') +
-      (n < 10 ? '<a class="next" href="level7-module' + (n + 1) + '.html"><small>Next module →</small>' + esc(L7.MODULES[n].t) + '</a>' : '<a class="next" href="level7.html"><small>Finish →</small>Level 7 dashboard &amp; certificate</a>');
+    pg.innerHTML = (n > 1 ? '<a href="' + lvPage(n - 1) + '"><small>← Previous module</small>' + esc(L7.MODULES[n - 2].t) + '</a>' : '<a href="' + lvPage() + '"><small>← Back</small>Level ' + LV + ' dashboard</a>') +
+      (n < 10 ? '<a class="next" href="' + lvPage(n + 1) + '"><small>Next module →</small>' + esc(L7.MODULES[n].t) + '</a>' : '<a class="next" href="' + lvPage() + '"><small>Finish →</small>Level ' + LV + ' dashboard &amp; certificate</a>');
     page.appendChild(pg);
 
     root.innerHTML = ''; root.appendChild(page);
-    document.title = 'Level 7 · Module ' + n + ': ' + (cfg.title || meta.t) + ' | Digital Design Explorer';
+    document.title = 'Level ' + LV + ' · Module ' + n + ': ' + (cfg.title || meta.t) + ' | Digital Design Explorer';
 
     var doneBtn = document.getElementById('l7Done');
     doneBtn.addEventListener('click', function () {
       if (!allMet()) return;
-      lsSet('level7_module' + n + '_completed', 'true');
+      lsSet(doneKey(n), 'true');
       var d = load(); mod(d, n).done = today(); save(d);
-      var p; try { if (typeof window.markModuleComplete === 'function') p = window.markModuleComplete(7, n); } catch (e) { p = null; }
+      var p; try { if (typeof window.markModuleComplete === 'function') p = window.markModuleComplete(LV, n); } catch (e) { p = null; }
       Promise.resolve(p).then(function () { refresh(); }, function () { refresh(); });
     });
 
@@ -388,7 +424,7 @@
       }).join('');
       if (s.complete) {
         doneBtn.disabled = true; doneBtn.textContent = '✓ Module ' + n + ' completed';
-        L7.fb(document.getElementById('l7DoneFb'), 'ok', '🎉 Saved to your Level 7 progress' + (n < 10 ? '. Continue with Module ' + (n + 1) + '.' : '. Open the Level 7 dashboard for your certificate.'));
+        L7.fb(document.getElementById('l7DoneFb'), 'ok', '🎉 Saved to your Level ' + LV + ' progress' + (n < 10 ? '. Continue with Module ' + (n + 1) + '.' : '. Open the Level ' + LV + ' dashboard for your certificate.'));
       } else {
         doneBtn.disabled = !allMet();
         L7.fb(document.getElementById('l7DoneFb'), allMet() ? 'info' : '', allMet() ? 'All requirements met – press the button to save this module.' : '');
@@ -415,9 +451,12 @@
         if (api.refresh) api.refresh();
       },
       isDone: function (id) { var m = load().m[n]; return !!(m && m.a && m.a[id]); },
+      quizInfo: function () { var m = load().m[n]; return (m && m.q) || null; },
       saveQuiz: function (score, total) {
         var d = load(), m = mod(d, n), q = m.q || { best: 0, tries: 0 };
+        if (q.last != null) q.prev = q.last;
         q.last = score; q.total = total; q.tries = (q.tries || 0) + 1; q.best = Math.max(q.best || 0, score); q.date = today();
+        q.hist = (q.hist || []).concat([{ s: score, t: total, d: today() }]).slice(-20);
         m.q = q; save(d);
         if (api.refresh) api.refresh();
       }
@@ -663,8 +702,19 @@
   /* ---------- Module quiz (graded, retake allowed) ---------- */
   function renderQuiz(sec, qs, api) {
     var box = h('div', 'l7-quiz');
-    sec.appendChild(h('p', 'l7-intro', qs.length + ' questions · pass mark 70% (' + Math.ceil(qs.length * PASS) + ' correct) · answer every question, then submit. You may retake the quiz; your best score is kept.'));
+    sec.appendChild(h('p', 'l7-intro', qs.length + ' questions · pass mark 70% (' + Math.ceil(qs.length * PASS) + ' correct) · answer every question, then submit. You may retake the quiz; every attempt is recorded and your best score is kept.'));
+    var hist = h('div', 'l7-attempts'); sec.appendChild(hist);
     sec.appendChild(box);
+    function showHist() {
+      var q = api.quizInfo && api.quizInfo();
+      if (!q || !q.tries) { hist.innerHTML = ''; return; }
+      var pass = q.best / q.total >= PASS;
+      hist.innerHTML = '<div><span>Previous score</span><b>' + (q.prev != null ? q.prev + '<small> / ' + q.total + '</small>' : '—') + '</b></div>' +
+        '<div><span>Latest score</span><b>' + q.last + '<small> / ' + q.total + '</small></b></div>' +
+        '<div class="' + (pass ? 'ok' : '') + '"><span>Best score</span><b>' + q.best + '<small> / ' + q.total + '</small></b></div>' +
+        '<div><span>Attempts</span><b>' + q.tries + '</b></div>';
+    }
+    showHist();
     var picks;
     function build() {
       picks = {};
@@ -672,7 +722,8 @@
       var head = h('div', 'l7-quiz-head', '<span class="l7-quiz-meter">Answered <b id="l7QA">0</b> / ' + qs.length + '</span>');
       box.appendChild(head);
       qs.forEach(function (it, i) {
-        var q = h('div', 'l7-q'); q.innerHTML = '<p class="l7-q-t"><span class="l7-q-n">Q' + (i + 1) + '</span>' + it.q + '</p>';
+        var q = h('div', 'l7-q'); q.innerHTML = '<p class="l7-q-t"><span class="l7-q-n">Q' + (i + 1) + '</span>' +
+          (it.d ? '<span class="l7-diff d-' + esc(it.d).toLowerCase() + '">' + esc(it.d) + '</span>' : '') + it.q + '</p>';
         var opts = h('div', 'l7-opts');
         it.o.forEach(function (o, k) {
           var b = h('button', 'l7-opt', o); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
@@ -701,10 +752,13 @@
         box.classList.add('is-graded');
         var pass = score / qs.length >= PASS;
         api.saveQuiz(score, qs.length);
+        showHist();
+        var qi = api.quizInfo ? api.quizInfo() : null;
         result.innerHTML = '<div class="l7-score ' + (pass ? 'pass' : 'fail') + '"><span class="big">' + score + ' / ' + qs.length + '</span>' +
-          (pass ? '🎉 Passed! Read the explanations, then open the 🎯 Complete tab.' : 'Below 70%. Read the explanations and try again.') + '</div>';
+          (pass ? '🎉 Passed! Read the explanations, then open the 🎯 Complete tab.' : 'Below the 70% pass mark. Read the explanations, then retake the quiz.') +
+          (qi ? '<br><small>Attempt ' + qi.tries + ' · best score ' + qi.best + ' / ' + qi.total + '</small>' : '') + '</div>';
         submit.remove();
-        var again = L7.btn('↻ Retake quiz', '', function () { build(); sec.scrollIntoView({ behavior: 'smooth' }); });
+        var again = L7.btn(pass ? '↻ Retake Quiz (optional)' : '↻ Retake Quiz', pass ? '' : 'pri', function () { build(); sec.scrollIntoView({ behavior: 'smooth' }); });
         row.appendChild(again);
         result.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
@@ -713,17 +767,17 @@
   }
 
   /* =====================================================================
-     LEVEL 7 HUB (level7.html)
+     LEVEL HUB (level7.html, level8.html, …)
      ===================================================================== */
   L7.hub = function (root) {
     var s = L7.levelSummary(), C = 2 * Math.PI * 50;
     var html = '<div class="l7-page">' +
-      '<section class="l7-hero"><div><p class="l7-kicker"><span class="l7-partb">PART B</span>Advanced VLSI · Level 7</p>' +
-      '<h1><span class="l7-grad">Digital VLSI Design</span></h1><p class="l7-lead">Move from logic to silicon. Ten interactive modules on transistor-level logic styles, arithmetic and datapath architectures, memories, wires, standard cells, IP reuse, reliability and the technologies shaping the next generation of chips.</p>' +
-      '<div class="l7-tags"><span class="l7-tag">10 modules</span><span class="l7-tag">' + 10 * 10 + ' quiz questions</span><span class="l7-tag">interactive labs</span><span class="l7-tag">mini project</span></div></div>' +
-      '<svg class="l7-ring" viewBox="0 0 128 128" role="img" aria-label="Level 7 progress ' + s.pct + ' percent"><circle class="bg" cx="64" cy="64" r="50"/>' +
+      '<section class="l7-hero"><div><p class="l7-kicker"><span class="l7-partb">PART B</span>Advanced VLSI · Level ' + LV + '</p>' +
+      '<h1><span class="l7-grad">' + esc(INFO.title) + '</span></h1><p class="l7-lead">' + esc(INFO.lead) + '</p>' +
+      '<div class="l7-tags">' + INFO.tags.map(function (t) { return '<span class="l7-tag">' + esc(t) + '</span>'; }).join('') + '</div></div>' +
+      '<svg class="l7-ring" viewBox="0 0 128 128" role="img" aria-label="Level ' + LV + ' progress ' + s.pct + ' percent"><circle class="bg" cx="64" cy="64" r="50"/>' +
       '<circle class="fg" cx="64" cy="64" r="50" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - s.frac)).toFixed(1) + '"/>' +
-      '<text x="64" y="68" text-anchor="middle">' + s.pct + '%</text><text class="sub" x="64" y="86" text-anchor="middle">LEVEL 7</text></svg></section>' +
+      '<text x="64" y="68" text-anchor="middle">' + s.pct + '%</text><text class="sub" x="64" y="86" text-anchor="middle">LEVEL ' + LV + '</text></svg></section>' +
       '<div class="l7-stats">' +
       '<div class="l7-stat"><span>Modules completed</span><b>' + s.mods + '<small> / 10</small></b></div>' +
       '<div class="l7-stat"><span>Activities</span><b>' + s.aD + '<small> / ' + (s.aT || '—') + '</small></b></div>' +
@@ -732,7 +786,7 @@
       '<div class="l7-part"><span>Modules</span></div><div class="l7-hub-grid">';
     L7.MODULES.forEach(function (m, i) {
       var n = i + 1, x = L7.summary(n);
-      html += '<a class="l7-mod' + (x.complete ? ' is-done' : '') + '" style="--acc:' + L7.ACC[i] + '" href="level7-module' + n + '.html">' +
+      html += '<a class="l7-mod' + (x.complete ? ' is-done' : '') + '" style="--acc:' + L7.ACC[i] + '" href="' + lvPage(n) + '">' +
         '<div class="l7-mod-top"><span class="l7-mod-num">Module ' + n + '</span><span class="l7-mod-ico" aria-hidden="true">' + m.i + '</span></div>' +
         '<h3>' + esc(m.t) + '</h3><p>' + esc(m.d) + '</p>' +
         '<div class="l7-bar" aria-hidden="true"><span style="width:' + Math.round(100 * x.frac) + '%"></span></div>' +
@@ -743,11 +797,11 @@
     });
     html += '</div>';
     var all = s.mods === 10;
-    html += '<div class="l7-cert-card"><div><h2>🏆 Level 7 Certificate</h2><p>' + (all ? 'All ten modules are complete. Your certificate is ready.' : 'Complete all ten modules to unlock your certificate (' + s.mods + ' of 10 done).') + '</p></div>' +
-      '<a class="l7-btn ' + (all ? 'cu' : 'ghost') + '" href="level7-certificate.html">' + (all ? '🏆 Open certificate' : '🔒 View requirements') + '</a></div>';
+    html += '<div class="l7-cert-card"><div><h2>🏆 Level ' + LV + ' Certificate</h2><p>' + (all ? 'All ten modules are complete. Your certificate is ready.' : 'Complete all ten modules to unlock your certificate (' + s.mods + ' of 10 done).') + '</p></div>' +
+      '<a class="l7-btn ' + (all ? 'cu' : 'ghost') + '" href="level' + LV + '-certificate.html">' + (all ? '🏆 Open certificate' : '🔒 View requirements') + '</a></div>';
     html += '<div class="l7-part"><span>Part B roadmap</span></div><div class="l7-roadmap">' +
       [[8, 'VLSI Timing & Power'], [9, 'RTL Design & Synthesis'], [10, 'Physical Design'], [11, 'Advanced Verification'], [12, 'DFT & Advanced Testing'], [13, 'Processor / VLSI Architecture'], [14, 'AI/ML for VLSI']]
-        .map(function (r) { return '<div><b>LEVEL ' + r[0] + ' · 🔒 COMING SOON</b>' + esc(r[1]) + '</div>'; }).join('') + '</div></div>';
+        .filter(function (r) { return r[0] > LV; }).map(function (r) { return '<div><b>LEVEL ' + r[0] + ' · 🔒 COMING SOON</b>' + esc(r[1]) + '</div>'; }).join('') + '</div></div>';
     root.innerHTML = html;
   };
 
