@@ -62,6 +62,25 @@
         { t: 'Power Analysis & Optimization', i: '🔍', d: 'Vector-based and vectorless analysis, power reports, peak power, hotspots, energy and energy-delay.' },
         { t: 'Timing & Power Case Study', i: '🏁', d: 'Analyse, fix and optimise a complete design, then compare delay, slack, power and area.' }
       ]
+    },
+    9: {
+      title: 'RTL Design & Synthesis',
+      lead: 'From a written specification to a gate-level netlist. Ten interactive modules on RTL thinking, synthesizable SystemVerilog, architecture, FSMs, coding for synthesis, logic synthesis, constraints, synthesis reports and RTL optimisation – ending with your own RTL-to-gates project.',
+      tags: ['10 modules', '100 quiz questions', 'RTL → gates', 'FSM builder', 'synthesis labs', 'project'],
+      acc: ['#0071e3', '#5856d6', '#ff9500', '#af52de', '#e5332a', '#00a7c4', '#34c759', '#d48a00', '#ff2d55', '#00b39f'],
+      sync: true,
+      modules: [
+        { t: 'RTL Design Fundamentals', i: '🧭', d: 'Register-transfer thinking, abstraction levels, datapath and control, hierarchy and reusable blocks.' },
+        { t: 'SystemVerilog for Synthesizable RTL', i: '⌨️', d: 'always_comb and always_ff, blocking vs non-blocking, parameters, generate, functions, interfaces and enums.' },
+        { t: 'RTL Architecture & Coding', i: '🏗️', d: 'From specification to block diagram to RTL: datapath/control split, muxes, arithmetic and pipelined structures.' },
+        { t: 'RTL FSM Design', i: '🔁', d: 'Moore and Mealy implementation, state encoding, coding styles and an interactive FSM builder.' },
+        { t: 'RTL Design for Synthesis', i: '✅', d: 'What synthesizes, what does not, and what silently creates latches, RAMs, ROMs, muxes or tri-states.' },
+        { t: 'Logic Synthesis', i: '⚙️', d: 'Elaboration, Boolean optimisation, technology mapping, cell selection and the gate-level netlist.' },
+        { t: 'Synthesis Constraints', i: '📐', d: 'Clocks, input and output delays, false and multicycle paths, fan-out and transition limits in SDC.' },
+        { t: 'Synthesis Reports & Analysis', i: '📋', d: 'Area, cell usage, timing, warnings, inferred latches and unused logic in synthesis reports.' },
+        { t: 'RTL Optimization', i: '🚀', d: 'Resource sharing, constant propagation, CSE, restructuring, pipelining and area/performance trade-offs.' },
+        { t: 'RTL-to-Gate-Level Project', i: '🎯', d: 'Take a design of your choice from specification through RTL, simulation and synthesis to a netlist report.' }
+      ]
     }
   };
   var INFO = LEVEL_INFO[LV] || LEVEL_INFO[7];
@@ -110,6 +129,53 @@
     }
     s.pct = Math.round(100 * s.frac);
     return s;
+  };
+
+  /* ---------- RTL code block (escaped, light SystemVerilog highlighting) ---------- */
+  var SV_KW = /\b(module|endmodule|input|output|inout|logic|wire|reg|always_ff|always_comb|always_latch|always|assign|begin|end|if|else|case|casez|unique|priority|endcase|default|posedge|negedge|or|parameter|localparam|typedef|enum|struct|packed|function|endfunction|task|endtask|automatic|return|for|generate|endgenerate|genvar|interface|endinterface|modport|initial|integer|int|bit|signed|unsigned)\b/g;
+  function escText(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  L7.code = function (src, cls) {
+    var out = String(src).split('\n').map(function (line) {
+      var i = line.indexOf('//'), code = i >= 0 ? line.slice(0, i) : line, com = i >= 0 ? line.slice(i) : '';
+      // text-node escaping only (& < >): apostrophes stay literal so 8'h00 and #5 highlight correctly
+      code = escText(code).replace(SV_KW, '<b class="kw">$1</b>').replace(/(\d*'[sS]?[bdhBDH][0-9a-fA-F_xXzZ]+|#\d+)/g, '<i class="num">$1</i>');
+      return code + (com ? '<i class="com">' + escText(com) + '</i>' : '');
+    }).join('\n');
+    return '<pre class="l7-code' + (cls ? ' ' + cls : '') + '">' + out + '</pre>';
+  };
+
+  /* ---------- Choice drill: show code / a question, pick an answer, explain (Level 9) ----------
+     cfg: { bar, items:[{ c:code?, q:html?, o:[labels], a:index, w:explanation }], fixed:true (keep option order), next:'Next →' } */
+  L7.drill = function (root, api, cfg) {
+    var lab = h('div', 'l7-lab', '<div class="l7-lab-bar"><i></i>' + (cfg.bar || 'Choose the correct answer') + '</div>');
+    var body = h('div', 'l7-lab-body'); lab.appendChild(body); root.appendChild(lab);
+    var items = cfg.items, cur = 0, ok = {};
+    var dots = h('div', 'l7-progdots'); body.appendChild(dots);
+    var box = h('div', ''); body.appendChild(box);
+    function paint() { dots.innerHTML = items.map(function (x, i) { return '<span class="' + (ok[i] ? 'ok' : i === cur ? 'cur' : '') + '"></span>'; }).join(''); }
+    function show() {
+      var it = items[cur]; paint();
+      box.innerHTML = '<p class="l7-hint">' + (cfg.label || 'Item') + ' ' + (cur + 1) + ' of ' + items.length + '</p>' + (it.q ? '<p style="font-weight:600;margin:6px 0">' + it.q + '</p>' : '') + (it.c ? L7.code(it.c) : '');
+      var ch = h('div', 'l7-choice'); box.appendChild(ch);
+      var fb = h('div', 'l7-fb'); box.appendChild(fb);
+      var order = it.o.map(function (x, k) { return k; });
+      if (!cfg.fixed) order.sort(function () { return Math.random() - 0.5; });
+      order.forEach(function (k) {
+        var b = h('button', '', it.o[k]); b.type = 'button';
+        b.addEventListener('click', function () {
+          L7.$$('button', ch).forEach(function (x) { x.classList.remove('is-right', 'is-wrong'); });
+          b.classList.add(k === it.a ? 'is-right' : 'is-wrong');
+          if (k !== it.a) { L7.fb(fb, 'bad', '✗ ' + (it.hint || 'Not this one – look again at what the code really describes.')); return; }
+          ok[cur] = 1; paint();
+          L7.fb(fb, 'ok', '✓ ' + (it.w || 'Correct.'));
+          var row = h('div', 'l7-row'); fb.appendChild(row);
+          if (Object.keys(ok).length === items.length) { row.appendChild(h('b', '', '🎉 All ' + items.length + ' done.')); api.done(); }
+          else row.appendChild(L7.btn(cfg.next || 'Next →', 'pri', function () { do { cur = (cur + 1) % items.length; } while (ok[cur]); show(); }));
+        });
+        ch.appendChild(b);
+      });
+    }
+    show();
   };
 
   /* ---------- Tiny DOM helpers ---------- */
@@ -197,13 +263,15 @@
     var n = cfg.n, root = document.getElementById('l7-root');
     if (!root) return;
     var data = load(), ms = mod(data, n);
-    var req = { a: [], p: [] };
+    var req = { a: [], p: [], c: [] };
     cfg.sections.forEach(function (s) {
       if (!s.id) return;
       if (ACT_TYPES[s.type]) req.a.push(s.id);
       else if (PRAC_TYPES[s.type]) req.p.push(s.id);
+      if (s.type === 'steps') req.c.push(s.id);
     });
     ms.req = req; save(data);
+    cloudSync(n);
 
     var page = h('div', 'l7-page');
     page.style.setProperty('--l7-acc', L7.ACC[n - 1]);
@@ -377,6 +445,7 @@
       var d = load(); mod(d, n).done = today(); save(d);
       var p; try { if (typeof window.markModuleComplete === 'function') p = window.markModuleComplete(LV, n); } catch (e) { p = null; }
       Promise.resolve(p).then(function () { refresh(); }, function () { refresh(); });
+      cloudSync(n);
     });
 
     function allMet() {
@@ -442,6 +511,16 @@
     else showTab(start || order[0][0], false);
   };
 
+  /* Save this module's progress to Supabase (levels with INFO.sync only; see js/progress-sync.js) */
+  function cloudSync(n, quiz) {
+    if (!INFO.sync || !window.DDEProgress) return;
+    try {
+      var p = quiz ? window.DDEProgress.recordQuiz(LV, n, quiz.score, quiz.total) : Promise.resolve();
+      p.then(function () { return window.DDEProgress.syncModule(LV, n); }).catch(function (e) { if (window.console) console.error('[DDE progress] Level ' + LV + ' sync failed', e); });
+    } catch (e) { if (window.console) console.error('[DDE progress]', e); }
+  }
+  L7.cloudSync = cloudSync;
+
   function makeApi(n, data, ms, refreshRef) {
     var api = {
       mark: function (id) {
@@ -449,6 +528,7 @@
         if (m.a[id]) return;
         m.a[id] = 1; save(d);
         if (api.refresh) api.refresh();
+        cloudSync(n);
       },
       isDone: function (id) { var m = load().m[n]; return !!(m && m.a && m.a[id]); },
       quizInfo: function () { var m = load().m[n]; return (m && m.q) || null; },
@@ -459,6 +539,7 @@
         q.hist = (q.hist || []).concat([{ s: score, t: total, d: today() }]).slice(-20);
         m.q = q; save(d);
         if (api.refresh) api.refresh();
+        cloudSync(n, { score: score, total: total });
       }
     };
     return api;

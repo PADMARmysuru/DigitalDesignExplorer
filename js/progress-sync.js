@@ -188,12 +188,61 @@
     }
   };
 
+  /* ---------- Part B levels that use the shared engine (js/level7-common.js) ----------
+     Local format: dde_level<L>_progress.m[<n>] = { a:{id:1}, req:{a,p,c}, q:{best,last,total,tries} }
+     Mapping: concepts = Learn-tab animations (req.c), activities = labs/reveal/drag,
+              practice = all practice sets, quiz = passed (best >= 70 %). */
+  var PARTB_SYNC = { 9: true };          // add 7 or 8 here to send those levels to Supabase too
+  var PARTB_PASS = 0.7;
+  function partB(level, module) {
+    var key = 'dde_level' + level + '_progress', doneKey = 'level' + level + '_module' + module + '_completed';
+    function rec() { var d = json(key, {}) || {}; return { d: d, m: (d.m && d.m[module]) || null }; }
+    return {
+      name: 'Module ' + module, partB: true,
+      read: function () {
+        var m = rec().m || {}, a = m.a || {}, req = m.req, q = m.q || null;
+        var has = function (id) { return !!a[id]; };
+        if (!req) return { skip: true };
+        var c = req.c || [], acts = req.a.filter(function (id) { return c.indexOf(id) < 0; });
+        var any = req.a.concat(req.p).some(has) || !!(q && q.tries);
+        var data = {
+          activities_completed: acts.filter(has).length, activities_total: acts.length,
+          concepts_completed: c.length ? c.every(has) : null,
+          practice_completed: req.p.length ? req.p.every(has) : null,
+          has_quiz: true,
+          quiz_passed: !!(q && q.total && q.best / q.total >= PARTB_PASS),
+          details: { a: a, q: q ? { best: q.best, last: q.last, total: q.total, tries: q.tries } : null, done: get(doneKey) === 'true' }
+        };
+        if (!any && !data.details.done) data.skip = true;
+        return data;
+      },
+      restore: function (row) {
+        var det = row.details || {}, r = rec(), d = r.d;
+        if (!d.m) d.m = {};
+        var m = d.m[module] || (d.m[module] = {});
+        m.a = m.a || {};
+        Object.keys(det.a || {}).forEach(function (id) { m.a[id] = 1; });
+        if (det.q && det.q.total && (!m.q || (det.q.best || 0) > (m.q.best || 0) || (det.q.tries || 0) > (m.q.tries || 0))) {
+          m.q = Object.assign({}, m.q || {}, { best: Math.max(det.q.best || 0, (m.q && m.q.best) || 0), last: det.q.last, total: det.q.total, tries: Math.max(det.q.tries || 0, (m.q && m.q.tries) || 0) });
+        }
+        set(key, JSON.stringify(d));
+        if (det.done || row.completed) set(doneKey, 'true');
+      }
+    };
+  }
+  function moduleDef(level, module) {
+    if (CATALOG[level] && CATALOG[level][module]) return CATALOG[level][module];
+    if (PARTB_SYNC[level] && module >= 1 && module <= 10) return partB(level, module);
+    return null;
+  }
+
   /* Save one catalogued module from its existing localStorage keys */
   function syncModule(level, module) {
-    var m = CATALOG[level] && CATALOG[level][module];
+    var m = moduleDef(level, module);
     if (!m) { log('No progress definition for Level ' + level + ' Module ' + module); return Promise.resolve({ ok: false, error: 'unknown_module' }); }
     var data = m.read();
-    if (!data.activities_completed && !data.has_quiz) return Promise.resolve({ ok: true, skipped: true });   // nothing done yet
+    if (data.skip || (!data.activities_completed && !data.has_quiz)) return Promise.resolve({ ok: true, skipped: true });   // nothing done yet
+    delete data.skip;
     return submit({ type: 'save', level: level, module: module, data: data });
   }
   function syncLevel(level) {
@@ -207,7 +256,7 @@
     if (!token) return Promise.resolve({ ok: false, error: 'not_logged_in' });
     return rpc('dde_load_progress', { p_token: token }).then(function (r) {
       if (!r || !r.ok) { if (r && r.error === 'not_logged_in') del(TOKEN); return r; }
-      (r.modules || []).forEach(function (row) { var m = CATALOG[row.level] && CATALOG[row.level][row.module]; if (m && m.restore) { try { m.restore(row); } catch (e) { log('restore failed', e); } } });
+      (r.modules || []).forEach(function (row) { var m = moduleDef(row.level, row.module); if (m && m.restore) { try { m.restore(row); } catch (e) { log('restore failed', e); } } });
       return r;
     });
   }
@@ -215,6 +264,7 @@
   window.DDEProgress = {
     rpc: rpc,
     CATALOG: CATALOG,
+    PARTB_SYNC: PARTB_SYNC,
     token: function () { return get(TOKEN); },
     setToken: function (t) { if (t) set(TOKEN, t); else del(TOKEN); },
     register: function (s, password) {

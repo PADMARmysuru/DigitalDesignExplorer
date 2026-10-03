@@ -502,3 +502,22 @@ body.dde-l7 .dde-footer .dde-role { color: #2997ff; }
 .l7-steps-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0; }
 .l7-steps-flow span { background: var(--l7-bg-2); border-radius: 99px; padding: 6px 12px; font-weight: 600; font-size: .85rem; }
 .l7-steps-flow b { color: var(--l7-ink-3); }
+
+/* ---------- RTL code blocks (Level 9) ---------- */
+.l7-page pre.l7-code { background: #1d1d1f; color: #f5f5f7; font: 500 .84rem/1.6 var(--l7-mono); border-radius: 14px; padding: 14px 16px; margin: 10px 0; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; tab-size: 2; }
+.l7-page pre.l7-code b.kw { color: #ff7ab2; font-weight: 600; }
+.l7-page pre.l7-code i.num { color: #d9c97c; font-style: normal; }
+.l7-page pre.l7-code i.com { color: #7f8c98; font-style: normal; }
+.l7-page pre.l7-code.sm { font-size: .78rem; padding: 10px 12px; }
+.l7-page pre.l7-code mark { background: rgba(255, 214, 10, .28); color: inherit; border-radius: 3px; }
+.l7-choice { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 10px 0; }
+.l7-choice > button { text-align: left; border: 1px solid var(--l7-line); background: #fff; border-radius: 14px; padding: 10px 12px; font: 600 .9rem var(--l7-body); color: var(--l7-ink); cursor: pointer; min-height: 44px; }
+.l7-choice > button:hover { border-color: var(--l7-sig); }
+.l7-choice > button.is-right { background: var(--l7-ok-dim); border-color: var(--l7-ok); }
+.l7-choice > button.is-wrong { background: var(--l7-bad-dim); border-color: var(--l7-bad); }
+.l7-choice > button svg { display: block; width: 100%; height: auto; margin-top: 6px; }
+.l7-progdots { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 10px; }
+.l7-progdots span { width: 26px; height: 8px; border-radius: 99px; background: var(--l7-line); }
+.l7-progdots span.ok { background: var(--l7-ok); } .l7-progdots span.cur { background: var(--l7-sig); }
+@media (max-width: 680px) { .l7-page pre.l7-code { font-size: .76rem; padding: 12px; } }
+.l7-choice > button.is-pick { background: var(--l7-sig-dim); border-color: var(--l7-sig); }

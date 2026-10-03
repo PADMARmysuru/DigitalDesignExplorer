@@ -220,7 +220,8 @@ $$;
 
 -- Save the non-quiz items of one module. Progress never goes backwards.
 -- p_data: {"activities_completed":5,"activities_total":7,"concepts_completed":null,
---          "practice_completed":null,"has_quiz":false,"details":{...}}
+--          "practice_completed":null,"has_quiz":false,"quiz_passed":true,"details":{...}}
+-- "quiz_passed" (optional) makes the quiz count only when passed (Part B levels).
 create or replace function public.dde_save_module(p_token text, p_level integer, p_module integer, p_data jsonb)
 returns json language plpgsql security definer set search_path = public, extensions as $$
 declare
@@ -230,6 +231,7 @@ declare
   v_cc  boolean := (p_data->>'concepts_completed')::boolean;
   v_pc  boolean := (p_data->>'practice_completed')::boolean;
   v_hq  boolean := coalesce((p_data->>'has_quiz')::boolean, false);
+  v_qp  boolean := (p_data->>'quiz_passed')::boolean;
   v_det jsonb   := coalesce(p_data->'details', '{}'::jsonb);
   v_id  uuid;
 begin
@@ -241,7 +243,8 @@ begin
   insert into public.student_module_progress as m
     (student_id, level, module, concepts_completed, activities_completed, activities_total,
      practice_completed, quiz_completed, details)
-  values (v_student, p_level, p_module, v_cc, v_ac, v_at, v_pc, case when v_hq then false end, v_det)
+  values (v_student, p_level, p_module, v_cc, v_ac, v_at, v_pc,
+          case when v_qp is not null then v_qp when v_hq then false end, v_det)
   on conflict (student_id, level, module) do update set
     activities_total     = greatest(m.activities_total, excluded.activities_total),
     activities_completed = greatest(m.activities_completed, excluded.activities_completed),
@@ -249,7 +252,8 @@ begin
                                 else coalesce(m.concepts_completed, false) or excluded.concepts_completed end,
     practice_completed   = case when excluded.practice_completed is null then m.practice_completed
                                 else coalesce(m.practice_completed, false) or excluded.practice_completed end,
-    quiz_completed       = case when m.quiz_completed is null and v_hq then false else m.quiz_completed end,
+    quiz_completed       = case when v_qp is not null then v_qp
+                                when m.quiz_completed is null and v_hq then false else m.quiz_completed end,
     details              = case when excluded.activities_completed >= m.activities_completed then excluded.details else m.details end
   returning m.id into v_id;
   perform public.dde_recompute(v_id);
@@ -364,7 +368,7 @@ end $$;
 -- 7) Teacher PIN (stored only as a hash). CHANGE THE TEXT BELOW, then run.
 -- ---------------------------------------------------------------------
 insert into public.dde_settings (k, v)
-values ('teacher_pin_hash', extensions.crypt('060329', extensions.gen_salt('bf')))
+values ('teacher_pin_hash', extensions.crypt('CHANGE-THIS-PIN', extensions.gen_salt('bf')))
 on conflict (k) do update set v = excluded.v;
 
 -- ---------------------------------------------------------------------

@@ -131,6 +131,14 @@ begin
   insert into dde_test_results (step, ok, detail) values ('28 example teacher email was replaced with a real one', c = 0,
     case when c > 0 then 'Remove it: delete from public.dde_teachers where email = ''your.email@gsss.edu.in'';' end);
 
+  r := public.dde_record_quiz(tok, 9, 1, 5, 10);
+  r := public.dde_save_module(tok, 9, 1, '{"activities_completed":3,"activities_total":3,"concepts_completed":true,"practice_completed":true,"has_quiz":true,"quiz_passed":false}');
+  insert into dde_test_results (step, ok, detail) values ('29 Level 9: failed quiz (5/10) keeps module below 100%',
+    (r->'progress'->>'progress_percent')::int = 75 and not (r->'progress'->>'completed')::boolean, r::text);
+  r := public.dde_save_module(tok, 9, 1, '{"activities_completed":3,"activities_total":3,"concepts_completed":true,"practice_completed":true,"has_quiz":true,"quiz_passed":true}');
+  insert into dde_test_results (step, ok, detail) values ('30 Level 9: passed quiz -> module 100% complete',
+    (r->'progress'->>'progress_percent')::int = 100 and (r->'progress'->>'completed')::boolean, r::text);
+
   -- clean up
   delete from public.dde_teachers where lower(email) = 'selftest-teacher@example.com';
   delete from public."STUDENTS" where upper(student_id) = v_usn;

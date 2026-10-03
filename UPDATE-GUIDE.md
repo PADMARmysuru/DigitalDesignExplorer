@@ -133,3 +133,15 @@ Module 1 saves from its own page. Modules 2–8 are saved whenever the student o
 
 ### Adding another level later
 Add the level's modules to `CATALOG` in `js/progress-sync.js` (which localStorage keys mean "done"), then call `DDEProgress.syncModule(level, module)` from that module's page. The database and the teacher dashboard need no changes.
+
+## Level 9 – RTL Design & Synthesis (Part B)
+
+Level 9 is installed but **locked**. Teachers can preview it after Teacher Login. To open it for students, edit `access-control.js` and change `level9: false` to `level9: true`.
+
+**Supabase (run once):** `progress-update-level9.sql` in the SQL Editor. It updates one function so that a Level 9 module's quiz counts only when it is passed (70 %). Then run `progress-selftest.sql`: all lines should PASS.
+
+New files: `level9.html`, `level9-module1.html` … `level9-module10.html`, `level9-certificate.html`, `js/level9-module1.js` … `js/level9-module10.js`, `progress-update-level9.sql`.
+
+Level 9 uses the shared Part B engine (`js/level7-common.js`) and stylesheet (`css/level7.css`), like Levels 7 and 8. New shared helpers: `L7.code` (RTL code blocks) and `L7.drill` (read-the-code-and-choose activities).
+
+**Supabase progress:** Level 9 is the first Part B level that also saves module progress to Supabase (`student_module_progress`, level = 9), so it appears in the Teacher Dashboard (Level 9 → Module 1…10). Concepts = Learn-tab animations, Activities = labs / reveal / drag, Practice = all practice sets, Quiz = passed. Levels 7 and 8 still save on the device only; to add them, put `7: true, 8: true` in `PARTB_SYNC` in `js/progress-sync.js`.
