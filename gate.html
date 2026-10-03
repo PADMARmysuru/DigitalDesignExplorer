@@ -1,1096 +1,1159 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GATE Digital Electronics Practice — Year Tagged</title>
 <script src="access-control.js"></script>
 <link rel="stylesheet" href="common.css">
 <script src="common.js" defer></script>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>GATE Practice - Digital Design Explorer</title>
-
 <style>
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f7fb;
-        color: #222;
-    }
-
-    header {
-        background: #243b64;
-        color: white;
-        padding: 25px;
-        text-align: center;
-    }
-
-    header h1 {
-        margin: 0;
-        font-size: 30px;
-    }
-
-    header p {
-        margin-top: 8px;
-        font-size: 16px;
-    }
-
-    .container {
-        max-width: 1000px;
-        margin: 30px auto;
-        padding: 20px;
-    }
-
-    .instructions {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-        margin-bottom: 25px;
-    }
-
-    .instructions h2 {
-        color: #243b64;
-    }
-
-    .question {
-        background: white;
-        padding: 22px;
-        margin-bottom: 20px;
-        border-radius: 12px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    }
-
-    .question h3 {
-        color: #243b64;
-        margin-top: 0;
-    }
-
-    .option {
-        display: block;
-        padding: 10px;
-        margin: 8px 0;
-        border: 1px solid #ddd;
-        border-radius: 7px;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    .option:hover {
-        background: #f0f4fa;
-    }
-
-    .option input {
-        margin-right: 10px;
-    }
-
-    .submit-btn {
-        display: block;
-        margin: 30px auto;
-        padding: 14px 35px;
-        border: none;
-        border-radius: 8px;
-        background: #243b64;
-        color: white;
-        font-size: 18px;
-        cursor: pointer;
-    }
-
-    .submit-btn:hover {
-        background: #162746;
-    }
-
-    #result {
-        display: none;
-        background: white;
-        padding: 25px;
-        border-radius: 12px;
-        margin-top: 25px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-
-    #score {
-        font-size: 30px;
-        font-weight: bold;
-        color: #243b64;
-    }
-
-    .correct {
-        background: #e8f5e9;
-        border-left: 5px solid #2e7d32;
-        padding: 12px;
-        margin-top: 10px;
-        text-align: left;
-    }
-
-    .wrong {
-        background: #ffebee;
-        border-left: 5px solid #c62828;
-        padding: 12px;
-        margin-top: 10px;
-        text-align: left;
-    }
-
-    .explanation {
-        margin-top: 7px;
-        font-size: 14px;
-    }
-
-    .back-btn {
-        display: inline-block;
-        text-decoration: none;
-        background: #162746;
-        color: white;
-        padding: 10px 18px;
-        border-radius: 7px;
-        margin-top: 10px;
-    }
+* { box-sizing:border-box; }
+body { margin:0; font-family:Arial,sans-serif; background:#f4f7fb; color:#222; }
+header { background:#243b64; color:white; padding:25px; text-align:center; }
+header h1 { margin:0; font-size:30px; }
+header p { margin-top:8px; font-size:16px; }
+.container { max-width:1000px; margin:30px auto; padding:20px; }
+.instructions { background:white; padding:20px; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,.08); margin-bottom:25px; }
+.instructions h2 { color:#243b64; margin-top:0; }
+.question { background:white; padding:22px; margin-bottom:20px; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,.08); }
+.question h3 { color:#243b64; margin:8px 0 15px; line-height:1.45; }
+.meta { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+.topic,.year { display:inline-block; padding:5px 9px; border-radius:14px; font-size:12px; font-weight:600; background:#eef3fb; color:#243b64; }
+.year { background:#fff4d8; color:#7a5600; }
+.year-question { border-left:5px solid #d6a21f; }
+.practice-question { border-left:5px solid #8aa1c4; }
+.option { display:block; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:7px; cursor:pointer; transition:.2s; }
+.option:hover { background:#f0f4fa; }
+.option input { margin-right:10px; }
+.submit-btn { display:block; margin:30px auto; padding:14px 35px; border:none; border-radius:8px; background:#243b64; color:white; font-size:18px; cursor:pointer; }
+.submit-btn:hover { background:#162746; }
+#result { display:none; background:white; padding:25px; border-radius:12px; margin-top:25px; box-shadow:0 3px 10px rgba(0,0,0,.1); text-align:center; }
+#score { font-size:30px; font-weight:bold; color:#243b64; }
+.correct { background:#e8f5e9; border-left:5px solid #2e7d32; padding:12px; margin-top:10px; text-align:left; }
+.wrong { background:#ffebee; border-left:5px solid #c62828; padding:12px; margin-top:10px; text-align:left; }
+.explanation { margin-top:7px; font-size:14px; }
+.retake-btn { display:none; margin:18px auto 8px; padding:13px 30px; border:none; border-radius:8px; background:#d97706; color:white; font-size:17px; font-weight:bold; cursor:pointer; }
+.target-note { background:#eef6ff; border-left:5px solid #243b64; padding:12px; margin-top:12px; border-radius:6px; }
+.note { background:#fff8e1; border-left:5px solid #f0b429; padding:12px; margin-top:12px; border-radius:6px; }
+.progress { position:sticky; top:0; z-index:5; background:white; padding:10px 15px; border-radius:0 0 10px 10px; box-shadow:0 2px 8px rgba(0,0,0,.08); margin-bottom:15px; color:#243b64; font-weight:bold; }
+.section-title { margin:28px 0 14px; color:#243b64; }
+.back-btn { display:inline-block; text-decoration:none; background:#162746; color:white; padding:10px 18px; border-radius:7px; margin-top:10px; }
 </style>
 </head>
-
 <body>
-
 <header>
-    <h1>🎯 GATE Digital Electronics Practice</h1>
-    <p>Digital Design Explorer</p>
+<h1>🎯 GATE Digital Electronics Practice</h1>
+<p>Digital Design Explorer • 100 Questions</p>
 </header>
 
 <div class="container">
-
-    <div class="instructions">
-        <h2>📘 Instructions</h2>
-        <ul>
-            <li>Answer all questions.</li>
-            <li>Select only one option for each question.</li>
-            <li>Answers will NOT be shown before submission.</li>
-            <li>Click <b>Submit Test</b> to view your score and explanations.</li>
-            <li>Questions are based on GATE-level Digital Electronics concepts.</li>
-        </ul>
-    </div>
-
-    <form id="gateForm">
-
-        <!-- Q1 -->
-        <div class="question">
-            <h3>Q1. The Boolean expression A + AB simplifies to:</h3>
-
-            <label class="option">
-                <input type="radio" name="q1" value="A">
-                A
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q1" value="B">
-                AB
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q1" value="C">
-                A + B
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q1" value="D">
-                B
-            </label>
-        </div>
-
-        <!-- Q2 -->
-        <div class="question">
-            <h3>Q2. A 4-variable K-map contains how many cells?</h3>
-
-            <label class="option">
-                <input type="radio" name="q2" value="A">
-                4
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q2" value="B">
-                8
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q2" value="C">
-                16
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q2" value="D">
-                32
-            </label>
-        </div>
-
-        <!-- Q3 -->
-        <div class="question">
-            <h3>Q3. Which gate is known as a universal gate?</h3>
-
-            <label class="option">
-                <input type="radio" name="q3" value="A">
-                XOR
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q3" value="B">
-                NAND
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q3" value="C">
-                XOR
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q3" value="D">
-                XNOR
-            </label>
-        </div>
-
-        <!-- Q4 -->
-        <div class="question">
-            <h3>Q4. The output of an XOR gate is 1 when:</h3>
-
-            <label class="option">
-                <input type="radio" name="q4" value="A">
-                Both inputs are 0
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q4" value="B">
-                Both inputs are 1
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q4" value="C">
-                Inputs are different
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q4" value="D">
-                Inputs are always equal
-            </label>
-        </div>
-
-        <!-- Q5 -->
-        <div class="question">
-            <h3>Q5. A half adder produces:</h3>
-
-            <label class="option">
-                <input type="radio" name="q5" value="A">
-                Sum and Carry
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q5" value="B">
-                Difference only
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q5" value="C">
-                Borrow only
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q5" value="D">
-                Product and Carry
-            </label>
-        </div>
-
-        <!-- Q6 -->
-        <div class="question">
-            <h3>Q6. Which flip-flop can eliminate the invalid state of an SR flip-flop?</h3>
-
-            <label class="option">
-                <input type="radio" name="q6" value="A">
-                D flip-flop
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q6" value="B">
-                JK flip-flop
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q6" value="C">
-                T flip-flop
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q6" value="D">
-                None
-            </label>
-        </div>
-
-        <!-- Q7 -->
-        <div class="question">
-            <h3>Q7. A 3-bit binary counter has how many states?</h3>
-
-            <label class="option">
-                <input type="radio" name="q7" value="A">
-                3
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q7" value="B">
-                6
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q7" value="C">
-                8
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q7" value="D">
-                16
-            </label>
-        </div>
-
-        <!-- Q8 -->
-        <div class="question">
-            <h3>Q8. The output of a NOT gate for input 0 is:</h3>
-
-            <label class="option">
-                <input type="radio" name="q8" value="A">
-                0
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q8" value="B">
-                1
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q8" value="C">
-                X
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q8" value="D">
-                Z
-            </label>
-        </div>
-
-        <!-- Q9 -->
-        <div class="question">
-            <h3>Q9. A multiplexer is primarily used for:</h3>
-
-            <label class="option">
-                <input type="radio" name="q9" value="A">
-                Data selection
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q9" value="B">
-                Data storage
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q9" value="C">
-                Frequency division
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q9" value="D">
-                Counting
-            </label>
-        </div>
-
-        <!-- Q10 -->
-        <div class="question">
-            <h3>Q10. A 4:1 multiplexer requires how many select lines?</h3>
-
-            <label class="option">
-                <input type="radio" name="q10" value="A">
-                1
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q10" value="B">
-                2
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q10" value="C">
-                3
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q10" value="D">
-                4
-            </label>
-        </div>
-
-        <!-- Q11 -->
-        <div class="question">
-            <h3>Q11. What is the decimal equivalent of binary 1010?</h3>
-
-            <label class="option">
-                <input type="radio" name="q11" value="A">
-                8
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q11" value="B">
-                9
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q11" value="C">
-                10
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q11" value="D">
-                12
-            </label>
-        </div>
-
-        <!-- Q12 -->
-        <div class="question">
-            <h3>Q12. The complement of A + B is:</h3>
-
-            <label class="option">
-                <input type="radio" name="q12" value="A">
-                A' + B'
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q12" value="B">
-                AB
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q12" value="C">
-                A'B'
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q12" value="D">
-                A + B
-            </label>
-        </div>
-
-        <!-- Q13 -->
-        <div class="question">
-            <h3>Q13. Which circuit converts binary information into one active output line?</h3>
-
-            <label class="option">
-                <input type="radio" name="q13" value="A">
-                Encoder
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q13" value="B">
-                Decoder
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q13" value="C">
-                Multiplexer
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q13" value="D">
-                Comparator
-            </label>
-        </div>
-
-        <!-- Q14 -->
-        <div class="question">
-            <h3>Q14. A flip-flop stores:</h3>
-
-            <label class="option">
-                <input type="radio" name="q14" value="A">
-                1 bit
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q14" value="B">
-                2 bits
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q14" value="C">
-                4 bits
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q14" value="D">
-                8 bits
-            </label>
-        </div>
-
-        <!-- Q15 -->
-        <div class="question">
-            <h3>Q15. In a synchronous counter, all flip-flops receive:</h3>
-
-            <label class="option">
-                <input type="radio" name="q15" value="A">
-                Different clocks
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q15" value="B">
-                The same clock
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q15" value="C">
-                No clock
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q15" value="D">
-                Random clocks
-            </label>
-        </div>
-
-        <!-- Q16 -->
-        <div class="question">
-            <h3>Q16. Which logic family generally provides very low static power dissipation?</h3>
-
-            <label class="option">
-                <input type="radio" name="q16" value="A">
-                CMOS
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q16" value="B">
-                RTL
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q16" value="C">
-                DTL
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q16" value="D">
-                ECL
-            </label>
-        </div>
-
-        <!-- Q17 -->
-        <div class="question">
-            <h3>Q17. If a binary number is shifted left by one position, its value is approximately:</h3>
-
-            <label class="option">
-                <input type="radio" name="q17" value="A">
-                Divided by 2
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q17" value="B">
-                Multiplied by 2
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q17" value="C">
-                Unchanged
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q17" value="D">
-                Multiplied by 4
-            </label>
-        </div>
-
-        <!-- Q18 -->
-        <div class="question">
-            <h3>Q18. The minimum number of flip-flops required for a MOD-10 counter is:</h3>
-
-            <label class="option">
-                <input type="radio" name="q18" value="A">
-                2
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q18" value="B">
-                3
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q18" value="C">
-                4
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q18" value="D">
-                10
-            </label>
-        </div>
-
-        <!-- Q19 -->
-        <div class="question">
-            <h3>Q19. Which circuit compares two binary numbers?</h3>
-
-            <label class="option">
-                <input type="radio" name="q19" value="A">
-                Encoder
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q19" value="B">
-                Decoder
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q19" value="C">
-                Comparator
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q19" value="D">
-                Multiplexer
-            </label>
-        </div>
-
-        <!-- Q20 -->
-        <div class="question">
-            <h3>Q20. In Verilog, which keyword is commonly used for continuous assignment?</h3>
-
-            <label class="option">
-                <input type="radio" name="q20" value="A">
-                always
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q20" value="B">
-                assign
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q20" value="C">
-                begin
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q20" value="D">
-                initial
-            </label>
-        </div>
-
-        <!-- Q21 -->
-        <div class="question">
-            <h3>Q21. What is the output of AND operation when A=1 and B=0?</h3>
-
-            <label class="option">
-                <input type="radio" name="q21" value="A">
-                0
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q21" value="B">
-                1
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q21" value="C">
-                X
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q21" value="D">
-                Z
-            </label>
-        </div>
-
-        <!-- Q22 -->
-        <div class="question">
-            <h3>Q22. A 2-to-4 decoder has:</h3>
-
-            <label class="option">
-                <input type="radio" name="q22" value="A">
-                2 inputs and 2 outputs
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q22" value="B">
-                2 inputs and 4 outputs
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q22" value="C">
-                4 inputs and 2 outputs
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q22" value="D">
-                4 inputs and 4 outputs
-            </label>
-        </div>
-
-        <!-- Q23 -->
-        <div class="question">
-            <h3>Q23. The race-around condition occurs in:</h3>
-
-            <label class="option">
-                <input type="radio" name="q23" value="A">
-                D flip-flop
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q23" value="B">
-                JK flip-flop
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q23" value="C">
-                SR latch only
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q23" value="D">
-                T flip-flop only
-            </label>
-        </div>
-
-        <!-- Q24 -->
-        <div class="question">
-            <h3>Q24. Which flip-flop toggles when its input is HIGH?</h3>
-
-            <label class="option">
-                <input type="radio" name="q24" value="A">
-                D
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q24" value="B">
-                SR
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q24" value="C">
-                T
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q24" value="D">
-                D latch
-            </label>
-        </div>
-
-        <!-- Q25 -->
-        <div class="question">
-            <h3>Q25. A NAND gate with its inputs tied together behaves as:</h3>
-
-            <label class="option">
-                <input type="radio" name="q25" value="A">
-                AND
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q25" value="B">
-                OR
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q25" value="C">
-                NOT
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q25" value="D">
-                XOR
-            </label>
-        </div>
-
-        <!-- Q26 -->
-        <div class="question">
-            <h3>Q26. For a full adder, the number of inputs is:</h3>
-
-            <label class="option">
-                <input type="radio" name="q26" value="A">
-                2
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q26" value="B">
-                3
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q26" value="C">
-                4
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q26" value="D">
-                5
-            </label>
-        </div>
-
-        <!-- Q27 -->
-        <div class="question">
-            <h3>Q27. A 16:1 multiplexer requires how many select lines?</h3>
-
-            <label class="option">
-                <input type="radio" name="q27" value="A">
-                2
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q27" value="B">
-                3
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q27" value="C">
-                4
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q27" value="D">
-                8
-            </label>
-        </div>
-
-        <!-- Q28 -->
-        <div class="question">
-            <h3>Q28. Which of the following is a sequential circuit?</h3>
-
-            <label class="option">
-                <input type="radio" name="q28" value="A">
-                Adder
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q28" value="B">
-                Multiplexer
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q28" value="C">
-                Counter
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q28" value="D">
-                Decoder
-            </label>
-        </div>
-
-        <!-- Q29 -->
-        <div class="question">
-            <h3>Q29. The Boolean expression A·A is equal to:</h3>
-
-            <label class="option">
-                <input type="radio" name="q29" value="A">
-                0
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q29" value="B">
-                1
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q29" value="C">
-                A
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q29" value="D">
-                A'
-            </label>
-        </div>
-
-        <!-- Q30 -->
-        <div class="question">
-            <h3>Q30. Which Verilog statement represents an AND gate?</h3>
-
-            <label class="option">
-                <input type="radio" name="q30" value="A">
-                assign y = a | b;
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q30" value="B">
-                assign y = a & b;
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q30" value="C">
-                assign y = a ^ b;
-            </label>
-
-            <label class="option">
-                <input type="radio" name="q30" value="D">
-                assign y = ~a;
-            </label>
-        </div>
-
-        <button type="button" class="submit-btn" onclick="submitTest()">
-            Submit GATE Test
-        </button>
-
-    </form>
-
-    <div id="result">
-        <h2>🎯 GATE Test Result</h2>
-
-        <p id="score"></p>
-
-        <p id="percentage"></p>
-
-        <div id="review"></div>
-
-        <a href="index.html" class="back-btn">← Back to Home</a>
-    </div>
-
+<div class="instructions">
+<h2>📘 GATE Practice Instructions</h2>
+<ul>
+<li><b>100 Digital Electronics questions.</b></li>
+<li><b>Questions 1–31</b> are based on identified GATE EC questions and are placed first.</li>
+<li>Each year-tagged question is labelled <b>“GATE YYYY EC Qxx · Adapted”</b>; wording may be paraphrased for practice.</li>
+<li><b>Questions 32–100</b> are additional GATE-style practice questions without a claimed GATE year.</li>
+<li>Select one option for each question. Answers and explanations appear only after submission.</li>
+</ul>
+<div class="target-note">🎯 <b>Target:</b> 60% (60/100). If your score is below 60%, a <b>Retake Test</b> button will appear after submission.</div>
+<div class="note">📌 <b>Order:</b> Year-identified questions first, followed by additional practice questions. No year is assigned to the additional questions.</div>
+</div>
+
+<div class="progress" id="progress">Answered: 0 / 100</div>
+<form id="gateForm">
+<h2 class="section-title">📅 GATE Year-Tagged Questions (1–31)</h2>
+
+<div class="question year-question" data-topic="CMOS Inverter">
+  <div class="meta">
+    <span class="topic">📚 CMOS Inverter</span>
+    <span class="year">📅 GATE 2019 EC Q13 · Adapted</span>
+  </div>
+  <h3>Q1. A CMOS inverter is designed for equal rise and fall times. If the pMOS width is increased while the nMOS width is kept unchanged, what is the expected qualitative change in the noise margins?</h3>
+  <label class="option"><input type="radio" name="q1" value="A"> <b>A.</b> NML increases and NMH decreases</label><label class="option"><input type="radio" name="q1" value="B"> <b>B.</b> Both NML and NMH increase</label><label class="option"><input type="radio" name="q1" value="C"> <b>C.</b> NML decreases and NMH increases</label><label class="option"><input type="radio" name="q1" value="D"> <b>D.</b> Both remain unchanged</label>
+</div>
+<div class="question year-question" data-topic="Memory / Decoder">
+  <div class="meta">
+    <span class="topic">📚 Memory / Decoder</span>
+    <span class="year">📅 GATE 2021 EC Q12 · Adapted</span>
+  </div>
+  <h3>Q2. A memory contains 32K words, each 16 bits wide. A single decoder is used to select one word. How many address inputs are required by the decoder?</h3>
+  <label class="option"><input type="radio" name="q2" value="A"> <b>A.</b> 10</label><label class="option"><input type="radio" name="q2" value="B"> <b>B.</b> 12</label><label class="option"><input type="radio" name="q2" value="C"> <b>C.</b> 15</label><label class="option"><input type="radio" name="q2" value="D"> <b>D.</b> 16</label>
+</div>
+<div class="question year-question" data-topic="Sequential Logic">
+  <div class="meta">
+    <span class="topic">📚 Sequential Logic</span>
+    <span class="year">📅 GATE 2021 EC Q46 · Adapted</span>
+  </div>
+  <h3>Q3. A 3-bit state register initially contains 111. If the specified next-state operation changes 111 to 100 in one clock transition, how many clock edges are required to reach 100?</h3>
+  <label class="option"><input type="radio" name="q3" value="A"> <b>A.</b> 1</label><label class="option"><input type="radio" name="q3" value="B"> <b>B.</b> 2</label><label class="option"><input type="radio" name="q3" value="C"> <b>C.</b> 3</label><label class="option"><input type="radio" name="q3" value="D"> <b>D.</b> 4</label>
+</div>
+<div class="question year-question" data-topic="Multiplexer">
+  <div class="meta">
+    <span class="topic">📚 Multiplexer</span>
+    <span class="year">📅 GATE 2022 EC Q19 · Adapted</span>
+  </div>
+  <h3>Q4. A 4:1 MUX uses C and D as its select inputs. Which data-input assignment makes the MUX output equal to C XOR D?</h3>
+  <label class="option"><input type="radio" name="q4" value="A"> <b>A.</b> A0=0, A1=1, A2=1, A3=0</label><label class="option"><input type="radio" name="q4" value="B"> <b>B.</b> A0=1, A1=0, A2=0, A3=1</label><label class="option"><input type="radio" name="q4" value="C"> <b>C.</b> A0=0, A1=0, A2=1, A3=1</label><label class="option"><input type="radio" name="q4" value="D"> <b>D.</b> A0=1, A1=1, A2=0, A3=0</label>
+</div>
+<div class="question year-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE 2022 EC Q27 · Adapted</span>
+  </div>
+  <h3>Q5. Which expression is equivalent to x + yz?</h3>
+  <label class="option"><input type="radio" name="q5" value="A"> <b>A.</b> (x+y)(x+z)</label><label class="option"><input type="radio" name="q5" value="B"> <b>B.</b> xy+xz</label><label class="option"><input type="radio" name="q5" value="C"> <b>C.</b> (x+y)(y+z)</label><label class="option"><input type="radio" name="q5" value="D"> <b>D.</b> x(y+z)</label>
+</div>
+<div class="question year-question" data-topic="CMOS Logic">
+  <div class="meta">
+    <span class="topic">📚 CMOS Logic</span>
+    <span class="year">📅 GATE 2022 EC Q28 · Adapted</span>
+  </div>
+  <h3>Q6. For a CMOS NOT gate, when the input is logic 0, which transistor states and output are correct?</h3>
+  <label class="option"><input type="radio" name="q6" value="A"> <b>A.</b> PMOS ON, NMOS OFF, output 1</label><label class="option"><input type="radio" name="q6" value="B"> <b>B.</b> PMOS OFF, NMOS ON, output 0</label><label class="option"><input type="radio" name="q6" value="C"> <b>C.</b> Both ON, output 0</label><label class="option"><input type="radio" name="q6" value="D"> <b>D.</b> Both OFF, output 1</label>
+</div>
+<div class="question year-question" data-topic="Boolean Gate">
+  <div class="meta">
+    <span class="topic">📚 Boolean Gate</span>
+    <span class="year">📅 GATE 2022 EC Q49 · Adapted</span>
+  </div>
+  <h3>Q7. A gate implements Y = A + B̅. If A=0 and B=1, what is Y?</h3>
+  <label class="option"><input type="radio" name="q7" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q7" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q7" value="C"> <b>C.</b> A</label><label class="option"><input type="radio" name="q7" value="D"> <b>D.</b> B</label>
+</div>
+<div class="question year-question" data-topic="Digital Logic / Registers">
+  <div class="meta">
+    <span class="topic">📚 Digital Logic / Registers</span>
+    <span class="year">📅 GATE 2023 EC Q56 · Adapted</span>
+  </div>
+  <h3>Q8. A 4-bit register initially stores ABCD = 1011. If all four bits are complemented simultaneously, what is the new content?</h3>
+  <label class="option"><input type="radio" name="q8" value="A"> <b>A.</b> 0100</label><label class="option"><input type="radio" name="q8" value="B"> <b>B.</b> 1010</label><label class="option"><input type="radio" name="q8" value="C"> <b>C.</b> 0101</label><label class="option"><input type="radio" name="q8" value="D"> <b>D.</b> 1111</label>
+</div>
+<div class="question year-question" data-topic="Digital Logic / Registers">
+  <div class="meta">
+    <span class="topic">📚 Digital Logic / Registers</span>
+    <span class="year">📅 GATE 2023 EC Q56 · Adapted</span>
+  </div>
+  <h3>Q9. A 4-bit register contains 0110. After one circular left shift, what is the resulting content?</h3>
+  <label class="option"><input type="radio" name="q9" value="A"> <b>A.</b> 1100</label><label class="option"><input type="radio" name="q9" value="B"> <b>B.</b> 1001</label><label class="option"><input type="radio" name="q9" value="C"> <b>C.</b> 0011</label><label class="option"><input type="radio" name="q9" value="D"> <b>D.</b> 0110</label>
+</div>
+<div class="question year-question" data-topic="Priority Encoder">
+  <div class="meta">
+    <span class="topic">📚 Priority Encoder</span>
+    <span class="year">📅 GATE 2024 EC Q40 · Adapted</span>
+  </div>
+  <h3>Q10. A 4-bit priority encoder has inputs D3,D2,D1,D0, with D3 having the highest priority. If D3=0,D2=1,D1=1,D0=1, which input is encoded?</h3>
+  <label class="option"><input type="radio" name="q10" value="A"> <b>A.</b> D0</label><label class="option"><input type="radio" name="q10" value="B"> <b>B.</b> D1</label><label class="option"><input type="radio" name="q10" value="C"> <b>C.</b> D2</label><label class="option"><input type="radio" name="q10" value="D"> <b>D.</b> D3</label>
+</div>
+<div class="question year-question" data-topic="Multiplexer Delay">
+  <div class="meta">
+    <span class="topic">📚 Multiplexer Delay</span>
+    <span class="year">📅 GATE 2024 EC Q41 · Adapted</span>
+  </div>
+  <h3>Q11. A 2:1 multiplexer has a propagation delay of 10 ns. If a signal passes through two identical MUX stages in cascade, ignoring other delays, what is the total propagation delay?</h3>
+  <label class="option"><input type="radio" name="q11" value="A"> <b>A.</b> 5 ns</label><label class="option"><input type="radio" name="q11" value="B"> <b>B.</b> 10 ns</label><label class="option"><input type="radio" name="q11" value="C"> <b>C.</b> 20 ns</label><label class="option"><input type="radio" name="q11" value="D"> <b>D.</b> 100 ns</label>
+</div>
+<div class="question year-question" data-topic="Sequential Circuits">
+  <div class="meta">
+    <span class="topic">📚 Sequential Circuits</span>
+    <span class="year">📅 GATE 2024 EC Q42 · Adapted</span>
+  </div>
+  <h3>Q12. A synchronous sequential circuit follows the state sequence 00 → 01 → 11 → 10 → 00. What state follows 11?</h3>
+  <label class="option"><input type="radio" name="q12" value="A"> <b>A.</b> 00</label><label class="option"><input type="radio" name="q12" value="B"> <b>B.</b> 01</label><label class="option"><input type="radio" name="q12" value="C"> <b>C.</b> 10</label><label class="option"><input type="radio" name="q12" value="D"> <b>D.</b> 11</label>
+</div>
+<div class="question year-question" data-topic="ADC">
+  <div class="meta">
+    <span class="topic">📚 ADC</span>
+    <span class="year">📅 GATE 2024 EC Q46 · Adapted</span>
+  </div>
+  <h3>Q13. An ideal 10-bit ADC has 1024 quantization levels. Approximately what fraction of full-scale range corresponds to one LSB?</h3>
+  <label class="option"><input type="radio" name="q13" value="A"> <b>A.</b> 1/10</label><label class="option"><input type="radio" name="q13" value="B"> <b>B.</b> 1/100</label><label class="option"><input type="radio" name="q13" value="C"> <b>C.</b> 1/1024</label><label class="option"><input type="radio" name="q13" value="D"> <b>D.</b> 1/2048</label>
+</div>
+<div class="question year-question" data-topic="Majority Logic">
+  <div class="meta">
+    <span class="topic">📚 Majority Logic</span>
+    <span class="year">📅 GATE 2025 EC Q23 · Adapted</span>
+  </div>
+  <h3>Q14. A 3-input majority gate produces logic 1 when at least two of X,Y,Z are 1. Which Boolean expression represents it?</h3>
+  <label class="option"><input type="radio" name="q14" value="A"> <b>A.</b> XY + YZ + ZX</label><label class="option"><input type="radio" name="q14" value="B"> <b>B.</b> X XOR Y XOR Z</label><label class="option"><input type="radio" name="q14" value="C"> <b>C.</b> X + Y + Z</label><label class="option"><input type="radio" name="q14" value="D"> <b>D.</b> XYZ</label>
+</div>
+<div class="question year-question" data-topic="Full Adder">
+  <div class="meta">
+    <span class="topic">📚 Full Adder</span>
+    <span class="year">📅 GATE 2025 EC Q24 · Adapted</span>
+  </div>
+  <h3>Q15. A full-adder stage receives X, Y and carry input Z. What operation does this circuit naturally perform?</h3>
+  <label class="option"><input type="radio" name="q15" value="A"> <b>A.</b> Addition with carry-in</label><label class="option"><input type="radio" name="q15" value="B"> <b>B.</b> Subtraction only</label><label class="option"><input type="radio" name="q15" value="C"> <b>C.</b> Multiplication</label><label class="option"><input type="radio" name="q15" value="D"> <b>D.</b> Gray-code conversion</label>
+</div>
+<div class="question year-question" data-topic="DAC">
+  <div class="meta">
+    <span class="topic">📚 DAC</span>
+    <span class="year">📅 GATE 2025 EC Q35 · Adapted</span>
+  </div>
+  <h3>Q16. A 4-bit weighted-resistor DAC changes its digital input from 1110 to 1101. By how many LSBs does the code decrease?</h3>
+  <label class="option"><input type="radio" name="q16" value="A"> <b>A.</b> 1 LSB</label><label class="option"><input type="radio" name="q16" value="B"> <b>B.</b> 2 LSB</label><label class="option"><input type="radio" name="q16" value="C"> <b>C.</b> 3 LSB</label><label class="option"><input type="radio" name="q16" value="D"> <b>D.</b> 4 LSB</label>
+</div>
+<div class="question year-question" data-topic="Sequential Logic">
+  <div class="meta">
+    <span class="topic">📚 Sequential Logic</span>
+    <span class="year">📅 GATE 2025 EC Q45 · Adapted</span>
+  </div>
+  <h3>Q17. A positive-edge-triggered circuit samples its input only at the active clock edge. If the input sequence at successive rising edges is 0,1,1,0, what sampled sequence is obtained?</h3>
+  <label class="option"><input type="radio" name="q17" value="A"> <b>A.</b> 0,1,1,0</label><label class="option"><input type="radio" name="q17" value="B"> <b>B.</b> 1,0,0,1</label><label class="option"><input type="radio" name="q17" value="C"> <b>C.</b> 0,0,1,1</label><label class="option"><input type="radio" name="q17" value="D"> <b>D.</b> 1,1,0,0</label>
+</div>
+<div class="question year-question" data-topic="Timing">
+  <div class="meta">
+    <span class="topic">📚 Timing</span>
+    <span class="year">📅 GATE 2025 EC Q62 · Adapted</span>
+  </div>
+  <h3>Q18. An edge-triggered flip-flop has setup time 2 ns and clock-to-Q delay 2 ns. Ignoring other delays, what is the minimum clock period for a back-to-back register transfer?</h3>
+  <label class="option"><input type="radio" name="q18" value="A"> <b>A.</b> 2 ns</label><label class="option"><input type="radio" name="q18" value="B"> <b>B.</b> 4 ns</label><label class="option"><input type="radio" name="q18" value="C"> <b>C.</b> 6 ns</label><label class="option"><input type="radio" name="q18" value="D"> <b>D.</b> 8 ns</label>
+</div>
+<div class="question year-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE 2026 EC Q20 · Adapted</span>
+  </div>
+  <h3>Q19. A logic circuit produces Y = A AND B. If A=1 and B=0, what is Y?</h3>
+  <label class="option"><input type="radio" name="q19" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q19" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q19" value="C"> <b>C.</b> A</label><label class="option"><input type="radio" name="q19" value="D"> <b>D.</b> B</label>
+</div>
+<div class="question year-question" data-topic="Ripple Counter">
+  <div class="meta">
+    <span class="topic">📚 Ripple Counter</span>
+    <span class="year">📅 GATE 2026 EC Q27 · Adapted</span>
+  </div>
+  <h3>Q20. A binary ripple counter must count from 0 through 63. What is the minimum number of flip-flops required?</h3>
+  <label class="option"><input type="radio" name="q20" value="A"> <b>A.</b> 4</label><label class="option"><input type="radio" name="q20" value="B"> <b>B.</b> 5</label><label class="option"><input type="radio" name="q20" value="C"> <b>C.</b> 6</label><label class="option"><input type="radio" name="q20" value="D"> <b>D.</b> 7</label>
+</div>
+<div class="question year-question" data-topic="JK Flip-Flop">
+  <div class="meta">
+    <span class="topic">📚 JK Flip-Flop</span>
+    <span class="year">📅 GATE 2026 EC Q35 · Adapted</span>
+  </div>
+  <h3>Q21. A negative-edge-triggered JK flip-flop has J=K=1. What happens at every active clock edge?</h3>
+  <label class="option"><input type="radio" name="q21" value="A"> <b>A.</b> It holds</label><label class="option"><input type="radio" name="q21" value="B"> <b>B.</b> It resets</label><label class="option"><input type="radio" name="q21" value="C"> <b>C.</b> It toggles</label><label class="option"><input type="radio" name="q21" value="D"> <b>D.</b> It becomes invalid</label>
+</div>
+<div class="question year-question" data-topic="4:1 MUX">
+  <div class="meta">
+    <span class="topic">📚 4:1 MUX</span>
+    <span class="year">📅 GATE 2026 EC Q48 · Adapted</span>
+  </div>
+  <h3>Q22. For a 4:1 MUX, select inputs are x and y. Which data-input assignment realizes x XOR y?</h3>
+  <label class="option"><input type="radio" name="q22" value="A"> <b>A.</b> D0=0,D1=1,D2=1,D3=0</label><label class="option"><input type="radio" name="q22" value="B"> <b>B.</b> D0=1,D1=0,D2=0,D3=1</label><label class="option"><input type="radio" name="q22" value="C"> <b>C.</b> D0=0,D1=0,D2=1,D3=1</label><label class="option"><input type="radio" name="q22" value="D"> <b>D.</b> D0=1,D1=1,D2=0,D3=0</label>
+</div>
+<div class="question year-question" data-topic="Shift Register">
+  <div class="meta">
+    <span class="topic">📚 Shift Register</span>
+    <span class="year">📅 GATE 2026 EC Q49 · Adapted</span>
+  </div>
+  <h3>Q23. A 4-bit register initially contains 1011. After a left shift by one bit with serial input 0, what is the new content?</h3>
+  <label class="option"><input type="radio" name="q23" value="A"> <b>A.</b> 0110</label><label class="option"><input type="radio" name="q23" value="B"> <b>B.</b> 1100</label><label class="option"><input type="radio" name="q23" value="C"> <b>C.</b> 0101</label><label class="option"><input type="radio" name="q23" value="D"> <b>D.</b> 1010</label>
+</div>
+<div class="question year-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE 2026 EC Q56 · Adapted</span>
+  </div>
+  <h3>Q24. For a four-variable Boolean function, how many cells are present in its Karnaugh map?</h3>
+  <label class="option"><input type="radio" name="q24" value="A"> <b>A.</b> 4</label><label class="option"><input type="radio" name="q24" value="B"> <b>B.</b> 8</label><label class="option"><input type="radio" name="q24" value="C"> <b>C.</b> 16</label><label class="option"><input type="radio" name="q24" value="D"> <b>D.</b> 32</label>
+</div>
+<div class="question year-question" data-topic="Error Control">
+  <div class="meta">
+    <span class="topic">📚 Error Control</span>
+    <span class="year">📅 GATE 2026 EC Q63 · Adapted</span>
+  </div>
+  <h3>Q25. A decoder is designed to correct one-bit errors. If a received codeword differs from the transmitted word in exactly one bit, what should the decoder ideally do?</h3>
+  <label class="option"><input type="radio" name="q25" value="A"> <b>A.</b> Detect and correct the error</label><label class="option"><input type="radio" name="q25" value="B"> <b>B.</b> Ignore the error</label><label class="option"><input type="radio" name="q25" value="C"> <b>C.</b> Always declare two errors</label><label class="option"><input type="radio" name="q25" value="D"> <b>D.</b> Convert the word to binary</label>
+</div>
+<div class="question year-question" data-topic="CMOS">
+  <div class="meta">
+    <span class="topic">📚 CMOS</span>
+    <span class="year">📅 GATE 2019 EC Q53 · Adapted</span>
+  </div>
+  <h3>Q26. In an ideal CMOS inverter, when the input is LOW, which device conducts strongly in the pull-up network?</h3>
+  <label class="option"><input type="radio" name="q26" value="A"> <b>A.</b> PMOS</label><label class="option"><input type="radio" name="q26" value="B"> <b>B.</b> NMOS</label><label class="option"><input type="radio" name="q26" value="C"> <b>C.</b> Both equally</label><label class="option"><input type="radio" name="q26" value="D"> <b>D.</b> Neither</label>
+</div>
+<div class="question year-question" data-topic="MOS Logic">
+  <div class="meta">
+    <span class="topic">📚 MOS Logic</span>
+    <span class="year">📅 GATE 2019 EC Q54 · Adapted</span>
+  </div>
+  <h3>Q27. In complementary CMOS logic, the pull-up network is primarily formed using which transistor type?</h3>
+  <label class="option"><input type="radio" name="q27" value="A"> <b>A.</b> NMOS</label><label class="option"><input type="radio" name="q27" value="B"> <b>B.</b> PMOS</label><label class="option"><input type="radio" name="q27" value="C"> <b>C.</b> BJT</label><label class="option"><input type="radio" name="q27" value="D"> <b>D.</b> JFET</label>
+</div>
+<div class="question year-question" data-topic="Error Control">
+  <div class="meta">
+    <span class="topic">📚 Error Control</span>
+    <span class="year">📅 GATE 2021 EC Q34 · Adapted</span>
+  </div>
+  <h3>Q28. In a Hamming-code based error-control system, what is the main purpose of parity bits?</h3>
+  <label class="option"><input type="radio" name="q28" value="A"> <b>A.</b> To provide error detection/correction capability</label><label class="option"><input type="radio" name="q28" value="B"> <b>B.</b> To increase analog bandwidth</label><label class="option"><input type="radio" name="q28" value="C"> <b>C.</b> To store program instructions</label><label class="option"><input type="radio" name="q28" value="D"> <b>D.</b> To generate a clock</label>
+</div>
+<div class="question year-question" data-topic="CMOS">
+  <div class="meta">
+    <span class="topic">📚 CMOS</span>
+    <span class="year">📅 GATE 2022 EC Q18 · Adapted</span>
+  </div>
+  <h3>Q29. For a static CMOS gate in steady state, ideally the direct DC current from VDD to ground is:</h3>
+  <label class="option"><input type="radio" name="q29" value="A"> <b>A.</b> Very small/approximately zero</label><label class="option"><input type="radio" name="q29" value="B"> <b>B.</b> Maximum</label><label class="option"><input type="radio" name="q29" value="C"> <b>C.</b> Equal to dynamic current</label><label class="option"><input type="radio" name="q29" value="D"> <b>D.</b> Independent of logic state and always large</label>
+</div>
+<div class="question year-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE 2024 EC Q19 · Adapted</span>
+  </div>
+  <h3>Q30. Using Boolean algebra, the complement of (A+B) is:</h3>
+  <label class="option"><input type="radio" name="q30" value="A"> <b>A.</b> A̅+B̅</label><label class="option"><input type="radio" name="q30" value="B"> <b>B.</b> A̅B̅</label><label class="option"><input type="radio" name="q30" value="C"> <b>C.</b> AB</label><label class="option"><input type="radio" name="q30" value="D"> <b>D.</b> A+B</label>
+</div>
+<div class="question year-question" data-topic="MOS Devices">
+  <div class="meta">
+    <span class="topic">📚 MOS Devices</span>
+    <span class="year">📅 GATE 2025 EC Q30 · Adapted</span>
+  </div>
+  <h3>Q31. Which statement is generally correct for an enhancement-mode nMOS transistor used as a digital switch?</h3>
+  <label class="option"><input type="radio" name="q31" value="A"> <b>A.</b> It conducts strongly when VGS is above threshold</label><label class="option"><input type="radio" name="q31" value="B"> <b>B.</b> It conducts strongly only when VGS is zero</label><label class="option"><input type="radio" name="q31" value="C"> <b>C.</b> It is always ON</label><label class="option"><input type="radio" name="q31" value="D"> <b>D.</b> It requires negative VGS to turn ON</label>
+</div>
+<h2 class="section-title">📝 Additional GATE-Style Practice (32–100)</h2>
+
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q32. The Boolean expression A + AB simplifies to:</h3>
+  <label class="option"><input type="radio" name="q32" value="A"> <b>A.</b> A</label><label class="option"><input type="radio" name="q32" value="B"> <b>B.</b> AB</label><label class="option"><input type="radio" name="q32" value="C"> <b>C.</b> A + B</label><label class="option"><input type="radio" name="q32" value="D"> <b>D.</b> B</label>
+</div>
+<div class="question practice-question" data-topic="K-Map">
+  <div class="meta">
+    <span class="topic">📚 K-Map</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q33. A 4-variable K-map contains how many cells?</h3>
+  <label class="option"><input type="radio" name="q33" value="A"> <b>A.</b> 4</label><label class="option"><input type="radio" name="q33" value="B"> <b>B.</b> 8</label><label class="option"><input type="radio" name="q33" value="C"> <b>C.</b> 16</label><label class="option"><input type="radio" name="q33" value="D"> <b>D.</b> 32</label>
+</div>
+<div class="question practice-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q34. Which of the following is a universal gate?</h3>
+  <label class="option"><input type="radio" name="q34" value="A"> <b>A.</b> XOR</label><label class="option"><input type="radio" name="q34" value="B"> <b>B.</b> NAND</label><label class="option"><input type="radio" name="q34" value="C"> <b>C.</b> XNOR</label><label class="option"><input type="radio" name="q34" value="D"> <b>D.</b> NOT</label>
+</div>
+<div class="question practice-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q35. The output of an XOR gate is 1 when:</h3>
+  <label class="option"><input type="radio" name="q35" value="A"> <b>A.</b> Both inputs are 0</label><label class="option"><input type="radio" name="q35" value="B"> <b>B.</b> Both inputs are 1</label><label class="option"><input type="radio" name="q35" value="C"> <b>C.</b> Inputs are different</label><label class="option"><input type="radio" name="q35" value="D"> <b>D.</b> Inputs are equal</label>
+</div>
+<div class="question practice-question" data-topic="Adders">
+  <div class="meta">
+    <span class="topic">📚 Adders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q36. A half adder produces:</h3>
+  <label class="option"><input type="radio" name="q36" value="A"> <b>A.</b> Sum and Carry</label><label class="option"><input type="radio" name="q36" value="B"> <b>B.</b> Difference only</label><label class="option"><input type="radio" name="q36" value="C"> <b>C.</b> Borrow only</label><label class="option"><input type="radio" name="q36" value="D"> <b>D.</b> Product and Carry</label>
+</div>
+<div class="question practice-question" data-topic="Flip-Flops">
+  <div class="meta">
+    <span class="topic">📚 Flip-Flops</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q37. Which flip-flop eliminates the invalid state of an SR flip-flop?</h3>
+  <label class="option"><input type="radio" name="q37" value="A"> <b>A.</b> D</label><label class="option"><input type="radio" name="q37" value="B"> <b>B.</b> JK</label><label class="option"><input type="radio" name="q37" value="C"> <b>C.</b> SR</label><label class="option"><input type="radio" name="q37" value="D"> <b>D.</b> None</label>
+</div>
+<div class="question practice-question" data-topic="Counters">
+  <div class="meta">
+    <span class="topic">📚 Counters</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q38. A 3-bit binary counter has how many states?</h3>
+  <label class="option"><input type="radio" name="q38" value="A"> <b>A.</b> 3</label><label class="option"><input type="radio" name="q38" value="B"> <b>B.</b> 6</label><label class="option"><input type="radio" name="q38" value="C"> <b>C.</b> 8</label><label class="option"><input type="radio" name="q38" value="D"> <b>D.</b> 16</label>
+</div>
+<div class="question practice-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q39. The output of a NOT gate for input 0 is:</h3>
+  <label class="option"><input type="radio" name="q39" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q39" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q39" value="C"> <b>C.</b> X</label><label class="option"><input type="radio" name="q39" value="D"> <b>D.</b> Z</label>
+</div>
+<div class="question practice-question" data-topic="Combinational Circuits">
+  <div class="meta">
+    <span class="topic">📚 Combinational Circuits</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q40. A multiplexer is primarily used for:</h3>
+  <label class="option"><input type="radio" name="q40" value="A"> <b>A.</b> Data selection</label><label class="option"><input type="radio" name="q40" value="B"> <b>B.</b> Data storage</label><label class="option"><input type="radio" name="q40" value="C"> <b>C.</b> Frequency division</label><label class="option"><input type="radio" name="q40" value="D"> <b>D.</b> Counting</label>
+</div>
+<div class="question practice-question" data-topic="Multiplexers">
+  <div class="meta">
+    <span class="topic">📚 Multiplexers</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q41. A 4:1 multiplexer requires how many select lines?</h3>
+  <label class="option"><input type="radio" name="q41" value="A"> <b>A.</b> 1</label><label class="option"><input type="radio" name="q41" value="B"> <b>B.</b> 2</label><label class="option"><input type="radio" name="q41" value="C"> <b>C.</b> 3</label><label class="option"><input type="radio" name="q41" value="D"> <b>D.</b> 4</label>
+</div>
+<div class="question practice-question" data-topic="Number Systems">
+  <div class="meta">
+    <span class="topic">📚 Number Systems</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q42. The decimal equivalent of binary 1010 is:</h3>
+  <label class="option"><input type="radio" name="q42" value="A"> <b>A.</b> 8</label><label class="option"><input type="radio" name="q42" value="B"> <b>B.</b> 9</label><label class="option"><input type="radio" name="q42" value="C"> <b>C.</b> 10</label><label class="option"><input type="radio" name="q42" value="D"> <b>D.</b> 12</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q43. The complement of A + B is:</h3>
+  <label class="option"><input type="radio" name="q43" value="A"> <b>A.</b> A&#x27; + B&#x27;</label><label class="option"><input type="radio" name="q43" value="B"> <b>B.</b> AB</label><label class="option"><input type="radio" name="q43" value="C"> <b>C.</b> A&#x27;B&#x27;</label><label class="option"><input type="radio" name="q43" value="D"> <b>D.</b> A + B</label>
+</div>
+<div class="question practice-question" data-topic="Decoders">
+  <div class="meta">
+    <span class="topic">📚 Decoders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q44. Which circuit converts an n-bit binary input into one of 2ⁿ active outputs?</h3>
+  <label class="option"><input type="radio" name="q44" value="A"> <b>A.</b> Encoder</label><label class="option"><input type="radio" name="q44" value="B"> <b>B.</b> Decoder</label><label class="option"><input type="radio" name="q44" value="C"> <b>C.</b> MUX</label><label class="option"><input type="radio" name="q44" value="D"> <b>D.</b> Comparator</label>
+</div>
+<div class="question practice-question" data-topic="Flip-Flops">
+  <div class="meta">
+    <span class="topic">📚 Flip-Flops</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q45. A flip-flop stores:</h3>
+  <label class="option"><input type="radio" name="q45" value="A"> <b>A.</b> 1 bit</label><label class="option"><input type="radio" name="q45" value="B"> <b>B.</b> 2 bits</label><label class="option"><input type="radio" name="q45" value="C"> <b>C.</b> 4 bits</label><label class="option"><input type="radio" name="q45" value="D"> <b>D.</b> 8 bits</label>
+</div>
+<div class="question practice-question" data-topic="Counters">
+  <div class="meta">
+    <span class="topic">📚 Counters</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q46. In a synchronous counter, all flip-flops receive:</h3>
+  <label class="option"><input type="radio" name="q46" value="A"> <b>A.</b> Different clocks</label><label class="option"><input type="radio" name="q46" value="B"> <b>B.</b> The same clock</label><label class="option"><input type="radio" name="q46" value="C"> <b>C.</b> No clock</label><label class="option"><input type="radio" name="q46" value="D"> <b>D.</b> Random clocks</label>
+</div>
+<div class="question practice-question" data-topic="CMOS">
+  <div class="meta">
+    <span class="topic">📚 CMOS</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q47. Which logic family generally has very low static power dissipation?</h3>
+  <label class="option"><input type="radio" name="q47" value="A"> <b>A.</b> CMOS</label><label class="option"><input type="radio" name="q47" value="B"> <b>B.</b> RTL</label><label class="option"><input type="radio" name="q47" value="C"> <b>C.</b> DTL</label><label class="option"><input type="radio" name="q47" value="D"> <b>D.</b> ECL</label>
+</div>
+<div class="question practice-question" data-topic="Number Systems">
+  <div class="meta">
+    <span class="topic">📚 Number Systems</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q48. Ignoring overflow, a left shift of an unsigned binary number by one position multiplies its value by:</h3>
+  <label class="option"><input type="radio" name="q48" value="A"> <b>A.</b> 1/2</label><label class="option"><input type="radio" name="q48" value="B"> <b>B.</b> 2</label><label class="option"><input type="radio" name="q48" value="C"> <b>C.</b> 3</label><label class="option"><input type="radio" name="q48" value="D"> <b>D.</b> 4</label>
+</div>
+<div class="question practice-question" data-topic="Counters">
+  <div class="meta">
+    <span class="topic">📚 Counters</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q49. The minimum number of flip-flops required for a MOD-10 counter is:</h3>
+  <label class="option"><input type="radio" name="q49" value="A"> <b>A.</b> 2</label><label class="option"><input type="radio" name="q49" value="B"> <b>B.</b> 3</label><label class="option"><input type="radio" name="q49" value="C"> <b>C.</b> 4</label><label class="option"><input type="radio" name="q49" value="D"> <b>D.</b> 10</label>
+</div>
+<div class="question practice-question" data-topic="Combinational Circuits">
+  <div class="meta">
+    <span class="topic">📚 Combinational Circuits</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q50. Which circuit compares two binary numbers?</h3>
+  <label class="option"><input type="radio" name="q50" value="A"> <b>A.</b> Encoder</label><label class="option"><input type="radio" name="q50" value="B"> <b>B.</b> Decoder</label><label class="option"><input type="radio" name="q50" value="C"> <b>C.</b> Comparator</label><label class="option"><input type="radio" name="q50" value="D"> <b>D.</b> MUX</label>
+</div>
+<div class="question practice-question" data-topic="Verilog">
+  <div class="meta">
+    <span class="topic">📚 Verilog</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q51. Which Verilog keyword is commonly used for continuous assignment?</h3>
+  <label class="option"><input type="radio" name="q51" value="A"> <b>A.</b> always</label><label class="option"><input type="radio" name="q51" value="B"> <b>B.</b> assign</label><label class="option"><input type="radio" name="q51" value="C"> <b>C.</b> begin</label><label class="option"><input type="radio" name="q51" value="D"> <b>D.</b> initial</label>
+</div>
+<div class="question practice-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q52. For A=1 and B=0, A AND B equals:</h3>
+  <label class="option"><input type="radio" name="q52" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q52" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q52" value="C"> <b>C.</b> X</label><label class="option"><input type="radio" name="q52" value="D"> <b>D.</b> Z</label>
+</div>
+<div class="question practice-question" data-topic="Decoders">
+  <div class="meta">
+    <span class="topic">📚 Decoders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q53. A 2-to-4 decoder has:</h3>
+  <label class="option"><input type="radio" name="q53" value="A"> <b>A.</b> 2 inputs and 2 outputs</label><label class="option"><input type="radio" name="q53" value="B"> <b>B.</b> 2 inputs and 4 outputs</label><label class="option"><input type="radio" name="q53" value="C"> <b>C.</b> 4 inputs and 2 outputs</label><label class="option"><input type="radio" name="q53" value="D"> <b>D.</b> 4 inputs and 4 outputs</label>
+</div>
+<div class="question practice-question" data-topic="Flip-Flops">
+  <div class="meta">
+    <span class="topic">📚 Flip-Flops</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q54. Race-around can occur in a level-triggered JK flip-flop when:</h3>
+  <label class="option"><input type="radio" name="q54" value="A"> <b>A.</b> J=0,K=0</label><label class="option"><input type="radio" name="q54" value="B"> <b>B.</b> J=0,K=1</label><label class="option"><input type="radio" name="q54" value="C"> <b>C.</b> J=K=1</label><label class="option"><input type="radio" name="q54" value="D"> <b>D.</b> J=1,K=0</label>
+</div>
+<div class="question practice-question" data-topic="Flip-Flops">
+  <div class="meta">
+    <span class="topic">📚 Flip-Flops</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q55. Which flip-flop toggles when its input is HIGH?</h3>
+  <label class="option"><input type="radio" name="q55" value="A"> <b>A.</b> D</label><label class="option"><input type="radio" name="q55" value="B"> <b>B.</b> SR</label><label class="option"><input type="radio" name="q55" value="C"> <b>C.</b> T</label><label class="option"><input type="radio" name="q55" value="D"> <b>D.</b> D latch</label>
+</div>
+<div class="question practice-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q56. A NAND gate with its inputs tied together behaves as:</h3>
+  <label class="option"><input type="radio" name="q56" value="A"> <b>A.</b> AND</label><label class="option"><input type="radio" name="q56" value="B"> <b>B.</b> OR</label><label class="option"><input type="radio" name="q56" value="C"> <b>C.</b> NOT</label><label class="option"><input type="radio" name="q56" value="D"> <b>D.</b> XOR</label>
+</div>
+<div class="question practice-question" data-topic="Adders">
+  <div class="meta">
+    <span class="topic">📚 Adders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q57. A full adder has how many inputs?</h3>
+  <label class="option"><input type="radio" name="q57" value="A"> <b>A.</b> 2</label><label class="option"><input type="radio" name="q57" value="B"> <b>B.</b> 3</label><label class="option"><input type="radio" name="q57" value="C"> <b>C.</b> 4</label><label class="option"><input type="radio" name="q57" value="D"> <b>D.</b> 5</label>
+</div>
+<div class="question practice-question" data-topic="Multiplexers">
+  <div class="meta">
+    <span class="topic">📚 Multiplexers</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q58. A 16:1 multiplexer requires how many select lines?</h3>
+  <label class="option"><input type="radio" name="q58" value="A"> <b>A.</b> 2</label><label class="option"><input type="radio" name="q58" value="B"> <b>B.</b> 3</label><label class="option"><input type="radio" name="q58" value="C"> <b>C.</b> 4</label><label class="option"><input type="radio" name="q58" value="D"> <b>D.</b> 8</label>
+</div>
+<div class="question practice-question" data-topic="Sequential Circuits">
+  <div class="meta">
+    <span class="topic">📚 Sequential Circuits</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q59. Which of the following is a sequential circuit?</h3>
+  <label class="option"><input type="radio" name="q59" value="A"> <b>A.</b> Adder</label><label class="option"><input type="radio" name="q59" value="B"> <b>B.</b> Multiplexer</label><label class="option"><input type="radio" name="q59" value="C"> <b>C.</b> Counter</label><label class="option"><input type="radio" name="q59" value="D"> <b>D.</b> Decoder</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q60. The Boolean expression A·A is equal to:</h3>
+  <label class="option"><input type="radio" name="q60" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q60" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q60" value="C"> <b>C.</b> A</label><label class="option"><input type="radio" name="q60" value="D"> <b>D.</b> A&#x27;</label>
+</div>
+<div class="question practice-question" data-topic="Verilog">
+  <div class="meta">
+    <span class="topic">📚 Verilog</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q61. Which Verilog statement represents an AND operation?</h3>
+  <label class="option"><input type="radio" name="q61" value="A"> <b>A.</b> assign y = a | b;</label><label class="option"><input type="radio" name="q61" value="B"> <b>B.</b> assign y = a &amp; b;</label><label class="option"><input type="radio" name="q61" value="C"> <b>C.</b> assign y = a ^ b;</label><label class="option"><input type="radio" name="q61" value="D"> <b>D.</b> assign y = ~a;</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q62. A + 0 is equal to:</h3>
+  <label class="option"><input type="radio" name="q62" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q62" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q62" value="C"> <b>C.</b> A</label><label class="option"><input type="radio" name="q62" value="D"> <b>D.</b> A&#x27;</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q63. A·1 is equal to:</h3>
+  <label class="option"><input type="radio" name="q63" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q63" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q63" value="C"> <b>C.</b> A</label><label class="option"><input type="radio" name="q63" value="D"> <b>D.</b> A&#x27;</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q64. A + A is equal to:</h3>
+  <label class="option"><input type="radio" name="q64" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q64" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q64" value="C"> <b>C.</b> A</label><label class="option"><input type="radio" name="q64" value="D"> <b>D.</b> A&#x27;</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q65. A + A&#x27; is equal to:</h3>
+  <label class="option"><input type="radio" name="q65" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q65" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q65" value="C"> <b>C.</b> A</label><label class="option"><input type="radio" name="q65" value="D"> <b>D.</b> A&#x27;</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q66. A·A&#x27; is equal to:</h3>
+  <label class="option"><input type="radio" name="q66" value="A"> <b>A.</b> 0</label><label class="option"><input type="radio" name="q66" value="B"> <b>B.</b> 1</label><label class="option"><input type="radio" name="q66" value="C"> <b>C.</b> A</label><label class="option"><input type="radio" name="q66" value="D"> <b>D.</b> A&#x27;</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q67. The complement of AB is:</h3>
+  <label class="option"><input type="radio" name="q67" value="A"> <b>A.</b> A&#x27;B&#x27;</label><label class="option"><input type="radio" name="q67" value="B"> <b>B.</b> A&#x27;+B&#x27;</label><label class="option"><input type="radio" name="q67" value="C"> <b>C.</b> AB</label><label class="option"><input type="radio" name="q67" value="D"> <b>D.</b> A+B</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q68. Which expression is equivalent to A(A+B)?</h3>
+  <label class="option"><input type="radio" name="q68" value="A"> <b>A.</b> A</label><label class="option"><input type="radio" name="q68" value="B"> <b>B.</b> B</label><label class="option"><input type="radio" name="q68" value="C"> <b>C.</b> AB</label><label class="option"><input type="radio" name="q68" value="D"> <b>D.</b> A+B</label>
+</div>
+<div class="question practice-question" data-topic="Boolean Algebra">
+  <div class="meta">
+    <span class="topic">📚 Boolean Algebra</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q69. The dual of A+0=A is:</h3>
+  <label class="option"><input type="radio" name="q69" value="A"> <b>A.</b> A·1=A</label><label class="option"><input type="radio" name="q69" value="B"> <b>B.</b> A+1=A</label><label class="option"><input type="radio" name="q69" value="C"> <b>C.</b> A·0=A</label><label class="option"><input type="radio" name="q69" value="D"> <b>D.</b> A+A=A</label>
+</div>
+<div class="question practice-question" data-topic="K-Map">
+  <div class="meta">
+    <span class="topic">📚 K-Map</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q70. For a 3-variable K-map, the maximum group size is:</h3>
+  <label class="option"><input type="radio" name="q70" value="A"> <b>A.</b> 2</label><label class="option"><input type="radio" name="q70" value="B"> <b>B.</b> 4</label><label class="option"><input type="radio" name="q70" value="C"> <b>C.</b> 8</label><label class="option"><input type="radio" name="q70" value="D"> <b>D.</b> 16</label>
+</div>
+<div class="question practice-question" data-topic="K-Map">
+  <div class="meta">
+    <span class="topic">📚 K-Map</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q71. Valid K-map groups contain a number of cells equal to:</h3>
+  <label class="option"><input type="radio" name="q71" value="A"> <b>A.</b> Any prime number</label><label class="option"><input type="radio" name="q71" value="B"> <b>B.</b> Any even number</label><label class="option"><input type="radio" name="q71" value="C"> <b>C.</b> A power of two</label><label class="option"><input type="radio" name="q71" value="D"> <b>D.</b> Only four</label>
+</div>
+<div class="question practice-question" data-topic="K-Map">
+  <div class="meta">
+    <span class="topic">📚 K-Map</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q72. In a K-map, adjacent cells differ in:</h3>
+  <label class="option"><input type="radio" name="q72" value="A"> <b>A.</b> Zero variables</label><label class="option"><input type="radio" name="q72" value="B"> <b>B.</b> Exactly one variable</label><label class="option"><input type="radio" name="q72" value="C"> <b>C.</b> Exactly two variables</label><label class="option"><input type="radio" name="q72" value="D"> <b>D.</b> All variables</label>
+</div>
+<div class="question practice-question" data-topic="K-Map">
+  <div class="meta">
+    <span class="topic">📚 K-Map</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q73. For a 4-variable K-map, a group of 4 eliminates how many variables?</h3>
+  <label class="option"><input type="radio" name="q73" value="A"> <b>A.</b> 1</label><label class="option"><input type="radio" name="q73" value="B"> <b>B.</b> 2</label><label class="option"><input type="radio" name="q73" value="C"> <b>C.</b> 3</label><label class="option"><input type="radio" name="q73" value="D"> <b>D.</b> 4</label>
+</div>
+<div class="question practice-question" data-topic="K-Map">
+  <div class="meta">
+    <span class="topic">📚 K-Map</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q74. Don&#x27;t-care terms in a K-map may be treated as:</h3>
+  <label class="option"><input type="radio" name="q74" value="A"> <b>A.</b> Only 0</label><label class="option"><input type="radio" name="q74" value="B"> <b>B.</b> Only 1</label><label class="option"><input type="radio" name="q74" value="C"> <b>C.</b> 0 or 1, whichever helps simplification</label><label class="option"><input type="radio" name="q74" value="D"> <b>D.</b> Always invalid</label>
+</div>
+<div class="question practice-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q75. An XNOR gate produces 1 when:</h3>
+  <label class="option"><input type="radio" name="q75" value="A"> <b>A.</b> Inputs differ</label><label class="option"><input type="radio" name="q75" value="B"> <b>B.</b> Inputs are equal</label><label class="option"><input type="radio" name="q75" value="C"> <b>C.</b> Both are 0 only</label><label class="option"><input type="radio" name="q75" value="D"> <b>D.</b> Both are 1 only</label>
+</div>
+<div class="question practice-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q76. An XOR gate can be constructed using AND, OR and:</h3>
+  <label class="option"><input type="radio" name="q76" value="A"> <b>A.</b> NOT</label><label class="option"><input type="radio" name="q76" value="B"> <b>B.</b> Only NAND</label><label class="option"><input type="radio" name="q76" value="C"> <b>C.</b> Only NOR</label><label class="option"><input type="radio" name="q76" value="D"> <b>D.</b> Buffer</label>
+</div>
+<div class="question practice-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q77. A NOR gate is equivalent to an OR gate followed by:</h3>
+  <label class="option"><input type="radio" name="q77" value="A"> <b>A.</b> AND</label><label class="option"><input type="radio" name="q77" value="B"> <b>B.</b> XOR</label><label class="option"><input type="radio" name="q77" value="C"> <b>C.</b> NOT</label><label class="option"><input type="radio" name="q77" value="D"> <b>D.</b> Buffer</label>
+</div>
+<div class="question practice-question" data-topic="Logic Gates">
+  <div class="meta">
+    <span class="topic">📚 Logic Gates</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q78. A NAND gate is equivalent to an AND gate followed by:</h3>
+  <label class="option"><input type="radio" name="q78" value="A"> <b>A.</b> OR</label><label class="option"><input type="radio" name="q78" value="B"> <b>B.</b> NOT</label><label class="option"><input type="radio" name="q78" value="C"> <b>C.</b> XOR</label><label class="option"><input type="radio" name="q78" value="D"> <b>D.</b> Buffer</label>
+</div>
+<div class="question practice-question" data-topic="Number Systems">
+  <div class="meta">
+    <span class="topic">📚 Number Systems</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q79. The binary representation of decimal 15 is:</h3>
+  <label class="option"><input type="radio" name="q79" value="A"> <b>A.</b> 1010</label><label class="option"><input type="radio" name="q79" value="B"> <b>B.</b> 1100</label><label class="option"><input type="radio" name="q79" value="C"> <b>C.</b> 1111</label><label class="option"><input type="radio" name="q79" value="D"> <b>D.</b> 1001</label>
+</div>
+<div class="question practice-question" data-topic="Number Systems">
+  <div class="meta">
+    <span class="topic">📚 Number Systems</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q80. The hexadecimal representation of binary 1110 is:</h3>
+  <label class="option"><input type="radio" name="q80" value="A"> <b>A.</b> C</label><label class="option"><input type="radio" name="q80" value="B"> <b>B.</b> D</label><label class="option"><input type="radio" name="q80" value="C"> <b>C.</b> E</label><label class="option"><input type="radio" name="q80" value="D"> <b>D.</b> F</label>
+</div>
+<div class="question practice-question" data-topic="Number Systems">
+  <div class="meta">
+    <span class="topic">📚 Number Systems</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q81. Two&#x27;s complement of 00000101 in 8 bits is:</h3>
+  <label class="option"><input type="radio" name="q81" value="A"> <b>A.</b> 00000110</label><label class="option"><input type="radio" name="q81" value="B"> <b>B.</b> 11111010</label><label class="option"><input type="radio" name="q81" value="C"> <b>C.</b> 11111011</label><label class="option"><input type="radio" name="q81" value="D"> <b>D.</b> 10000101</label>
+</div>
+<div class="question practice-question" data-topic="Number Systems">
+  <div class="meta">
+    <span class="topic">📚 Number Systems</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q82. The range of an n-bit unsigned number is:</h3>
+  <label class="option"><input type="radio" name="q82" value="A"> <b>A.</b> −2ⁿ to 2ⁿ−1</label><label class="option"><input type="radio" name="q82" value="B"> <b>B.</b> 0 to 2ⁿ−1</label><label class="option"><input type="radio" name="q82" value="C"> <b>C.</b> −2ⁿ⁻¹ to 2ⁿ⁻¹−1</label><label class="option"><input type="radio" name="q82" value="D"> <b>D.</b> 1 to 2ⁿ</label>
+</div>
+<div class="question practice-question" data-topic="Number Systems">
+  <div class="meta">
+    <span class="topic">📚 Number Systems</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q83. The range of an n-bit two&#x27;s-complement number is:</h3>
+  <label class="option"><input type="radio" name="q83" value="A"> <b>A.</b> 0 to 2ⁿ−1</label><label class="option"><input type="radio" name="q83" value="B"> <b>B.</b> −2ⁿ to 2ⁿ</label><label class="option"><input type="radio" name="q83" value="C"> <b>C.</b> −2ⁿ⁻¹ to 2ⁿ⁻¹−1</label><label class="option"><input type="radio" name="q83" value="D"> <b>D.</b> −2ⁿ⁻¹−1 to 2ⁿ⁻¹</label>
+</div>
+<div class="question practice-question" data-topic="Adders">
+  <div class="meta">
+    <span class="topic">📚 Adders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q84. The sum output of a half adder is:</h3>
+  <label class="option"><input type="radio" name="q84" value="A"> <b>A.</b> AB</label><label class="option"><input type="radio" name="q84" value="B"> <b>B.</b> A+B</label><label class="option"><input type="radio" name="q84" value="C"> <b>C.</b> A⊕B</label><label class="option"><input type="radio" name="q84" value="D"> <b>D.</b> A&#x27;B&#x27;</label>
+</div>
+<div class="question practice-question" data-topic="Adders">
+  <div class="meta">
+    <span class="topic">📚 Adders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q85. The carry output of a half adder is:</h3>
+  <label class="option"><input type="radio" name="q85" value="A"> <b>A.</b> A+B</label><label class="option"><input type="radio" name="q85" value="B"> <b>B.</b> A⊕B</label><label class="option"><input type="radio" name="q85" value="C"> <b>C.</b> AB</label><label class="option"><input type="radio" name="q85" value="D"> <b>D.</b> A&#x27;B</label>
+</div>
+<div class="question practice-question" data-topic="Adders">
+  <div class="meta">
+    <span class="topic">📚 Adders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q86. The sum output of a full adder is:</h3>
+  <label class="option"><input type="radio" name="q86" value="A"> <b>A.</b> A+B+Cin</label><label class="option"><input type="radio" name="q86" value="B"> <b>B.</b> A⊕B⊕Cin</label><label class="option"><input type="radio" name="q86" value="C"> <b>C.</b> AB+Cin</label><label class="option"><input type="radio" name="q86" value="D"> <b>D.</b> ABCin</label>
+</div>
+<div class="question practice-question" data-topic="Adders">
+  <div class="meta">
+    <span class="topic">📚 Adders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q87. The carry output of a full adder is:</h3>
+  <label class="option"><input type="radio" name="q87" value="A"> <b>A.</b> AB + ACin + BCin</label><label class="option"><input type="radio" name="q87" value="B"> <b>B.</b> A⊕B⊕Cin</label><label class="option"><input type="radio" name="q87" value="C"> <b>C.</b> ABCin</label><label class="option"><input type="radio" name="q87" value="D"> <b>D.</b> A+B+Cin</label>
+</div>
+<div class="question practice-question" data-topic="Adders">
+  <div class="meta">
+    <span class="topic">📚 Adders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q88. A ripple-carry adder is slower mainly because:</h3>
+  <label class="option"><input type="radio" name="q88" value="A"> <b>A.</b> It uses no XOR gates</label><label class="option"><input type="radio" name="q88" value="B"> <b>B.</b> Carry propagates through stages</label><label class="option"><input type="radio" name="q88" value="C"> <b>C.</b> It has no inputs</label><label class="option"><input type="radio" name="q88" value="D"> <b>D.</b> It uses only latches</label>
+</div>
+<div class="question practice-question" data-topic="Subtractor">
+  <div class="meta">
+    <span class="topic">📚 Subtractor</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q89. A half subtractor produces:</h3>
+  <label class="option"><input type="radio" name="q89" value="A"> <b>A.</b> Sum and carry</label><label class="option"><input type="radio" name="q89" value="B"> <b>B.</b> Difference and borrow</label><label class="option"><input type="radio" name="q89" value="C"> <b>C.</b> Product and carry</label><label class="option"><input type="radio" name="q89" value="D"> <b>D.</b> Only borrow</label>
+</div>
+<div class="question practice-question" data-topic="Multiplexers">
+  <div class="meta">
+    <span class="topic">📚 Multiplexers</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q90. An 8:1 MUX needs how many select inputs?</h3>
+  <label class="option"><input type="radio" name="q90" value="A"> <b>A.</b> 2</label><label class="option"><input type="radio" name="q90" value="B"> <b>B.</b> 3</label><label class="option"><input type="radio" name="q90" value="C"> <b>C.</b> 4</label><label class="option"><input type="radio" name="q90" value="D"> <b>D.</b> 8</label>
+</div>
+<div class="question practice-question" data-topic="Multiplexers">
+  <div class="meta">
+    <span class="topic">📚 Multiplexers</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q91. A 32:1 MUX requires how many select lines?</h3>
+  <label class="option"><input type="radio" name="q91" value="A"> <b>A.</b> 4</label><label class="option"><input type="radio" name="q91" value="B"> <b>B.</b> 5</label><label class="option"><input type="radio" name="q91" value="C"> <b>C.</b> 6</label><label class="option"><input type="radio" name="q91" value="D"> <b>D.</b> 32</label>
+</div>
+<div class="question practice-question" data-topic="Decoders">
+  <div class="meta">
+    <span class="topic">📚 Decoders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q92. A 3-to-8 decoder has how many output lines?</h3>
+  <label class="option"><input type="radio" name="q92" value="A"> <b>A.</b> 3</label><label class="option"><input type="radio" name="q92" value="B"> <b>B.</b> 6</label><label class="option"><input type="radio" name="q92" value="C"> <b>C.</b> 8</label><label class="option"><input type="radio" name="q92" value="D"> <b>D.</b> 16</label>
+</div>
+<div class="question practice-question" data-topic="Decoders">
+  <div class="meta">
+    <span class="topic">📚 Decoders</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q93. An encoder performs the reverse operation of a:</h3>
+  <label class="option"><input type="radio" name="q93" value="A"> <b>A.</b> Counter</label><label class="option"><input type="radio" name="q93" value="B"> <b>B.</b> Decoder</label><label class="option"><input type="radio" name="q93" value="C"> <b>C.</b> Adder</label><label class="option"><input type="radio" name="q93" value="D"> <b>D.</b> Comparator</label>
+</div>
+<div class="question practice-question" data-topic="Priority Encoder">
+  <div class="meta">
+    <span class="topic">📚 Priority Encoder</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q94. A priority encoder is useful when:</h3>
+  <label class="option"><input type="radio" name="q94" value="A"> <b>A.</b> Only one input can ever be active</label><label class="option"><input type="radio" name="q94" value="B"> <b>B.</b> Multiple inputs may be active and priority is required</label><label class="option"><input type="radio" name="q94" value="C"> <b>C.</b> No inputs are present</label><label class="option"><input type="radio" name="q94" value="D"> <b>D.</b> Storage is required</label>
+</div>
+<div class="question practice-question" data-topic="Comparator">
+  <div class="meta">
+    <span class="topic">📚 Comparator</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q95. A 1-bit magnitude comparator commonly provides outputs for:</h3>
+  <label class="option"><input type="radio" name="q95" value="A"> <b>A.</b> A&gt;B, A=B, A&lt;B</label><label class="option"><input type="radio" name="q95" value="B"> <b>B.</b> A+B, AB, A⊕B</label><label class="option"><input type="radio" name="q95" value="C"> <b>C.</b> Sum and carry</label><label class="option"><input type="radio" name="q95" value="D"> <b>D.</b> Only equality</label>
+</div>
+<div class="question practice-question" data-topic="Comparator">
+  <div class="meta">
+    <span class="topic">📚 Comparator</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q96. For a 1-bit comparator, A=B is represented by:</h3>
+  <label class="option"><input type="radio" name="q96" value="A"> <b>A.</b> A⊕B</label><label class="option"><input type="radio" name="q96" value="B"> <b>B.</b> A XNOR B</label><label class="option"><input type="radio" name="q96" value="C"> <b>C.</b> AB</label><label class="option"><input type="radio" name="q96" value="D"> <b>D.</b> A+B</label>
+</div>
+<div class="question practice-question" data-topic="Flip-Flops">
+  <div class="meta">
+    <span class="topic">📚 Flip-Flops</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q97. For a D flip-flop, the next state is:</h3>
+  <label class="option"><input type="radio" name="q97" value="A"> <b>A.</b> Q⁺=D</label><label class="option"><input type="radio" name="q97" value="B"> <b>B.</b> Q⁺=D&#x27;</label><label class="option"><input type="radio" name="q97" value="C"> <b>C.</b> Q⁺=Q</label><label class="option"><input type="radio" name="q97" value="D"> <b>D.</b> Q⁺=0</label>
+</div>
+<div class="question practice-question" data-topic="Flip-Flops">
+  <div class="meta">
+    <span class="topic">📚 Flip-Flops</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q98. For a T flip-flop, T=0 causes:</h3>
+  <label class="option"><input type="radio" name="q98" value="A"> <b>A.</b> Toggle</label><label class="option"><input type="radio" name="q98" value="B"> <b>B.</b> Hold</label><label class="option"><input type="radio" name="q98" value="C"> <b>C.</b> Set</label><label class="option"><input type="radio" name="q98" value="D"> <b>D.</b> Reset</label>
+</div>
+<div class="question practice-question" data-topic="Flip-Flops">
+  <div class="meta">
+    <span class="topic">📚 Flip-Flops</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q99. For a T flip-flop, T=1 causes:</h3>
+  <label class="option"><input type="radio" name="q99" value="A"> <b>A.</b> Hold</label><label class="option"><input type="radio" name="q99" value="B"> <b>B.</b> Toggle</label><label class="option"><input type="radio" name="q99" value="C"> <b>C.</b> Reset</label><label class="option"><input type="radio" name="q99" value="D"> <b>D.</b> Set</label>
+</div>
+<div class="question practice-question" data-topic="Flip-Flops">
+  <div class="meta">
+    <span class="topic">📚 Flip-Flops</span>
+    <span class="year">📅 GATE-style Practice</span>
+  </div>
+  <h3>Q100. For a JK flip-flop, J=0 and K=0 causes:</h3>
+  <label class="option"><input type="radio" name="q100" value="A"> <b>A.</b> Set</label><label class="option"><input type="radio" name="q100" value="B"> <b>B.</b> Reset</label><label class="option"><input type="radio" name="q100" value="C"> <b>C.</b> Hold</label><label class="option"><input type="radio" name="q100" value="D"> <b>D.</b> Toggle</label>
+</div>
+<button type="button" class="submit-btn" onclick="submitTest()">Submit GATE Test</button>
+</form>
+
+<div id="result">
+<h2>🎯 GATE Test Result</h2>
+<p id="score"></p>
+<p id="percentage"></p>
+<div id="review"></div>
+<button type="button" id="retakeBtn" class="retake-btn" onclick="retakeTest()">🔄 Retake Test</button>
+<a href="index.html" class="back-btn">← Back to Home</a>
+</div>
 </div>
 
 <script>
-
 const answers = {
-    q1: "A",
-    q2: "C",
-    q3: "B",
-    q4: "C",
-    q5: "A",
-    q6: "B",
-    q7: "C",
-    q8: "B",
-    q9: "A",
-    q10: "B",
-    q11: "C",
-    q12: "C",
-    q13: "B",
-    q14: "A",
-    q15: "B",
-    q16: "A",
-    q17: "B",
-    q18: "C",
-    q19: "C",
-    q20: "B",
-    q21: "A",
-    q22: "B",
-    q23: "B",
-    q24: "C",
-    q25: "C",
-    q26: "B",
-    q27: "C",
-    q28: "C",
-    q29: "C",
-    q30: "B"
+  q1: "A",
+  q2: "C",
+  q3: "A",
+  q4: "A",
+  q5: "A",
+  q6: "A",
+  q7: "A",
+  q8: "A",
+  q9: "A",
+  q10: "C",
+  q11: "C",
+  q12: "C",
+  q13: "C",
+  q14: "A",
+  q15: "A",
+  q16: "A",
+  q17: "A",
+  q18: "B",
+  q19: "A",
+  q20: "C",
+  q21: "C",
+  q22: "A",
+  q23: "A",
+  q24: "C",
+  q25: "A",
+  q26: "A",
+  q27: "B",
+  q28: "A",
+  q29: "A",
+  q30: "B",
+  q31: "A",
+  q32: "A",
+  q33: "C",
+  q34: "B",
+  q35: "C",
+  q36: "A",
+  q37: "B",
+  q38: "C",
+  q39: "B",
+  q40: "A",
+  q41: "B",
+  q42: "C",
+  q43: "C",
+  q44: "B",
+  q45: "A",
+  q46: "B",
+  q47: "A",
+  q48: "B",
+  q49: "C",
+  q50: "C",
+  q51: "B",
+  q52: "A",
+  q53: "B",
+  q54: "C",
+  q55: "C",
+  q56: "C",
+  q57: "B",
+  q58: "C",
+  q59: "C",
+  q60: "C",
+  q61: "B",
+  q62: "C",
+  q63: "C",
+  q64: "C",
+  q65: "B",
+  q66: "A",
+  q67: "B",
+  q68: "A",
+  q69: "A",
+  q70: "C",
+  q71: "C",
+  q72: "B",
+  q73: "B",
+  q74: "C",
+  q75: "B",
+  q76: "A",
+  q77: "C",
+  q78: "B",
+  q79: "C",
+  q80: "C",
+  q81: "C",
+  q82: "B",
+  q83: "C",
+  q84: "C",
+  q85: "C",
+  q86: "B",
+  q87: "A",
+  q88: "B",
+  q89: "B",
+  q90: "B",
+  q91: "B",
+  q92: "C",
+  q93: "B",
+  q94: "B",
+  q95: "A",
+  q96: "B",
+  q97: "A",
+  q98: "B",
+  q99: "B",
+  q100: "C",
 };
 
 const explanations = {
-    q1: "Absorption law: A + AB = A.",
-    q2: "A 4-variable K-map contains 2⁴ = 16 cells.",
-    q3: "NAND is a universal logic gate.",
-    q4: "XOR produces 1 when the inputs are different.",
-    q5: "A half adder produces Sum and Carry.",
-    q6: "A JK flip-flop removes the invalid SR condition.",
-    q7: "A 3-bit counter has 2³ = 8 states.",
-    q8: "NOT operation complements the input, so NOT 0 = 1.",
-    q9: "A multiplexer selects one input from multiple inputs.",
-    q10: "For 4 inputs, log₂4 = 2 select lines are required.",
-    q11: "1010₂ = 8 + 2 = 10.",
-    q12: "By De Morgan's theorem, (A+B)' = A'B'.",
-    q13: "A decoder activates one output corresponding to the input code.",
-    q14: "A flip-flop stores one bit.",
-    q15: "All flip-flops in a synchronous counter receive the same clock.",
-    q16: "CMOS has very low static power consumption.",
-    q17: "A left shift by one position generally multiplies a binary number by 2.",
-    q18: "Since 2³ < 10 ≤ 2⁴, four flip-flops are required.",
-    q19: "A comparator compares two binary numbers.",
-    q20: "assign is used for continuous assignment in Verilog.",
-    q21: "AND gives 1 only when all inputs are 1.",
-    q22: "A 2-to-4 decoder has 2 inputs and 4 outputs.",
-    q23: "Race-around can occur in a level-triggered JK flip-flop when J=K=1.",
-    q24: "A T flip-flop toggles when T=1.",
-    q25: "Y = (A·A)' = A', so it behaves as a NOT gate.",
-    q26: "A full adder has A, B and Carry-in as three inputs.",
-    q27: "A 16:1 MUX requires log₂16 = 4 select lines.",
-    q28: "A counter is a sequential circuit because it has memory.",
-    q29: "Idempotent law: A·A = A.",
-    q30: "The Verilog '&' operator represents bitwise AND."
+  q1: "Increasing pMOS strength shifts the inverter transition region toward a higher input voltage. Qualitatively, NML increases while NMH decreases.",
+  q2: "32K = 32768 = 2^15, so 15 address bits are required.",
+  q3: "The stated next-state transition occurs on one active clock edge, so one edge is required.",
+  q4: "For CD = 00, 01, 10, 11, XOR gives 0, 1, 1, 0 respectively. Hence A0,A1,A2,A3 = 0,1,1,0.",
+  q5: "Using distributive/consensus identities, x + yz = (x+y)(x+z).",
+  q6: "A low input turns the pMOS ON and the nMOS OFF, pulling the output up to logic 1.",
+  q7: "B̅ = 0 when B=1. Therefore Y = 0 + 0 = 0.",
+  q8: "Bitwise complementation changes 1→0 and 0→1, so 1011 becomes 0100.",
+  q9: "A circular left shift moves the MSB to the LSB: 0110 → 1100.",
+  q10: "D2 is the highest-priority input that is asserted, so D2 is encoded.",
+  q11: "Propagation delays of cascaded stages add: 10 ns + 10 ns = 20 ns.",
+  q12: "Reading the given state sequence, the next state after 11 is 10.",
+  q13: "A 10-bit converter has 2^10 = 1024 levels, so one LSB is approximately 1/1024 of full scale.",
+  q14: "Each pairwise product is 1 when that pair is 1. The majority function is XY + YZ + ZX.",
+  q15: "A full adder adds two operand bits and an incoming carry bit.",
+  q16: "1110 is decimal 14 and 1101 is decimal 13, so the change is one LSB.",
+  q17: "The sampled value at each rising edge is simply the input present at that edge.",
+  q18: "Minimum period = clock-to-Q delay + setup time = 2 ns + 2 ns = 4 ns.",
+  q19: "AND produces 1 only when both inputs are 1. Therefore 1 AND 0 = 0.",
+  q20: "There are 64 states from 0 to 63, and 2^6 = 64, so six flip-flops are required.",
+  q21: "For a JK flip-flop, J=K=1 is the toggle condition.",
+  q22: "For xy = 00,01,10,11, XOR gives 0,1,1,0, so the data inputs must be 0,1,1,0.",
+  q23: "A left shift gives 0110 when a 0 enters at the LSB.",
+  q24: "A four-variable K-map has 2^4 = 16 cells.",
+  q25: "A single-bit-error-correcting decoder identifies the error position and corrects that bit.",
+  q26: "A low input turns the pMOS ON and the nMOS OFF, so the pMOS provides the pull-up path.",
+  q27: "The CMOS pull-up network uses pMOS transistors; the pull-down network uses nMOS transistors.",
+  q28: "Parity bits create check relationships that allow error detection and, for standard Hamming codes, single-bit error correction.",
+  q29: "Ideally, one of the complementary transistor networks is OFF in steady state, so direct DC current is approximately zero.",
+  q30: "By De Morgan's theorem, (A+B)̅ = A̅B̅.",
+  q31: "An enhancement nMOS turns ON when VGS exceeds its threshold voltage.",
+  q32: "Absorption law: A + AB = A.",
+  q33: "A 4-variable K-map contains 2⁴ = 16 cells.",
+  q34: "NAND can be used to realize NOT, AND and OR.",
+  q35: "XOR produces 1 when its inputs are different.",
+  q36: "A half adder has Sum = A⊕B and Carry = AB.",
+  q37: "A JK flip-flop removes the invalid SR condition.",
+  q38: "A 3-bit counter has 2³ = 8 states.",
+  q39: "NOT 0 = 1.",
+  q40: "A multiplexer selects one input from several inputs.",
+  q41: "log₂4 = 2 select lines.",
+  q42: "1010₂ = 8 + 2 = 10.",
+  q43: "By De Morgan's theorem, (A+B)' = A'B'.",
+  q44: "A decoder activates an output corresponding to the input code.",
+  q45: "A flip-flop is a one-bit storage element.",
+  q46: "All flip-flops are triggered by the common clock.",
+  q47: "Ideally, CMOS has nearly zero static power when not switching.",
+  q48: "A one-bit left shift multiplies an unsigned integer by 2.",
+  q49: "2³ < 10 ≤ 2⁴, so 4 flip-flops are required.",
+  q50: "A magnitude comparator compares two binary numbers.",
+  q51: "assign is used for continuous assignments.",
+  q52: "AND is 1 only when all inputs are 1.",
+  q53: "A 2-to-4 decoder has 2 input lines and 4 output lines.",
+  q54: "For J=K=1, repeated toggling can occur during the active level.",
+  q55: "A T flip-flop toggles when T=1.",
+  q56: "Y=(A·A)'=A', so it acts as an inverter.",
+  q57: "Inputs are A, B and carry-in.",
+  q58: "log₂16 = 4.",
+  q59: "A counter has memory and state.",
+  q60: "Idempotent law: A·A=A.",
+  q61: "The Verilog & operator represents bitwise AND.",
+  q62: "Identity law: A+0=A.",
+  q63: "Identity law: A·1=A.",
+  q64: "Idempotent law: A+A=A.",
+  q65: "Complement law: A+A'=1.",
+  q66: "Complement law: A·A'=0.",
+  q67: "De Morgan's theorem gives (AB)'=A'+B'.",
+  q68: "Absorption: A(A+B)=A.",
+  q69: "Interchanging + with · and 0 with 1 gives A·1=A.",
+  q70: "All 2³=8 cells can form one group.",
+  q71: "Valid groups contain 1,2,4,8,... cells.",
+  q72: "Gray-code ordering makes adjacent cells differ in one variable.",
+  q73: "A group of 4 eliminates log₂4 = 2 variables.",
+  q74: "Don't-cares may be used as 0 or 1 for simplification.",
+  q75: "XNOR is the equality detector.",
+  q76: "XOR = A'B + AB', requiring inversion along with AND/OR.",
+  q77: "NOR is NOT-OR.",
+  q78: "NAND is NOT-AND.",
+  q79: "15 = 8+4+2+1 = 1111₂.",
+  q80: "1110₂ = E₁₆.",
+  q81: "Invert 00000101 →11111010 and add 1 →11111011.",
+  q82: "Unsigned n-bit numbers range from 0 through 2ⁿ−1.",
+  q83: "Two's complement range is −2ⁿ⁻¹ through 2ⁿ⁻¹−1.",
+  q84: "Sum = A XOR B.",
+  q85: "Carry = AB.",
+  q86: "Full-adder sum is A XOR B XOR Cin.",
+  q87: "Carry = AB + ACin + BCin.",
+  q88: "Carry must propagate from one stage to the next.",
+  q89: "A half subtractor has difference and borrow outputs.",
+  q90: "log₂8=3.",
+  q91: "log₂32=5.",
+  q92: "2³=8 outputs.",
+  q93: "An encoder converts one active input into a binary code; decoder reverses this mapping.",
+  q94: "It resolves multiple active inputs according to priority.",
+  q95: "These are the three magnitude relationships.",
+  q96: "XNOR is 1 when A and B are equal.",
+  q97: "The D input is transferred to Q at the active clock edge.",
+  q98: "T=0 means no change.",
+  q99: "T=1 causes the output to toggle.",
+  q100: "JK=00 is the no-change condition.",
 };
 
+function updateProgress() {
+  const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+  document.getElementById("progress").textContent = "Answered: " + answered + " / 100";
+}
+document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener("change", updateProgress));
+
 function submitTest() {
+  let score = 0;
+  let attempted = 0;
+  const review = document.getElementById("review");
+  review.innerHTML = "";
 
-    let score = 0;
-    let attempted = 0;
+  for (let i = 1; i <= 100; i++) {
+    const question = "q" + i;
+    const selected = document.querySelector('input[name="' + question + '"]:checked');
+    const userAnswer = selected ? selected.value : "Not Attempted";
+    if (selected) attempted++;
 
-    const review = document.getElementById("review");
-
-    review.innerHTML = "";
-
-    for (let i = 1; i <= 30; i++) {
-
-        const question = "q" + i;
-
-        const selected = document.querySelector(
-            'input[name="' + question + '"]:checked'
-        );
-
-        let userAnswer = selected ? selected.value : "Not Attempted";
-
-        if (selected) {
-            attempted++;
-        }
-
-        const block = document.createElement("div");
-
-        if (userAnswer === answers[question]) {
-
-            score++;
-
-            block.className = "correct";
-
-            block.innerHTML =
-                "<b>Q" + i + ": Correct ✓</b>" +
-                "<div class='explanation'>" +
-                explanations[question] +
-                "</div>";
-
-        } else {
-
-            block.className = "wrong";
-
-            block.innerHTML =
-                "<b>Q" + i + ": Incorrect ✗</b>" +
-                "<br>Your answer: " + userAnswer +
-                "<br>Correct answer: " + answers[question] +
-                "<div class='explanation'>" +
-                explanations[question] +
-                "</div>";
-        }
-
-        review.appendChild(block);
+    const block = document.createElement("div");
+    if (userAnswer === answers[question]) {
+      score++;
+      block.className = "correct";
+      block.innerHTML = "<b>Q" + i + ": Correct ✓</b><div class='explanation'>" + explanations[question] + "</div>";
+    } else {
+      block.className = "wrong";
+      block.innerHTML = "<b>Q" + i + ": Incorrect ✗</b><br>Your answer: " + userAnswer +
+        "<br>Correct answer: " + answers[question] +
+        "<div class='explanation'>" + explanations[question] + "</div>";
     }
+    review.appendChild(block);
+  }
 
-    const percentage = Math.round((score / 30) * 100);
+  const percentage = score;
+  document.getElementById("score").innerHTML = "Score: " + score + " / 100";
+  const target = 60;
 
-    document.getElementById("score").innerHTML =
-        "Score: " + score + " / 30";
-
+  if (percentage < target) {
     document.getElementById("percentage").innerHTML =
-        "Percentage: " + percentage + "% | Attempted: " +
-        attempted + " / 30";
+      "Percentage: " + percentage + "% | Attempted: " + attempted +
+      " / 100<br><span style='color:#b45309;font-weight:bold'>Target: " +
+      target + "%. You can retake the test to improve your score.</span>";
+    document.getElementById("retakeBtn").style.display = "block";
+  } else {
+    document.getElementById("percentage").innerHTML =
+      "Percentage: " + percentage + "% | Attempted: " + attempted +
+      " / 100<br><span style='color:#2e7d32;font-weight:bold'>🎉 Target achieved!</span>";
+    document.getElementById("retakeBtn").style.display = "none";
+  }
 
-    document.getElementById("result").style.display = "block";
-
-    window.scrollTo({
-        top: document.getElementById("result").offsetTop,
-        behavior: "smooth"
-    });
-
-    // Save result for dashboard
-    localStorage.setItem("gateScore", score);
-    localStorage.setItem("gateTotal", 30);
+  document.getElementById("result").style.display = "block";
+  window.scrollTo({ top: document.getElementById("result").offsetTop, behavior:"smooth" });
+  localStorage.setItem("gateScore", score);
+  localStorage.setItem("gateTotal", 100);
 }
 
+function retakeTest() {
+  document.getElementById("gateForm").reset();
+  document.getElementById("result").style.display = "none";
+  document.getElementById("review").innerHTML = "";
+  document.getElementById("score").innerHTML = "";
+  document.getElementById("percentage").innerHTML = "";
+  document.getElementById("retakeBtn").style.display = "none";
+  document.getElementById("progress").textContent = "Answered: 0 / 100";
+  localStorage.removeItem("gateScore");
+  localStorage.removeItem("gateTotal");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 </script>
-
 </body>
 </html>
-```
