@@ -37,3 +37,28 @@ Save and push. Every Level 4 page opens for students. Do the same for `level5` a
 - Every page needs a login (the home page and login page stay public).
 - A student whose saved USN is not in `4GWxxECxxx` format must register again.
 - Existing progress is kept: no progress key was renamed or reset.
+
+## Level 7 – Digital VLSI Design (Part B)
+
+Level 7 is installed but **locked**. To open it for students, edit `access-control.js` and change
+
+    level7: false,
+
+to
+
+    level7: true,
+
+then upload the file. Levels 8–14 remain "coming soon".
+
+New files for Level 7 (Levels 1–6 content is unchanged):
+
+- `level7.html` – Level 7 dashboard (progress ring, module cards, certificate card)
+- `level7-module1.html` … `level7-module10.html` – the ten modules
+- `level7-certificate.html` – certificate (unlocks when all ten modules are completed)
+- `css/level7.css` – the Part B design (dark "silicon" theme, different from Part A)
+- `js/level7-common.js` – shared engine: labs, animations, drag & drop, quizzes, progress
+- `js/level7-module1.js` … `js/level7-module10.js` – content of each module
+
+Shared files updated: `access-control.js` (Level 7 entry), `common.js` (Level 7 in menus, student dashboard and certificate), `index.html` (Level 7 card opens Level 7), `dashboard.html` (Level 1 progress cards now open their pages).
+
+Progress is stored in the student's browser (`dde_level7_progress`, `level7_moduleN_completed`, and `dde_level7_project` for the mini-project tracker), like the other levels.

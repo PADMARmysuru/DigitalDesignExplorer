@@ -315,7 +315,7 @@
             <div>
                 <h2>Advanced VLSI &amp; Digital IC Design</h2>
                 <p>Advanced VLSI learning: design, timing and power, synthesis, physical design, verification, test, architecture and AI/ML for VLSI.</p>
-                <span class="part-meta">Levels 7–14 · 🔒 Locked · ⏳ Coming Soon</span>
+                <span class="part-meta">Levels 7–14 · Level 7: Digital VLSI Design · ⏳ Levels 8–14 coming soon</span>
             </div>
         </div>
 
@@ -323,10 +323,10 @@
             <div class="path-step">
                 <div class="path-circle">L7</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span>
                     <h3>LEVEL 7 — Digital VLSI Design</h3>
-                    <p>Advanced digital VLSI design, circuit architectures and emerging technologies.</p>
-                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
+                    <p>Advanced CMOS logic, arithmetic circuits, datapaths, memories, interconnect, standard cells, IP, reliability and emerging technologies.</p>
+                    <button class="path-button" type="button" onclick="goLevel(7)">🔒 Not yet released</button>
                 </div>
             </div>
         
@@ -452,7 +452,8 @@
         anyone could read the PIN in the page source.
         */
         var LEVEL_PAGES = { 1: 'dashboard.html', 2: 'level2-dashboard.html', 3: 'level3-dashboard.html',
-                            4: 'level4-dashboard.html', 5: 'level5-dashboard.html', 6: 'level6.html' };
+                            4: 'level4-dashboard.html', 5: 'level5-dashboard.html', 6: 'level6.html',
+                            7: 'level7.html' };
 
         function goLevel(level) {
             if (!LEVEL_PAGES[level]) {

@@ -134,8 +134,31 @@
     }
   ];
 
-  /* Part B – Advanced VLSI & Digital IC Design: ROADMAP ONLY.
-     These levels have no pages yet; they are always shown as locked / coming soon. */
+  /* Part B – Advanced VLSI & Digital IC Design.
+     Level 7 has pages (released through LEVEL_ACCESS.level7 in access-control.js).
+     Levels 8–14 are ROADMAP ONLY: no pages yet, always shown as locked / coming soon. */
+  var LEVELS_B = [
+    {
+      n: 7, part: 'B', title: 'Digital VLSI Design', color: '#16b5c9', dashboard: 'level7.html', certificate: 'level7-certificate.html',
+      modules: [
+        ['Advanced CMOS Logic Design', 'level7-module1.html'], ['VLSI Arithmetic Circuit Design', 'level7-module2.html'],
+        ['Datapath Circuit Design', 'level7-module3.html'], ['VLSI Memory Circuits', 'level7-module4.html'],
+        ['VLSI Interconnect', 'level7-module5.html'], ['Standard Cell Design', 'level7-module6.html'],
+        ['IP-Based VLSI Design', 'level7-module7.html'], ['VLSI Design for Reliability', 'level7-module8.html'],
+        ['Emerging Digital VLSI Technologies', 'level7-module9.html'], ['Digital VLSI Mini Project', 'level7-module10.html']
+      ],
+      unit: 'Modules', numbered: true,
+      progress: function () {
+        return LEVELS_B[0].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level7_module' + (i + 1) + '_completed'), href: m[1] }; });
+      }
+    }
+  ];
+  function levelByN(n) {
+    n = +n;
+    if (n >= 1 && n <= LEVELS.length) return LEVELS[n - 1];
+    for (var i = 0; i < LEVELS_B.length; i++) if (LEVELS_B[i].n === n) return LEVELS_B[i];
+    return null;
+  }
   var PART_B = [
     [7, 'Digital VLSI Design', 'Advanced digital VLSI design, circuit architectures and emerging technologies.'],
     [8, 'VLSI Timing & Power', 'Timing behavior, timing analysis and power-related concepts in VLSI circuits.'],
@@ -154,7 +177,7 @@
   }
   function student() { return A.currentStudent ? A.currentStudent() : null; }
 
-  var DDE = window.DDE = { PART_B: PART_B, LEVELS: LEVELS, levelStats: levelStats, isOpen: isOpen, student: student };
+  var DDE = window.DDE = { PART_B: PART_B, LEVELS: LEVELS, LEVELS_B: LEVELS_B, levelByN: levelByN, levelStats: levelStats, isOpen: isOpen, student: student };
 
   /* ---------- Small SVG pieces ---------- */
   var LOGO = '<svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="3" fill="none" stroke="#c9a227" stroke-width="2"/>' +
@@ -198,6 +221,9 @@
         ? '<a href="' + x.dashboard + '"' + (L && L.n === x.n ? ' class="is-current"' : '') + '><span class="dde-num">' + x.n + '</span>🟢 ' + esc(x.title) + '</a>'
         : '<span class="is-locked" title="Not yet released"><span class="dde-num">' + x.n + '</span>🔒 ' + esc(x.title) + '</span>';
     }).join('') + '<hr><span class="dde-menu-head">Part B — Advanced VLSI</span>' + PART_B.map(function (x) {
+      var B = levelByN(x[0]);
+      if (B && isOpen(B.n)) return '<a href="' + B.dashboard + '"' + (L && L.n === B.n ? ' class="is-current"' : '') + '><span class="dde-num">' + x[0] + '</span>🟢 ' + esc(x[1]) + '</a>';
+      if (B) return '<span class="is-locked" title="Not yet released"><span class="dde-num">' + x[0] + '</span>🔒 ' + esc(x[1]) + '</span>';
       return '<span class="is-locked" title="Coming soon"><span class="dde-num">' + x[0] + '</span>🔒 ' + esc(x[1]) + ' <em class="dde-soon">Coming soon</em></span>';
     }).join('') + '</div></details>';
     // Current level menu
@@ -272,10 +298,10 @@
   DDE.logout = logout;
 
   function mountChrome() {
-    var page = A.page || 'index.html', L = A.level ? LEVELS[A.level - 1] : null;
+    var page = A.page || 'index.html', L = A.level ? levelByN(A.level) : null;
     if (page === 'locked.html') {
       var q = parseInt(new URLSearchParams(location.search).get('level'), 10);
-      if (q >= 1 && q <= 6) L = null;
+      if (q >= 1 && q <= 7) L = null;
     }
     var b = document.body;
     b.classList.add('dde-on');
@@ -317,7 +343,7 @@
   /* ---------- Dashboard overview (profile, overall progress, levels) ---------- */
   function renderOverview(root) {
     var st = student() || {};
-    var open = LEVELS.filter(function (L) { return isOpen(L.n); });
+    var open = LEVELS.concat(LEVELS_B).filter(function (L) { return isOpen(L.n); });
     var tot = 0, done = 0, finished = 0;
     open.forEach(function (L) { var s = levelStats(L); tot += s.total; done += s.done; if (s.done === s.total) finished++; });
     var pct = tot ? Math.round(100 * done / tot) : 0;
@@ -360,8 +386,26 @@
     html += '</div>';
     html += '<div class="dde-part dde-part-b"><span class="dde-part-badge">PART B</span><div><h3>Advanced VLSI &amp; Digital IC Design</h3>' +
       '<p>The advanced track: digital VLSI design, timing and power, synthesis, physical design, verification, DFT, processor architecture and AI/ML for VLSI.</p>' +
-      '<span class="dde-part-meta">Levels 7–14 · 🔒 Locked · ⏳ Coming Soon</span></div></div><div class="dde-levels dde-levels-b">';
+      '<span class="dde-part-meta">Levels 7–14 · Level 7 ' + (isOpen(7) ? '🟢 available' : '🔒 locked') + ' · ⏳ Levels 8–14 coming soon</span></div></div><div class="dde-levels dde-levels-b">';
     PART_B.forEach(function (x) {
+      var B = levelByN(x[0]);
+      if (B) {
+        var bo = isOpen(B.n), bs = bo ? levelStats(B) : null, bf = bs && bs.done === bs.total;
+        html += '<article class="dde-card dde-level' + (bo ? '' : ' is-locked') + '" style="--lvl:' + (bo ? B.color : '#9aa3b2') + '">' +
+          '<div class="dde-level-top"><div><span class="dde-level-num">Level ' + B.n + '</span><h3>' + esc(B.title) + '</h3></div>' +
+          (bo ? (bf ? '<span class="dde-pill is-done">🏆 Completed</span>' : '<span class="dde-pill is-open">🟢 Available</span>') : '<span class="dde-pill is-locked">🔒 Locked</span>') + '</div>';
+        if (bo) {
+          html += '<div class="dde-bar' + (bf ? ' is-full' : '') + '"><span style="width:' + bs.pct + '%"></span></div>' +
+            '<div class="dde-level-meta"><span>Progress: <b>' + bs.pct + '%</b></span><span>Completed ' + B.unit + ': <b>' + bs.done + '/' + bs.total + '</b></span></div>' +
+            '<div class="dde-level-actions"><a class="dde-btn" href="' + B.dashboard + '">' + (bs.done ? 'Continue Learning →' : 'Start Learning →') + '</a>' +
+            (bf ? '<a class="dde-btn is-gold" href="' + B.certificate + '">🏆 Certificate</a>' : '') + '</div>';
+        } else {
+          html += '<p class="dde-level-note">' + esc(x[2]) + ' This level will open when your instructor releases it.</p>' +
+            '<div class="dde-level-actions"><button type="button" class="dde-btn" disabled aria-disabled="true">🔒 Locked</button></div>';
+        }
+        html += '</article>';
+        return;
+      }
       html += '<article class="dde-card dde-level dde-roadmap"><div class="dde-level-top"><div><span class="dde-level-num">🔒 Level ' + x[0] + '</span><h3>' + esc(x[1]) + '</h3></div>' +
         '<span class="dde-pill is-locked">🔒 Locked</span></div><p class="dde-level-note">' + esc(x[2]) + '</p>' +
         '<div class="dde-level-actions"><span class="dde-soonbar">⏳ Coming Soon</span></div></article>';
@@ -374,7 +418,7 @@
   /* ---------- Locked level page ---------- */
   function renderLocked(root) {
     var n = parseInt(new URLSearchParams(location.search).get('level'), 10);
-    var L = LEVELS[n - 1];
+    var L = levelByN(n);
     if (L && isOpen(n)) { location.replace(L.dashboard); return; }
     root.innerHTML = '<div class="dde-card dde-locked" role="alert"><div class="dde-big" aria-hidden="true">🔒</div>' +
       '<h1>' + (L ? 'Level ' + n + ' is currently locked' : 'This level is currently locked') + '</h1>' +
@@ -401,7 +445,8 @@
     3: 'covering Verilog basics, structural, data-flow, behavioral and RTL modeling, and testbench-based verification',
     4: 'covering MOSFET operation, CMOS logic design, inverter analysis, layout, fabrication, scaling and advanced logic styles',
     5: 'covering fault models, fault simulation, test pattern generation, design for testability, scan, BIST and boundary scan',
-    6: 'covering SystemVerilog design constructs, object-oriented programming, assertions, constrained randomization, functional coverage and layered testbenches'
+    6: 'covering SystemVerilog design constructs, object-oriented programming, assertions, constrained randomization, functional coverage and layered testbenches',
+    7: 'covering advanced CMOS logic, VLSI arithmetic circuits, datapaths, memory circuits, interconnect, standard cells, IP-based design, reliability and emerging VLSI technologies'
   };
 
   function corner(tf) {
@@ -415,7 +460,7 @@
     '<text x="60" y="74" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#c9a227">2026</text></svg>';
 
   function renderCertificate(root, n) {
-    var L = LEVELS[n - 1], s = levelStats(L), st = student() || {};
+    var L = levelByN(n), s = levelStats(L), st = student() || {};
     document.body.classList.add('dde-certpage');
     if (s.done < s.total) {
       root.innerHTML = '<div class="dde-wrap"><div class="dde-card dde-locked" role="alert"><div class="dde-big" aria-hidden="true">🔒</div>' +

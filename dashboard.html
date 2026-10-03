@@ -94,6 +94,12 @@
             transition: width 0.5s ease;
         }
 
+        /* Progress cards open their page (click or keyboard) */
+        .progress-card[data-href] { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+        .progress-card[data-href]:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.14); }
+        .progress-card[data-href]:focus-visible { outline: 3px solid #243b64; outline-offset: 3px; }
+        .progress-card[data-href] .open-hint { display: block; margin-top: 8px; font-size: 13px; font-weight: 600; color: #243b64; }
+
     </style>
 
 </head>
@@ -173,7 +179,7 @@
 
     <section class="dashboard-cards">
 
-        <div class="progress-card module-logic">
+        <div class="progress-card module-logic" data-href="logic-gates.html">
             <h2>💡 Logic Gates</h2>
             <div class="progress-bar">
                 <div class="progress" id="logicProgress">0%</div>
@@ -181,7 +187,7 @@
             <p id="logicProgressText">0 / 7 Gates Completed</p>
         </div>
 
-        <div class="progress-card module-half">
+        <div class="progress-card module-half" data-href="half-adder.html">
             <h2>➕ Half Adder</h2>
             <div class="progress-bar">
                 <div class="progress" id="halfAdderProgress">0%</div>
@@ -189,7 +195,7 @@
             <p id="halfAdderProgressText">Not Completed</p>
         </div>
 
-        <div class="progress-card module-full">
+        <div class="progress-card module-full" data-href="full-adder.html">
             <h2>➕ Full Adder</h2>
             <div class="progress-bar">
                 <div class="progress" id="fullAdderProgress">0%</div>
@@ -197,7 +203,7 @@
             <p id="fullAdderProgressText">Not Completed</p>
         </div>
 
-        <div class="progress-card module-verilog">
+        <div class="progress-card module-verilog" data-href="practice.html">
             <h2>💻 Verilog Practice</h2>
             <div class="progress-bar">
                 <div class="progress" id="practiceProgress">0%</div>
@@ -205,13 +211,13 @@
             <p id="practiceCompleted">0 / 10 Programs Completed</p>
         </div>
 
-        <div class="progress-card module-quiz">
+        <div class="progress-card module-quiz" data-href="quiz.html">
             <h2>📝 Quiz</h2>
             <div class="score-display" id="quizScore">-- / 110</div>
             <p id="quizProgressText">Quiz Not Completed</p>
         </div>
 
-        <div class="progress-card module-kmap">
+        <div class="progress-card module-kmap" data-href="kmap.html">
             <h2>🧩 K-Map</h2>
             <div class="progress-bar">
                 <div class="progress" id="kmapProgress">0%</div>
@@ -219,7 +225,7 @@
             <p id="kmapProgressText">Not Completed</p>
         </div>
 
-        <div class="progress-card module-qm">
+        <div class="progress-card module-qm" data-href="quine-mccluskey.html">
             <h2>🧮 Quine–McCluskey</h2>
             <div class="progress-bar">
                 <div class="progress" id="qmProgress">0%</div>
@@ -258,7 +264,7 @@
     </section>
 
 
-    <div class="progress-card module-lab" style="grid-column: 1 / -1; max-width: 350px; width: 100%; justify-self: center;">
+    <div class="progress-card module-lab" data-href="digital-logic-lab.html" style="grid-column: 1 / -1; max-width: 350px; width: 100%; justify-self: center;">
             <h2>🧪 Digital Logic Lab</h2>
 
             <div class="progress-bar">
@@ -801,6 +807,29 @@ function logout() {
 
 </script>
 
+
+
+<!-- PROGRESS CARDS OPEN THEIR MODULE -->
+<script>
+(function () {
+    var cards = document.querySelectorAll('.progress-card[data-href]');
+    Array.prototype.forEach.call(cards, function (card) {
+        var href = card.getAttribute('data-href');
+        var title = (card.querySelector('h2') || {}).textContent || 'module';
+        card.setAttribute('role', 'link');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', 'Open ' + title.replace(/^[^A-Za-z]+/, '').trim());
+        var hint = document.createElement('span');
+        hint.className = 'open-hint';
+        hint.textContent = 'Open →';
+        card.appendChild(hint);
+        card.addEventListener('click', function () { window.location.href = href; });
+        card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.location.href = href; }
+        });
+    });
+})();
+</script>
 
 </body>
 

@@ -13,6 +13,8 @@ var LEVEL_ACCESS = {
   level4: false,  // VLSI Basics       (locked until you release it)
   level5: false,  // VLSI Testing      (locked until you release it)
   level6: false,   // SystemVerilog     (locked until you release it)
+  // ---- Part B: Advanced VLSI ----
+  level7: false,  // Digital VLSI Design (locked until you release it)
 };
 
 /* Only ECE students of GSSSIETW: 4GW + 2 digits + EC + 3 digits, e.g. 4GW24EC001 */
@@ -40,7 +42,10 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
     6: ['level6.html', 'level6-module1.html', 'level6-module2.html', 'level6-module3.html',
         'level6-module4.html', 'level6-module5.html', 'level6-module6.html', 'level6-module7.html',
         'level6-module8.html', 'level6-module9.html', 'level6-module10.html', 'level6-module11.html',
-        'level6-module12.html', 'level6-certificate.html']
+        'level6-module12.html', 'level6-certificate.html'],
+    7: ['level7.html', 'level7-module1.html', 'level7-module2.html', 'level7-module3.html',
+        'level7-module4.html', 'level7-module5.html', 'level7-module6.html', 'level7-module7.html',
+        'level7-module8.html', 'level7-module9.html', 'level7-module10.html', 'level7-certificate.html']
   };
 
   /* Pages anyone may open without logging in */
