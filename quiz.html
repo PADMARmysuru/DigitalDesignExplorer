@@ -17,6 +17,7 @@
 
     <link rel="stylesheet" href="style.css">
     <script src="supabase-config.js"></script>
+<script src="js/progress-sync.js"></script>
 
 </head>
 
@@ -1753,32 +1754,8 @@ async function showResult() {
         "quizScore",
         score
     );
-    const studentId = localStorage.getItem("studentId");
-
-if (studentId) {
-const response = await fetch(
-    SUPABASE_URL + "/rest/v1/student_progress?student_id=eq." + studentId,
-    {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            "apikey": SUPABASE_ANON_KEY,
-            "Authorization": "Bearer " + SUPABASE_ANON_KEY,
-            "Prefer": "return=minimal"
-        },
-        body: JSON.stringify({
-            quiz_score: score,
-            quiz_total: questions.length
-        })
-    }
-);
-
-console.log("Quiz update status:", response.status);
-
-if (!response.ok) {
-    console.error("Quiz update failed:", await response.text());
-}
-}
+    // Level 1 · Module 5 (Quiz) → Supabase: every attempt is recorded, best score kept
+    if (window.DDEProgress) DDEProgress.recordQuiz(1, 5, score, questions.length);
 
     localStorage.setItem(
         "quizTotal",

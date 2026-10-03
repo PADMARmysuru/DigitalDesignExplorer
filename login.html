@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
 <!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
 <script src="access-control.js"></script>
 <link rel="stylesheet" href="common.css">
@@ -10,6 +11,7 @@
     <title>Digital Design Explorer - Student Login</title>
     <link rel="stylesheet" href="style.css">
     <script src="supabase-config.js"></script>
+    <script src="js/progress-sync.js"></script>
 </head>
 
 <body>
@@ -86,176 +88,126 @@ function validateUSNField(inputId, messageId) {
     return usn;
 }
 
+/* Local password check (only a hash is kept on this device; older accounts may still hold plain text) */
+async function hashLocal(text) {
+    try {
+        const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("dde:" + text));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+    } catch (e) { return null; }
+}
+async function localPasswordMatches(saved, password) {
+    if (!saved) return false;
+    if (saved.passwordHash) return saved.passwordHash === await hashLocal(password);
+    return saved.password === password;   // account created before this update
+}
+function say(id, text, color) {
+    const el = document.getElementById(id);
+    el.innerHTML = text;
+    el.style.color = color;
+}
+function readRegisterForm(usn) {
+    return {
+        name: document.getElementById("studentName").value.trim(),
+        usn: usn,
+        branch: document.getElementById("studentBranch").value,
+        semester: document.getElementById("studentSemester").value,
+        section: document.getElementById("studentSection").value,
+        email: document.getElementById("studentEmail").value.trim()
+    };
+}
+async function saveLocalAccount(student, password) {
+    const local = Object.assign({}, student);
+    const h = await hashLocal(password);
+    if (h) local.passwordHash = h; else local.password = password;
+    localStorage.setItem("studentAccount", JSON.stringify(local));
+}
+
 async function registerStudent() {
     // Validate the USN first: an invalid USN is never saved locally or sent to Supabase
     const validUSN = validateUSNField("studentUSN", "registerMessage");
     if (!validUSN) return;
-
-    const studentId = crypto.randomUUID();
-localStorage.setItem("studentId", studentId);
-    let student = {
-
-        name:
-            document.getElementById("studentName").value,
-
-        usn:
-            validUSN,
-
-        branch:
-            document.getElementById("studentBranch").value,
-
-        semester:
-            document.getElementById("studentSemester").value,
-
-        section:
-            document.getElementById("studentSection").value,
-
-        email:
-            document.getElementById("studentEmail").value,
-
-        password:
-            document.getElementById("studentPassword").value
-
-    };
-
-    // Keep the existing local login system
-    localStorage.setItem(
-        "studentAccount",
-        JSON.stringify(student)
-    );
-
-    // Save student information to Supabase
+    const student = readRegisterForm(validUSN);
+    const password = document.getElementById("studentPassword").value;
+    if (!student.name || !student.email || !password) {
+        say("registerMessage", "❌ Please fill in your name, email and password.", "red");
+        return;
+    }
+    say("registerMessage", "Registering…", "#4a5468");
     try {
-
-        const response = await fetch(
-            SUPABASE_URL + "/rest/v1/STUDENTS",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json",
-                    "apikey": SUPABASE_ANON_KEY,
-                    "Authorization":
-                        "Bearer " + SUPABASE_ANON_KEY,
-                 "Prefer": "return=minimal"
-                },
-
-                body: JSON.stringify({
-                    id: studentId,
-                    student_id: student.usn,
-                    student_name: student.name,
-                    email: student.email,
-                    branch: student.branch,
-                    semester: student.semester,
-                    section: student.section
-                })
-            }
-        );
-
-        if (!response.ok) {
-
-            const errorText = await response.text();
-
-            console.error(
-                "Supabase registration error:",
-                errorText
-            );
-
-            document.getElementById("registerMessage")
-                .innerText =
-                "Registration saved locally, but database saving failed.";
-
-            document.getElementById("registerMessage")
-                .style.color = "orange";
-
-            return;
+        const r = await DDEProgress.register(student, password);
+        if (r && r.ok) {
+            await saveLocalAccount(student, password);
+            say("registerMessage", "✅ Registration successful! You can now login.", "green");
+        } else if (r && r.error === "already_registered") {
+            say("registerMessage", "❌ This USN is already registered. Please login. If you forgot your password, ask your teacher to reset your registration.", "red");
+        } else if (r && r.error === "weak_password") {
+            say("registerMessage", "❌ Please choose a password with at least 4 characters.", "red");
+        } else {
+            console.error("Registration rejected by the server:", r);
+            say("registerMessage", "❌ Registration failed (" + ((r && r.error) || "unknown error") + "). Please check your details.", "red");
         }
-
-        
-const progressResponse = await fetch(
-    SUPABASE_URL + "/rest/v1/student_progress",
-    {
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json",
-            "apikey": SUPABASE_ANON_KEY,
-            "Authorization":
-                "Bearer " + SUPABASE_ANON_KEY,
-            "Prefer": "return=minimal"
-        },
-
-        body: JSON.stringify({
-            student_id: studentId,
-            logic_gates: 0,
-            digital_circuits: 0,
-            quiz_score: 0,
-            quiz_total: 110,
-            kmap: 0,
-            verilog: 0,
-            certificate: false
-        })
+    } catch (e) {
+        // Server unreachable: keep the existing local registration; it is sent to the server at the next online login
+        console.error("Supabase registration error:", e.code, e.message);
+        await saveLocalAccount(student, password);
+        say("registerMessage", e.code === "setup"
+            ? "Registration saved on this device. Progress tracking is not set up on the server yet – please tell your teacher."
+            : "Registration saved on this device, but the server could not be reached. Login again when you are online to finish registration.", "orange");
     }
-);
-console.log("Progress insert status:", progressResponse.status);
-console.log("Progress insert response:", await progressResponse.text());
-
-        document.getElementById("registerMessage")
-            .innerText =
-            "✅ Registration successful! You can now login.";
-
-        document.getElementById("registerMessage")
-            .style.color = "green";
-
-    } catch (error) {
-
-        console.error(
-            "Supabase connection error:",
-            error
-        );
-
-        document.getElementById("registerMessage")
-            .innerText =
-            "Registration saved locally. Database connection failed.";
-
-        document.getElementById("registerMessage")
-            .style.color = "orange";
-    }
-
 }
 
+function finishLogin() {
+    localStorage.setItem("studentLoggedIn", "true");
+    // Return to the page the student originally asked for (only pages of this site)
+    const next = new URLSearchParams(window.location.search).get("next");
+    window.location.href = (next && /^[a-z0-9-]+\.html$/i.test(next) && next !== "login.html") ? next : "student-dashboard.html";
+}
 
-function loginStudent() {
+async function loginStudent() {
     const enteredUSN = validateUSNField("loginUSN", "loginMessage");
     if (!enteredUSN) return;
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
 
     let savedStudent = null;
     try { savedStudent = JSON.parse(localStorage.getItem("studentAccount")); } catch (e) { savedStudent = null; }
+    const savedUSN = savedStudent ? String(savedStudent.usn || "").trim().toUpperCase() : "";
+    const localOk = !!savedStudent && savedUSN === enteredUSN &&
+        String(savedStudent.email || "").trim().toLowerCase() === email.toLowerCase() &&
+        await localPasswordMatches(savedStudent, password);
 
-    let email = document.getElementById("loginEmail").value;
-    let password = document.getElementById("loginPassword").value;
-
-    if (!savedStudent) {
-        document.getElementById("loginMessage").innerText = "❌ Please register first.";
-        document.getElementById("loginMessage").style.color = "red";
-        return;
-    }
-
-    const savedUSN = String(savedStudent.usn || "").trim().toUpperCase();
-    if (!USN_PATTERN.test(savedUSN)) {
-        document.getElementById("loginMessage").innerHTML = "<strong>Invalid USN</strong><br>The account saved on this device does not have a valid USN (format <strong>4GWxxECxxx</strong>, e.g. <strong>4GW24EC001</strong>). Please register again with your correct USN.";
-        document.getElementById("loginMessage").style.color = "red";
-        return;
-    }
-
-    if (email === savedStudent.email && password === savedStudent.password && enteredUSN === savedUSN) {
-        localStorage.setItem("studentLoggedIn", "true");
-        // Return to the page the student originally asked for (only pages of this site)
-        const next = new URLSearchParams(window.location.search).get("next");
-        window.location.href = (next && /^[a-z0-9-]+\.html$/i.test(next) && next !== "login.html") ? next : "student-dashboard.html";
-    } else {
-        document.getElementById("loginMessage").innerText = "❌ Invalid USN, Email or Password.";
-        document.getElementById("loginMessage").style.color = "red";
+    say("loginMessage", "Logging in…", "#4a5468");
+    try {
+        let r = await DDEProgress.login(enteredUSN, email, password);
+        if (r && !r.ok && r.error === "not_registered" && localOk) {
+            // Registered on this device before the server was ready: register on the server now
+            r = await DDEProgress.register(savedStudent, password);
+        }
+        if (r && r.ok) {
+            if (savedUSN !== enteredUSN) localStorage.removeItem("ddePendingSaves");   // another student used this device
+            DDEProgress.setToken(r.token);
+            const p = r.student || {};
+            await saveLocalAccount({ name: p.name, usn: p.usn, branch: p.branch, semester: p.semester, section: p.section, email: p.email }, password);
+            try { await DDEProgress.restore(); await DDEProgress.flush(); } catch (e) { console.error("Progress restore failed:", e.code, e.message); }
+            finishLogin();
+            return;
+        }
+        if (r && r.error === "not_registered") {
+            say("loginMessage", "❌ This USN is not registered. Please register first.", "red");
+        } else {
+            say("loginMessage", "❌ Invalid USN, Email or Password.", "red");
+        }
+    } catch (e) {
+        // Server unreachable: fall back to the existing login on this device
+        console.error("Supabase login error:", e.code, e.message);
+        if (localOk) {
+            say("loginMessage", "Logged in on this device (offline). Your progress will be saved to your account at your next online login.", "orange");
+            setTimeout(finishLogin, 1200);
+        } else if (!savedStudent) {
+            say("loginMessage", "❌ The server could not be reached and this device has no saved account. Please check your connection.", "red");
+        } else {
+            say("loginMessage", "❌ Invalid USN, Email or Password.", "red");
+        }
     }
 }
 </script>

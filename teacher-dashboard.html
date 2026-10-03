@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teacher Dashboard | Digital Design Explorer</title>
+<meta name="robots" content="noindex">
+<!-- Digital Design Explorer: common platform (header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+<script src="supabase-config.js"></script>
+<script src="js/progress-sync.js"></script>
+<style>
+body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial, sans-serif; }
+.tdb h1 { margin: 0 0 4px; font-size: 1.5rem; color: var(--dde-navy); }
+.tdb .sub { margin: 0; color: var(--dde-ink-2); }
+.tdb-top { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+.tdb-msg { margin: 14px 0 0; padding: 10px 14px; border-radius: 10px; font-weight: 600; display: none; }
+.tdb-msg.is-bad { display: block; background: #fdecec; color: #a12a2a; }
+.tdb-msg.is-info { display: block; background: #eef3fc; color: var(--dde-navy); }
+.tdb-login { max-width: 420px; margin: 20px auto; }
+.tdb-login label, .tdb-filters label { display: block; font-size: .8rem; font-weight: 700; color: var(--dde-ink-2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .03em; }
+.tdb input, .tdb select { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--dde-line); border-radius: 10px; font: inherit; background: #fff; color: var(--dde-ink); }
+.tdb-filters { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.tdb-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.tdb-actions .dde-btn { padding: 9px 16px; font-size: .9rem; }
+.tdb-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.tdb-stat { background: #fff; border: 1px solid var(--dde-line); border-radius: 14px; padding: 14px 16px; box-shadow: var(--dde-shadow); }
+.tdb-stat span { display: block; font-size: .78rem; font-weight: 700; color: var(--dde-ink-3); text-transform: uppercase; letter-spacing: .03em; }
+.tdb-stat b { font-size: 1.6rem; color: var(--dde-navy); }
+.tdb-table-wrap { overflow-x: auto; }
+.tdb-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.tdb-table th { text-align: left; font-size: .78rem; text-transform: uppercase; letter-spacing: .03em; color: var(--dde-ink-3); padding: 10px 12px; border-bottom: 2px solid var(--dde-line); white-space: nowrap; }
+.tdb-table td { padding: 12px; border-bottom: 1px solid var(--dde-line); vertical-align: middle; }
+.tdb-table tbody tr { cursor: pointer; }
+.tdb-table tbody tr:hover, .tdb-table tbody tr:focus { background: #f6f9ff; outline: none; }
+.tdb-prog { display: flex; align-items: center; gap: 10px; min-width: 140px; }
+.tdb-prog .dde-bar { flex: 1; height: 9px; }
+.tdb-prog b { min-width: 42px; text-align: right; }
+.tdb-st { display: inline-block; font-size: .78rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
+.tdb-st.done { background: var(--dde-ok-soft); color: var(--dde-ok); }
+.tdb-st.prog { background: #fff4d6; color: #8a6d0f; }
+.tdb-st.none { background: #eef0f4; color: var(--dde-lock); }
+.tdb-empty { text-align: center; color: var(--dde-ink-3); padding: 30px 10px; }
+.tdb-modal { position: fixed; inset: 0; background: rgba(22, 39, 70, .45); display: none; align-items: flex-start; justify-content: center; padding: 30px 14px; z-index: 9000; overflow-y: auto; }
+.tdb-modal.is-open { display: flex; }
+.tdb-modal .dde-card { width: 100%; max-width: 720px; position: relative; }
+.tdb-close { position: absolute; top: 12px; right: 12px; border: 0; background: #eef0f4; border-radius: 10px; width: 36px; height: 36px; font-size: 1.1rem; cursor: pointer; }
+.tdb-kv { display: grid; grid-template-columns: 140px 1fr; gap: 6px 14px; margin: 0; }
+.tdb-kv dt { font-weight: 700; color: var(--dde-ink-2); }
+.tdb-kv dd { margin: 0; }
+.tdb-items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 14px 0; }
+.tdb-item { border: 1px solid var(--dde-line); border-radius: 12px; padding: 10px 12px; }
+.tdb-item span { display: block; font-size: .75rem; font-weight: 700; color: var(--dde-ink-3); text-transform: uppercase; }
+.tdb-item b { font-size: 1.05rem; }
+.tdb-mini { width: 100%; border-collapse: collapse; font-size: .88rem; margin-top: 6px; }
+.tdb-mini td, .tdb-mini th { padding: 6px 8px; border-bottom: 1px solid var(--dde-line); text-align: left; }
+.tdb h3 { color: var(--dde-navy); margin: 22px 0 8px; font-size: 1.05rem; }
+@media (max-width: 900px) {
+  .tdb-filters, .tdb-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tdb-items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Phones: each student becomes a card */
+@media (max-width: 640px) {
+  .tdb-table thead { display: none; }
+  .tdb-table, .tdb-table tbody, .tdb-table tr, .tdb-table td { display: block; width: 100%; box-sizing: border-box; }
+  .tdb-table tr { border: 1px solid var(--dde-line); border-radius: 14px; margin-bottom: 12px; padding: 6px 4px; background: #fff; }
+  .tdb-table td { border: 0; padding: 6px 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .tdb-table td::before { content: attr(data-label); font-size: .75rem; font-weight: 700; color: var(--dde-ink-3); text-transform: uppercase; flex: none; }
+  .tdb-table td.tdb-name { font-size: 1.05rem; font-weight: 700; }
+  .tdb-prog { flex: 1; justify-content: flex-end; min-width: 0; }
+  .tdb-kv { grid-template-columns: 110px 1fr; }
+}
+</style>
+</head>
+<body>
+<main class="dde-wrap tdb">
+
+  <section class="dde-card">
+    <div class="tdb-top">
+      <div>
+        <h1>👩‍🏫 Teacher Dashboard</h1>
+        <p class="sub">Student progress by level and module.</p>
+      </div>
+      <button type="button" class="dde-btn is-ghost" id="tdbLogout" hidden>Log out</button>
+    </div>
+    <div class="tdb-msg" id="tdbMsg" role="status"></div>
+  </section>
+
+  <!-- Teacher login -->
+  <section class="dde-card tdb-login" id="tdbLogin" hidden>
+    <h2 style="margin:0 0 6px;color:var(--dde-navy);font-size:1.15rem">Teacher login</h2>
+    <p class="sub" style="margin-bottom:14px">Enter the teacher PIN. It is checked on the server; students cannot open this data.</p>
+    <label for="tdbPin">Teacher PIN</label>
+    <input type="password" id="tdbPin" autocomplete="current-password">
+    <div class="tdb-actions"><button type="button" class="dde-btn" id="tdbPinBtn">Open dashboard</button></div>
+    <div class="tdb-msg" id="tdbLoginMsg" role="alert"></div>
+  </section>
+
+  <!-- Progress view -->
+  <section id="tdbMain" hidden>
+    <div class="dde-card" style="margin-top:18px">
+      <div class="tdb-filters">
+        <div><label for="fLevel">Level</label><select id="fLevel"></select></div>
+        <div><label for="fModule">Module</label><select id="fModule"></select></div>
+        <div><label for="fSection">Section</label><select id="fSection"><option value="">All sections</option></select></div>
+        <div><label for="fStatus">Status</label>
+          <select id="fStatus">
+            <option value="">All</option><option value="done">Complete</option>
+            <option value="prog">In progress</option><option value="none">Not started</option>
+          </select></div>
+        <div><label for="fSearch">Student</label><input type="search" id="fSearch" placeholder="Name or USN"></div>
+      </div>
+      <div class="tdb-actions">
+        <button type="button" class="dde-btn" id="tdbRefresh">↻ Refresh</button>
+        <button type="button" class="dde-btn is-ghost" id="tdbCsv">⬇ Download CSV</button>
+      </div>
+    </div>
+
+    <div class="tdb-stats" id="tdbStats"></div>
+
+    <div class="dde-card">
+      <h2 style="margin:0 0 10px;color:var(--dde-navy);font-size:1.1rem" id="tdbTitle">Student progress</h2>
+      <div class="tdb-table-wrap">
+        <table class="tdb-table">
+          <thead><tr><th>Student name</th><th>USN</th><th>Section</th><th>Progress</th><th>Quiz</th><th>Status</th><th>Last updated</th></tr></thead>
+          <tbody id="tdbRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Student detail -->
+  <div class="tdb-modal" id="tdbModal" role="dialog" aria-modal="true" aria-labelledby="tdbDetailTitle">
+    <div class="dde-card" id="tdbDetail"></div>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var KEY = 'ddeTeacherToken';
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { rows: [], level: 1, module: 1 };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function token() { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } }
+  function setToken(t) { try { if (t) sessionStorage.setItem(KEY, t); else sessionStorage.removeItem(KEY); } catch (e) {} }
+  function msg(id, kind, text) { var el = $(id); el.className = 'tdb-msg' + (text ? ' is-' + kind : ''); el.textContent = text || ''; }
+  function when(t) {
+    if (!t) return '–';
+    var d = new Date(t); if (isNaN(d)) return '–';
+    return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  }
+  function errorText(e) {
+    var c = e && e.code;
+    if (c === 'network' || c === 'config') return 'Could not connect to the database. Please check your internet connection and try again.';
+    if (c === 'setup') return 'The progress functions are not installed in Supabase yet. Run progress-setup.sql in the Supabase SQL editor.';
+    if (c === 'rls') return 'The database refused the request (row-level security). Run progress-setup.sql again.';
+    return 'Database error: ' + ((e && e.message) || 'unknown') + '. See the browser console for details.';
+  }
+
+  /* ---------- Levels and modules for the dropdowns (reusable for every level) ---------- */
+  function levels() {
+    var out = [], D = window.DDE, C = window.DDEProgress && DDEProgress.CATALOG;
+    for (var n = 1; n <= 14; n++) {
+      var L = D && D.levelByN(n), mods = [];
+      if (C && C[n]) mods = Object.keys(C[n]).map(function (k) { return [+k, C[n][k].name]; });
+      else if (L && L.part === 'B' && L.modules) mods = L.modules.map(function (m, i) { return [i + 1, m[0]]; });
+      else if (L && L.progress) { try { mods = L.progress().map(function (x, i) { return [i + 1, x.label]; }); } catch (e) { mods = []; } }
+      if (mods.length) out.push({ n: n, title: L ? L.title : 'Level ' + n, modules: mods });
+    }
+    return out;
+  }
+  function fillLevels() {
+    var ls = levels();
+    $('fLevel').innerHTML = ls.map(function (l) { return '<option value="' + l.n + '">Level ' + l.n + ' – ' + esc(l.title) + '</option>'; }).join('');
+    $('fLevel').value = String(state.level);
+    fillModules();
+  }
+  function fillModules() {
+    var l = levels().filter(function (x) { return x.n === +$('fLevel').value; })[0];
+    $('fModule').innerHTML = (l ? l.modules : []).map(function (m) { return '<option value="' + m[0] + '">Module ' + m[0] + ' – ' + esc(m[1]) + '</option>'; }).join('');
+    if (l && l.modules.some(function (m) { return m[0] === state.module; })) $('fModule').value = String(state.module);
+  }
+  function moduleName(level, module) {
+    var l = levels().filter(function (x) { return x.n === level; })[0], m = l && l.modules.filter(function (x) { return x[0] === module; })[0];
+    return m ? m[1] : '';
+  }
+
+  /* ---------- Status ---------- */
+  function status(r) {
+    if (r.completed) return 'done';
+    if (r.has_record && (r.progress_percent > 0 || r.attempt_count > 0)) return 'prog';
+    return 'none';
+  }
+  var ST = { done: 'Complete', prog: 'In progress', none: 'Not started' };
+  function quiz(r) { return r.quiz_total ? (r.best_score + ' / ' + r.quiz_total) : '–'; }
+
+  /* ---------- Login ---------- */
+  function showLogin(text) {
+    setToken(null);
+    $('tdbLogin').hidden = false; $('tdbMain').hidden = true; $('tdbLogout').hidden = true;
+    msg('tdbLoginMsg', 'bad', text || '');
+    setTimeout(function () { $('tdbPin').focus(); }, 50);
+  }
+  function doLogin() {
+    var pin = $('tdbPin').value;
+    if (!pin) { msg('tdbLoginMsg', 'bad', 'Please enter the teacher PIN.'); return; }
+    $('tdbPinBtn').disabled = true; msg('tdbLoginMsg', 'info', 'Checking…');
+    DDEProgress.rpc('dde_teacher_login', { p_pin: pin }).then(function (r) {
+      $('tdbPinBtn').disabled = false;
+      if (!r || !r.ok) { msg('tdbLoginMsg', 'bad', 'Incorrect PIN.'); return; }
+      setToken(r.token); $('tdbPin').value = ''; showMain();
+    }, function (e) { $('tdbPinBtn').disabled = false; msg('tdbLoginMsg', 'bad', errorText(e)); });
+  }
+  function showMain() {
+    $('tdbLogin').hidden = true; $('tdbMain').hidden = false; $('tdbLogout').hidden = false;
+    fillLevels(); load();
+  }
+
+  /* ---------- Load and draw ---------- */
+  function load() {
+    state.level = +$('fLevel').value || 1; state.module = +$('fModule').value || 1;
+    $('tdbTitle').textContent = 'Level ' + state.level + ' → Module ' + state.module + (moduleName(state.level, state.module) ? ': ' + moduleName(state.level, state.module) : '');
+    $('tdbRows').innerHTML = '<tr><td colspan="7" class="tdb-empty">Loading…</td></tr>';
+    msg('tdbMsg', '', '');
+    DDEProgress.rpc('dde_teacher_report', { p_token: token(), p_level: state.level, p_module: state.module }).then(function (r) {
+      if (!r || !r.ok) { if (r && r.error === 'not_teacher') showLogin('Your teacher session has expired. Please enter the PIN again.'); else msg('tdbMsg', 'bad', 'Report failed: ' + ((r && r.error) || 'unknown')); return; }
+      state.rows = r.students || [];
+      var secs = {}; state.rows.forEach(function (x) { if (x.section) secs[x.section] = 1; });
+      var keep = $('fSection').value;
+      $('fSection').innerHTML = '<option value="">All sections</option>' + Object.keys(secs).sort().map(function (s) { return '<option>' + esc(s) + '</option>'; }).join('');
+      if (secs[keep]) $('fSection').value = keep;
+      draw();
+    }, function (e) { $('tdbRows').innerHTML = ''; msg('tdbMsg', 'bad', errorText(e)); });
+  }
+
+  function filtered() {
+    var sec = $('fSection').value, st = $('fStatus').value, q = $('fSearch').value.trim().toLowerCase();
+    return state.rows.filter(function (r) {
+      if (sec && r.section !== sec) return false;
+      if (st && status(r) !== st) return false;
+      if (q && (String(r.name || '').toLowerCase().indexOf(q) < 0 && String(r.usn || '').toLowerCase().indexOf(q) < 0)) return false;
+      return true;
+    });
+  }
+
+  function draw() {
+    var rows = filtered(), c = { done: 0, prog: 0, none: 0 }, sum = 0;
+    rows.forEach(function (r) { c[status(r)]++; sum += r.progress_percent || 0; });
+    $('tdbStats').innerHTML = [['Students', rows.length], ['Not started', c.none], ['In progress', c.prog], ['Complete', c.done], ['Average progress', rows.length ? Math.round(sum / rows.length) + '%' : '–']]
+      .map(function (s) { return '<div class="tdb-stat"><span>' + s[0] + '</span><b>' + s[1] + '</b></div>'; }).join('');
+    if (!state.rows.length) { $('tdbRows').innerHTML = '<tr><td colspan="7" class="tdb-empty">No students have registered yet.</td></tr>'; return; }
+    if (!rows.length) { $('tdbRows').innerHTML = '<tr><td colspan="7" class="tdb-empty">No students match these filters.</td></tr>'; return; }
+    $('tdbRows').innerHTML = rows.map(function (r) {
+      var s = status(r), p = r.progress_percent || 0;
+      return '<tr tabindex="0" data-usn="' + esc(r.usn) + '">' +
+        '<td class="tdb-name" data-label="Student">' + esc(r.name) + '</td>' +
+        '<td data-label="USN">' + esc(r.usn) + '</td>' +
+        '<td data-label="Section">' + esc(r.section || '–') + '</td>' +
+        '<td data-label="Progress"><div class="tdb-prog"><div class="dde-bar' + (p >= 100 ? ' is-full' : '') + '"><span style="width:' + p + '%"></span></div><b>' + p + '%</b></div></td>' +
+        '<td data-label="Quiz">' + quiz(r) + '</td>' +
+        '<td data-label="Status"><span class="tdb-st ' + s + '">' + ST[s] + '</span></td>' +
+        '<td data-label="Updated">' + when(r.updated_at) + '</td></tr>';
+    }).join('');
+    Array.prototype.forEach.call($('tdbRows').querySelectorAll('tr[data-usn]'), function (tr) {
+      var open = function () { detail(tr.getAttribute('data-usn')); };
+      tr.addEventListener('click', open);
+      tr.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
+  }
+
+  /* ---------- Student detail ---------- */
+  function yes(v) { return v == null ? '<span style="color:var(--dde-ink-3)">— not in this module</span>' : v ? '✅' : '❌'; }
+  function detail(usn) {
+    var r = state.rows.filter(function (x) { return x.usn === usn; })[0];
+    if (!r) return;
+    var s = status(r), name = moduleName(state.level, state.module);
+    var box = $('tdbDetail');
+    var acts = r.activities_total ? r.activities_completed + ' / ' + r.activities_total + (r.activities_completed >= r.activities_total ? ' ✅' : '') : '<span style="color:var(--dde-ink-3)">— not in this module</span>';
+    var gates = r.details && r.details.gates && r.details.gates.length ? '<p class="sub" style="margin:0">Gates explored: ' + r.details.gates.map(esc).join(', ') + '</p>' : '';
+    box.innerHTML = '<button type="button" class="tdb-close" aria-label="Close">✕</button>' +
+      '<h2 id="tdbDetailTitle" style="margin:0 0 12px;color:var(--dde-navy)">' + esc(r.name) + '</h2>' +
+      '<dl class="tdb-kv"><dt>USN</dt><dd>' + esc(r.usn) + '</dd><dt>Branch</dt><dd>' + esc(r.branch || '–') + '</dd><dt>Semester</dt><dd>' + esc(r.semester || '–') + '</dd>' +
+      '<dt>Section</dt><dd>' + esc(r.section || '–') + '</dd><dt>Email</dt><dd>' + esc(r.email || '–') + '</dd><dt>Last login</dt><dd>' + when(r.last_login) + '</dd></dl>' +
+      '<h3>Level ' + state.level + ' · Module ' + state.module + (name ? ' – ' + esc(name) : '') + '</h3>' +
+      '<div class="tdb-prog" style="max-width:420px"><div class="dde-bar' + (r.progress_percent >= 100 ? ' is-full' : '') + '"><span style="width:' + (r.progress_percent || 0) + '%"></span></div><b>' + (r.progress_percent || 0) + '%</b></div>' +
+      '<div class="tdb-items">' +
+      '<div class="tdb-item"><span>Concepts</span><b>' + yes(r.has_record ? r.concepts_completed : null) + '</b></div>' +
+      '<div class="tdb-item"><span>Activities</span><b>' + (r.has_record ? acts : '0') + '</b></div>' +
+      '<div class="tdb-item"><span>Practice</span><b>' + yes(r.has_record ? r.practice_completed : null) + '</b></div>' +
+      '<div class="tdb-item"><span>Quiz</span><b>' + yes(r.has_record ? r.quiz_completed : null) + '</b></div></div>' + gates +
+      '<dl class="tdb-kv" style="margin-top:12px">' +
+      '<dt>Latest score</dt><dd>' + (r.quiz_total ? r.latest_score + ' / ' + r.quiz_total : '–') + '</dd>' +
+      '<dt>Best score</dt><dd>' + (r.quiz_total ? r.best_score + ' / ' + r.quiz_total : '–') + '</dd>' +
+      '<dt>Attempts</dt><dd>' + (r.attempt_count || 0) + '</dd>' +
+      '<dt>Status</dt><dd><span class="tdb-st ' + s + '">' + ST[s].toUpperCase() + '</span></dd>' +
+      '<dt>Started</dt><dd>' + when(r.started_at) + '</dd>' +
+      '<dt>Last updated</dt><dd>' + when(r.updated_at) + '</dd></dl>' +
+      '<div id="tdbMore"><p class="sub" style="margin-top:16px">Loading quiz attempts and other modules…</p></div>';
+    $('tdbModal').classList.add('is-open');
+    box.querySelector('.tdb-close').addEventListener('click', closeDetail);
+    box.querySelector('.tdb-close').focus();
+    DDEProgress.rpc('dde_teacher_student', { p_token: token(), p_usn: usn }).then(function (d) {
+      var more = $('tdbMore'); if (!more) return;
+      if (!d || !d.ok) { more.innerHTML = '<p class="sub">' + (d && d.error === 'not_teacher' ? 'Session expired – please log in again.' : 'Could not load more details.') + '</p>'; return; }
+      var att = (d.attempts || []).filter(function (a) { return a.level === state.level && a.module === state.module; });
+      var html = '';
+      if (att.length) html += '<h3>Quiz attempts</h3><table class="tdb-mini"><tr><th>#</th><th>Score</th><th>Date</th></tr>' +
+        att.map(function (a, i) { return '<tr><td>' + (att.length - i) + '</td><td>' + a.score + ' / ' + a.total + '</td><td>' + when(a.created_at) + '</td></tr>'; }).join('') + '</table>';
+      var mods = d.modules || [];
+      html += '<h3>All recorded modules</h3>' + (mods.length ? '<table class="tdb-mini"><tr><th>Level</th><th>Module</th><th>Progress</th><th>Updated</th></tr>' +
+        mods.map(function (m) { var nm = moduleName(m.level, m.module); return '<tr><td>' + m.level + '</td><td>' + m.module + (nm ? ' – ' + esc(nm) : '') + '</td><td>' + m.progress_percent + '%' + (m.completed ? ' ✅' : '') + '</td><td>' + when(m.updated_at) + '</td></tr>'; }).join('') + '</table>'
+        : '<p class="sub">No progress recorded yet.</p>');
+      more.innerHTML = html;
+    }, function (e) { var more = $('tdbMore'); if (more) more.innerHTML = '<p class="sub">' + esc(errorText(e)) + '</p>'; });
+  }
+  function closeDetail() { $('tdbModal').classList.remove('is-open'); }
+
+  /* ---------- CSV ---------- */
+  function csv() {
+    var rows = filtered(), head = ['Name', 'USN', 'Branch', 'Semester', 'Section', 'Email', 'Level', 'Module', 'Progress %', 'Activities', 'Quiz best', 'Quiz latest', 'Quiz total', 'Attempts', 'Status', 'Last updated'];
+    var q = function (v) { v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var lines = [head.join(',')].concat(rows.map(function (r) {
+      return [r.name, r.usn, r.branch, r.semester, r.section, r.email, state.level, state.module, r.progress_percent,
+        r.activities_total ? r.activities_completed + '/' + r.activities_total : '', r.best_score, r.latest_score, r.quiz_total,
+        r.attempt_count, ST[status(r)], r.updated_at || ''].map(q).join(',');
+    }));
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv' }));
+    a.download = 'progress-level' + state.level + '-module' + state.module + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  /* ---------- Wiring ---------- */
+  function init() {
+    if (!window.DDEProgress) { msg('tdbMsg', 'bad', 'js/progress-sync.js could not be loaded.'); return; }
+    $('tdbPinBtn').addEventListener('click', doLogin);
+    $('tdbPin').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+    $('tdbLogout').addEventListener('click', function () { var t = token(); setToken(null); if (t) DDEProgress.rpc('dde_logout', { p_token: t }).catch(function () {}); showLogin(''); });
+    $('fLevel').addEventListener('change', function () { state.module = 1; fillModules(); load(); });
+    $('fModule').addEventListener('change', load);
+    $('tdbRefresh').addEventListener('click', load);
+    $('tdbCsv').addEventListener('click', csv);
+    ['fSection', 'fStatus'].forEach(function (id) { $(id).addEventListener('change', draw); });
+    $('fSearch').addEventListener('input', draw);
+    $('tdbModal').addEventListener('click', function (e) { if (e.target === $('tdbModal')) closeDetail(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDetail(); });
+    if (token()) showMain(); else showLogin('');
+  }
+  /* common.js is deferred: wait for it so the level/module names are available */
+  if (document.readyState === 'complete') init(); else window.addEventListener('load', init);
+})();
+</script>
+</body>
+</html>

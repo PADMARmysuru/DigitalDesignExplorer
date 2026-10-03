@@ -307,7 +307,9 @@
 
   function logout() {
     try { localStorage.removeItem('studentLoggedIn'); } catch (e) {}
-    location.href = 'login.html';
+    var go = function () { location.href = 'login.html'; };
+    if (window.DDEProgress) { DDEProgress.logout().then(go, go); setTimeout(go, 1500); }
+    else { try { localStorage.removeItem('ddeSessionToken'); } catch (e) {} go(); }
   }
   DDE.logout = logout;
 

@@ -53,7 +53,7 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
   };
 
   /* Pages anyone may open without logging in */
-  var PUBLIC_PAGES = ['index.html', 'login.html', 'locked.html', 'supabase-test.html'];
+  var PUBLIC_PAGES = ['index.html', 'login.html', 'locked.html', 'supabase-test.html', 'teacher-dashboard.html'];
 
   function pageName() {
     var p = (location.pathname.split('/').pop() || 'index.html').toLowerCase();

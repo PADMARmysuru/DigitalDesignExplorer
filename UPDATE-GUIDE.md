@@ -92,3 +92,33 @@ Quiz upgrade (applies to Level 7 and Level 8): every attempt is recorded; the qu
 Shared files updated: `access-control.js` (Level 8 entry), `common.js` (Level 8 in menus, student dashboard and certificate), `index.html` (Level 8 card opens Level 8).
 
 Progress is stored in the student's browser (`dde_level8_progress`, `level8_moduleN_completed`), in the same format as Level 7.
+
+## Student progress in Supabase + Teacher Dashboard
+
+### One-time setup (Supabase)
+1. Open `progress-setup.sql`. In section 7, replace `CHANGE-THIS-PIN` with your own teacher PIN (at least 8 characters).
+2. Supabase Dashboard → SQL Editor → New query → paste the whole file → Run.
+3. New query → paste `progress-selftest.sql` → Run. Every line should show ✅ PASS. (It uses a temporary test student and deletes it again.)
+4. Upload the website files and push to GitHub.
+
+### Teacher dashboard
+Open `teacher-dashboard.html` and enter the teacher PIN. Choose Level and Module (Level 1 → Module 1 = Logic Gates), filter by section, student or status, click a student for details, or download a CSV. The PIN is checked on the server; students cannot see the data by opening the page.
+
+To change the PIN later:
+    update public.dde_settings set v = extensions.crypt('NEW-PIN', extensions.gen_salt('bf')) where k = 'teacher_pin_hash';
+
+To reset a student who forgot the password (they can register again):
+    delete from public."STUDENTS" where student_id = '4GW24EC001';
+
+### How it works
+- `STUDENTS` (id uuid) remains the only student identity. Login is now checked on the server (hashed password), so it works on any device; the old on-device login is kept as an offline fallback.
+- `student_module_progress` holds one row per student + level + module; `student_quiz_attempts` keeps every quiz attempt.
+- The browser never reads or writes tables directly (row level security stays ON). It calls the `dde_*` functions through `js/progress-sync.js`.
+- localStorage keys are unchanged and remain the on-device state. If a save fails, the student sees a message and the save is retried automatically.
+
+### Level 1 modules tracked (order of the Level 1 dashboard)
+1 Logic Gates (7 gates) · 2 Half Adder · 3 Full Adder · 4 Verilog Practice (10 programs) · 5 Quiz (best / latest / attempts) · 6 K-Map · 7 Quine–McCluskey · 8 Digital Logic Lab (8 experiments).
+Module 1 saves from its own page. Modules 2–8 are saved whenever the student opens the Level 1 dashboard; the quiz and K-Map pages also save directly.
+
+### Adding another level later
+Add the level's modules to `CATALOG` in `js/progress-sync.js` (which localStorage keys mean "done"), then call `DDEProgress.syncModule(level, module)` from that module's page. The database and the teacher dashboard need no changes.

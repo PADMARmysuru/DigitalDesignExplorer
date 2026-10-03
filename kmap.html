@@ -9,6 +9,7 @@
     <title>K-Map Learning</title>
     <link rel="stylesheet" href="style.css">
     <script src="supabase-config.js"></script>
+<script src="js/progress-sync.js"></script>
 </head>
 
 <body>
@@ -1447,35 +1448,8 @@ saveKmapProgress();
 
 loadKmapQuestion();
 async function saveKmapProgress() {
-
-    const studentId = localStorage.getItem("studentId");
-
-    if (!studentId) {
-        console.log("No student ID found.");
-        return;
-    }
-
-    const response = await fetch(
-        SUPABASE_URL + "/rest/v1/student_progress?student_id=eq." + studentId,
-        {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "apikey": SUPABASE_ANON_KEY,
-                "Authorization": "Bearer " + SUPABASE_ANON_KEY,
-                "Prefer": "return=minimal"
-            },
-            body: JSON.stringify({
-                kmap: 1
-            })
-        }
-    );
-
-    console.log("K-Map progress status:", response.status);
-
-    if (!response.ok) {
-        console.error("K-Map progress failed:", await response.text());
-    }
+    // Level 1 · Module 6 (K-Map) → Supabase
+    if (window.DDEProgress) return DDEProgress.syncModule(1, 6);
 }
 
 </script>
