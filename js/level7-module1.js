@@ -124,7 +124,7 @@
         var vals = {}; cur.in.forEach(function (n, i) { vals[n] = (m >> (N - 1 - i)) & 1; });
         var y = evalY(vals, pun), isCur = cur.in.every(function (n) { return (v[n] ? 1 : 0) === vals[n]; });
         if (y === 'X' || y === 'Z') bad++;
-        rows += '<tr' + (isCur ? ' style="background:rgba(53,224,198,.12)"' : '') + '><td>' + cur.in.map(function (n) { return vals[n]; }).join('') + '</td><td style="color:' + (y === 'X' || y === 'Z' ? 'var(--l7-bad)' : 'var(--l7-sig)') + '">' + y + '</td></tr>';
+        rows += '<tr' + (isCur ? ' style="background:rgba(0,113,227,.09)"' : '') + '><td>' + cur.in.map(function (n) { return vals[n]; }).join('') + '</td><td style="color:' + (y === 'X' || y === 'Z' ? 'var(--l7-bad)' : 'var(--l7-sig)') + '">' + y + '</td></tr>';
       }
       tt.innerHTML = '<table class="l7-table" style="min-width:0"><tr><th>' + cur.in.join('') + '</th><th>Y</th></tr>' + rows + '</table>';
       if (wrongPun) L.fb(fb, 'bad', '⚠ With a PUN that is not the dual of the PDN, ' + bad + ' input combination' + (bad === 1 ? '' : 's') + ' give <b>X</b> (both networks on → short circuit, contention) or <b>Z</b> (both off → floating output). A correct static CMOS gate never does this.' + (bad === 0 ? ' (For this gate the error happens to be harmless – try AOI21.)' : ''));

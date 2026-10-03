@@ -55,7 +55,7 @@ New files for Level 7 (Levels 1–6 content is unchanged):
 - `level7.html` – Level 7 dashboard (progress ring, module cards, certificate card)
 - `level7-module1.html` … `level7-module10.html` – the ten modules
 - `level7-certificate.html` – certificate (unlocks when all ten modules are completed)
-- `css/level7.css` – the Part B design (dark "silicon" theme, different from Part A)
+- `css/level7.css` – the Part B design (clean light theme with tabbed modules, different from Part A)
 - `js/level7-common.js` – shared engine: labs, animations, drag & drop, quizzes, progress
 - `js/level7-module1.js` … `js/level7-module10.js` – content of each module
 

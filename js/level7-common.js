@@ -19,6 +19,7 @@
   L7.PASS = PASS;
 
   /* ---------- Module catalogue (used by the hub and the pager) ---------- */
+  L7.ACC = ['#0071e3', '#ff9500', '#34c759', '#af52de', '#ff2d55', '#00a7c4', '#5856d6', '#e5332a', '#00b39f', '#d48a00'];
   L7.MODULES = [
     { t: 'Advanced CMOS Logic Design', i: '⚡', d: 'Complex gates, PUN/PDN design, AOI/OAI, transmission-gate, pass-transistor, ratioed, dynamic and domino logic.' },
     { t: 'VLSI Arithmetic Circuit Design', i: '➕', d: 'Ripple, look-ahead, select, skip and prefix adders; subtractors, comparators, array, Wallace and Dadda multipliers.' },
@@ -169,12 +170,13 @@
     ms.req = req; save(data);
 
     var page = h('div', 'l7-page');
+    page.style.setProperty('--l7-acc', L7.ACC[n - 1]);
     var meta = L7.MODULES[n - 1];
     var C = 2 * Math.PI * 50;
     page.innerHTML =
       '<section class="l7-hero"><div>' +
-      '<p class="l7-kicker"><span class="l7-partb">PART B</span>Level 7 · Module ' + ('0' + n).slice(-2) + '</p>' +
-      '<h1>' + meta.i + ' ' + esc(cfg.title || meta.t) + '</h1><p class="l7-lead">' + cfg.lead + '</p>' +
+      '<p class="l7-kicker"><span class="l7-partb">PART B</span>Level 7 · Module ' + n + ' ' + meta.i + '</p>' +
+      '<h1><span class="l7-grad">' + esc(cfg.title || meta.t) + '</span></h1><p class="l7-lead">' + cfg.lead + '</p>' +
       '<div class="l7-tags">' + (cfg.tags || []).map(function (t) { return '<span class="l7-tag">' + esc(t) + '</span>'; }).join('') + '</div></div>' +
       '<svg class="l7-ring" viewBox="0 0 128 128" role="img" aria-label="Module progress"><circle class="bg" cx="64" cy="64" r="50"/>' +
       '<circle class="fg" id="l7RingFg" cx="64" cy="64" r="50" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + C.toFixed(1) + '"/>' +
@@ -185,27 +187,93 @@
       '<div class="l7-stat"><span>Quiz best</span><b id="l7StQ">—</b></div>' +
       '<div class="l7-stat"><span>Status</span><b id="l7StS">In progress</b></div></div>';
 
-    var nav = h('div', 'l7-secnav'); var navIn = h('div', 'l7-secnav-in'); nav.appendChild(navIn); page.appendChild(nav);
-    nav.setAttribute('role', 'navigation'); nav.setAttribute('aria-label', 'Module sections');
+    /* ---------- Tabs ---------- */
+    var TABS = [
+      ['learn', '📘', 'Learn', 'Key ideas, diagrams and animations'],
+      ['labs', '🔬', 'Labs', 'Hands-on interactive circuits'],
+      ['act', '🧩', 'Activities', 'Reveal cards and drag & drop'],
+      ['prac', '✏️', 'Practice', 'Calculations, MCQs, short answers and scenarios'],
+      ['quiz', '🏁', 'Quiz', cfg.quiz.length + ' questions · pass mark 70%'],
+      ['done', '🎯', 'Complete', 'Your checklist for this module']
+    ];
+    var TAB_OF = { concept: 'learn', steps: 'learn', widget: 'labs', reveal: 'act', drag: 'act', calc: 'prac', mcq: 'prac', short: 'prac', scen: 'prac' };
+    var tabsEl = h('div', 'l7-tabs'), tabsIn = h('div', 'l7-tabs-in');
+    tabsIn.setAttribute('role', 'tablist'); tabsIn.setAttribute('aria-label', 'Module sections');
+    tabsEl.appendChild(tabsIn); page.appendChild(tabsEl);
     var body = h('div', 'l7-body'); page.appendChild(body);
+    var panels = {}, tabBtns = {}, tabTracked = {}, secTab = {}, count = {};
+    var used = {};
+    cfg.sections.forEach(function (s) { if (!s.part) used[TAB_OF[s.type] || 'learn'] = 1; });
+    used.quiz = 1; used.done = 1;
+    var order = TABS.filter(function (t) { return used[t[0]]; });
+    order.forEach(function (t, k) {
+      var b = h('button', 'l7-tab', '<span class="ico" aria-hidden="true">' + t[1] + '</span>' + t[2] + '<span class="cnt"></span>');
+      b.type = 'button'; b.setAttribute('role', 'tab'); b.id = 'l7tab-' + t[0]; b.setAttribute('aria-controls', 'l7panel-' + t[0]);
+      b.addEventListener('click', function () { showTab(t[0], true); });
+      tabsIn.appendChild(b); tabBtns[t[0]] = b; tabTracked[t[0]] = [];
+      var p = h('section', 'l7-panel l7-hidden'); p.id = 'l7panel-' + t[0]; p.setAttribute('data-tab', t[0]);
+      p.setAttribute('role', 'tabpanel'); p.setAttribute('aria-labelledby', b.id);
+      p.innerHTML = '<div class="l7-panel-head"><span class="l7-panel-ico" aria-hidden="true">' + t[1] + '</span><div><h2>' + t[2] + '</h2><p>' + esc(t[3]) + '</p></div></div>';
+      p._list = h('div', ''); p.appendChild(p._list);
+      var nx = order[k + 1];
+      if (nx) {
+        var nb = h('div', 'l7-panel-next');
+        nb.appendChild(L7.btn('Next: ' + nx[1] + ' ' + nx[2] + ' →', 'pri', function () { showTab(nx[0], true); }));
+        p.appendChild(nb);
+      }
+      body.appendChild(p); panels[t[0]] = p; count[t[0]] = 0;
+    });
+    tabsIn.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var keys = order.map(function (t) { return t[0]; }), i = keys.indexOf(cur), j = (i + (e.key === 'ArrowRight' ? 1 : -1) + keys.length) % keys.length;
+      showTab(keys[j], false); tabBtns[keys[j]].focus();
+    });
+    var cur = null;
+    function showTab(key, scroll) {
+      if (!panels[key]) key = order[0][0];
+      cur = key;
+      order.forEach(function (t) {
+        var on = t[0] === key;
+        panels[t[0]].classList.toggle('l7-hidden', !on);
+        tabBtns[t[0]].setAttribute('aria-selected', on ? 'true' : 'false');
+        tabBtns[t[0]].tabIndex = on ? 0 : -1;
+      });
+      try { sessionStorage.setItem('l7tab' + n, key); history.replaceState(null, '', '#tab-' + key); } catch (e) { }
+      if (tabsIn.scrollTo) tabsIn.scrollTo({ left: Math.max(0, tabBtns[key].offsetLeft - 30), behavior: 'smooth' });
+      if (scroll) {
+        var y = tabsEl.getBoundingClientRect().top + window.pageYOffset;
+        if (window.pageYOffset > y) window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }
+    function goTo(id) {
+      var t = id === 'quiz' ? 'quiz' : id === 'complete' ? 'done' : secTab[id];
+      if (!t) return false;
+      showTab(t, false);
+      var el = document.getElementById('s-' + id);
+      if (el) setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 40);
+      return true;
+    }
+    page.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a[href^="#s-"]') : null;
+      if (a && goTo(a.getAttribute('href').slice(3))) e.preventDefault();
+    });
 
     var api = makeApi(n, data, ms, refresh);
-    var navLinks = [];
 
     cfg.sections.forEach(function (s, i) {
-      if (s.part) { body.appendChild(h('div', 'l7-part', '<span>' + esc(s.part) + '</span>')); return; }
-      var id = s.id || ('c' + i);
-      var sec = h('section', 'l7-sec'); sec.id = 's-' + id;
+      if (s.part) return;
+      var id = s.id || ('c' + i), tab = TAB_OF[s.type] || 'learn';
+      var sec = h('section', 'l7-sec k-' + (s.type || 'concept')); sec.id = 's-' + id;
       var badgeKey = s.type === 'widget' ? (s.badge || 'explore') : (s.type === 'steps' ? 'anim' : (s.type || 'concept'));
       var b = BADGE[badgeKey] || BADGE.concept;
       var tracked = !!s.id && (ACT_TYPES[s.type] || PRAC_TYPES[s.type]);
-      sec.innerHTML = '<div class="l7-sec-head"><div><span class="l7-badge ' + b[0] + '">' + b[1] + '</span><h2>' + esc(s.title) + '</h2></div>' +
+      count[tab]++;
+      sec.innerHTML = '<div class="l7-sec-head"><div><span class="l7-badge ' + b[0] + '">' + b[1] + '</span><h2><span class="l7-sec-num">' + ('0' + count[tab]).slice(-2) + '</span>' + esc(s.title) + '</h2></div>' +
         (tracked ? '<span class="l7-status" data-st="' + id + '">○ To do</span>' : '') + '</div>' +
         (s.intro ? '<p class="l7-intro">' + s.intro + '</p>' : '');
       var content = h('div', 'l7-sec-body'); sec.appendChild(content);
-      body.appendChild(sec);
-      var a = h('a', '', esc(s.nav || s.title)); a.href = '#s-' + id; if (tracked) a.setAttribute('data-act', id);
-      navIn.appendChild(a); navLinks.push([a, sec]);
+      panels[tab]._list.appendChild(sec);
+      secTab[id] = tab; if (tracked) tabTracked[tab].push(id);
       var done = function () { api.mark(id); };
       try {
         switch (s.type) {
@@ -217,7 +285,9 @@
           case 'mcq': renderMcq(content, s, done); break;
           case 'short': renderShort(content, s, done); break;
           case 'scen': renderScen(content, s, done); break;
-          default: content.innerHTML = s.html || '';
+          default:
+            content.innerHTML = s.html || '';
+            foldConcept(sec, content);
         }
       } catch (err) {
         content.innerHTML = '<p class="l7-fb bad">This activity could not load on this browser. Please refresh the page.</p>';
@@ -225,22 +295,35 @@
       }
     });
 
+    /* Concepts: show the first two blocks, fold the rest behind "Read more" */
+    function foldConcept(sec, content) {
+      var kids = Array.prototype.slice.call(content.children);
+      if (kids.length <= 2) return;
+      var more = h('div', 'l7-more');
+      kids.slice(2).forEach(function (k) { more.appendChild(k); });
+      content.appendChild(more);
+      var btn = h('button', 'l7-morebtn', 'Read more ⌄'); btn.type = 'button'; btn.setAttribute('aria-expanded', 'false');
+      btn.addEventListener('click', function () {
+        var open = !sec.classList.contains('is-open');
+        sec.classList.toggle('is-open', open); btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.textContent = open ? 'Show less ⌃' : 'Read more ⌄';
+      });
+      content.appendChild(btn);
+    }
+
     /* Quiz */
-    body.appendChild(h('div', 'l7-part', '<span>Assess</span>'));
-    var qs = h('section', 'l7-sec'); qs.id = 's-quiz';
+    var qs = h('section', 'l7-sec k-quiz'); qs.id = 's-quiz';
     qs.innerHTML = '<div class="l7-sec-head"><div><span class="l7-badge t-mcq">🏁 Module quiz</span><h2>Module ' + n + ' Quiz</h2></div><span class="l7-status" data-st="quiz">○ Not passed</span></div>';
-    body.appendChild(qs);
-    var qa = h('a', '', 'Quiz'); qa.href = '#s-quiz'; navIn.appendChild(qa); navLinks.push([qa, qs]);
+    panels.quiz._list.appendChild(qs);
     renderQuiz(qs, cfg.quiz, api);
 
     /* Completion */
-    var cs = h('section', 'l7-sec'); cs.id = 's-complete';
-    cs.innerHTML = '<div class="l7-sec-head"><div><span class="l7-badge t-concept">🎯 Completion</span><h2>Complete Module ' + n + '</h2></div></div>' +
-      '<p class="l7-intro">Finish every activity, every practice set and pass the module quiz (70% or more). Then save the module to your Level 7 progress.</p>' +
+    var cs = h('section', 'l7-sec k-complete'); cs.id = 's-complete';
+    cs.innerHTML = '<div class="l7-sec-head"><div><span class="l7-badge t-scen">🎯 Completion</span><h2>Complete Module ' + n + '</h2></div></div>' +
+      '<p class="l7-intro">Finish every lab and activity, every practice set, and pass the quiz (70% or more). Then save the module to your Level 7 progress.</p>' +
       '<ul class="l7-checklist" id="l7Check"></ul><div class="l7-row"><button type="button" class="l7-btn pri" id="l7Done" disabled>Mark Module ' + n + ' complete</button>' +
       '<a class="l7-btn ghost" href="level7.html">← Level 7 dashboard</a></div><div class="l7-fb" id="l7DoneFb"></div>';
-    body.appendChild(cs);
-    var ca = h('a', '', 'Complete'); ca.href = '#s-complete'; navIn.appendChild(ca); navLinks.push([ca, cs]);
+    panels.done._list.appendChild(cs);
 
     /* Pager */
     var pg = h('div', 'l7-pager');
@@ -271,14 +354,22 @@
         var id = el.getAttribute('data-st');
         if (id === 'quiz') {
           el.classList.toggle('is-done', s.qPass);
-          el.textContent = s.qPass ? '✓ Passed' : (s.q ? '✗ Retake (best ' + s.q.best + '/' + s.q.total + ')' : '○ Not passed');
+          el.textContent = s.qPass ? '✓ Passed' : (s.q ? '↻ Retake (best ' + s.q.best + '/' + s.q.total + ')' : '○ Not passed');
         } else {
           var ok = !!m.a[id]; el.classList.toggle('is-done', ok); el.textContent = ok ? '✓ Done' : '○ To do';
         }
       });
-      L7.$$('a[data-act]', navIn).forEach(function (a) { a.classList.toggle('is-done', !!m.a[a.getAttribute('data-act')]); });
-      qa.classList.toggle('is-done', s.qPass);
-      ca.classList.toggle('is-done', s.complete);
+      order.forEach(function (t) {
+        var k = t[0], btn = tabBtns[k], c = btn.querySelector('.cnt'), ok;
+        if (k === 'quiz') { ok = s.qPass; c.textContent = ok ? '✓' : (s.q ? s.q.best + '/' + s.q.total : ''); }
+        else if (k === 'done') { ok = s.complete; c.textContent = ok ? '✓' : ''; }
+        else if (tabTracked[k].length) {
+          var dn = tabTracked[k].filter(function (id) { return m.a[id]; }).length;
+          ok = dn === tabTracked[k].length; c.textContent = ok ? '✓' : dn + '/' + tabTracked[k].length;
+        } else { ok = false; c.textContent = ''; }
+        btn.classList.toggle('is-done', !!ok);
+        c.style.display = c.textContent ? '' : 'none';
+      });
       document.getElementById('l7StA').innerHTML = s.aD + '<small> / ' + s.aT + '</small>';
       document.getElementById('l7StP').innerHTML = s.pD + '<small> / ' + s.pT + '</small>';
       document.getElementById('l7StQ').innerHTML = s.q ? s.q.best + '<small> / ' + s.q.total + '</small>' : '—';
@@ -288,7 +379,7 @@
       document.getElementById('l7RingTxt').textContent = pct + '%';
       var list = document.getElementById('l7Check');
       var items = [
-        [s.aD === s.aT, 'Explore activities: ' + s.aD + ' of ' + s.aT + ' done', firstTodo(req.a, m)],
+        [s.aD === s.aT, 'Labs & activities: ' + s.aD + ' of ' + s.aT + ' done', firstTodo(req.a, m)],
         [s.pD === s.pT, 'Practice sets: ' + s.pD + ' of ' + s.pT + ' done', firstTodo(req.p, m)],
         [s.qPass, 'Module quiz passed (≥ 70%)' + (s.q ? ' – best ' + s.q.best + '/' + s.q.total : ''), s.qPass ? null : 'quiz']
       ];
@@ -307,20 +398,12 @@
     api.refresh = refresh;
     refresh();
 
-    /* Highlight the section in view */
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es) {
-        es.forEach(function (e) {
-          if (!e.isIntersecting) return;
-          navLinks.forEach(function (x) {
-            var on = x[1] === e.target; x[0].classList.toggle('is-active', on);
-            if (on && navIn.scrollTo) { var l = x[0].offsetLeft - 40; navIn.scrollTo({ left: l < 0 ? 0 : l, behavior: 'smooth' }); }
-          });
-        });
-      }, { rootMargin: '-35% 0px -60% 0px' });
-      navLinks.forEach(function (x) { io.observe(x[1]); });
-    }
-    if (location.hash) { var t = document.getElementById(location.hash.slice(1)); if (t) setTimeout(function () { t.scrollIntoView(); }, 60); }
+    /* Initial tab: #tab-x, #s-section, last visited, or Learn */
+    var hsh = location.hash.slice(1), start = null;
+    try { start = sessionStorage.getItem('l7tab' + n); } catch (e) { }
+    if (/^tab-/.test(hsh)) showTab(hsh.slice(4), false);
+    else if (/^s-/.test(hsh) && goTo(hsh.slice(2))) { /* opened */ }
+    else showTab(start || order[0][0], false);
   };
 
   function makeApi(n, data, ms, refreshRef) {
@@ -619,7 +702,7 @@
         var pass = score / qs.length >= PASS;
         api.saveQuiz(score, qs.length);
         result.innerHTML = '<div class="l7-score ' + (pass ? 'pass' : 'fail') + '"><span class="big">' + score + ' / ' + qs.length + '</span>' +
-          (pass ? '🎉 Passed! Read the explanations, then complete the module below.' : 'Below 70%. Read the explanations and try again.') + '</div>';
+          (pass ? '🎉 Passed! Read the explanations, then open the 🎯 Complete tab.' : 'Below 70%. Read the explanations and try again.') + '</div>';
         submit.remove();
         var again = L7.btn('↻ Retake quiz', '', function () { build(); sec.scrollIntoView({ behavior: 'smooth' }); });
         row.appendChild(again);
@@ -636,7 +719,7 @@
     var s = L7.levelSummary(), C = 2 * Math.PI * 50;
     var html = '<div class="l7-page">' +
       '<section class="l7-hero"><div><p class="l7-kicker"><span class="l7-partb">PART B</span>Advanced VLSI · Level 7</p>' +
-      '<h1>Digital VLSI Design</h1><p class="l7-lead">Move from logic to silicon. Ten interactive modules on transistor-level logic styles, arithmetic and datapath architectures, memories, wires, standard cells, IP reuse, reliability and the technologies shaping the next generation of chips.</p>' +
+      '<h1><span class="l7-grad">Digital VLSI Design</span></h1><p class="l7-lead">Move from logic to silicon. Ten interactive modules on transistor-level logic styles, arithmetic and datapath architectures, memories, wires, standard cells, IP reuse, reliability and the technologies shaping the next generation of chips.</p>' +
       '<div class="l7-tags"><span class="l7-tag">10 modules</span><span class="l7-tag">' + 10 * 10 + ' quiz questions</span><span class="l7-tag">interactive labs</span><span class="l7-tag">mini project</span></div></div>' +
       '<svg class="l7-ring" viewBox="0 0 128 128" role="img" aria-label="Level 7 progress ' + s.pct + ' percent"><circle class="bg" cx="64" cy="64" r="50"/>' +
       '<circle class="fg" cx="64" cy="64" r="50" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - s.frac)).toFixed(1) + '"/>' +
@@ -649,8 +732,8 @@
       '<div class="l7-part"><span>Modules</span></div><div class="l7-hub-grid">';
     L7.MODULES.forEach(function (m, i) {
       var n = i + 1, x = L7.summary(n);
-      html += '<a class="l7-mod' + (x.complete ? ' is-done' : '') + '" href="level7-module' + n + '.html">' +
-        '<div class="l7-mod-top"><span class="l7-mod-num">MODULE ' + ('0' + n).slice(-2) + '</span><span class="l7-mod-ico" aria-hidden="true">' + m.i + '</span></div>' +
+      html += '<a class="l7-mod' + (x.complete ? ' is-done' : '') + '" style="--acc:' + L7.ACC[i] + '" href="level7-module' + n + '.html">' +
+        '<div class="l7-mod-top"><span class="l7-mod-num">Module ' + n + '</span><span class="l7-mod-ico" aria-hidden="true">' + m.i + '</span></div>' +
         '<h3>' + esc(m.t) + '</h3><p>' + esc(m.d) + '</p>' +
         '<div class="l7-bar" aria-hidden="true"><span style="width:' + Math.round(100 * x.frac) + '%"></span></div>' +
         '<div class="l7-mod-meta">' +
