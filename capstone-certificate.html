@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Final Capstone Certificate | Digital Design Explorer</title>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+<link rel="icon" type="image/svg+xml" href="icons/dde-favicon.svg">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#161617">
+<!-- Part B design system -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/level7.css">
+<script src="supabase-config.js"></script>
+<script src="js/progress-sync.js" defer></script>
+
+<script>
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function go() {
+    var root = document.getElementById('capCert'), tok = null; try { tok = localStorage.getItem('ddeSessionToken'); } catch (e) {}
+    if (!window.DDEProgress) { root.innerHTML = '<p>Could not load.</p>'; return; }
+    DDEProgress.rpc('dde_capstone_load', { p_token: tok }).then(function (r) {
+      if (!r || !r.ok) { root.innerHTML = '<div class="l7-verdict bad">Please log in to view your certificate.</div>'; return; }
+      var e = r.evaluation, s1 = (r.stages || []).filter(function (x) { return x.stage === 1; })[0] || {}, d = s1.details || {};
+      if (!e || !e.approved) { root.innerHTML = '<div class="l7-verdict warn">🏆 Certificate not yet available<small>The Final Capstone certificate is issued after your faculty approves your project. <a href="capstone.html">Go to the capstone</a>.</small></div>'; return; }
+      var dt = new Date(e.evaluated_at);
+      root.innerHTML = '<div class="cap-cert"><div class="cap-cert-k">Digital Design Explorer · Part B – Advanced VLSI</div><h1>Certificate of Completion</h1><p>This certifies that</p><h2>' + esc(r.student.name) + '</h2><p class="cap-cert-usn">' + esc(r.student.usn) + '</p>' +
+        '<p>has successfully completed the</p><h3>🏆 Final Capstone — Complete VLSI Design Challenge</h3><p class="cap-cert-t">“' + esc(d.title) + '”</p>' +
+        '<div class="cap-cert-g"><div><span>Final score</span><b>' + esc(e.total) + ' / 100</b></div><div><span>Approved by</span><b>' + esc(e.evaluated_by || 'Faculty') + '</b></div><div><span>Date</span><b>' + (isNaN(dt) ? '' : dt.toLocaleDateString(undefined, { day: '2-digit', month: 'long', year: 'numeric' })) + '</b></div></div>' +
+        '<p class="cap-cert-f">Department of Electronics & Communication Engineering · GSSSIETW, Mysuru</p></div><p style="text-align:center"><button class="l7-btn pri" onclick="window.print()">🖨 Print / Save as PDF</button></p>';
+    }, function () { root.innerHTML = '<div class="l7-verdict bad">Could not reach the server.</div>'; });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(go, 0); }); else go();
+})();
+</script>
+<style>
+.cap-cert{max-width:760px;margin:24px auto;background:#fff;border:6px double #d48a00;border-radius:18px;padding:34px 24px;text-align:center}
+.cap-cert h1{margin:8px 0;font-size:2rem}.cap-cert h2{margin:6px 0 0;font-size:1.8rem;color:#0062c4}.cap-cert-usn{margin:2px 0 12px;color:#86868b}
+.cap-cert-k{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#86868b}.cap-cert-t{font-style:italic;font-size:1.1rem}
+.cap-cert-g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.cap-cert-g span{display:block;font-size:.8rem;color:#86868b}
+.cap-cert-f{font-size:.85rem;color:#86868b;margin-top:18px}
+@media(max-width:560px){.cap-cert-g{grid-template-columns:1fr}}
+@media print{header,footer,nav,.dde-header,.dde-footer,button{display:none!important}}
+</style>
+</head>
+<body class="dde-l7 dde-cap" data-level="15">
+<main id="capCert" style="padding:0 16px 30px"><p class="l7-hint" style="padding:30px">Loading…</p></main>
+</body>
+</html>

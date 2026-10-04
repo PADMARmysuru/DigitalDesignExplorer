@@ -3,7 +3,7 @@
 -- Run AFTER progress-setup.sql and progress-teacher-auth.sql:
 -- SQL Editor > New query > paste > Run.
 -- It creates a temporary test student (4GW99EC999) and a temporary test
--- teacher, checks every step, deletes both again and shows PASS / FAIL.
+-- teacher, checks every step (including Part B access and the Final Capstone), deletes both again and shows PASS / FAIL.
 -- Real students and teachers are not touched.
 -- =====================================================================
 drop table if exists dde_test_results;
@@ -119,6 +119,56 @@ begin
   insert into dde_test_results (step, ok, detail) values ('25 browser cannot read teacher accounts or call the admin function',
     not has_table_privilege('anon', 'public.dde_teachers', 'select')
     and not has_function_privilege('anon', 'public.dde_admin_set_teacher(text, text, text)', 'execute'), null);
+
+  -- ---------- Part B access and Final Capstone (needs progress-partb-capstone.sql) ----------
+  r := public.dde_save_module(tok, 13, 1, '{"activities_completed":1,"activities_total":2}');
+  insert into dde_test_results (step, ok, detail) values ('PB1 without Part B access a student cannot save Level 13 progress', r->>'error' = 'no_partb_access', r::text);
+  r := public.dde_partb_status(tok);
+  insert into dde_test_results (step, ok, detail) values ('PB2 Part B status of the student is "not granted"', (r->>'ok')::boolean and not (r->>'granted')::boolean, r::text);
+  r := public.dde_teacher_partb_set(tok, array[v_usn], true);
+  insert into dde_test_results (step, ok, detail) values ('PB3 a student token cannot grant Part B access', r->>'error' = 'not_teacher', r::text);
+  r := public.dde_teacher_partb_set(ttok, array[v_usn], true);
+  x := public.dde_partb_status(tok);
+  insert into dde_test_results (step, ok, detail) values ('PB4 teacher grants Part B access', (r->>'ok')::boolean and (x->>'granted')::boolean, x::text);
+  select count(*) into c from public.dde_partb_access a join public."STUDENTS" s on s.id = a.student_id
+   where upper(s.student_id) = v_usn and a.access_granted and a.granted_by is not null and a.granted_at is not null;
+  insert into dde_test_results (step, ok, detail) values ('PB5 access record stores granting teacher and date', c = 1, null);
+  r := public.dde_save_module(tok, 13, 1, '{"activities_completed":1,"activities_total":2}');
+  insert into dde_test_results (step, ok, detail) values ('PB6 with Part B access Level 13 progress is saved', coalesce((r->>'ok')::boolean, false), r::text);
+  r := public.dde_teacher_partb_set(ttok, array[v_usn], false);
+  x := public.dde_save_module(tok, 14, 1, '{"activities_completed":1,"activities_total":2}');
+  insert into dde_test_results (step, ok, detail) values ('PB7 after revoking, Level 14 progress is refused again', x->>'error' = 'no_partb_access', x::text);
+  r := public.dde_teacher_partb_set(ttok, array[v_usn], true);
+  insert into dde_test_results (step, ok, detail) values ('PB8 browser cannot read Part B or capstone tables directly',
+    not has_table_privilege('anon', 'public.dde_partb_access', 'select') and not has_table_privilege('anon', 'public.dde_capstone_eval', 'select')
+    and not has_table_privilege('authenticated', 'public.dde_partb_access', 'insert'), null);
+
+  r := public.dde_capstone_save(tok, 1, '{"title":"Self-test RISC core","type":"Small RISC Processor","team":"Individual"}', true);
+  insert into dde_test_results (step, ok, detail) values ('CP1 capstone stage 1 (project selection) is saved', coalesce((r->>'ok')::boolean, false) and (r->>'completed')::boolean, r::text);
+  r := public.dde_capstone_save(tok, 12, '{"report":"x"}', true);
+  insert into dde_test_results (step, ok, detail) values ('CP2 final report cannot be submitted before stages 1-11 are complete', r->>'error' = 'stages_incomplete', r::text);
+  r := public.dde_capstone_save(tok, 13, '{}', true);
+  insert into dde_test_results (step, ok, detail) values ('CP3 invalid stage number is rejected', r->>'error' = 'invalid_data', r::text);
+  r := public.dde_teacher_capstone_evaluate(tok, v_usn, '{"problem":5}', 'x', false);
+  insert into dde_test_results (step, ok, detail) values ('CP4 a student cannot evaluate a capstone', r->>'error' = 'not_teacher', r::text);
+  r := public.dde_teacher_capstone_evaluate(ttok, v_usn, '{"problem":9}', 'too high', false);
+  insert into dde_test_results (step, ok, detail) values ('CP5 rubric scores above the maximum are rejected', r->>'error' = 'score_out_of_range', r::text);
+  r := public.dde_teacher_capstone_evaluate(ttok, v_usn, '{"problem":5,"architecture":9}', 'early', true);
+  insert into dde_test_results (step, ok, detail) values ('CP6 a project cannot be approved before the report is submitted', r->>'error' = 'not_submitted', r::text);
+  for c in 2..11 loop
+    r := public.dde_capstone_save(tok, c, '{"text":"stage done"}', true);
+  end loop;
+  r := public.dde_capstone_save(tok, 12, '{"report":"final"}', true);
+  insert into dde_test_results (step, ok, detail) values ('CP7 after stages 1-11 the final report is submitted', coalesce((r->>'ok')::boolean, false) and (r->>'completed')::boolean, r::text);
+  r := public.dde_teacher_capstone_evaluate(ttok, v_usn, '{"problem":5,"architecture":9,"vlsi":8,"rtl":9,"timing":8,"physical":7,"verification":9,"dft":8,"performance":8,"aiml":4,"documentation":9}', 'well done', true);
+  insert into dde_test_results (step, ok, detail) values ('CP8 teacher evaluates and approves (total 84 / 100)', coalesce((r->>'ok')::boolean, false) and (r->>'total')::numeric = 84 and (r->>'approved')::boolean, r::text);
+  x := public.dde_teacher_capstone_list(ttok);
+  select count(*) into c from json_array_elements(x->'students') e where e->>'usn' = v_usn and e->>'title' = 'Self-test RISC core' and (e->>'approved')::boolean;
+  insert into dde_test_results (step, ok, detail) values ('CP9 Faculty Dashboard list shows the project, score and approval', c = 1, null);
+  r := public.dde_capstone_save(tok, 3, '{"text":"late change"}', true);
+  x := public.dde_capstone_load(tok);
+  insert into dde_test_results (step, ok, detail) values ('CP10 approved capstone is locked; student sees the evaluation',
+    r->>'error' = 'locked_after_approval' and (x->'evaluation'->>'approved')::boolean, r::text);
 
   update public.dde_teachers set active = false where lower(email) = 'selftest-teacher@example.com';
   r := public.dde_teacher_report(ttok, 1, 1);

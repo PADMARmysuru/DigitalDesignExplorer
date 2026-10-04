@@ -171,3 +171,15 @@ Quiz randomisation: Levels 11 and 12 shuffle the order of questions and answer o
 Content boundaries: Level 11 builds on Level 6 (SystemVerilog syntax is not re-taught). Level 12 builds on Level 5 (basic fault models, D-algorithm/PODEM, SCOAP, scan chains, LFSR/BILBO and the JTAG TAP are not re-taught).
 
 Adding Level 13 or 14 later follows the same pattern: a catalogue entry in `js/level7-common.js`, a `LEVELS_B` entry in `common.js`, `levelN` in `access-control.js`, the number in `PARTB_SYNC`, and the page shells.
+
+## Levels 13–14, Part B access management and the Final Capstone
+
+**Supabase – run once, in this order:** `progress-partb-capstone.sql`, then `progress-selftest.sql` (every line should say PASS).
+It adds the `dde_partb_access` and `dde_capstone_eval` tables (RLS on, no direct browser access), Part B checks inside the save functions, and the capstone and faculty functions. It changes nothing else.
+
+**Two switches now control Part B (Levels 7–14 + Capstone):**
+1. `access-control.js` – `level7` … `level14` and `capstone` release the content (as before). All are delivered `false`.
+2. Faculty Dashboard → 🔑 Part B Access – grant access to individual students (or many at once). Students without a grant see "Part B Access Required", and the server refuses to save their Part B progress or capstone.
+Teachers see Part B through Teacher Login (preview), as before.
+
+**Final Capstone:** `capstone.html` (12 stages) → student submits → Faculty Dashboard → 🏆 Final Capstone → open the student → rubric (100 marks) → approve. The student then sees "FINAL CAPSTONE COMPLETED" and can open `capstone-certificate.html`. Capstone stages are stored in the existing progress table as level 15.

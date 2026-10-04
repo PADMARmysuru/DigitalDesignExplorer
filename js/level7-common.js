@@ -138,6 +138,44 @@
         { t: 'Post-Silicon Validation & Yield', i: '📈', d: 'Bring-up, failure diagnosis, defect classification, yield models and yield learning.' },
         { t: 'Advanced DFT & Silicon Test Project', i: '🏆', d: 'Build a complete test solution: compression, ATPG, MBIST, LBIST, IJTAG, diagnosis and yield.' }
       ]
+    },
+    13: {
+      title: 'Processor / VLSI Architecture',
+      lead: 'How modern processors turn transistors into performance: from a single-cycle datapath through pipelining, branch prediction, speculation, superscalar and out-of-order execution to caches, interconnects and performance analysis – ending with your own mini processor.',
+      tags: ['10 modules', '100 quiz questions', 'pipeline & OoO simulators', 'branch predictor lab', 'cache simulator', 'project'],
+      acc: ['#0071e3', '#ff9500', '#af52de', '#e5332a', '#34c759', '#5856d6', '#00a7c4', '#d48a00', '#ff2d55', '#00b39f'],
+      sync: true, shuffle: true,
+      modules: [
+        { t: 'Processor Architecture Fundamentals', i: '🖥️', d: 'CPU organisation, datapath and control, PC, register file, ALU, memories and the five instruction steps.' },
+        { t: 'Pipelined Processors', i: '🚥', d: 'IF–ID–EX–MEM–WB, throughput and latency, structural/data/control hazards, forwarding, stalls and flushes.' },
+        { t: 'Branch Prediction', i: '🔮', d: 'Branch penalty, static and dynamic predictors, 1-bit, 2-bit, bimodal, local/global history, gshare, tournament, TAGE idea.' },
+        { t: 'Speculative Execution', i: '🎲', d: 'Executing past predicted branches, architectural vs speculative state, misprediction recovery and flushing.' },
+        { t: 'Superscalar Architecture', i: '🛣️', d: 'Multiple issue, ILP, functional units, issue width, dependencies, dynamic scheduling and register renaming.' },
+        { t: 'Out-of-Order Execution', i: '🔀', d: 'RAW/WAR/WAW, renaming, reservation stations, Tomasulo, reorder buffer, commit and precise exceptions.' },
+        { t: 'Cache Architecture', i: '🗃️', d: 'Locality, tag/index/offset, mapping, associativity, LRU, write policies and multi-level caches.' },
+        { t: 'Memory & Interconnect Architecture', i: '🧭', d: 'Memory hierarchy, latency and bandwidth, buses, arbitration, interconnects and networks-on-chip.' },
+        { t: 'Processor Performance', i: '📈', d: 'CPU time, CPI, IPC, clock, speedup and the impact of branch prediction and caches.' },
+        { t: 'Processor Architecture Project', i: '🏆', d: 'Build a mini processor: pipeline, predictor, issue width, cache and program – then read the performance report.' }
+      ]
+    },
+    14: {
+      title: 'AI/ML for VLSI',
+      lead: 'Artificial intelligence applied where chip designers need it: predicting timing and congestion, guiding placement, prioritising verification, classifying faults, exploring design spaces and predicting branches – with hands-on labs instead of generic AI theory.',
+      tags: ['10 modules', '100 quiz questions', 'prediction & placement labs', 'RL game', 'neural network explorer', 'educational project'],
+      acc: ['#5856d6', '#0071e3', '#34c759', '#ff9500', '#e5332a', '#af52de', '#00a7c4', '#d48a00', '#00b39f', '#ff2d55'],
+      sync: true, shuffle: true,
+      modules: [
+        { t: 'Introduction to AI/ML for VLSI', i: '🧠', d: 'Where AI fits in VLSI and EDA: features, labels, training/testing, classification, regression, evaluation.' },
+        { t: 'ML for VLSI Prediction', i: '🔭', d: 'Predicting timing, power, area, congestion, yield and reliability from design features.' },
+        { t: 'ML for Physical Design', i: '🗺️', d: 'Placement optimisation, routing and congestion prediction, timing estimation and design-space exploration.' },
+        { t: 'ML for Verification', i: '🧪', d: 'Test generation, coverage prediction and closure, bug prediction, anomaly detection, regression prioritisation.' },
+        { t: 'AI for DFT & Testing', i: '🔍', d: 'Fault prediction, pattern optimisation, diagnosis, test-time reduction, yield prediction and test analytics.' },
+        { t: 'Reinforcement Learning for VLSI', i: '🎮', d: 'Agent, environment, state, action, reward, policy, exploration vs exploitation – for placement and optimisation.' },
+        { t: 'Deep Learning for VLSI', i: '🕸️', d: 'Neural networks, training and inference, CNN and sequence-model ideas, applied to layouts, defects and prediction.' },
+        { t: 'AI for Processor Architecture', i: '⚙️', d: 'ML branch prediction, cache and prefetch prediction, adaptive architecture and runtime scheduling.' },
+        { t: 'AI-Assisted VLSI Design', i: '🤝', d: 'Surrogate models, design-space exploration, multi-objective PPA optimisation and human + AI engineering.' },
+        { t: 'AI-Based Branch Prediction Project', i: '🏆', d: 'An educational project: features, data, a lightweight classifier, accuracy and comparison with a traditional predictor.' }
+      ]
     }
   };
   var INFO = LEVEL_INFO[LV] || LEVEL_INFO[7];
@@ -947,8 +985,12 @@
     html += '<div class="l7-cert-card"><div><h2>🏆 Level ' + LV + ' Certificate</h2><p>' + (all ? 'All ten modules are complete. Your certificate is ready.' : 'Complete all ten modules to unlock your certificate (' + s.mods + ' of 10 done).') + '</p></div>' +
       '<a class="l7-btn ' + (all ? 'cu' : 'ghost') + '" href="level' + LV + '-certificate.html">' + (all ? '🏆 Open certificate' : '🔒 View requirements') + '</a></div>';
     html += '<div class="l7-part"><span>Part B roadmap</span></div><div class="l7-roadmap">' +
-      [[8, 'VLSI Timing & Power'], [9, 'RTL Design & Synthesis'], [10, 'Physical Design'], [11, 'Advanced Verification'], [12, 'DFT & Advanced Testing'], [13, 'Processor / VLSI Architecture'], [14, 'AI/ML for VLSI']]
-        .filter(function (r) { return r[0] > LV; }).map(function (r) { return '<div><b>LEVEL ' + r[0] + ' · 🔒 COMING SOON</b>' + esc(r[1]) + '</div>'; }).join('') + '</div></div>';
+      [[8, 'VLSI Timing & Power'], [9, 'RTL Design & Synthesis'], [10, 'Physical Design'], [11, 'Advanced Design Verification'], [12, 'Advanced DFT & Silicon Test'], [13, 'Processor / VLSI Architecture'], [14, 'AI/ML for VLSI'], [15, '🏆 Final Capstone – Complete VLSI Design Challenge']]
+        .filter(function (r) { return r[0] > LV; }).map(function (r) {
+          var open = window.canOpenLevel ? window.canOpenLevel(r[0]) : false, name = r[0] === 15 ? 'FINAL CAPSTONE' : 'LEVEL ' + r[0];
+          return open ? '<div><b><a href="' + (r[0] === 15 ? 'capstone.html' : 'level' + r[0] + '.html') + '">' + name + ' · 🟢 AVAILABLE</a></b>' + esc(r[1]) + '</div>'
+                      : '<div><b>' + name + ' · 🔒 LOCKED</b>' + esc(r[1]) + '</div>';
+        }).join('') + '</div></div>';
     root.innerHTML = html;
   };
 

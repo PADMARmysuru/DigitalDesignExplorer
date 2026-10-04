@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>🏆 Final Capstone | Digital Design Explorer</title>
+<!-- Digital Design Explorer: common platform (access control, header, navigation, footer) -->
+<script src="access-control.js"></script>
+<link rel="stylesheet" href="common.css">
+<script src="common.js" defer></script>
+<link rel="icon" type="image/svg+xml" href="icons/dde-favicon.svg">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#161617">
+<!-- Part B design system -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/level7.css">
+<script src="supabase-config.js"></script>
+<script src="js/progress-sync.js" defer></script>
+
+<script src="js/capstone-data.js" defer></script>
+<script src="js/capstone.js" defer></script>
+<style>
+body.dde-cap #capstone{max-width:1080px;margin:0 auto;padding:0 18px 40px}
+.cap-journey{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}
+.cap-journey span{background:#fff;border:1px solid var(--l7-line);border-radius:999px;padding:5px 11px;font-size:.8rem;font-weight:600}
+.cap-journey i{color:var(--l7-ink-3,#86868b);font-style:normal}
+.cap-prog{background:#fff;border:1px solid var(--l7-line);border-radius:16px;padding:14px 16px;margin:14px 0;display:grid;gap:8px}
+.cap-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:12px 0 16px}
+.cap-step{display:flex;gap:8px;align-items:center;text-align:left;border:1px solid var(--l7-line);background:#fff;border-radius:12px;padding:8px 10px;font:inherit;font-size:.8rem;cursor:pointer;color:inherit;min-height:44px}
+.cap-step b{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--l7-bg-2);font-size:.75rem}
+.cap-step.ok{border-color:#34c759;background:rgba(52,199,89,.08)} .cap-step.ok b{background:#34c759;color:#fff}
+.cap-step.cur{border-color:#0071e3;box-shadow:0 0 0 2px rgba(0,113,227,.15)} .cap-step.cur b{background:#0071e3;color:#fff}
+.cap-step[disabled]{cursor:default;opacity:.85}
+.cap-f{display:block;margin:12px 0;font-weight:600;font-size:.9rem}
+.cap-f small{font-weight:500;color:var(--l7-ink-3,#86868b)}
+.cap-f input[type=text],.cap-f textarea,.cap-f select{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:10px 12px;border:1px solid var(--l7-line-2);border-radius:10px;font:inherit;font-weight:400;font-size:16px;background:#fff}
+.cap-f textarea{resize:vertical;min-height:90px}
+fieldset.cap-f{border:1px solid var(--l7-line);border-radius:12px;padding:10px 12px}
+.cap-checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px;font-weight:500}
+.cap-checks label{display:flex;gap:8px;align-items:center;min-height:36px}
+.cap-req{color:#e5332a}.cap-badge{font-size:.75rem;background:#34c759;color:#fff;border-radius:999px;padding:3px 9px;vertical-align:middle}
+.cap-done{border:2px solid #34c759;border-radius:18px;padding:18px;margin:12px 0;background:linear-gradient(160deg,rgba(52,199,89,.12),#fff)}
+.cap-done-t{font-size:1.4rem;font-weight:800;margin-bottom:10px}
+.cap-done-g{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;margin-bottom:14px}
+.cap-done-g span{color:var(--l7-ink-3,#86868b);font-size:.85rem}
+.cap-report{background:#fff;border:1px solid var(--l7-line);border-radius:16px;padding:22px;margin-top:18px}
+.cap-report h1{margin:8px 0 4px;font-size:1.6rem}.cap-rep-sub{color:var(--l7-ink-3,#86868b);margin:0 0 14px}
+.cap-rep-s{border-top:1px solid var(--l7-line);padding-top:8px;margin-top:12px}.cap-rep-s h3{margin:6px 0}.cap-rep-s p{margin:6px 0;line-height:1.5;overflow-wrap:anywhere}
+@media print{.cap-noprint,header,footer,nav,.dde-header,.dde-footer{display:none!important}.cap-report{border:0;padding:0}}
+</style>
+</head>
+<body class="dde-l7 dde-cap" data-level="15">
+<main id="capstone"></main>
+<noscript><p style="padding:20px">Please enable JavaScript to use the Final Capstone.</p></noscript>
+</body>
+</html>

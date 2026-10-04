@@ -20,6 +20,11 @@ var LEVEL_ACCESS = {
   level10: false, // Physical Design (locked until you release it)
   level11: false, // Advanced Design Verification (locked until you release it)
   level12: false, // Advanced DFT & Silicon Test (locked until you release it)
+  level13: false, // Processor / VLSI Architecture (locked until you release it)
+  level14: false, // AI/ML for VLSI (locked until you release it)
+  capstone: false // 🏆 Final Capstone (locked until you release it)
+  // Part B (Levels 7–14 + Capstone) ALSO requires faculty-granted Part B access for each student:
+  // Faculty Dashboard → Part B Access. That permission is checked by the server (Supabase).
 };
 
 /* Only ECE students of GSSSIETW: 4GW + 2 digits + EC + 3 digits, e.g. 4GW24EC001 */
@@ -65,16 +70,25 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
         'level11-module8.html', 'level11-module9.html', 'level11-module10.html', 'level11-certificate.html'],
     12: ['level12.html', 'level12-module1.html', 'level12-module2.html', 'level12-module3.html',
         'level12-module4.html', 'level12-module5.html', 'level12-module6.html', 'level12-module7.html',
-        'level12-module8.html', 'level12-module9.html', 'level12-module10.html', 'level12-certificate.html']
+        'level12-module8.html', 'level12-module9.html', 'level12-module10.html', 'level12-certificate.html'],
+    13: ['level13.html', 'level13-module1.html', 'level13-module2.html', 'level13-module3.html',
+        'level13-module4.html', 'level13-module5.html', 'level13-module6.html', 'level13-module7.html',
+        'level13-module8.html', 'level13-module9.html', 'level13-module10.html', 'level13-certificate.html'],
+    14: ['level14.html', 'level14-module1.html', 'level14-module2.html', 'level14-module3.html',
+        'level14-module4.html', 'level14-module5.html', 'level14-module6.html', 'level14-module7.html',
+        'level14-module8.html', 'level14-module9.html', 'level14-module10.html', 'level14-certificate.html'],
+    15: ['capstone.html', 'capstone-certificate.html']   // Final Capstone (Part B)
   };
 
-  /* Learning content (all level pages) is open WITHOUT login, so teachers can teach with it.
+  /* Part A learning content is open WITHOUT login, so teachers can teach with it. Part B pages
+     (Levels 7–14 + Capstone) need a student with faculty-granted Part B access or a Teacher Login.
      Released / locked levels are still controlled by LEVEL_ACCESS above.
      Only these student-specific pages require a STUDENT login: */
   var STUDENT_PAGES = ['student-dashboard.html', 'certificate.html', 'level2-certificate.html', 'level3-certificate.html',
                        'level4-certificate.html', 'level5-certificate.html', 'level6-certificate.html',
                        'level7-certificate.html', 'level8-certificate.html', 'level9-certificate.html', 'level10-certificate.html',
-                       'level11-certificate.html', 'level12-certificate.html'];
+                       'level11-certificate.html', 'level12-certificate.html',
+                       'level13-certificate.html', 'level14-certificate.html', 'capstone-certificate.html'];
   /* The teacher pages are protected by a teacher login checked in Supabase (teacher-login.html) */
   var PUBLIC_PAGES = ['index.html', 'login.html', 'locked.html', 'supabase-test.html', 'teacher-dashboard.html', 'teacher-login.html'];
 
@@ -106,7 +120,7 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
 
   /* checkLevelAccess("level4") or checkLevelAccess(4) → true / false (released for students?) */
   function checkLevelAccess(level) {
-    var key = typeof level === 'number' ? 'level' + level : String(level).toLowerCase();
+    var key = typeof level === 'number' ? (level === 15 ? 'capstone' : 'level' + level) : String(level).toLowerCase();
     return LEVEL_ACCESS[key] === true;
   }
 
@@ -119,6 +133,58 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
     return !!sget('ddeTeacherToken') && until > Date.now();
   }
   function canOpenLevel(level) { return checkLevelAccess(level) || teacherPreview(); }
+
+  /* ---------- Part B (Levels 7–14 + Final Capstone): faculty-granted access, checked by the SERVER ----------
+     The page stays hidden until Supabase confirms that this browser's session (a student with Part B access,
+     or a logged-in teacher) may see it. localStorage / sessionStorage values are never trusted on their own. */
+  var PARTB_FIRST = 7, PARTB_LAST = 15;
+  function isPartB(lv) { return lv >= PARTB_FIRST && lv <= PARTB_LAST; }
+  /* One shared loader for supabase-config.js, used by access-control.js, common.js and progress-sync.js,
+     so the file is never loaded twice (that would redeclare SUPABASE_URL). Resolves true when configured. */
+  window.ddeLoadConfig = function () {
+    if (typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined') return Promise.resolve(true);
+    if (window.__ddeCfgPromise) return window.__ddeCfgPromise;
+    window.__ddeCfgPromise = new Promise(function (resolve) {
+      function waitFor(n) { if (typeof SUPABASE_URL !== 'undefined') return resolve(true); if (n > 200) return resolve(false); setTimeout(function () { waitFor(n + 1); }, 25); }
+      function go() {
+        if (typeof SUPABASE_URL !== 'undefined') return resolve(true);
+        if (document.querySelector('script[src$="supabase-config.js"]')) return waitFor(0);   // the page loads it itself
+        var sc = document.createElement('script'); sc.src = 'supabase-config.js';
+        sc.onload = function () { resolve(typeof SUPABASE_URL !== 'undefined'); }; sc.onerror = function () { resolve(false); };
+        (document.head || document.documentElement).appendChild(sc);
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+    });
+    return window.__ddeCfgPromise;
+  };
+  function withConfig(cb, fail) { window.ddeLoadConfig().then(function (ok) { if (ok) cb(); else fail(); }); }
+  function partBStatus() {                                   // → Promise {ok, role, granted} (display + guard)
+    var t = sget('ddeTeacherToken'), st = get('ddeSessionToken');
+    if (!t && !st) return Promise.resolve({ ok: false, error: 'not_logged_in' });
+    if (t && st) return ask(t).then(function (r) { return r && r.ok ? r : ask(st); });   // stale teacher token → student session
+    return ask(t || st);
+  }
+  function ask(tok) {
+    return new Promise(function (resolve) {
+      withConfig(function () {
+        fetch(SUPABASE_URL + '/rest/v1/rpc/dde_partb_status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY },
+          body: JSON.stringify({ p_token: tok })
+        }).then(function (r) { return r.json(); }).then(resolve, function () { resolve({ ok: false, error: 'offline' }); });
+      }, function () { resolve({ ok: false, error: 'offline' }); });
+    });
+  }
+  function guardPartB(lv) {
+    var st = document.createElement('style'); st.id = 'dde-partb-hide';
+    st.textContent = 'html{visibility:hidden!important}';
+    (document.head || document.documentElement).appendChild(st);
+    partBStatus().then(function (r) {
+      if (r && r.ok && r.granted) { var e = document.getElementById('dde-partb-hide'); if (e) e.parentNode.removeChild(e); return; }
+      if (r && r.error === 'not_logged_in') { location.replace('login.html?partb=1&next=' + encodeURIComponent(page)); return; }
+      location.replace('locked.html?partb=' + (r && r.error === 'offline' ? 'offline' : '1') + '&level=' + lv);
+    });
+  }
 
   function hideAndGo(url) {
     // Hide the page immediately so protected content is never shown while leaving
@@ -143,6 +209,8 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
     checkLevelAccess: checkLevelAccess,
     teacherPreview: teacherPreview,
     canOpenLevel: canOpenLevel,
+    isPartB: isPartB,
+    partBStatus: partBStatus,
     STUDENT_PAGES: STUDENT_PAGES
   };
   window.checkLevelAccess = checkLevelAccess;
@@ -162,5 +230,9 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
 
   if (level && !canOpenLevel(level)) {
     hideAndGo('locked.html?level=' + level);
+    return;
   }
+
+  // Part B pages additionally need server-confirmed Part B access (student) or a teacher session
+  if (level && isPartB(level)) guardPartB(level);
 })();

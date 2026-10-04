@@ -135,8 +135,9 @@
   ];
 
   /* Part B – Advanced VLSI & Digital IC Design.
-     Levels 7–12 have pages (released through LEVEL_ACCESS.level7 … level12 in access-control.js).
-     Levels 13–14 are ROADMAP ONLY: no pages yet, always shown as locked / coming soon. */
+     Levels 7–14 have pages (released through LEVEL_ACCESS.level7 … level14 in access-control.js), followed by
+     the Final Capstone (LEVEL_ACCESS.capstone). Part B also needs faculty-granted Part B access per student.
+     (Formerly: Levels 13–14 were ROADMAP ONLY: no pages yet, always shown as locked / coming soon. */
   var LEVELS_B = [
     {
       n: 7, part: 'B', title: 'Digital VLSI Design', color: '#16b5c9', dashboard: 'level7.html', certificate: 'level7-certificate.html',
@@ -231,6 +232,44 @@
       progress: function () {
         return LEVELS_B[5].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level12_module' + (i + 1) + '_completed'), href: m[1] }; });
       }
+    },
+    {
+      n: 13, part: 'B', title: 'Processor / VLSI Architecture', color: '#0071e3', dashboard: 'level13.html', certificate: 'level13-certificate.html',
+      modules: [
+        ['Processor Architecture Fundamentals', 'level13-module1.html'],
+        ['Pipelined Processors', 'level13-module2.html'],
+        ['Branch Prediction', 'level13-module3.html'],
+        ['Speculative Execution', 'level13-module4.html'],
+        ['Superscalar Architecture', 'level13-module5.html'],
+        ['Out-of-Order Execution', 'level13-module6.html'],
+        ['Cache Architecture', 'level13-module7.html'],
+        ['Memory & Interconnect Architecture', 'level13-module8.html'],
+        ['Processor Performance', 'level13-module9.html'],
+        ['Processor Architecture Project', 'level13-module10.html']
+      ],
+      unit: 'Modules', numbered: true,
+      progress: function () {
+        return LEVELS_B[6].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level13_module' + (i + 1) + '_completed'), href: m[1] }; });
+      }
+    },
+    {
+      n: 14, part: 'B', title: 'AI/ML for VLSI', color: '#5856d6', dashboard: 'level14.html', certificate: 'level14-certificate.html',
+      modules: [
+        ['Introduction to AI/ML for VLSI', 'level14-module1.html'],
+        ['ML for VLSI Prediction', 'level14-module2.html'],
+        ['ML for Physical Design', 'level14-module3.html'],
+        ['ML for Verification', 'level14-module4.html'],
+        ['AI for DFT & Testing', 'level14-module5.html'],
+        ['Reinforcement Learning for VLSI', 'level14-module6.html'],
+        ['Deep Learning for VLSI', 'level14-module7.html'],
+        ['AI for Processor Architecture', 'level14-module8.html'],
+        ['AI-Assisted VLSI Design', 'level14-module9.html'],
+        ['AI-Based Branch Prediction Project', 'level14-module10.html']
+      ],
+      unit: 'Modules', numbered: true,
+      progress: function () {
+        return LEVELS_B[7].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level14_module' + (i + 1) + '_completed'), href: m[1] }; });
+      }
     }
   ];
   function levelByN(n) {
@@ -283,6 +322,7 @@
       }).catch(function () { /* offline: keep the preview */ });
     };
     if (typeof SUPABASE_URL !== 'undefined') return check();
+    if (window.ddeLoadConfig) { window.ddeLoadConfig().then(function (ok) { if (ok) check(); }); return; }
     var s = document.createElement('script'); s.src = 'supabase-config.js'; s.onload = check;
     document.head.appendChild(s);
   }
@@ -340,7 +380,8 @@
       if (B && isOpen(B.n)) return '<a href="' + B.dashboard + '"' + (L && L.n === B.n ? ' class="is-current"' : '') + '><span class="dde-num">' + x[0] + '</span>🟢 ' + esc(x[1]) + '</a>';
       if (B) return '<span class="is-locked" title="Not yet released"><span class="dde-num">' + x[0] + '</span>🔒 ' + esc(x[1]) + '</span>';
       return '<span class="is-locked" title="Coming soon"><span class="dde-num">' + x[0] + '</span>🔒 ' + esc(x[1]) + ' <em class="dde-soon">Coming soon</em></span>';
-    }).join('') + '</div></details>';
+    }).join('') + (isOpen(15) ? '<a href="capstone.html"' + (page === 'capstone.html' ? ' class="is-current"' : '') + '><span class="dde-num">★</span>🏆 Final Capstone</a>'
+      : '<span class="is-locked" title="Not yet released"><span class="dde-num">★</span>🔒 Final Capstone</span>') + '</div></details>';
     // Current level menu
     var mp = page;
     if (L && isOpen(L.n)) {
@@ -508,7 +549,7 @@
     html += '</div>';
     html += '<div class="dde-part dde-part-b"><span class="dde-part-badge">PART B</span><div><h3>Advanced VLSI &amp; Digital IC Design</h3>' +
       '<p>The advanced track: digital VLSI design, timing and power, synthesis, physical design, verification, DFT, processor architecture and AI/ML for VLSI.</p>' +
-      '<span class="dde-part-meta">Levels 7–14 · Level 7 ' + (isOpen(7) ? '🟢 available' : '🔒 locked') + ' · Level 8 ' + (isOpen(8) ? '🟢 available' : '🔒 locked') + ' · Level 9 ' + (isOpen(9) ? '🟢 available' : '🔒 locked') + ' · Level 10 ' + (isOpen(10) ? '🟢 available' : '🔒 locked') + ' · Level 11 ' + (isOpen(11) ? '🟢 available' : '🔒 locked') + ' · Level 12 ' + (isOpen(12) ? '🟢 available' : '🔒 locked') + ' · ⏳ Levels 13–14 coming soon</span></div></div><div class="dde-levels dde-levels-b">';
+      '<span class="dde-part-meta">Levels 7–14 · Level 7 ' + (isOpen(7) ? '🟢 available' : '🔒 locked') + ' · Level 8 ' + (isOpen(8) ? '🟢 available' : '🔒 locked') + ' · Level 9 ' + (isOpen(9) ? '🟢 available' : '🔒 locked') + ' · Level 10 ' + (isOpen(10) ? '🟢 available' : '🔒 locked') + ' · Level 11 ' + (isOpen(11) ? '🟢 available' : '🔒 locked') + ' · Level 12 ' + (isOpen(12) ? '🟢 available' : '🔒 locked') + ' · Level 13 ' + (isOpen(13) ? '🟢 available' : '🔒 locked') + ' · Level 14 ' + (isOpen(14) ? '🟢 available' : '🔒 locked') + ' · 🏆 Final Capstone ' + (isOpen(15) ? '<a href=\"capstone.html\">🟢 open</a>' : '🔒 locked') + ' · Part B needs faculty-granted access</span></div></div><div class="dde-levels dde-levels-b">';
     PART_B.forEach(function (x) {
       var B = levelByN(x[0]);
       if (B) {
@@ -539,8 +580,18 @@
 
   /* ---------- Locked level page ---------- */
   function renderLocked(root) {
-    var n = parseInt(new URLSearchParams(location.search).get('level'), 10);
-    var L = levelByN(n);
+    var qs = new URLSearchParams(location.search), n = parseInt(qs.get('level'), 10);
+    var L = levelByN(n), pb = qs.get('partb');
+    if (pb) {                                     // Part B: released, but this student has no faculty-granted access
+      var nm = n === 15 ? '🏆 Final Capstone' : L ? 'Level ' + n + ' – ' + esc(L.title) : 'Part B';
+      root.innerHTML = '<div class="dde-card dde-locked" role="alert"><div class="dde-big" aria-hidden="true">🔒</div>' +
+        '<h1>Part B Access Required</h1><p><b>' + nm + '</b></p>' +
+        (pb === 'offline' ? '<p>Your Part B access could not be checked because the server is not reachable. Please check your internet connection and try again.</p>'
+          : '<p>Part B contains advanced VLSI topics and is currently available only to selected students. Please contact your faculty if you require access.</p>') +
+        '<div class="dde-actions"><a class="dde-btn" href="student-dashboard.html">📊 Return to Dashboard</a><a class="dde-btn is-ghost" href="index.html">🏠 Home</a></div>' +
+        '<p style="margin-top:16px;font-size:.9rem">Teacher? <a href="teacher-login.html?next=' + encodeURIComponent(L ? L.dashboard : (n === 15 ? 'capstone.html' : 'index.html')) + '">Log in with Teacher Login</a>.</p></div>';
+      return;
+    }
     if (L && isOpen(n)) { location.replace(L.dashboard); return; }
     root.innerHTML = '<div class="dde-card dde-locked" role="alert"><div class="dde-big" aria-hidden="true">🔒</div>' +
       '<h1>' + (L ? 'Level ' + n + ' is currently locked' : 'This level is currently locked') + '</h1>' +
@@ -574,7 +625,9 @@
     9: 'covering RTL design methodology, synthesizable SystemVerilog, RTL architecture, FSM implementation, coding for synthesis, logic synthesis, synthesis constraints, synthesis reports and RTL optimization',
     10: 'covering the physical design flow, floorplanning, power planning, placement, clock tree synthesis, routing, physical design challenges, physical verification, physical optimization, GDSII and tape-out',
     11: 'covering verification methodology and planning, SystemVerilog verification environments, constrained-random verification, assertions, functional and code coverage, UVM, interface verification and verification closure',
-    12: 'covering DFT architecture, scan compression, advanced ATPG, advanced fault models, memory test and repair, logic BIST, IJTAG test access, at-speed testing, silicon diagnosis and yield'
+    12: 'covering DFT architecture, scan compression, advanced ATPG, advanced fault models, memory test and repair, logic BIST, IJTAG test access, at-speed testing, silicon diagnosis and yield',
+    13: 'covering processor organisation, pipelining and hazards, branch prediction, speculation, superscalar and out-of-order execution, caches, memory and interconnect architecture and processor performance',
+    14: 'covering machine learning for VLSI prediction, physical design, verification, DFT and testing, reinforcement learning, deep learning, AI for processor architecture and AI-assisted design'
   };
 
   function corner(tf) {

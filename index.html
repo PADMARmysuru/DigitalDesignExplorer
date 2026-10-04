@@ -315,7 +315,7 @@
             <div>
                 <h2>Advanced VLSI &amp; Digital IC Design</h2>
                 <p>Advanced VLSI learning: design, timing and power, synthesis, physical design, verification, test, architecture and AI/ML for VLSI.</p>
-                <span class="part-meta">Levels 7–14 · Level 7: Digital VLSI Design · Level 8: VLSI Timing &amp; Power · Level 9: RTL Design &amp; Synthesis · Level 10: Physical Design · Level 11: Advanced Design Verification · Level 12: Advanced DFT &amp; Silicon Test · ⏳ Levels 13–14 coming soon</span>
+                <span class="part-meta">Levels 7–14 · Level 7: Digital VLSI Design · Level 8: VLSI Timing &amp; Power · Level 9: RTL Design &amp; Synthesis · Level 10: Physical Design · Level 11: Advanced Design Verification · Level 12: Advanced DFT &amp; Silicon Test · Level 13: Processor / VLSI Architecture · Level 14: AI/ML for VLSI · 🏆 Final Capstone</span>
             </div>
         </div>
 
@@ -389,10 +389,10 @@
             <div class="path-step">
                 <div class="path-circle">L13</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span>
                     <h3>LEVEL 13 — Processor / VLSI Architecture</h3>
-                    <p>Pipelining, hazards, branch prediction, speculation, cache and processor architecture.</p>
-                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
+                    <p>Processor organisation, pipelining, branch prediction, speculation, superscalar and out-of-order execution, caches, interconnects and performance.</p>
+                    <button class="path-button" type="button" onclick="goLevel(13)">🔒 Not yet released</button>
                 </div>
             </div>
         
@@ -400,10 +400,21 @@
             <div class="path-step">
                 <div class="path-circle">L14</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
+                    <span class="path-status status-locked">🔒 LOCKED</span>
                     <h3>LEVEL 14 — AI/ML for VLSI</h3>
-                    <p>Applications of artificial intelligence and machine learning in VLSI and EDA.</p>
-                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
+                    <p>Machine learning for timing and congestion prediction, placement, verification, test, processor architecture and AI-assisted design.</p>
+                    <button class="path-button" type="button" onclick="goLevel(14)">🔒 Not yet released</button>
+                </div>
+            </div>
+        
+
+            <div class="path-step path-capstone">
+                <div class="path-circle">🏆</div>
+                <div class="path-card">
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>FINAL CAPSTONE — Complete VLSI Design Challenge</h3>
+                    <p>The last component of Part B: one project from specification through architecture, RTL, physical design, verification, DFT and processor architecture to an AI/ML enhancement – evaluated by faculty.</p>
+                    <button class="path-button" type="button" onclick="goLevel(15)">🔒 Not yet released</button>
                 </div>
             </div>
         
@@ -453,7 +464,7 @@
         */
         var LEVEL_PAGES = { 1: 'dashboard.html', 2: 'level2-dashboard.html', 3: 'level3-dashboard.html',
                             4: 'level4-dashboard.html', 5: 'level5-dashboard.html', 6: 'level6.html',
-                            7: 'level7.html', 8: 'level8.html', 9: 'level9.html', 10: 'level10.html', 11: 'level11.html', 12: 'level12.html' };
+                            7: 'level7.html', 8: 'level8.html', 9: 'level9.html', 10: 'level10.html', 11: 'level11.html', 12: 'level12.html', 13: 'level13.html', 14: 'level14.html', 15: 'capstone.html' };
 
         function goLevel(level) {
             if (!LEVEL_PAGES[level]) {
@@ -477,12 +488,12 @@
                     step.classList.add("open");
                     status.className = "path-status status-open";
                     status.textContent = "👩‍🏫 TEACHER PREVIEW";
-                    btn.textContent = "Preview Level " + level + " →";
+                    btn.textContent = level === 15 ? "Preview the Final Capstone →" : "Preview Level " + level + " →";
                 } else if (LEVEL_PAGES[level] && checkLevelAccess(level)) {
                     step.classList.add("open");
                     status.className = "path-status status-open";
                     status.textContent = level === 1 ? "🟢 START HERE" : "🟢 AVAILABLE";
-                    btn.textContent = "Open Level " + level + " →";
+                    btn.textContent = level === 15 ? "Open the Final Capstone →" : "Open Level " + level + " →";
                 } else if (LEVEL_PAGES[level]) {
                     step.classList.remove("open");
                     status.className = "path-status status-locked";
@@ -491,6 +502,20 @@
                 } else {
                     btn.textContent = "⏳ Coming soon";
                 }
+            });
+            /* Part B (Levels 7–14 + Capstone) needs faculty-granted access. This only changes the LABELS;
+               the real check happens on the server when a Part B page is opened. */
+            var A = window.DDE_ACCESS;
+            if (!A || !A.partBStatus) return;
+            A.partBStatus().then(function (r) {
+                Array.prototype.forEach.call(steps, function (step, i) {
+                    var level = i + 1, status = step.querySelector(".path-status"), btn = step.querySelector(".path-button");
+                    if (level < 7 || level > 15 || !status || !btn || !step.classList.contains("open")) return;
+                    if (r && r.ok && r.granted) return;
+                    status.className = "path-status status-locked";
+                    if (r && r.ok) { status.textContent = "🔑 PART B ACCESS REQUIRED"; btn.textContent = "🔒 Part B access required"; }
+                    else { status.textContent = "🔑 SELECTED STUDENTS"; btn.textContent = "🔐 Log in to open"; }
+                });
             });
         });
 

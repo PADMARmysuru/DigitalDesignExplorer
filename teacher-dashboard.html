@@ -58,6 +58,17 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
 .tdb-mini { width: 100%; border-collapse: collapse; font-size: .88rem; margin-top: 6px; }
 .tdb-mini td, .tdb-mini th { padding: 6px 8px; border-bottom: 1px solid var(--dde-line); text-align: left; }
 .tdb h3 { color: var(--dde-navy); margin: 22px 0 8px; font-size: 1.05rem; }
+.fx-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+.fx-tab { font: inherit; font-weight: 700; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--dde-line); background: #fff; cursor: pointer; min-height: 44px; }
+.fx-tab.is-on { background: var(--dde-navy); color: #fff; border-color: var(--dde-navy); }
+.fx-bulk { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+.fx-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; }
+.fx-yes { background: #e3f6e8; color: #18813d; } .fx-no { background: #f2f2f5; color: #6e6e73; }
+.fx-cb { width: 22px; height: 22px; }
+.fx-rub { display: grid; grid-template-columns: 1fr 90px; gap: 8px 12px; align-items: center; }
+.fx-rub input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 16px; border: 1px solid var(--dde-line); border-radius: 8px; }
+.fx-stage { border-top: 1px solid var(--dde-line); padding-top: 8px; margin-top: 10px; }
+.fx-stage p { margin: 4px 0; overflow-wrap: anywhere; }
 @media (max-width: 900px) {
   .tdb-filters, .tdb-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .tdb-items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -89,6 +100,15 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
     <div class="tdb-msg" id="tdbMsg" role="status"></div>
   </section>
 
+  <!-- Faculty sections: Student Progress | Part B Access | Final Capstone (js/faculty-extras.js) -->
+  <nav class="fx-tabs" id="fxTabs" hidden aria-label="Faculty dashboard sections">
+    <button type="button" class="fx-tab is-on" data-tab="progress">📊 Student Progress</button>
+    <button type="button" class="fx-tab" data-tab="partb">🔑 Part B Access</button>
+    <button type="button" class="fx-tab" data-tab="capstone">🏆 Final Capstone</button>
+  </nav>
+  <section id="fxPartB" hidden></section>
+  <section id="fxCap" hidden></section>
+
   <!-- Progress view -->
   <section id="tdbMain" hidden>
     <div class="dde-card" style="margin-top:18px">
@@ -102,6 +122,8 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
             <option value="prog">In progress</option><option value="none">Not started</option>
           </select></div>
         <div><label for="fSearch">Student</label><input type="search" id="fSearch" placeholder="Name or USN"></div>
+        <div><label for="fPartB">Part B access</label>
+          <select id="fPartB"><option value="">All</option><option value="yes">Granted</option><option value="no">Not granted</option></select></div>
       </div>
       <div class="tdb-actions">
         <button type="button" class="dde-btn" id="tdbRefresh">↻ Refresh</button>
@@ -127,6 +149,8 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
     <div class="dde-card" id="tdbDetail"></div>
   </div>
 </main>
+<script src="js/capstone-data.js"></script>
+<script src="js/faculty-extras.js"></script>
 
 <script>
 (function () {
@@ -201,6 +225,7 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
     $('tdbMain').hidden = false; $('tdbLogout').hidden = false;
     if (teacher) $('tdbWho').textContent = ' · Logged in as ' + (teacher.name || teacher.email);
     fillLevels(); load();
+    if (window.DDEFaculty) DDEFaculty.init({ token: token, expired: showLogin, esc: esc, when: when });
   }
 
   /* ---------- Load and draw ---------- */
@@ -230,6 +255,8 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
       if (sec && r.section !== sec) return false;
       if (st && status(r) !== st) return false;
       if (q && (String(r.name || '').toLowerCase().indexOf(q) < 0 && String(r.usn || '').toLowerCase().indexOf(q) < 0)) return false;
+      var pb = $('fPartB') ? $('fPartB').value : '';
+      if (pb && (!!r.partb_access) !== (pb === 'yes')) return false;
       return true;
     });
   }
@@ -333,7 +360,7 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
     $('fModule').addEventListener('change', load);
     $('tdbRefresh').addEventListener('click', load);
     $('tdbCsv').addEventListener('click', csv);
-    ['fSection', 'fStatus'].forEach(function (id) { $(id).addEventListener('change', draw); });
+    ['fSection', 'fStatus', 'fPartB'].forEach(function (id) { $(id).addEventListener('change', draw); });
     $('fSearch').addEventListener('input', draw);
     $('tdbModal').addEventListener('click', function (e) { if (e.target === $('tdbModal')) closeDetail(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDetail(); });
