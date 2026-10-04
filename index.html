@@ -315,7 +315,7 @@
             <div>
                 <h2>Advanced VLSI &amp; Digital IC Design</h2>
                 <p>Advanced VLSI learning: design, timing and power, synthesis, physical design, verification, test, architecture and AI/ML for VLSI.</p>
-                <span class="part-meta">Levels 7–14 · Level 7: Digital VLSI Design · Level 8: VLSI Timing &amp; Power · Level 9: RTL Design &amp; Synthesis · Level 10: Physical Design · ⏳ Levels 11–14 coming soon</span>
+                <span class="part-meta">Levels 7–14 · Level 7: Digital VLSI Design · Level 8: VLSI Timing &amp; Power · Level 9: RTL Design &amp; Synthesis · Level 10: Physical Design · Level 11: Advanced Design Verification · Level 12: Advanced DFT &amp; Silicon Test · ⏳ Levels 13–14 coming soon</span>
             </div>
         </div>
 
@@ -367,10 +367,10 @@
             <div class="path-step">
                 <div class="path-circle">L11</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
-                    <h3>LEVEL 11 — Advanced Verification</h3>
-                    <p>Advanced verification strategies and methodologies.</p>
-                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 11 — Advanced Design Verification</h3>
+                    <p>Verification planning, constrained-random stimulus, assertions, functional and code coverage, UVM and verification closure.</p>
+                    <button class="path-button" type="button" onclick="goLevel(11)">🔒 Not yet released</button>
                 </div>
             </div>
         
@@ -378,10 +378,10 @@
             <div class="path-step">
                 <div class="path-circle">L12</div>
                 <div class="path-card">
-                    <span class="path-status status-locked">🔒 LOCKED</span> <span class="path-status status-soon">⏳ Coming Soon</span>
-                    <h3>LEVEL 12 — DFT & Advanced Testing</h3>
-                    <p>Design-for-test and advanced VLSI testing techniques.</p>
-                    <button class="path-button" type="button" disabled>⏳ Coming Soon</button>
+                    <span class="path-status status-locked">🔒 LOCKED</span>
+                    <h3>LEVEL 12 — Advanced DFT & Silicon Test</h3>
+                    <p>Scan compression, advanced ATPG and fault models, memory test and repair, logic BIST, IJTAG, at-speed test and yield.</p>
+                    <button class="path-button" type="button" onclick="goLevel(12)">🔒 Not yet released</button>
                 </div>
             </div>
         
@@ -453,7 +453,7 @@
         */
         var LEVEL_PAGES = { 1: 'dashboard.html', 2: 'level2-dashboard.html', 3: 'level3-dashboard.html',
                             4: 'level4-dashboard.html', 5: 'level5-dashboard.html', 6: 'level6.html',
-                            7: 'level7.html', 8: 'level8.html', 9: 'level9.html', 10: 'level10.html' };
+                            7: 'level7.html', 8: 'level8.html', 9: 'level9.html', 10: 'level10.html', 11: 'level11.html', 12: 'level12.html' };
 
         function goLevel(level) {
             if (!LEVEL_PAGES[level]) {

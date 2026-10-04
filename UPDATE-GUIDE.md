@@ -157,3 +157,17 @@ New files: `level10.html`, `level10-module1.html` … `level10-module10.html`, `
 Level 10 uses the shared Part B engine (`js/level7-common.js`) and stylesheet (`css/level7.css`). Its module progress is saved to Supabase like Level 9 (`PARTB_SYNC = { 9: true, 10: true }` in `js/progress-sync.js`), so the Teacher Dashboard shows Level 10 → Module 1…10 automatically.
 
 Labs: physical-design pipeline + arrange-the-flow, floorplan lab, power-grid lab (IR drop / EM / tracks), placement board with congestion map, clock-tree lab, routing grid (M2/M3 + vias), problem map + crosstalk/antenna lab, physical verification (DRC/LVS/ERC/antenna), physical optimisation + repeater lab, and the 11-step **Build Your Chip** project with a score out of 100.
+
+## Levels 11 and 12 – Advanced Design Verification / Advanced DFT & Silicon Test (Part B)
+
+Both levels are installed but **locked**. Teachers can preview them after Teacher Login. To open them for students, set `level11: true` and/or `level12: true` in `access-control.js`.
+
+**No Supabase changes are needed** – the existing module-progress tables and functions already support levels 1–14. Progress for both levels is sent to Supabase (`PARTB_SYNC = { 9: true, 10: true, 11: true, 12: true }` in `js/progress-sync.js`), so the Teacher Dashboard shows Level 11/12 → Module 1…10 automatically, including students with 0 % progress.
+
+New files: `level11.html`, `level11-module1.html` … `level11-module10.html`, `level11-certificate.html`, `js/level11-module1.js` … `js/level11-module10.js`, and the same set for Level 12.
+
+Quiz randomisation: Levels 11 and 12 shuffle the order of questions and answer options on every attempt (`shuffle: true` in their catalogue entries in `js/level7-common.js`). Levels 7–10 are unchanged.
+
+Content boundaries: Level 11 builds on Level 6 (SystemVerilog syntax is not re-taught). Level 12 builds on Level 5 (basic fault models, D-algorithm/PODEM, SCOAP, scan chains, LFSR/BILBO and the JTAG TAP are not re-taught).
+
+Adding Level 13 or 14 later follows the same pattern: a catalogue entry in `js/level7-common.js`, a `LEVELS_B` entry in `common.js`, `levelN` in `access-control.js`, the number in `PARTB_SYNC`, and the page shells.

@@ -100,6 +100,44 @@
         { t: 'Physical Design Optimization', i: '⚙️', d: 'Spreading, buffering, resizing, layer promotion and the trade-offs of physical optimisation.' },
         { t: 'GDSII, Tape-out & Build Your Chip', i: '🏆', d: 'Sign-off, GDSII, masks and fabrication – then build your own chip from netlist to tape-out.' }
       ]
+    },
+    11: {
+      title: 'Advanced Design Verification',
+      lead: 'Did we design the hardware correctly? Ten modules on how professional teams verify chips before silicon: planning, constrained-random stimulus, assertions, functional and code coverage, UVM, interface verification and closure – ending with your own verification project.',
+      tags: ['10 modules', '100 quiz questions', 'verification plan builder', 'assertion & coverage labs', 'UVM', 'project'],
+      acc: ['#5856d6', '#0071e3', '#ff9500', '#34c759', '#00a7c4', '#af52de', '#e5332a', '#d48a00', '#00b39f', '#ff2d55'],
+      sync: true, shuffle: true,
+      modules: [
+        { t: 'Advanced Verification Methodology', i: '🧭', d: 'Verification vs validation, planning, strategy, directed vs constrained-random, regression, metrics and closure.' },
+        { t: 'SystemVerilog for Verification', i: '🧱', d: 'Using classes, randomisation, mailboxes, interfaces and clocking blocks to build verification components.' },
+        { t: 'Constrained-Random Verification', i: '🎲', d: 'Constraint design, distributions, seeds, corner and illegal cases, and random regressions.' },
+        { t: 'Assertions & SVA', i: '✅', d: 'Properties, sequences, temporal operators and protocol checking with assertion-based verification.' },
+        { t: 'Functional Coverage', i: '📊', d: 'Covergroups, coverpoints, bins, crosses, transitions, coverage goals and closure.' },
+        { t: 'Code Coverage', i: '🧾', d: 'Statement, branch, expression, toggle and FSM coverage, reports and their limitations.' },
+        { t: 'UVM Fundamentals', i: '🏛️', d: 'Transactions, sequences, sequencers, drivers, monitors, agents, environments and scoreboards.' },
+        { t: 'Digital Interface Verification', i: '🔌', d: 'FIFO, UART, register and handshake/AXI-style verification with checkers, scoreboards and error injection.' },
+        { t: 'Verification Closure', i: '🏁', d: 'Coverage holes, regression strategy, test prioritisation, bug tracking, metrics and sign-off.' },
+        { t: 'Advanced Verification Project', i: '🎯', d: 'Verify an ALU, FIFO, UART, register file or bus interface with stimulus, assertions, coverage and a scoreboard.' }
+      ]
+    },
+    12: {
+      title: 'Advanced DFT & Silicon Test',
+      lead: 'Can we test the manufactured chip and find its defects? Building on the testing basics of Level 5, ten modules on industrial DFT: scan compression, advanced ATPG and fault models, memory test and repair, logic BIST, IJTAG, at-speed test, diagnosis and yield.',
+      tags: ['10 modules', '100 quiz questions', 'scan & ATPG labs', 'March & LFSR simulators', 'yield dashboard', 'project'],
+      acc: ['#e5332a', '#ff9500', '#0071e3', '#af52de', '#34c759', '#5856d6', '#00a7c4', '#ff2d55', '#d48a00', '#00b39f'],
+      sync: true, shuffle: true,
+      modules: [
+        { t: 'Advanced DFT Architecture', i: '🏗️', d: 'Test modes, test access, hierarchical and core-based DFT, DFT planning and trade-offs.' },
+        { t: 'Advanced Scan Design', i: '⛓️', d: 'Multiple chains, balancing, scan compression and EDT, test-data volume, test time and low-power scan.' },
+        { t: 'Advanced ATPG', i: '🧮', d: 'ATPG flow, fault simulation and collapsing at scale, compaction, pattern count and coverage improvement.' },
+        { t: 'Advanced Fault Models', i: '🧬', d: 'Transition and path-delay testing in depth, bridging, opens, cell-aware faults and small-delay defects.' },
+        { t: 'Advanced Memory Test', i: '🧠', d: 'Memory fault models, March algorithms, MBIST architecture, redundancy, repair and BISR.' },
+        { t: 'Logic BIST', i: '🔁', d: 'LBIST architecture, phase shifters, MISR compaction, aliasing, X-masking and test points.' },
+        { t: 'Advanced Test Access', i: '🔑', d: 'Advanced 1149.1 use, interconnect test, IEEE 1687 (IJTAG), embedded instruments and hierarchical access.' },
+        { t: 'At-Speed & Silicon Testing', i: '⏱️', d: 'Launch-on-capture, launch-on-shift, on-chip clocking and delay-test challenges.' },
+        { t: 'Post-Silicon Validation & Yield', i: '📈', d: 'Bring-up, failure diagnosis, defect classification, yield models and yield learning.' },
+        { t: 'Advanced DFT & Silicon Test Project', i: '🏆', d: 'Build a complete test solution: compression, ATPG, MBIST, LBIST, IJTAG, diagnosis and yield.' }
+      ]
     }
   };
   var INFO = LEVEL_INFO[LV] || LEVEL_INFO[7];
@@ -816,7 +854,16 @@
     }
     showHist();
     var picks;
+    var baseQs = qs;
+    function shuffled(list) {                     // new order of questions AND options for every attempt (INFO.shuffle levels)
+      var out = list.map(function (it) {
+        var idx = it.o.map(function (o, k) { return k; }).sort(function () { return Math.random() - 0.5; });
+        return Object.assign({}, it, { o: idx.map(function (k) { return it.o[k]; }), a: idx.indexOf(it.a) });
+      });
+      return out.sort(function () { return Math.random() - 0.5; });
+    }
     function build() {
+      if (INFO.shuffle) qs = shuffled(baseQs);
       picks = {};
       box.classList.remove('is-graded'); box.innerHTML = '';
       var head = h('div', 'l7-quiz-head', '<span class="l7-quiz-meter">Answered <b id="l7QA">0</b> / ' + qs.length + '</span>');

@@ -135,8 +135,8 @@
   ];
 
   /* Part B – Advanced VLSI & Digital IC Design.
-     Levels 7–10 have pages (released through LEVEL_ACCESS.level7 … level10 in access-control.js).
-     Levels 11–14 are ROADMAP ONLY: no pages yet, always shown as locked / coming soon. */
+     Levels 7–12 have pages (released through LEVEL_ACCESS.level7 … level12 in access-control.js).
+     Levels 13–14 are ROADMAP ONLY: no pages yet, always shown as locked / coming soon. */
   var LEVELS_B = [
     {
       n: 7, part: 'B', title: 'Digital VLSI Design', color: '#16b5c9', dashboard: 'level7.html', certificate: 'level7-certificate.html',
@@ -192,6 +192,44 @@
       unit: 'Modules', numbered: true,
       progress: function () {
         return LEVELS_B[3].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level10_module' + (i + 1) + '_completed'), href: m[1] }; });
+      }
+    },
+    {
+      n: 11, part: 'B', title: 'Advanced Design Verification', color: '#5856d6', dashboard: 'level11.html', certificate: 'level11-certificate.html',
+      modules: [
+        ['Advanced Verification Methodology', 'level11-module1.html'],
+        ['SystemVerilog for Verification', 'level11-module2.html'],
+        ['Constrained-Random Verification', 'level11-module3.html'],
+        ['Assertions & SVA', 'level11-module4.html'],
+        ['Functional Coverage', 'level11-module5.html'],
+        ['Code Coverage', 'level11-module6.html'],
+        ['UVM Fundamentals', 'level11-module7.html'],
+        ['Digital Interface Verification', 'level11-module8.html'],
+        ['Verification Closure', 'level11-module9.html'],
+        ['Advanced Verification Project', 'level11-module10.html']
+      ],
+      unit: 'Modules', numbered: true,
+      progress: function () {
+        return LEVELS_B[4].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level11_module' + (i + 1) + '_completed'), href: m[1] }; });
+      }
+    },
+    {
+      n: 12, part: 'B', title: 'Advanced DFT & Silicon Test', color: '#e5332a', dashboard: 'level12.html', certificate: 'level12-certificate.html',
+      modules: [
+        ['Advanced DFT Architecture', 'level12-module1.html'],
+        ['Advanced Scan Design', 'level12-module2.html'],
+        ['Advanced ATPG', 'level12-module3.html'],
+        ['Advanced Fault Models', 'level12-module4.html'],
+        ['Advanced Memory Test', 'level12-module5.html'],
+        ['Logic BIST', 'level12-module6.html'],
+        ['Advanced Test Access', 'level12-module7.html'],
+        ['At-Speed & Silicon Testing', 'level12-module8.html'],
+        ['Post-Silicon Validation & Yield', 'level12-module9.html'],
+        ['Advanced DFT & Silicon Test Project', 'level12-module10.html']
+      ],
+      unit: 'Modules', numbered: true,
+      progress: function () {
+        return LEVELS_B[5].modules.map(function (m, i) { return { label: 'Module ' + (i + 1) + ': ' + m[0] + ' (activities + quiz)', done: flag('level12_module' + (i + 1) + '_completed'), href: m[1] }; });
       }
     }
   ];
@@ -470,7 +508,7 @@
     html += '</div>';
     html += '<div class="dde-part dde-part-b"><span class="dde-part-badge">PART B</span><div><h3>Advanced VLSI &amp; Digital IC Design</h3>' +
       '<p>The advanced track: digital VLSI design, timing and power, synthesis, physical design, verification, DFT, processor architecture and AI/ML for VLSI.</p>' +
-      '<span class="dde-part-meta">Levels 7–14 · Level 7 ' + (isOpen(7) ? '🟢 available' : '🔒 locked') + ' · Level 8 ' + (isOpen(8) ? '🟢 available' : '🔒 locked') + ' · Level 9 ' + (isOpen(9) ? '🟢 available' : '🔒 locked') + ' · Level 10 ' + (isOpen(10) ? '🟢 available' : '🔒 locked') + ' · ⏳ Levels 11–14 coming soon</span></div></div><div class="dde-levels dde-levels-b">';
+      '<span class="dde-part-meta">Levels 7–14 · Level 7 ' + (isOpen(7) ? '🟢 available' : '🔒 locked') + ' · Level 8 ' + (isOpen(8) ? '🟢 available' : '🔒 locked') + ' · Level 9 ' + (isOpen(9) ? '🟢 available' : '🔒 locked') + ' · Level 10 ' + (isOpen(10) ? '🟢 available' : '🔒 locked') + ' · Level 11 ' + (isOpen(11) ? '🟢 available' : '🔒 locked') + ' · Level 12 ' + (isOpen(12) ? '🟢 available' : '🔒 locked') + ' · ⏳ Levels 13–14 coming soon</span></div></div><div class="dde-levels dde-levels-b">';
     PART_B.forEach(function (x) {
       var B = levelByN(x[0]);
       if (B) {
@@ -534,7 +572,9 @@
     7: 'covering advanced CMOS logic, VLSI arithmetic circuits, datapaths, memory circuits, interconnect, standard cells, IP-based design, reliability and emerging VLSI technologies',
     8: 'covering timing fundamentals, CMOS delay analysis, setup and hold constraints, clock timing, static timing analysis, timing optimization, VLSI power, low-power techniques and power analysis',
     9: 'covering RTL design methodology, synthesizable SystemVerilog, RTL architecture, FSM implementation, coding for synthesis, logic synthesis, synthesis constraints, synthesis reports and RTL optimization',
-    10: 'covering the physical design flow, floorplanning, power planning, placement, clock tree synthesis, routing, physical design challenges, physical verification, physical optimization, GDSII and tape-out'
+    10: 'covering the physical design flow, floorplanning, power planning, placement, clock tree synthesis, routing, physical design challenges, physical verification, physical optimization, GDSII and tape-out',
+    11: 'covering verification methodology and planning, SystemVerilog verification environments, constrained-random verification, assertions, functional and code coverage, UVM, interface verification and verification closure',
+    12: 'covering DFT architecture, scan compression, advanced ATPG, advanced fault models, memory test and repair, logic BIST, IJTAG test access, at-speed testing, silicon diagnosis and yield'
   };
 
   function corner(tf) {
