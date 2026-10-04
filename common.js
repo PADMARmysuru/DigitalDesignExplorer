@@ -587,6 +587,7 @@
       root.innerHTML = '<div class="dde-card dde-locked" role="alert"><div class="dde-big" aria-hidden="true">🔒</div>' +
         '<h1>Part B Access Required</h1><p><b>' + nm + '</b></p>' +
         (pb === 'offline' ? '<p>Your Part B access could not be checked because the server is not reachable. Please check your internet connection and try again.</p>'
+          : pb === 'setup' ? '<p>Part B access could not be checked: the server is not fully set up yet.</p><p style="font-size:.9rem"><b>Faculty:</b> run <code>progress-partb-capstone.sql</code> in the Supabase SQL Editor (then <code>progress-selftest.sql</code>), and reload this page.</p>'
           : '<p>Part B contains advanced VLSI topics and is currently available only to selected students. Please contact your faculty if you require access.</p>') +
         '<div class="dde-actions"><a class="dde-btn" href="student-dashboard.html">📊 Return to Dashboard</a><a class="dde-btn is-ghost" href="index.html">🏠 Home</a></div>' +
         '<p style="margin-top:16px;font-size:.9rem">Teacher? <a href="teacher-login.html?next=' + encodeURIComponent(L ? L.dashboard : (n === 15 ? 'capstone.html' : 'index.html')) + '">Log in with Teacher Login</a>.</p></div>';

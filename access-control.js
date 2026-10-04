@@ -182,7 +182,8 @@ var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;
     partBStatus().then(function (r) {
       if (r && r.ok && r.granted) { var e = document.getElementById('dde-partb-hide'); if (e) e.parentNode.removeChild(e); return; }
       if (r && r.error === 'not_logged_in') { location.replace('login.html?partb=1&next=' + encodeURIComponent(page)); return; }
-      location.replace('locked.html?partb=' + (r && r.error === 'offline' ? 'offline' : '1') + '&level=' + lv);
+      var why = r && r.error === 'offline' ? 'offline' : (r && r.ok) ? '1' : 'setup';   // not ok and no known error = server function missing (SQL not run)
+      location.replace('locked.html?partb=' + why + '&level=' + lv);
     });
   }
 
