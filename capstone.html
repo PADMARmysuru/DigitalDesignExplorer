@@ -23,6 +23,9 @@
 <script src="js/capstone-data.js" defer></script>
 <script src="js/capstone.js" defer></script>
 <style>
+/* Read-only fields (teacher preview, or after faculty approval) look clearly read-only */
+.cap-f input:disabled, .cap-f textarea:disabled, .cap-f select:disabled { background: #eef0f4 !important; color: #6e6e73; cursor: not-allowed; opacity: 1; }
+.cap-f input[type=checkbox]:disabled { cursor: not-allowed; }
 body.dde-cap #capstone{max-width:1080px;margin:0 auto;padding:0 18px 40px}
 .cap-journey{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}
 .cap-journey span{background:#fff;border:1px solid var(--l7-line);border-radius:999px;padding:5px 11px;font-size:.8rem;font-weight:600}
