@@ -325,23 +325,7 @@
 
     <!-- CERTIFICATE -->
 
-    <section class="certificate-section">
-
-        <h2>🏆 Certificate</h2>
-
-        <p id="certificateMessage">
-            🔒 Complete all modules to unlock your certificate.
-        </p>
-
-        <button id="certificateButton"
-                onclick="openCertificate()"
-                disabled>
-
-            🔒 Generate Certificate
-
-        </button>
-
-    </section>
+    <section class="certificate-section" data-dde-certbox="1"><!-- drawn by common.js with the uniform Level 1–3 rule --></section>
 
 
 </main>
@@ -427,15 +411,17 @@ function updateModuleProgress() {
     let savedTotal =
         localStorage.getItem("quizTotal");
 
-    let quizDone = savedScore !== null;
+    let quizBest = Math.max(+(localStorage.getItem("quizBestScore") || -1), savedScore === null ? -1 : +savedScore);
+    let quizNeed = Math.ceil((+(savedTotal || 110)) * (typeof CERT_PASS_PERCENT === "number" ? CERT_PASS_PERCENT : 50) / 100);
+    let quizDone = savedScore !== null && quizBest >= quizNeed;
 
-    if (quizDone) {
+    if (savedScore !== null) {
 
         document.getElementById("quizScore").innerText =
-            savedScore + " / " + (savedTotal || "110");
+            "Best " + quizBest + " / " + (savedTotal || "110");
 
         document.getElementById("quizProgressText").innerText =
-            "Quiz Completed";
+            quizDone ? "Quiz Passed" : "Retake – pass mark " + quizNeed + " / " + (savedTotal || "110");
 
     } else {
 
@@ -538,13 +524,7 @@ let savedScore =
 let savedTotal =
     localStorage.getItem("quizTotal");
 
-if (savedScore !== null) {
-
-    document.getElementById("quizScore")
-        .innerText =
-        savedScore + " / " + savedTotal;
-
-}
+/* quiz card is drawn by updateModuleProgress() (best score) */
 
 </script>
 
@@ -620,177 +600,9 @@ if (savedStudent) {
 </script>
 
 
-<!-- CERTIFICATE CHECK -->
+<!-- CERTIFICATE CHECK: uniform rule in common.js (DDE.renderCertBoxes) -->
 
 <script>
-
-function checkCertificateEligibility() {
-
-    let completedGates =
-        JSON.parse(
-            localStorage.getItem("completedGates")
-        ) || [];
-
-
-    let completedPrograms = 0;
-
-
-    for (let i = 1; i <= 10; i++) {
-
-        if (
-            localStorage.getItem("practice" + i)
-            === "completed"
-        ) {
-
-            completedPrograms++;
-
-        }
-
-    }
-
-
-    let quizCompleted =
-        localStorage.getItem("quizScore") !== null;
-
-    let completedLabExperiments = 0;
-    for (let i = 1; i <= 8; i++) {
-        if (localStorage.getItem("digitalLabExp" + i) === "true") {
-            completedLabExperiments++;
-        }
-    }
-
-
-    let allModulesCompleted =
-
-        completedGates.length === 7 &&
-
-        completedPrograms === 10 &&
-
-        localStorage.getItem("halfAdderCompleted")
-            === "true" &&
-
-        localStorage.getItem("fullAdderCompleted")
-            === "true" &&
-
-        quizCompleted &&
-
-        localStorage.getItem("kmapCompleted")
-            === "true" &&
-
-        localStorage.getItem("qmPracticeCompleted")
-            === "true" &&
-
-        completedLabExperiments === 8;
-
-
-    let certificateButton =
-        document.getElementById(
-            "certificateButton"
-        );
-
-
-    let certificateMessage =
-        document.getElementById(
-            "certificateMessage"
-        );
-
-
-    if (allModulesCompleted) {
-
-        certificateButton.disabled = false;
-
-        certificateButton.innerText =
-            "🏆 Generate Certificate";
-
-        certificateMessage.innerText =
-            "🎉 Congratulations! You have completed all modules.";
-
-    }
-
-}
-
-
-/* OPEN CERTIFICATE */
-
-function openCertificate() {
-
-    let completedGates =
-        JSON.parse(
-            localStorage.getItem("completedGates")
-        ) || [];
-
-
-    let completedPrograms = 0;
-
-
-    for (let i = 1; i <= 10; i++) {
-
-        if (
-            localStorage.getItem("practice" + i)
-            === "completed"
-        ) {
-
-            completedPrograms++;
-
-        }
-
-    }
-
-
-    let quizCompleted =
-        localStorage.getItem("quizScore") !== null;
-
-    let completedLabExperiments = 0;
-    for (let i = 1; i <= 8; i++) {
-        if (localStorage.getItem("digitalLabExp" + i) === "true") {
-            completedLabExperiments++;
-        }
-    }
-
-
-    let allModulesCompleted =
-
-        completedGates.length === 7 &&
-
-        completedPrograms === 10 &&
-
-        localStorage.getItem("halfAdderCompleted")
-            === "true" &&
-
-        localStorage.getItem("fullAdderCompleted")
-            === "true" &&
-
-        quizCompleted &&
-
-        localStorage.getItem("kmapCompleted")
-            === "true" &&
-
-        localStorage.getItem("qmPracticeCompleted")
-            === "true";
-
-
-    if (allModulesCompleted) {
-
-        window.location.href =
-            "certificate.html";
-
-    }
-
-    else {
-
-        document.getElementById(
-            "certificateMessage"
-        ).innerText =
-            "🔒 Complete all modules to unlock your certificate.";
-
-    }
-
-}
-
-
-/* CHECK WHEN DASHBOARD LOADS */
-
-checkCertificateEligibility();
 
 function logout() {
     localStorage.removeItem("studentLoggedIn");

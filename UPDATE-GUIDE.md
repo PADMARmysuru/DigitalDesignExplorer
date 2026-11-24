@@ -183,3 +183,40 @@ It adds the `dde_partb_access` and `dde_capstone_eval` tables (RLS on, no direct
 Teachers see Part B through Teacher Login (preview), as before.
 
 **Final Capstone:** `capstone.html` (12 stages) → student submits → Faculty Dashboard → 🏆 Final Capstone → open the student → rubric (100 marks) → approve. The student then sees "FINAL CAPSTONE COMPLETED" and can open `capstone-certificate.html`. Capstone stages are stored in the existing progress table as level 15.
+
+## November 2026 – Uniform certificate rule for Levels 1–3, Levels 1–3 open, faculty logins
+
+### What students will notice
+- **Levels 1, 2 and 3 are open** for every student (`access-control.js`: `level1`–`level3` are `true`). Levels 4–14 and the Capstone stay locked.
+- **One certificate rule for Levels 1, 2 and 3**, shown on each level dashboard and on the certificate page:
+  1. every item of the level must show ✓;
+  2. a learning activity shows ✓ when it is finished (all gates / programs / experiments / problems / final challenge);
+  3. a scored test shows ✓ when the **best** score is at least **50 %** (retakes allowed – a lower retake never removes a pass).
+- The checklist now says exactly what is missing (e.g. "best score 40 / 110 – pass mark 55 / 110", "5 / 7 gates").
+- **Progress follows the student to any device.** Every Level 1–3 page saves to the student's online record automatically (when logged in), and the certificate page loads the online record before deciding. Completing work on a lab PC and opening the certificate on a phone now works.
+
+To change the pass mark, edit one number in `access-control.js`: `var CERT_PASS_PERCENT = 50;`
+
+### Why certificates were not generated (fixed)
+| Where | Problem | Now |
+|---|---|---|
+| All Level 1–3 pages | Progress was kept only in the browser where it was done (Levels 2–3 never reached the server; Level 1 only when the dashboard was opened) | Saved online automatically; loaded on login and on the certificate page |
+| Verilog Practice (L1) | Only one exact way of writing each program was accepted (e.g. `assign y = b & a`, gate primitives, `input i0, input i1, input s` were rejected) | Any code that produces the correct truth table is accepted |
+| Level 3 final challenges | Exact text only (e.g. `q <= 0` or `assign gt = a > b` rejected; instances had to be named fa0–fa3) | Equivalent correct forms accepted |
+| Sequential Circuits – 20 problems (L2) | Needed 20 / 20; "Reset" erased the completion | Best score ≥ 50 %; reset keeps the pass |
+| Quiz (L1) | Any attempt counted, but a later retake replaced the score | Best score ≥ 50 % counts |
+| K-Map (L1) | Marked complete as soon as the page opened | Complete after all 10 questions |
+| Half / Full Adder (L1) | Marked complete as soon as the page opened | Complete after all 4 / 8 input combinations are tried |
+| Level 1/2/3 dashboards | Each had its own (different) certificate check | All use the same rule as the certificate page |
+
+Nothing a student already earned is removed: old completion flags still count.
+
+### Faculty
+- **Teacher Dashboard → Level 1/2/3 → Module "🏆 Certificate status – all modules"** lists every student as *Eligible* or *n / N modules*, with the pending modules when you click a student. CSV download works here too.
+- **Two more faculty logins:** run `add-faculty-logins.sql` (delivered separately – keep it private, do not put it in this folder or on GitHub) in the Supabase SQL Editor after entering the faculty e-mail addresses. They log in at `teacher-login.html`.
+
+### Supabase
+No database change is needed: the existing functions already accept Levels 1–14.
+
+### Files changed
+`access-control.js`, `common.js`, `js/progress-sync.js`, `dashboard.html`, `level2-dashboard.html`, `level3-dashboard.html`, `teacher-dashboard.html`, `half-adder.html`, `full-adder.html`, `kmap.html`, `practice.html`, `quiz.html`, `quine-mccluskey.html`, `sequential-circuits-20-problems.html`, `verilog-structural.html`, `verilog-dataflow.html`, `verilog-behavioral.html`, `verilog-rtl.html`, `verilog-testbench-verification.html`, `UPDATE-GUIDE.md`.

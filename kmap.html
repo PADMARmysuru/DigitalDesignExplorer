@@ -1342,7 +1342,6 @@ let currentKmapQuestion = 0;
 function loadKmapQuestion() {
 
     let q = kmapQuestions[currentKmapQuestion];
-        localStorage.setItem("kmapCompleted", "true");
 
     document.getElementById("kmapLevel")
         .innerText = "📘 " + q.level + " K-Map";
@@ -1417,7 +1416,9 @@ function nextKmapQuestion() {
         loadKmapQuestion();
 
     } else {
-saveKmapProgress();
+        // K-Map is complete only after all questions are answered correctly (uniform Level 1–3 rule)
+        localStorage.setItem("kmapCompleted", "true");
+        saveKmapProgress();
         document.getElementById("kmapLevel")
             .innerText = "🎉 K-Map Practice Completed!";
 

@@ -351,6 +351,9 @@ function showChallengeHint(){
     document.getElementById("challengeResult").innerHTML =
         "💡 Use an if–else inside always @(posedge clk or posedge reset). On reset set q to 4'b0000; otherwise increment q by 1.";
 }
+/* Lenient check for the final challenge (uniform Level 1–3 rule): equivalent correct
+   ways of writing the same code are accepted (e.g. 0 / 4'b0000 / 4'd0, with or without brackets). */
+function ddeHas(code, re) { return re.test(code); }
 function checkChallenge(){
     const code=cleanCode(document.getElementById("challengeCode").value);
     const r=document.getElementById("challengeResult");
@@ -359,11 +362,11 @@ function checkChallenge(){
         code.includes("inputclk") &&
         code.includes("inputreset") &&
         code.includes("outputreg[3:0]q") &&
-        code.includes("always@(posedgeclkorposedgereset)") &&
-        code.includes("if(reset)") &&
-        code.includes("q<=4'b0000;") &&
+        ddeHas(code, /always@\(posedgeclk(or|,)posedgereset\)/) &&
+        ddeHas(code, /if\((reset|reset==1|reset==1'b1)\)/) &&
+        ddeHas(code, /q<=(4'b0000|4'b0|4'd0|4'h0|0|'0|'b0);/) &&
         code.includes("else") &&
-        code.includes("q<=q+1'b1;") &&
+        ddeHas(code, /q<=(q\+(1'b1|1|1'd1|4'b0001|4'd1|4'h1)|(1'b1|1|1'd1|4'b0001|4'd1|4'h1)\+q);/) &&
         code.includes("endmodule");
     if(correct){
         r.innerHTML="✅ Challenge completed! Your behavioral 4-bit counter is correctly described.";

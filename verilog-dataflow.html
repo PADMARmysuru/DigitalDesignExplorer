@@ -365,6 +365,9 @@ function showChallengeHint(){
     document.getElementById("challengeResult").innerHTML =
         "💡 Use three continuous assignments comparing the two 4-bit buses.";
 }
+/* Lenient check for the final challenge (uniform Level 1–3 rule): equivalent correct
+   ways of writing the same code are accepted (e.g. 0 / 4'b0000 / 4'd0, with or without brackets). */
+function ddeHas(code, re) { return re.test(code); }
 function checkChallenge(){
     const code=cleanCode(document.getElementById("challengeCode").value);
     const r=document.getElementById("challengeResult");
@@ -375,9 +378,9 @@ function checkChallenge(){
         code.includes("outputgt") &&
         code.includes("outputeq") &&
         code.includes("outputlt") &&
-        code.includes("assigngt=(a>b);") &&
-        code.includes("assigneq=(a==b);") &&
-        code.includes("assignlt=(a<b);") &&
+        ddeHas(code, /assigngt=(\(a>b\)|a>b|\(b<a\)|b<a|\(a>b\)\?1('b1)?:0('b0)?|a>b\?1('b1)?:0('b0)?);/) &&
+        ddeHas(code, /assigneq=(\(a==b\)|a==b|\(b==a\)|b==a|\(a==b\)\?1('b1)?:0('b0)?|a==b\?1('b1)?:0('b0)?);/) &&
+        ddeHas(code, /assignlt=(\(a<b\)|a<b|\(b>a\)|b>a|\(a<b\)\?1('b1)?:0('b0)?|a<b\?1('b1)?:0('b0)?);/) &&
         code.includes("endmodule");
     if(correct){
         r.innerHTML="✅ Challenge completed! Your 4-bit comparator uses data-flow modeling.";

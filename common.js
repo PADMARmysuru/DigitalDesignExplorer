@@ -28,6 +28,60 @@
     return last;
   }
 
+  /* ---------- UNIFORM CERTIFICATE RULE – Levels 1, 2 and 3 ----------
+     One definition used by the level dashboards, the student dashboard, the certificate pages
+     and (through js/progress-sync.js) the online record that the Teacher Dashboard reads.
+       • learning module  → done when its activity is finished
+       • scored test      → done when the BEST score ≥ CERT_PASS_PERCENT (access-control.js)
+     Nothing a student has already earned is taken away: the old completion flags still count. */
+  function passPct() { return (typeof CERT_PASS_PERCENT === 'number' && CERT_PASS_PERCENT > 0) ? CERT_PASS_PERCENT : 50; }
+  function num(k) { var v = get(k); if (v === null || v === '') return null; v = +v; return isNaN(v) ? null : v; }
+  function bestOf() { var b = null; for (var i = 0; i < arguments.length; i++) { var v = num(arguments[i]); if (v !== null && (b === null || v > b)) b = v; } return b; }
+  function uniq(a) { return (a || []).filter(function (x, i, arr) { return arr.indexOf(x) === i; }); }
+  function scored(label, href, best, total, legacyDone) {
+    var need = Math.ceil(total * passPct() / 100);
+    var done = (best !== null && best >= need) || !!legacyDone;
+    var detail = best === null ? (legacyDone ? 'completed' : 'not attempted yet – pass mark ' + need + ' / ' + total)
+      : 'best score ' + best + ' / ' + total + (done ? '' : ' – pass mark ' + need + ' / ' + total);
+    return { label: label + ' (pass mark ' + passPct() + '%)', done: done, href: href, detail: detail, kind: 'test' };
+  }
+  function counted(label, href, have, total, unit) {
+    have = Math.min(have, total);
+    return { label: label, done: have >= total, href: href, detail: have + ' / ' + total + ' ' + unit, kind: 'activity' };
+  }
+  function single(label, href, done) { return { label: label, done: !!done, href: href, detail: done ? 'completed' : 'not completed yet', kind: 'activity' }; }
+  function certItems(n) {
+    if (n === 1) {
+      var qTotal = num('quizTotal') || 110, qmTotal = num('qmPracticeTotal') || 10;
+      var qmBest = bestOf('qmPracticeBest', 'qmPracticeScore');
+      return [
+        counted('Logic Gates – explore all 7 gates', 'logic-gates.html', uniq(json('completedGates', [])).length, 7, 'gates'),
+        single('Half Adder – try all 4 input combinations', 'half-adder.html', flag('halfAdderCompleted')),
+        single('Full Adder – try all 8 input combinations', 'full-adder.html', flag('fullAdderCompleted')),
+        counted('Verilog Practice – 10 programs', 'practice.html', count(10, function (i) { return get('practice' + i) === 'completed'; }), 10, 'programs'),
+        scored('Quiz', 'quiz.html', bestOf('quizBestScore', 'quizScore'), qTotal, false),
+        single('K-Map – finish all 10 questions', 'kmap.html', flag('kmapCompleted')),
+        // QM finished earlier without a stored score still counts (legacy)
+        scored('Quine–McCluskey practice', 'quine-mccluskey.html', flag('qmPracticeCompleted') ? qmBest : null, qmTotal, flag('qmPracticeCompleted') && qmBest === null),
+        counted('Digital Logic Lab – 8 experiments', 'digital-logic-lab.html', count(8, function (i) { return flag('digitalLabExp' + i); }), 8, 'experiments')
+      ];
+    }
+    if (n === 2) {
+      return [
+        counted('Gate-Level Realization – 20 problems', 'gate-realization.html', uniq(json('completedGateProblems', [])).length, 20, 'problems'),
+        single('Sequential Circuits – challenge', 'sequential-circuits.html', flag('sequentialChallengeDone')),
+        scored('Sequential Circuits – 20 problems test', 'sequential-circuits-20-problems.html', bestOf('sequential20Best'), 20, flag('sequentialCircuitsDone')),
+        single('Counters – activity', 'counters.html', flag('counterActivityDone')),
+        single('Registers – activity', 'registers.html', flag('registerActivityDone')),
+        single('State Machines – activity', 'state-machines.html', flag('stateMachineActivityDone'))
+      ];
+    }
+    var k = [['Verilog Basics', 'verilogBasicsDone', 'verilog-basics.html'], ['Structural Modeling', 'verilogStructuralDone', 'verilog-structural.html'],
+      ['Data-Flow Modeling', 'verilogDataflowDone', 'verilog-dataflow.html'], ['Behavioral Modeling', 'verilogBehavioralDone', 'verilog-behavioral.html'],
+      ['RTL Modeling', 'verilogRTLDone', 'verilog-rtl.html'], ['Testbench & Verification', 'verilogVerificationDone', 'verilog-testbench-verification.html']];
+    return k.map(function (x) { return single(x[0] + ' – final challenge', x[2], flag(x[1])); });
+  }
+
   /* ---------- The levels: only pages that exist in the project ---------- */
   var LEVELS = [
     {
@@ -41,21 +95,7 @@
       practice: [['Verilog Practice', 'practice.html'], ['GATE Practice', 'gate.html']],
       interview: [['Interview Questions', 'interview.html'], ['Interview Test', 'interview-test.html']],
       unit: 'Modules',
-      progress: function () {
-        var gates = (json('completedGates', []) || []).length;
-        var prog = count(10, function (i) { return get('practice' + i) === 'completed'; });
-        var lab = count(8, function (i) { return flag('digitalLabExp' + i); });
-        return [
-          { label: 'Logic Gates (7 gates)', done: gates >= 7, href: 'logic-gates.html' },
-          { label: 'Half Adder', done: flag('halfAdderCompleted'), href: 'half-adder.html' },
-          { label: 'Full Adder', done: flag('fullAdderCompleted'), href: 'full-adder.html' },
-          { label: 'Verilog Practice (10 programs)', done: prog >= 10, href: 'practice.html' },
-          { label: 'Quiz', done: get('quizScore') !== null, href: 'quiz.html' },
-          { label: 'K-Map', done: flag('kmapCompleted'), href: 'kmap.html' },
-          { label: 'Quine–McCluskey practice', done: flag('qmPracticeCompleted'), href: 'quine-mccluskey.html' },
-          { label: 'Digital Logic Lab (8 experiments)', done: lab >= 8, href: 'digital-logic-lab.html' }
-        ];
-      }
+      progress: function () { return certItems(1); }
     },
     {
       n: 2, title: 'Digital Circuit Design', color: '#0f8b8d', dashboard: 'level2-dashboard.html', certificate: 'level2-certificate.html',
@@ -65,16 +105,7 @@
       ],
       practice: [['Sequential Circuits – 20 Problems', 'sequential-circuits-20-problems.html']],
       unit: 'Activities',
-      progress: function () {
-        return [
-          { label: 'Gate-Level Realization (20 problems)', done: (json('completedGateProblems', []) || []).length >= 20, href: 'gate-realization.html' },
-          { label: 'Sequential Circuits challenge', done: flag('sequentialChallengeDone'), href: 'sequential-circuits.html' },
-          { label: 'Sequential Circuits – 20 problems', done: flag('sequentialCircuitsDone'), href: 'sequential-circuits-20-problems.html' },
-          { label: 'Counters', done: flag('counterActivityDone'), href: 'counters.html' },
-          { label: 'Registers', done: flag('registerActivityDone'), href: 'registers.html' },
-          { label: 'State Machines', done: flag('stateMachineActivityDone'), href: 'state-machines.html' }
-        ];
-      }
+      progress: function () { return certItems(2); }
     },
     {
       n: 3, title: 'Verilog for Beginners', color: '#6c4fd1', dashboard: 'level3-dashboard.html', certificate: 'level3-certificate.html',
@@ -85,12 +116,7 @@
       ],
       interview: [['Interview Questions', 'interview.html'], ['Interview Test', 'interview-test.html']],
       unit: 'Activities',
-      progress: function () {
-        var k = [['Verilog Basics', 'verilogBasicsDone', 'verilog-basics.html'], ['Structural Modeling', 'verilogStructuralDone', 'verilog-structural.html'],
-          ['Data-Flow Modeling', 'verilogDataflowDone', 'verilog-dataflow.html'], ['Behavioral Modeling', 'verilogBehavioralDone', 'verilog-behavioral.html'],
-          ['RTL Modeling', 'verilogRTLDone', 'verilog-rtl.html'], ['Testbench & Verification', 'verilogVerificationDone', 'verilog-testbench-verification.html']];
-        return k.map(function (x) { return { label: x[0], done: flag(x[1]), href: x[2] }; });
-      }
+      progress: function () { return certItems(3); }
     },
     {
       n: 4, title: 'VLSI Basics', color: '#c2570c', dashboard: 'level4-dashboard.html', certificate: 'level4-certificate.html',
@@ -326,13 +352,28 @@
     var s = document.createElement('script'); s.src = 'supabase-config.js'; s.onload = check;
     document.head.appendChild(s);
   }
+  /* Load js/progress-sync.js once (pages that do not include it themselves) */
+  var syncPromise = null;
+  function ensureSync() {
+    if (window.DDEProgress) return Promise.resolve(window.DDEProgress);
+    if (syncPromise) return syncPromise;
+    syncPromise = new Promise(function (resolve) {
+      var done = function () { resolve(window.DDEProgress || null); };
+      var existing = document.querySelector('script[src$="progress-sync.js"]');
+      if (existing) { var n = 0; (function wait() { if (window.DDEProgress || n++ > 200) return done(); setTimeout(wait, 25); })(); return; }
+      var sc = document.createElement('script'); sc.src = 'js/progress-sync.js';
+      sc.onload = done; sc.onerror = done; document.head.appendChild(sc);
+    });
+    return syncPromise;
+  }
   function levelStats(L) {
     var items = L.progress(), done = items.filter(function (x) { return x.done; }).length;
     return { items: items, done: done, total: items.length, pct: items.length ? Math.round(100 * done / items.length) : 0 };
   }
   function student() { return A.currentStudent ? A.currentStudent() : null; }
 
-  var DDE = window.DDE = { PART_B: PART_B, LEVELS: LEVELS, LEVELS_B: LEVELS_B, levelByN: levelByN, levelStats: levelStats, isOpen: isOpen, student: student };
+  var DDE = window.DDE = { PART_B: PART_B, LEVELS: LEVELS, LEVELS_B: LEVELS_B, levelByN: levelByN, levelStats: levelStats, isOpen: isOpen, student: student,
+    certItems: certItems, passPct: passPct, ensureSync: ensureSync };
 
   /* ---------- Small SVG pieces ---------- */
   var LOGO = '<svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="5" width="16" height="16" rx="3" fill="none" stroke="#c9a227" stroke-width="2"/>' +
@@ -641,17 +682,37 @@
     '<text x="60" y="58" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="700" fill="#fff">ECE</text>' +
     '<text x="60" y="74" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#c9a227">2026</text></svg>';
 
+  /* Before deciding, bring in the student's ONLINE progress (other computer / phone / lab PC) */
   function renderCertificate(root, n) {
-    var L = levelByN(n), s = levelStats(L), st = student() || {};
     document.body.classList.add('dde-certpage');
+    var hasToken = !!get('ddeSessionToken');
+    if (!hasToken) return drawCertificate(root, n, 'local');
+    root.innerHTML = '<div class="dde-wrap"><div class="dde-card dde-locked" role="status"><div class="dde-big" aria-hidden="true">⏳</div>' +
+      '<h1>Checking your progress…</h1><p>Your saved progress is being loaded from your account.</p></div></div>';
+    var finished = false;
+    var finish = function (how) { if (finished) return; finished = true; drawCertificate(root, n, how); };
+    setTimeout(function () { finish('timeout'); }, 8000);
+    ensureSync().then(function (P) {
+      if (!P) return finish('local');
+      P.restore().then(function (r) {
+        // send anything this device has that the server does not have yet, so both agree
+        var after = function () { finish(r && r.ok ? 'online' : 'local'); };
+        if (P.syncLevel && n <= 3) P.syncLevel(n).then(after, after); else after();
+      }, function () { finish('local'); });
+    });
+  }
+  function drawCertificate(root, n, how) {
+    var L = levelByN(n), s = levelStats(L), st = student() || {};
     if (s.done < s.total) {
       root.innerHTML = '<div class="dde-wrap"><div class="dde-card dde-locked" role="alert"><div class="dde-big" aria-hidden="true">🔒</div>' +
         '<h1>Certificate Locked</h1><p>Complete all required learning ' + L.unit.toLowerCase() + ' to unlock your certificate.</p>' +
         '<p><b>Level ' + n + ' – ' + esc(L.title) + ':</b> ' + s.done + ' of ' + s.total + ' completed</p>' +
         '<ul class="dde-req">' + s.items.map(function (x) {
           return '<li class="' + (x.done ? 'is-done' : 'is-todo') + '"><b aria-hidden="true">' + (x.done ? '✓' : '') + '</b><span>' + esc(x.label) +
-            '<span class="dde-hidden"> – ' + (x.done ? 'completed' : 'not completed') + '</span></span>' + (x.done ? '' : '<a href="' + x.href + '">Open</a>') + '</li>';
-        }).join('') + '</ul><div class="dde-actions"><a class="dde-btn" href="' + L.dashboard + '">Go to Level ' + n + ' dashboard</a><a class="dde-btn is-ghost" href="student-dashboard.html">📊 Dashboard</a></div></div></div>';
+            '<span class="dde-hidden"> – ' + (x.done ? 'completed' : 'not completed') + '</span>' +
+            (x.detail ? '<small style="display:block;opacity:.75;font-size:.85em">' + esc(x.detail) + '</small>' : '') + '</span>' + (x.done ? '' : '<a href="' + x.href + '">Open</a>') + '</li>';
+        }).join('') + '</ul>' + (n <= 3 ? '<p style="font-size:.9rem;margin-top:12px">Rule for Levels 1–3: every item must show ✓. Activities must be finished; tests need a best score of at least ' + passPct() + '% (you may retake them). ' +
+          (how === 'online' ? 'Your online record was checked as well.' : 'Log in on this device to include progress you saved on another device.') + '</p>' : '') + '<div class="dde-actions"><a class="dde-btn" href="' + L.dashboard + '">Go to Level ' + n + ' dashboard</a><a class="dde-btn is-ghost" href="student-dashboard.html">📊 Dashboard</a></div></div></div>';
       return;
     }
     var name = String(st.name || '').trim() || 'Student Name';
@@ -705,6 +766,29 @@
   }
   DDE.renderCertificate = renderCertificate;
 
+  /* ---------- Certificate box on the Level 1/2/3 dashboards (same rule as the certificate page) ---------- */
+  function renderCertBoxes() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-dde-certbox]'), function (box) {
+      var n = parseInt(box.getAttribute('data-dde-certbox'), 10), L = levelByN(n);
+      if (!L) return;
+      var s = levelStats(L), ok = s.done >= s.total;
+      box.innerHTML = '<div style="text-align:center">' +
+        '<h2 style="margin:0 0 6px">🏆 Level ' + n + ' Certificate</h2>' +
+        '<p style="margin:0 0 6px;font-weight:600;color:' + (ok ? '#1f8a4c' : '#5b6472') + '">' +
+        (ok ? '🎉 All requirements completed – your certificate is ready.' : '🔒 ' + s.done + ' of ' + s.total + ' completed. Finish the items below to unlock your certificate.') + '</p>' +
+        '<p style="margin:0 0 10px;font-size:.88rem;color:#5b6472">Same rule for Levels 1–3: every item ✓ · activities finished · tests need a best score of ' + passPct() + '% (retakes allowed).</p></div>' +
+        '<ul class="dde-req">' + s.items.map(function (x) {
+          return '<li class="' + (x.done ? 'is-done' : 'is-todo') + '"><b aria-hidden="true">' + (x.done ? '✓' : '') + '</b><span>' + esc(x.label) +
+            (x.detail ? '<small style="display:block;opacity:.75;font-size:.85em">' + esc(x.detail) + '</small>' : '') + '</span>' +
+            (x.done ? '' : '<a href="' + x.href + '">Open</a>') + '</li>';
+        }).join('') + '</ul>' +
+        '<div class="dde-actions" style="justify-content:center;margin-top:12px">' +
+        (ok ? '<a class="dde-btn is-gold" href="' + L.certificate + '">🎓 Generate Level ' + n + ' Certificate</a>'
+            : '<a class="dde-btn is-ghost" href="' + L.certificate + '">Check my certificate status</a>') + '</div>';
+    });
+  }
+  DDE.renderCertBoxes = renderCertBoxes;
+
   /* ---------- Boot ---------- */
   function boot() {
     mountChrome();
@@ -714,6 +798,15 @@
     if (lk) renderLocked(lk);
     var ce = document.querySelector('[data-dde-certificate]');
     if (ce) renderCertificate(ce, parseInt(ce.getAttribute('data-dde-certificate'), 10));
+    if (document.querySelector('[data-dde-certbox]')) {
+      renderCertBoxes();
+      window.addEventListener('pageshow', renderCertBoxes);
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) renderCertBoxes(); });
+    }
+    // Levels 1–3: every page keeps the student's online record up to date (see js/progress-sync.js)
+    if ((A.level >= 1 && A.level <= 3) || A.page === 'student-dashboard.html') {
+      ensureSync().then(function (P) { if (P && P.autoSync) P.autoSync(); });
+    }
     // A page whose own logout() is still called keeps working; make it use the common one too
     if (typeof window.logout !== 'function') window.logout = logout;
   }

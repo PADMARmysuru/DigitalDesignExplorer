@@ -7,9 +7,9 @@
    certificate) opens automatically. Nothing else needs editing.
    ===================================================================== */
 var LEVEL_ACCESS = {
-  level1: true,   // Digital Design Fundamentals
-  level2: false,   // Digital Circuit Design
-  level3: false,   // Verilog for Beginners
+  level1: true,   // Digital Design Fundamentals   (OPEN for students)
+  level2: true,   // Digital Circuit Design        (OPEN for students)
+  level3: true,   // Verilog for Beginners         (OPEN for students)
   level4: false,  // VLSI Basics       (locked until you release it)
   level5: false,  // VLSI Testing      (locked until you release it)
   level6: false,   // SystemVerilog     (locked until you release it)
@@ -26,6 +26,20 @@ var LEVEL_ACCESS = {
   // Part B (Levels 7–14 + Capstone) ALSO requires faculty-granted Part B access for each student:
   // Faculty Dashboard → Part B Access. That permission is checked by the server (Supabase).
 };
+
+/* ---------------------------------------------------------------------
+   CERTIFICATE RULE – the same for Level 1, Level 2 and Level 3
+   1. Every module listed on the level dashboard must show ✓.
+   2. A learning module shows ✓ when its activity is finished
+      (all gates / programs / experiments / problems / final challenge).
+   3. A scored test shows ✓ when the student's BEST score is at least
+      CERT_PASS_PERCENT. Retakes are allowed; a lower retake never
+      removes a pass.
+   4. Progress is read from this device AND from the student's online
+      record, so changing computer or phone does not lose anything.
+   Change the pass mark here only (one number for all three levels).
+   --------------------------------------------------------------------- */
+var CERT_PASS_PERCENT = 50;
 
 /* Only ECE students of GSSSIETW: 4GW + 2 digits + EC + 3 digits, e.g. 4GW24EC001 */
 var USN_PATTERN = /^4GW\d{2}EC\d{3}$/;

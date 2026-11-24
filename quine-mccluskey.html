@@ -3186,6 +3186,14 @@ function showQMResult(){
     );
     localStorage.setItem("qmPracticeCompleted", "true");
 
+    /* Certificate status (uniform Level 1–3 rule: best score ≥ pass mark) */
+    var ddePass = (typeof CERT_PASS_PERCENT === "number" ? CERT_PASS_PERCENT : 50);
+    var ddeNeed = Math.ceil(qmQuestions.length * ddePass / 100);
+    var ddeBest = Math.max(qmScore, +(localStorage.getItem("qmPracticeBest") || -1));
+    document.getElementById("qmScore").innerHTML += "<br><small>" + (ddeBest >= ddeNeed
+        ? "✅ Certificate requirement met (best " + ddeBest + " / " + qmQuestions.length + ")."
+        : "🔁 Certificate needs a best score of " + ddeNeed + " / " + qmQuestions.length + " (" + ddePass + "%). Best so far: " + ddeBest + ". Try again.") + "</small>";
+
 }
 
 

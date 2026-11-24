@@ -238,8 +238,9 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
   }
   function fillModules() {
     var l = levels().filter(function (x) { return x.n === +$('fLevel').value; })[0];
-    $('fModule').innerHTML = (l ? l.modules : []).map(function (m) { return '<option value="' + m[0] + '">Module ' + m[0] + ' – ' + esc(m[1]) + '</option>'; }).join('');
-    if (l && l.modules.some(function (m) { return m[0] === state.module; })) $('fModule').value = String(state.module);
+    var certOpt = (l && l.n <= 3) ? '<option value="0">🏆 Certificate status – all modules</option>' : '';
+    $('fModule').innerHTML = certOpt + (l ? l.modules : []).map(function (m) { return '<option value="' + m[0] + '">Module ' + m[0] + ' – ' + esc(m[1]) + '</option>'; }).join('');
+    if (l && (l.modules.some(function (m) { return m[0] === state.module; }) || (state.module === 0 && certOpt))) $('fModule').value = String(state.module);
   }
   function moduleName(level, module) {
     var l = levels().filter(function (x) { return x.n === level; })[0], m = l && l.modules.filter(function (x) { return x[0] === module; })[0];
@@ -273,7 +274,8 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
   /* ---------- Load and draw ---------- */
   function load(after, quiet) {
     if (typeof after !== 'function') after = null;   // called directly from a button/select event
-    state.level = +$('fLevel').value || 1; state.module = +$('fModule').value || 1;
+    state.level = +$('fLevel').value || 1; state.module = $('fModule').value === '0' ? 0 : (+$('fModule').value || 1);
+    if (state.module === 0) return loadCert(after, quiet);
     $('tdbTitle').textContent = 'Level ' + state.level + ' → Module ' + state.module + (moduleName(state.level, state.module) ? ': ' + moduleName(state.level, state.module) : '');
     if (!quiet) $('tdbRows').innerHTML = '<tr><td colspan="7" class="tdb-empty">Loading…</td></tr>';
     msg('tdbMsg', '', '');
@@ -287,6 +289,38 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
       draw();
       state.loadedAt = Date.now();
       $('tdbTitle').setAttribute('title', 'Updated ' + new Date().toLocaleTimeString());
+      if (typeof after === 'function') after();
+    }, function (e) { if (!quiet) $('tdbRows').innerHTML = ''; msg('tdbMsg', 'bad', errorText(e)); });
+  }
+
+  /* ---------- Certificate status: all modules of Level 1/2/3 together (uniform rule) ---------- */
+  function loadCert(after, quiet) {
+    var l = levels().filter(function (x) { return x.n === state.level; })[0];
+    var mods = l ? l.modules : [];
+    $('tdbTitle').textContent = 'Level ' + state.level + ' → Certificate status (every module must be complete)';
+    if (!quiet) $('tdbRows').innerHTML = '<tr><td colspan="7" class="tdb-empty">Loading all ' + mods.length + ' modules…</td></tr>';
+    msg('tdbMsg', '', '');
+    Promise.all(mods.map(function (m) {
+      return DDEProgress.rpc('dde_teacher_report', { p_token: token(), p_level: state.level, p_module: m[0] });
+    })).then(function (reports) {
+      if (reports.some(function (r) { return r && r.error === 'not_teacher'; })) return showLogin();
+      var by = {};
+      reports.forEach(function (r, i) {
+        ((r && r.students) || []).forEach(function (x) {
+          var o = by[x.usn] || (by[x.usn] = { usn: x.usn, name: x.name, email: x.email, branch: x.branch, semester: x.semester, section: x.section,
+            last_login: x.last_login, partb_access: x.partb_access, cert: true, done: 0, total: mods.length, missing: [], has_record: false, updated_at: null });
+          if (x.completed) o.done++; else o.missing.push('Module ' + mods[i][0] + ' – ' + mods[i][1]);
+          if (x.has_record) o.has_record = true;
+          if (x.updated_at && (!o.updated_at || x.updated_at > o.updated_at)) o.updated_at = x.updated_at;
+        });
+      });
+      state.rows = Object.keys(by).map(function (k) { var o = by[k]; o.progress_percent = o.total ? Math.round(100 * o.done / o.total) : 0; o.completed = o.total > 0 && o.done === o.total; return o; })
+        .sort(function (a, b) { return String(a.section || '').localeCompare(String(b.section || '')) || String(a.usn).localeCompare(String(b.usn)); });
+      var secs = {}; state.rows.forEach(function (x) { if (x.section) secs[x.section] = 1; });
+      var keep = $('fSection').value;
+      $('fSection').innerHTML = '<option value="">All sections</option>' + Object.keys(secs).sort().map(function (s) { return '<option>' + esc(s) + '</option>'; }).join('');
+      if (secs[keep]) $('fSection').value = keep;
+      draw();
       if (typeof after === 'function') after();
     }, function (e) { if (!quiet) $('tdbRows').innerHTML = ''; msg('tdbMsg', 'bad', errorText(e)); });
   }
@@ -306,6 +340,7 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
   function draw() {
     var rows = filtered(), c = { done: 0, prog: 0, none: 0 }, sum = 0;
     rows.forEach(function (r) { c[status(r)]++; sum += r.progress_percent || 0; });
+    var qh = $('tdbRows').parentNode.querySelector('thead th:nth-child(5)'); if (qh) qh.textContent = state.module === 0 ? 'Certificate' : 'Quiz';
     $('tdbStats').innerHTML = [['Students', rows.length], ['Not started', c.none], ['In progress', c.prog], ['Complete', c.done], ['Average progress', rows.length ? Math.round(sum / rows.length) + '%' : '–']]
       .map(function (s) { return '<div class="tdb-stat"><span>' + s[0] + '</span><b>' + s[1] + '</b></div>'; }).join('');
     if (!state.rows.length) { $('tdbRows').innerHTML = '<tr><td colspan="7" class="tdb-empty">No students have registered yet.</td></tr>'; return; }
@@ -317,7 +352,7 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
         '<td data-label="USN">' + esc(r.usn) + '</td>' +
         '<td data-label="Section">' + esc(r.section || '–') + '</td>' +
         '<td data-label="Progress"><div class="tdb-prog"><div class="dde-bar' + (p >= 100 ? ' is-full' : '') + '"><span style="width:' + p + '%"></span></div><b>' + p + '%</b></div></td>' +
-        '<td data-label="Quiz">' + quiz(r) + '</td>' +
+        '<td data-label="' + (r.cert ? 'Certificate' : 'Quiz') + '">' + (r.cert ? (r.completed ? '🏆 Eligible' : r.done + ' / ' + r.total + ' modules') : quiz(r)) + '</td>' +
         '<td data-label="Status"><span class="tdb-st ' + s + '">' + ST[s] + '</span></td>' +
         '<td data-label="Updated">' + when(r.updated_at) + '</td></tr>';
     }).join('');
@@ -333,6 +368,7 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
   function detail(usn) {
     var r = state.rows.filter(function (x) { return x.usn === usn; })[0];
     if (!r) return;
+    if (r.cert) return certDetail(r);
     var s = status(r), name = moduleName(state.level, state.module);
     var box = $('tdbDetail');
     var acts = r.activities_total ? r.activities_completed + ' / ' + r.activities_total + (r.activities_completed >= r.activities_total ? ' ✅' : '') : '<span style="color:var(--dde-ink-3)">— not in this module</span>';
@@ -373,10 +409,34 @@ body { margin: 0; background: #f4f6fa; font-family: "Segoe UI", system-ui, Arial
       more.innerHTML = html;
     }, function (e) { var more = $('tdbMore'); if (more) more.innerHTML = '<p class="sub">' + esc(errorText(e)) + '</p>'; });
   }
+  function certDetail(r) {
+    var box = $('tdbDetail');
+    box.innerHTML = '<button type="button" class="tdb-close" aria-label="Close">✕</button>' +
+      '<h2 id="tdbDetailTitle" style="margin:0 0 12px;color:var(--dde-navy)">' + esc(r.name) + '</h2>' +
+      '<dl class="tdb-kv"><dt>USN</dt><dd>' + esc(r.usn) + '</dd><dt>Section</dt><dd>' + esc(r.section || '–') + '</dd><dt>Email</dt><dd>' + esc(r.email || '–') + '</dd>' +
+      '<dt>Last login</dt><dd>' + when(r.last_login) + '</dd></dl>' +
+      '<h3>Level ' + state.level + ' certificate: ' + (r.completed ? '🏆 ELIGIBLE' : r.done + ' of ' + r.total + ' modules complete') + '</h3>' +
+      (r.missing.length ? '<p class="sub" style="margin:0 0 6px">Still pending (as saved online):</p><ul>' + r.missing.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul>' : '<p>All modules are complete. The student can open the Level ' + state.level + ' certificate after logging in.</p>') +
+      '<p class="sub" style="margin-top:12px">Progress done on a device where the student was not logged in is sent to this record the next time the student opens any Level 1–3 page while logged in on that device.</p>';
+    $('tdbModal').classList.add('is-open');
+    box.querySelector('.tdb-close').addEventListener('click', closeDetail);
+    box.querySelector('.tdb-close').focus();
+  }
   function closeDetail() { $('tdbModal').classList.remove('is-open'); }
 
   /* ---------- CSV ---------- */
   function csv() {
+    if (state.module === 0) {
+      var cr = filtered(), qq = function (v) { v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+      var cl = [['Name', 'USN', 'Section', 'Email', 'Level', 'Modules complete', 'Modules total', 'Certificate', 'Pending modules', 'Last updated'].join(',')].concat(cr.map(function (r) {
+        return [r.name, r.usn, r.section, r.email, state.level, r.done, r.total, r.completed ? 'Eligible' : 'Not yet', r.missing.join('; '), r.updated_at || ''].map(qq).join(',');
+      }));
+      var ca = document.createElement('a');
+      ca.href = URL.createObjectURL(new Blob(['\ufeff' + cl.join('\n')], { type: 'text/csv' }));
+      ca.download = 'certificate-status-level' + state.level + '.csv';
+      document.body.appendChild(ca); ca.click(); ca.remove();
+      return;
+    }
     var rows = filtered(), head = ['Name', 'USN', 'Branch', 'Semester', 'Section', 'Email', 'Level', 'Module', 'Progress %', 'Activities', 'Quiz best', 'Quiz latest', 'Quiz total', 'Attempts', 'Status', 'Last updated'];
     var q = function (v) { v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
     var lines = [head.join(',')].concat(rows.map(function (r) {

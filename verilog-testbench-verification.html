@@ -865,27 +865,31 @@ function showChallengeHint(){
         "💡 Instantiate mux2to1 as dut, then use an initial block. Assign i0 and i1, set s=0, wait #10, then set s=1 and wait #10.";
 }
 
+/* Lenient check for the final challenge (uniform Level 1–3 rule): equivalent correct
+   ways of writing the same code are accepted (e.g. 0 / 4'b0000 / 4'd0, with or without brackets). */
+function ddeHas(code, re) { return re.test(code); }
+function ddeDeclares(code, kw, name) {
+    var re = new RegExp(kw + "(\\[[0-9:]+\\])?([a-z_][a-z0-9_,]*);", "g"), m;
+    while ((m = re.exec(code))) { if (m[2].split(",").indexOf(name) >= 0) return true; }
+    return false;
+}
 function checkChallenge(){
     const code=cleanCode(document.getElementById("challengeCode").value);
     const result=document.getElementById("challengeResult");
 
     const correct=
         code.includes("modulemux2to1(") &&
-        code.includes("assigny=(~s&i0)|(s&i1);") &&
-        code.includes("moduletb_mux2to1;") &&
-        code.includes("regi0;") &&
-        code.includes("regi1;") &&
-        code.includes("regs;") &&
-        code.includes("wirey;") &&
-        code.includes("mux2to1dut(") &&
-        code.includes(".i0(i0)") &&
-        code.includes(".i1(i1)") &&
-        code.includes(".s(s)") &&
-        code.includes(".y(y)") &&
+        (code.includes("assigny=(~s&i0)|(s&i1);") || ddeHas(code, /assigny=(s\?i1:i0|\(s\)\?i1:i0|\(~s&i0\)\|\(s&i1\)|\(s&i1\)\|\(~s&i0\));/)) &&
+        code.includes("moduletb_mux2to1") &&
+        ddeDeclares(code, "reg", "i0") && ddeDeclares(code, "reg", "i1") && ddeDeclares(code, "reg", "s") &&
+        ddeDeclares(code, "wire", "y") &&
+        ddeHas(code, /mux2to1[a-z_][a-z0-9_]*\(/) &&
+        ((code.includes(".i0(i0)") && code.includes(".i1(i1)") && code.includes(".s(s)") && code.includes(".y(y)")) ||
+         ddeHas(code, /mux2to1[a-z_][a-z0-9_]*\(i0,i1,s,y\)/)) &&
         code.includes("initialbegin") &&
-        code.includes("#10;") &&
-        code.includes("s=0;") &&
-        code.includes("s=1;") &&
+        ddeHas(code, /#\d+/) &&
+        ddeHas(code, /\bs=(1'b)?0;|[;#\d]s=(1'b)?0;/) &&
+        ddeHas(code, /\bs=(1'b)?1;|[;#\d]s=(1'b)?1;/) &&
         code.includes("endmodule");
 
     if(correct){

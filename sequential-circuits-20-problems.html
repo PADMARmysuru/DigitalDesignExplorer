@@ -209,10 +209,21 @@ function checkAll(){
  updateProgress();
  const result=document.getElementById("result");
  result.style.display="block";
- result.textContent=`Score: ${score} / 20`;
+ /* Uniform Level 1–3 rule: the test is passed when the BEST score reaches the pass mark
+    (CERT_PASS_PERCENT in access-control.js). Retakes allowed; a lower retake never removes a pass. */
+ const passPct=(typeof CERT_PASS_PERCENT==="number"?CERT_PASS_PERCENT:50);
+ const need=Math.ceil(20*passPct/100);
+ const prevBest=+(localStorage.getItem("sequential20Best")||-1);
+ const best=Math.max(prevBest,score);
+ localStorage.setItem("sequential20Best",String(best));
+ if(window.DDEProgress) DDEProgress.recordQuiz(2,3,score,20);
+ if(best>=need) localStorage.setItem("sequentialCircuitsDone","true");
  if(score===20){
-  result.textContent="🎉 Excellent! All 20 Sequential Circuit Problems completed!";
-  localStorage.setItem("sequentialCircuitsDone","true");
+  result.textContent="🎉 Excellent! All 20 Sequential Circuit Problems correct!";
+ }else if(best>=need){
+  result.textContent=`Score: ${score} / 20 · Best: ${best} / 20 – ✅ Test passed (pass mark ${need} / 20). You may retake it to improve.`;
+ }else{
+  result.textContent=`Score: ${score} / 20 · Best: ${best} / 20 – pass mark is ${need} / 20. Review the answers and try again.`;
  }
  window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
 }
@@ -227,7 +238,7 @@ function resetQuiz(){
  answers={}; completed=[];
  localStorage.removeItem("sequential20Answers");
  localStorage.removeItem("sequential20Completed");
- localStorage.removeItem("sequentialCircuitsDone");
+ /* the pass (sequentialCircuitsDone) and best score are kept when the answers are reset */
  document.getElementById("result").style.display="none";
  render();
  window.scrollTo({top:0,behavior:"smooth"});

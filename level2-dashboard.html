@@ -290,20 +290,8 @@
                 </div>
 
             </div>
-            <div id="certificateSection"
-     style="display:none; text-align:center; margin-top:20px;">
-
-    <p style="color:#2e7d32; font-weight:bold; font-size:18px;">
-        🎉 Congratulations! Level 2 Completed!
-    </p>
-
-    <a href="level2-certificate.html"
-       class="open-btn"
-       style="background:#c9a227; color:#162746;">
-        🎓 Generate Level 2 Certificate
-    </a>
-
-</div>
+            <!-- Certificate: drawn by common.js with the uniform Level 1–3 rule -->
+            <div data-dde-certbox="2" style="margin-top:20px"></div>
 
         </div>
 
@@ -575,13 +563,7 @@ function updateLevel2Progress() {
 
     if (pendingCount) pendingCount.textContent = pending;
 
-    const certificateSection =
-        document.getElementById("certificateSection");
-
-    if (certificateSection) {
-        certificateSection.style.display =
-            completed === total ? "block" : "none";
-    }
+    if (window.DDE && DDE.renderCertBoxes) DDE.renderCertBoxes();
 }
 
 updateLevel2Progress();

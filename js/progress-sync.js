@@ -161,6 +161,38 @@
       restore: function (row) { if (row.activities_completed >= 1) set(key, 'true'); }
     };
   }
+  /* A scored test: complete when the BEST score reaches CERT_PASS_PERCENT (access-control.js).
+     bestKeys: keys that may hold a score (the highest one counts); totalKey/defTotal: number of questions;
+     bestStore: where the best score is kept; finishedKey: optional "finished" flag; legacyKey: old "done" flag. */
+  function passPct() { return (typeof CERT_PASS_PERCENT === 'number' && CERT_PASS_PERCENT > 0) ? CERT_PASS_PERCENT : 50; }
+  function numKey(k) { var v = get(k); if (v === null || v === '') return null; v = +v; return isNaN(v) ? null : v; }
+  function scoredTest(bestKeys, totalKey, defTotal, bestStore, finishedKey, extraRestore, legacyKey) {
+    function best() {
+      var b = null;
+      bestKeys.forEach(function (k) { var v = numKey(k); if (v !== null && (b === null || v > b)) b = v; });
+      if (finishedKey && !flag(finishedKey)) return null;
+      return b;
+    }
+    function total() { return (totalKey && numKey(totalKey)) || defTotal; }
+    return {
+      scored: true,
+      read: function () {
+        var b = best(), t = total(), legacy = (legacyKey && flag(legacyKey)) || (finishedKey && flag(finishedKey) && b === null);
+        if (b === null && !legacy) return { skip: true };
+        var passed = legacy || (b !== null && b >= Math.ceil(t * passPct() / 100));
+        return { activities_completed: 0, activities_total: 0, has_quiz: true, quiz_passed: !!passed,
+                 details: { best: b, total: t, pass_percent: passPct() } };
+      },
+      restore: function (row) {
+        var d = row.details || {}, b = Math.max(d.best == null ? -1 : +d.best, row.best_score == null ? -1 : +row.best_score);
+        if (b >= 0 && (numKey(bestStore) === null || b > numKey(bestStore))) set(bestStore, String(b));
+        if (totalKey && d.total && numKey(totalKey) === null) set(totalKey, String(d.total));
+        if (finishedKey && b >= 0) set(finishedKey, 'true');
+        if (legacyKey && row.completed && (d.best == null)) set(legacyKey, 'true');
+        if (extraRestore) extraRestore(row);
+      }
+    };
+  }
   var CATALOG = {
     1: {
       1: { name: 'Logic Gates', page: 'logic-gates.html', items: '7 gates explored',
@@ -178,14 +210,41 @@
       4: { name: 'Verilog Practice', page: 'practice.html', items: '10 programs',
            read: function () { var p = countKeys(10, function (i) { return get('practice' + i) === 'completed'; }); return { activities_completed: p.length, activities_total: 10, details: { programs: p } }; },
            restore: function (row) { ((row.details && row.details.programs) || []).forEach(function (i) { set('practice' + i, 'completed'); }); } },
-      5: { name: 'Quiz', page: 'quiz.html', items: 'quiz', quiz: true,
-           read: function () { return { activities_completed: 0, activities_total: 0, has_quiz: true, details: {} }; },
-           restore: function (row) { if (row.latest_score != null && get('quizScore') === null) { set('quizScore', String(row.latest_score)); set('quizTotal', String(row.quiz_total)); } } },
+      5: Object.assign({ name: 'Quiz', page: 'quiz.html', items: 'quiz', quiz: true }, scoredTest(['quizBestScore', 'quizScore'], 'quizTotal', 110, 'quizBestScore', null,
+           function (row) { if (row.latest_score != null && get('quizScore') === null) { set('quizScore', String(row.latest_score)); set('quizTotal', String(row.quiz_total)); } })),
       6: Object.assign({ name: 'K-Map', page: 'kmap.html', items: 'completed' }, oneFlag('kmapCompleted')),
-      7: Object.assign({ name: 'Quine–McCluskey', page: 'quine-mccluskey.html', items: 'completed' }, oneFlag('qmPracticeCompleted')),
+      7: Object.assign({ name: 'Quine–McCluskey', page: 'quine-mccluskey.html', items: 'completed' }, scoredTest(['qmPracticeBest', 'qmPracticeScore'], 'qmPracticeTotal', 10, 'qmPracticeBest', 'qmPracticeCompleted')),
       8: { name: 'Digital Logic Lab', page: 'digital-logic-lab.html', items: '8 experiments',
            read: function () { var e = countKeys(8, function (i) { return flag('digitalLabExp' + i); }); return { activities_completed: e.length, activities_total: 8, details: { experiments: e } }; },
            restore: function (row) { ((row.details && row.details.experiments) || []).forEach(function (i) { set('digitalLabExp' + i, 'true'); }); } }
+    },
+    /* Level 2 – order of the Level 2 dashboard */
+    2: {
+      1: { name: 'Gate-Level Realization', page: 'gate-realization.html', items: '20 problems',
+           read: function () {
+             var g = (json('completedGateProblems', []) || []).filter(function (x, i, a) { return a.indexOf(x) === i; });
+             return { activities_completed: Math.min(g.length, 20), activities_total: 20, details: { problems: g } };
+           },
+           restore: function (row) {
+             var g = json('completedGateProblems', []) || [], add = (row.details && row.details.problems) || [];
+             add.forEach(function (x) { if (g.indexOf(x) < 0) g.push(x); });
+             set('completedGateProblems', JSON.stringify(g));
+           } },
+      2: Object.assign({ name: 'Sequential Circuits challenge', page: 'sequential-circuits.html', items: 'completed' }, oneFlag('sequentialChallengeDone')),
+      3: Object.assign({ name: 'Sequential Circuits – 20 problems test', page: 'sequential-circuits-20-problems.html', items: 'test', quiz: true },
+           scoredTest(['sequential20Best'], null, 20, 'sequential20Best', null, null, 'sequentialCircuitsDone')),
+      4: Object.assign({ name: 'Counters', page: 'counters.html', items: 'completed' }, oneFlag('counterActivityDone')),
+      5: Object.assign({ name: 'Registers', page: 'registers.html', items: 'completed' }, oneFlag('registerActivityDone')),
+      6: Object.assign({ name: 'State Machines', page: 'state-machines.html', items: 'completed' }, oneFlag('stateMachineActivityDone'))
+    },
+    /* Level 3 – order of the Level 3 dashboard (a module is complete when its final challenge is solved) */
+    3: {
+      1: Object.assign({ name: 'Verilog Basics', page: 'verilog-basics.html', items: 'final challenge' }, oneFlag('verilogBasicsDone')),
+      2: Object.assign({ name: 'Structural Modeling', page: 'verilog-structural.html', items: 'final challenge' }, oneFlag('verilogStructuralDone')),
+      3: Object.assign({ name: 'Data-Flow Modeling', page: 'verilog-dataflow.html', items: 'final challenge' }, oneFlag('verilogDataflowDone')),
+      4: Object.assign({ name: 'Behavioral Modeling', page: 'verilog-behavioral.html', items: 'final challenge' }, oneFlag('verilogBehavioralDone')),
+      5: Object.assign({ name: 'RTL Modeling', page: 'verilog-rtl.html', items: 'final challenge' }, oneFlag('verilogRTLDone')),
+      6: Object.assign({ name: 'Testbench & Verification', page: 'verilog-testbench-verification.html', items: 'final challenge' }, oneFlag('verilogVerificationDone'))
     }
   };
 
@@ -238,17 +297,91 @@
   }
 
   /* Save one catalogued module from its existing localStorage keys */
-  function syncModule(level, module) {
+  /* What was last sent in this browser session, so unchanged modules are not sent again */
+  function sget(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  function sset(k, v) { try { sessionStorage.setItem(k, v); } catch (e) { /* ignore */ } }
+  function sentMap() { var m = null; try { m = JSON.parse(sget('ddeSyncSent') || 'null'); } catch (e) { m = null; } return (m && m.t === get(TOKEN)) ? m : { t: get(TOKEN), h: {} }; }
+  function markSent(level, module, sig) { var m = sentMap(); m.h[level + '-' + module] = sig; sset('ddeSyncSent', JSON.stringify(m)); }
+
+  /* Save one catalogued module from its existing localStorage keys (force = send even if unchanged) */
+  function syncModule(level, module, force) {
     var m = moduleDef(level, module);
     if (!m) { log('No progress definition for Level ' + level + ' Module ' + module); return Promise.resolve({ ok: false, error: 'unknown_module' }); }
     var data = m.read();
     if (data.skip || (!data.activities_completed && !data.has_quiz)) return Promise.resolve({ ok: true, skipped: true });   // nothing done yet
     delete data.skip;
-    return submit({ type: 'save', level: level, module: module, data: data });
+    var sig = JSON.stringify(data);
+    if (!force && sentMap().h[level + '-' + module] === sig) return Promise.resolve({ ok: true, unchanged: true });
+    return submit({ type: 'save', level: level, module: module, data: data }).then(function (r) {
+      if (r && r.ok) markSent(level, module, sig);
+      return r;
+    });
   }
   function syncLevel(level) {
     var mods = Object.keys(CATALOG[level] || {});
     return mods.reduce(function (p, k) { return p.then(function () { return syncModule(level, +k).catch(function () {}); }); }, Promise.resolve());
+  }
+
+  /* ---------- Levels 1–3: save automatically whenever a progress key changes ----------
+     The module pages only write localStorage; this watcher sends the change to the student's
+     online record (and keeps the BEST score of every test). No page needs its own save code. */
+  var WATCH = [
+    [1, /^(completedGates|halfAdderCompleted|fullAdderCompleted|practice\d+|quizScore|quizTotal|quizBestScore|kmapCompleted|qmPractice\w*|digitalLabExp\d+)$/],
+    [2, /^(completedGateProblems|sequentialChallengeDone|sequentialCircuitsDone|sequential20Best|counterActivityDone|registerActivityDone|stateMachineActivityDone)$/],
+    [3, /^verilog(Basics|Structural|Dataflow|Behavioral|RTL|Verification)Done$/]
+  ];
+  var BEST = { quizScore: 'quizBestScore', qmPracticeScore: 'qmPracticeBest' };   // latest score key → best score key
+  var quiet = 0, timers = {};
+  function rawSet(k, v) { try { ORIG_SET.call(window.localStorage, k, v); } catch (e) { /* ignore */ } }
+  function onKeySet(k, v) {
+    if (quiet) return;
+    if (BEST[k] && v !== '' && !isNaN(+v)) { var b = numKey(BEST[k]); if (b === null || +v > b) rawSet(BEST[k], String(+v)); }
+    for (var i = 0; i < WATCH.length; i++) {
+      if (WATCH[i][1].test(k)) {
+        var lv = WATCH[i][0];
+        if (!get(TOKEN)) return;                                  // not logged in: device only (as before)
+        clearTimeout(timers[lv]);
+        timers[lv] = setTimeout(function () { syncLevel(lv); }, 1500);
+        return;
+      }
+    }
+  }
+  var ORIG_SET = null;
+  try {
+    if (window.Storage && Storage.prototype.setItem && !Storage.prototype.setItem.__dde) {
+      ORIG_SET = Storage.prototype.setItem;
+      var hooked = function (k, v) {
+        ORIG_SET.call(this, k, v);
+        try { if (this === window.localStorage) onKeySet(String(k), String(v)); } catch (e) { /* never break the page */ }
+      };
+      hooked.__dde = true;
+      Storage.prototype.setItem = hooked;
+    } else if (window.Storage) ORIG_SET = Storage.prototype.setItem;
+  } catch (e) { /* storage blocked */ }
+
+  /* Run once per page on Levels 1–3: bring the online record into this browser (once per session),
+     then send whatever this browser has that the server does not. */
+  var RELOAD_PAGES = ['dashboard.html', 'level2-dashboard.html', 'level3-dashboard.html', 'student-dashboard.html'];
+  function snapshot() {
+    var o = {};
+    try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (WATCH.some(function (w) { return w[1].test(k); })) o[k] = localStorage.getItem(k); } } catch (e) { /* ignore */ }
+    return JSON.stringify(o, Object.keys(o).sort());
+  }
+  var autoRan = false;
+  function autoSync() {
+    if (autoRan) return Promise.resolve(); autoRan = true;
+    var t = get(TOKEN);
+    if (!t) return Promise.resolve();
+    var first = sget('ddeRestoredFor') !== t;
+    var before = snapshot();
+    var p = first ? restore().then(function (r) { if (r && r.ok) sset('ddeRestoredFor', t); }, function () {}) : Promise.resolve();
+    return p.then(function () {
+      var page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+      if (first && snapshot() !== before && RELOAD_PAGES.indexOf(page) >= 0 && sget('ddeRestoreReload') !== t) {
+        sset('ddeRestoreReload', t); location.reload(); return;     // show the restored progress
+      }
+      return syncLevel(1).then(function () { return syncLevel(2); }).then(function () { return syncLevel(3); });
+    });
   }
 
   /* Bring server progress back into this browser (new device / after login) */
@@ -257,7 +390,10 @@
     if (!token) return Promise.resolve({ ok: false, error: 'not_logged_in' });
     return rpc('dde_load_progress', { p_token: token }).then(function (r) {
       if (!r || !r.ok) { if (r && r.error === 'not_logged_in') del(TOKEN); return r; }
-      (r.modules || []).forEach(function (row) { var m = moduleDef(row.level, row.module); if (m && m.restore) { try { m.restore(row); } catch (e) { log('restore failed', e); } } });
+      quiet++;
+      try {
+        (r.modules || []).forEach(function (row) { var m = moduleDef(row.level, row.module); if (m && m.restore) { try { m.restore(row); } catch (e) { log('restore failed', e); } } });
+      } finally { quiet--; }
       return r;
     });
   }
@@ -274,7 +410,16 @@
     login: function (usn, email, password) { return rpc('dde_login', { p_usn: usn, p_email: email, p_password: password }); },
     logout: function () { var t = get(TOKEN); del(TOKEN); return t ? rpc('dde_logout', { p_token: t }).catch(function () {}) : Promise.resolve(); },
     saveModule: function (level, module, data) { return submit({ type: 'save', level: level, module: module, data: data }); },
-    recordQuiz: function (level, module, score, total) { return submit({ type: 'quiz', level: level, module: module, score: +score, total: +total }); },
+    recordQuiz: function (level, module, score, total) {
+      return submit({ type: 'quiz', level: level, module: module, score: +score, total: +total }).then(function (r) {
+        // the pass/fail of a Levels 1–3 test follows the uniform rule (best score ≥ pass mark)
+        var m = moduleDef(level, module);
+        if (r && r.ok && m && m.scored) return syncModule(level, module, true).then(function () { return r; }, function () { return r; });
+        return r;
+      });
+    },
+    autoSync: autoSync,
+    passPct: passPct,
     syncModule: syncModule,
     syncLevel: syncLevel,
     restore: restore,

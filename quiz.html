@@ -1779,6 +1779,14 @@ async function showResult() {
 
     }
 
+    /* Certificate status (uniform Level 1–3 rule: best score ≥ pass mark) */
+    var ddePass = (typeof CERT_PASS_PERCENT === "number" ? CERT_PASS_PERCENT : 50);
+    var ddeNeed = Math.ceil(questions.length * ddePass / 100);
+    var ddeBest = Math.max(score, +(localStorage.getItem("quizBestScore") || -1));
+    document.getElementById("message").innerText += "\n" + (ddeBest >= ddeNeed
+        ? "✅ Certificate requirement met (best " + ddeBest + " / " + questions.length + ", pass mark " + ddeNeed + ")."
+        : "🔁 Certificate needs a best score of " + ddeNeed + " / " + questions.length + " (" + ddePass + "%). Your best so far: " + ddeBest + ". Retake the quiz.");
+
 }
 
 
